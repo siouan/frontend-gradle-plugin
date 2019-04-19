@@ -56,7 +56,7 @@ public class NodeDistributionUrlResolverTest {
     @Test
     public void shouldResolveUrlWhenOsIsLinuxAndJreArchIsAmd64() throws DistributionUrlResolverException {
         assertThat(new NodeDistributionUrlResolver(VERSION, null, "Linux", "amd64").resolve().toString())
-            .endsWith("-linux-x64.tar.xz");
+            .endsWith("-linux-x64.tar.gz");
     }
 
     @Test

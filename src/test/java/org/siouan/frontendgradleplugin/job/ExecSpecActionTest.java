@@ -93,8 +93,7 @@ public class ExecSpecActionTest {
 
         action.execute(execSpec);
 
-        assertExecSpecWith(ExecSpecAction.SHELL_EXECUTABLE,
-            Collections.singletonList(String.join(" ", ExecSpecAction.NPM_EXECUTABLE, script)), pathEnvironment, true,
+        assertExecSpecWith(ExecSpecAction.NPM_EXECUTABLE, Collections.singletonList(script), pathEnvironment, true,
             false);
     }
 
@@ -108,8 +107,7 @@ public class ExecSpecActionTest {
 
         action.execute(execSpec);
 
-        assertExecSpecWith(ExecSpecAction.SHELL_EXECUTABLE,
-            Collections.singletonList(String.join(" ", ExecSpecAction.YARN_EXECUTABLE, script)), pathEnvironment, true,
+        assertExecSpecWith(ExecSpecAction.YARN_EXECUTABLE, Collections.singletonList(script), pathEnvironment, true,
             true);
     }
 

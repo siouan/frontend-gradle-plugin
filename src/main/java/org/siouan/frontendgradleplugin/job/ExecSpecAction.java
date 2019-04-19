@@ -100,18 +100,23 @@ public class ExecSpecAction implements Action<ExecSpec> {
         if (Utils.isWindowsOs(osName)) {
             executable = CMD_EXECUTABLE;
             args.add("/c");
+            final String scriptExecutable;
+            if (yarnEnabled) {
+                scriptExecutable = YARN_EXECUTABLE;
+            } else {
+                scriptExecutable = NPM_EXECUTABLE;
+            }
+            // The command that must be executed in the terminal must be a single argument on itself (like if it was
+            // quoted).
+            args.add(scriptExecutable + ' ' + script);
         } else {
-            executable = SHELL_EXECUTABLE;
+            if (yarnEnabled) {
+                executable = YARN_EXECUTABLE;
+            } else {
+                executable = NPM_EXECUTABLE;
+            }
+            args.add(script);
         }
-        final String scriptExecutable;
-        if (yarnEnabled) {
-            scriptExecutable = YARN_EXECUTABLE;
-        } else {
-            scriptExecutable = NPM_EXECUTABLE;
-        }
-        // The command that must be executed in the shell/terminal must be a single argument on itself (like if it was
-        // quoted).
-        args.add(scriptExecutable + ' ' + script);
 
         // Prepend directories containing the Node and Yarn executables to the 'PATH' environment variable.
         final Map<String, Object> environment = execSpec.getEnvironment();
