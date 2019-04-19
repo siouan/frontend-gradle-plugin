@@ -64,7 +64,7 @@ public class NodeDistributionUrlResolver implements DistributionUrlResolver {
                 if (Utils.isWindowsOs(osName)) {
                     extension = "-win-x64.zip";
                 } else if (Utils.isLinuxOs(osName)) {
-                    extension = "-linux-x64.tar.xz";
+                    extension = "-linux-x64.tar.gz";
                 } else if (Utils.isMacOs(osName)) {
                     extension = "-darwin-x64.tar.gz";
                 } else {

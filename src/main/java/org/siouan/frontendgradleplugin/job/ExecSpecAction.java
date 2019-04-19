@@ -68,6 +68,16 @@ public class ExecSpecAction implements Action<ExecSpec> {
             System.getProperty("os.name"));
     }
 
+    /**
+     * Builds an action to run a frontend script on the local platform.
+     *
+     * @param yarnEnabled Whether the script shall be run with Yarn instead of NPM.
+     * @param nodeInstallDirectory Directory where the Node distribution is installed.
+     * @param yarnInstallDirectory Directory where the Yarn distribution is installed.
+     * @param script Name of the script to execute.
+     * @param afterConfigured A consumer called once the exec specification has been configured.
+     * @param osName Name of the O/S.
+     */
     public ExecSpecAction(final boolean yarnEnabled, final File nodeInstallDirectory, final File yarnInstallDirectory,
         final String script, final Consumer<ExecSpec> afterConfigured, final String osName) {
         this.yarnEnabled = yarnEnabled;

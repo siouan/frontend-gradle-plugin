@@ -68,8 +68,8 @@ public class DistributionInstallJob extends AbstractJob {
         final Function<Object, FileTree> extractFunction;
         if (distributionFile.getName().endsWith(".zip")) {
             extractFunction = project::zipTree;
-        } else if (distributionFile.getName().endsWith(".tar.gz") || distributionFile.getName().endsWith(".tar.xz")
-            || distributionFile.getName().endsWith(".gzip") || distributionFile.getName().endsWith(".tar.Z")) {
+        } else if (distributionFile.getName().endsWith(".tar.gz") || distributionFile.getName().endsWith(".gzip")
+            || distributionFile.getName().endsWith(".tar.Z")) {
             extractFunction = project::tarTree;
         } else {
             logError("Unsupported type of archive: " + distributionFile.getName());

@@ -45,7 +45,7 @@ public class ExecSpecActionTest {
     @Test
     public void shouldConfigureWithCmdTermAndNpmWhenWindowsOsAndYarnDisabled() {
         final ExecSpecAction action = new ExecSpecAction(false, nodeInstallDirectory, yarnInstallDirectory, SCRIPT,
-            this::afterConfigured);
+            this::afterConfigured, "Windows NT");
 
         action.execute(execSpec);
 
@@ -67,7 +67,7 @@ public class ExecSpecActionTest {
     @Test
     public void shouldConfigureWithCmdTermAndYarnWhenWindowsOsAndYarnEnabled() {
         final ExecSpecAction action = new ExecSpecAction(true, nodeInstallDirectory, yarnInstallDirectory, SCRIPT,
-            this::afterConfigured);
+            this::afterConfigured, "Windows NT");
 
         action.execute(execSpec);
 
