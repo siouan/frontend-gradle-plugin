@@ -1,0 +1,54 @@
+plugins {
+    id 'java-gradle-plugin'
+    id 'maven-publish'
+}
+
+wrapper {
+    gradleVersion = '5.4'
+    distributionType = Wrapper.DistributionType.ALL
+}
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        exceptionFormat = 'full'
+    }
+}
+
+dependencies {
+    implementation gradleApi()
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.4.1'
+    testImplementation 'org.mockito:mockito-core:2.+'
+    testImplementation 'org.assertj:assertj-core:3.12.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.4.1'
+}
+
+group 'org.siouan'
+version '1.0.0-SNAPSHOT'
+description 'Sets up a frontend build environment based on Node, NPM/Yarn, and already integrated tasks.'
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+gradlePlugin {
+    plugins {
+        frontend {
+            id = 'org.siouan.frontend'
+            implementationClass = 'org.siouan.frontendgradleplugin.FrontendGradlePlugin'
+        }
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            url 'maven-repo'
+        }
+    }
+}
