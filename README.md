@@ -1,7 +1,9 @@
 # Frontend Gradle plugin
 
 [![Initial release upcoming](https://img.shields.io/badge/Initial%20release-Upcoming-blue.svg)](https://github.com/Siouan/frontend-gradle-plugin)
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
+
+[![Build Status](https://travis-ci.org/Siouan/frontend-gradle-plugin.svg?branch=master)](https://travis-ci.org/Siouan/frontend-gradle-plugin)
 
 This plugin integrates frontend build tasks into a Gradle build. It is inspired by the
 [frontend-maven-plugin][frontend-maven-plugin].
@@ -12,22 +14,23 @@ Detailed changes for each release are documented in the [release notes][release-
 
 - [Requirements](#requirements)
 - [Installation](#installation)
-  - Using Gradle DSL
-  - Using Gradle build script block
-- [Configuration](#configuration)
-  - DSL reference
-  - Typical configuration with NPM
-  - Typical configuration with Yarn
+  - [Activation](#activation)
+    - [Using Gradle DSL](#using-gradle-dsl)
+    - [Using Gradle build script block](#using-gradle-build-script-block)
+  - [Configuration](#configuration)
+    - [DSL reference](#dsl-reference)
+    - [Typical configuration with NPM](#typical-configuration-with-npm)
+    - [Typical configuration with Yarn](#typical-configuration-with-yarn)
+  - [Final steps](#final-steps)
 - [Tasks](#tasks)
-  - Dependencies
-  - Install Node
-  - Install Yarn
-  - Install frontend
-  - Clean frontend
-  - Assemble frontend
-  - Test frontend
-  - Start frontend
-  - Run custom NPM/Yarn script
+  - [Dependencies](#dependencies)
+  - [Install Node](#install-node)
+  - [Install Yarn](#install-yarn)
+  - [Install frontend dependencies](#install-frontend-dependencies)
+  - [Clean frontend](#clean-frontend)
+  - [Assemble frontend](#assemble-frontend)
+  - [Check frontend](#check-frontend)
+  - [Run custom NPM/Yarn script](#run-custom-npmyarn-script)
 
 ## Requirements
 
@@ -37,9 +40,11 @@ The plugin is officially supported with:
 
 ## Installation
 
-2 options are available.
+### Activation 
 
-### Using [Gradle DSL][gradle-dsl]
+2 options  are available.
+
+#### Using [Gradle DSL][gradle-dsl]
 
 This is the modern and recommended approach.
 
@@ -50,7 +55,7 @@ plugins {
 }
 ```
 
-### Using [Gradle build script block][gradle-build-script-block]
+#### Using [Gradle build script block][gradle-build-script-block]
 
 This approach is the legacy way to resolve and apply plugins.
 
@@ -68,9 +73,9 @@ buildscript {
 apply plugin: 'org.siouan.frontend'
 ```
 
-## Configuration
+### Configuration
 
-### DSL reference
+#### DSL reference
 
 All settings are introduced hereafter, with default value for each property.
 
@@ -83,32 +88,28 @@ frontend {
 
     // NODE SETTINGS
     // Version of the distribution to download, used to build the URL to download the distribution, if not set.
-    version = '10.15.3'
+    nodeVersion = '10.15.3'
 
-    // [Optional] Sets this property to force the download from a custom website. By default, the plugin attempts to
-    // download the distribution compatible with the current platform from the Node website.
-    // Note that changing only this property after a build will not trigger a new download during the next build.
-    // Use the 'reinstallEnabled' flag to do so.
-    distributionUrl = 'https://nodejs.org/dist/vX.Y.Z/node-vX.Y.Z-win-x64.zip'
+    // [Optional] Sets this property to force the download from a custom website. By default, this property is 'null',
+    // and the plugin attempts to download the distribution compatible with the current platform from the Node website.
+    nodeDistributionUrl = 'https://nodejs.org/dist/vX.Y.Z/node-vX.Y.Z-win-x64.zip'
 
     // [Optional] Install directory where the distribution archive shall be exploded.
-    installDirectory = "${projectDir}/node"
+    nodeInstallDirectory = "${projectDir}/node"
 
     // YARN SETTINGS
     // Yarn version, used to build the URL to download the corresponding distribution, if not set. This version number
-    // is also used to remove the root directory in the distribution archive. If a custom 'distributionUrl' property is
-    // set, the version of the distribution is expected to be the same as the one set in the 'version' property, or this
-    // may lead to an unexpected result.
-    version = '1.15.2'
+    // is also used to remove the root directory in the distribution archive. If a custom 'yarnDistributionUrl' property
+    // is set, the version of the distribution is expected to be the same as the one set in the 'yarnVersion' property,
+    // or this may lead to unexpected results.
+    yarnVersion = '1.15.2'
 
-    // [Optional] Sets this property to force the download from a custom website. By default, the plugin attempts to
-    // download the distribution compatible with the current platform Yarn's Github task.
-    // Note that changing only this property after a build will not trigger a new download during the next build.
-    // Use the 'reinstallEnabled' flag to do so.
-    distributionUrl = 'https://github.com/yarnpkg/yarn/releases/download/vX.Y.Z/yarn-vX.Y.Z.tar.gz'
+    // [Optional] Sets this property to force the download from a custom website. By default, this property is 'null',
+    // and the plugin attempts to download the distribution compatible with the current platform from the Yarn website.
+    yarnDistributionUrl = 'https://github.com/yarnpkg/yarn/releases/download/vX.Y.Z/yarn-vX.Y.Z.tar.gz'
 
     // [Optional] Install directory where the distribution archive shall be exploded.
-    installDirectory = "${projectDir}/yarn"
+    yarnInstallDirectory = "${projectDir}/yarn"
 
     // OTHER SETTINGS
     // Name of the NPM/Yarn scripts (see 'package.json' file) that shall be executing depending on the Gradle phase.
@@ -129,7 +130,7 @@ frontend {
 }
 ```
 
-### Typical configuration with NPM
+#### Typical configuration with NPM
 
 ```gradle
 // build.gradle
@@ -141,7 +142,7 @@ frontend {
 }
 ```
 
-### Typical configuration with Yarn
+#### Typical configuration with Yarn
 
 ```gradle
 // build.gradle
@@ -155,12 +156,27 @@ frontend {
 }
 ```
 
+### Final steps
+
+If the developer needs to use Node/NPM apart from Gradle, it is mandatory to apply the following steps:
+
+- Create a `NODEJS_HOME` environment variable containing the real path set in the `nodeInstallationDirectory`
+property.
+- Add the `$NODEJS_HOME` (Unix-like OS) or `%NODEJS_HOME%` (Windows OS) path to the `PATH` environment variable.
+
+If Yarn is enabled, apply these latest steps.
+
+- Create a `YARN_HOME` environment variable containing the real path set in the
+`yarnInstallationDirectory` property.
+- Add the `$YARN_HOME/bin` (Unix-like OS) or `%YARN_HOME%\bin` (Windows OS) path to the `PATH`
+environment variable.
+
 ## Tasks
 
 The plugin registers multiple tasks, some having dependencies with other, and also with Gradle lifecycle tasks defined
 in the [Gradle base plugin][gradle-base-plugin].
 
-### Task dependencies
+### Dependencies
 
 ![Task dependencies][task-dependencies]
 

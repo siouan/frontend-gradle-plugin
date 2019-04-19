@@ -1,6 +1,7 @@
 plugins {
     id 'java-gradle-plugin'
     id 'maven-publish'
+    id 'jacoco'
 }
 
 wrapper {
@@ -30,8 +31,8 @@ dependencies {
 }
 
 group 'org.siouan'
-version '1.0.0-SNAPSHOT'
-description 'Sets up a frontend build environment based on Node, NPM/Yarn, and already integrated tasks.'
+version '1.0.0'
+description 'Integrate your frontend NPM/Yarn build into a Gradle build.'
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8

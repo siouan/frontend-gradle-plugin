@@ -1,14 +1,8 @@
 language: java
 install: true
 
-git:
-  depth: 3
-
 jdk:
   - oraclejdk8
-
-env:
-  - CI=true
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
@@ -18,6 +12,14 @@ cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
+    - $HOME/.sonar/cache
+
+addons:
+  sonarcloud:
+    organization: "siouan"
+    token:
+      secure: "rrvb0/ID8lLjECdTtLTrDMjsGAQXo2RAVE9ruLsd34m4iaXdBYrD5ZHt4Hbg1M9kUKYKSSdBjAdLYMtCd05nFiJ5VE57vpPdRbpNnsut4qfH5iF+Ndr63PNahDiptCLwk5yQJRC/uM1ZY0VZCVoA1iDaqS2fkqxkCnadv7hEM83MU+xmZBuzOdBOV5O6TuDhOn9InZQubhufzhH7MHhBR/X4ME1xhbn88/omzae7okxvviP8uYwC0u3YHEOucI+BFZ8QRNYWL/JG6rhJNBwPAg1Jk9Kcro14Iue3BrbQerbCvn5gzE87dgqEBp8vU8t65flza2x78NQmxzoDYvfZ2kzNUn/y1IDIvnY7133pbV2NVRI9964KozngNFMmnXhtmTIJEMAuu/CYIjVZ1lbyvaajIA4LWA6TcDD1W2VWN5ggnJDGtwHy+skVGLRPjFLlpllERYo5vggnuxxmv/AcY47Qrn2qH4/07FHoJvFd83UIJNbBfASCi6bSw3HbyS23aFev+aA6BZqvUvvotpFj/CjWWG7HYiySk6MYwTKhPHWkr/YO/rePOLcxqlZipy159n7eLBHoC0fB/EQGku2+MG/QXgD2tswD8VXsZDe18/Z262QIlKeGRg44sJSofmkaqYgf28z+zwrIfGpXlI/2ZHm7iXn4ekRx9/D97KAF5yg="
 
 script:
   - ./gradlew build --scan -s
+  - sonar-scanner
