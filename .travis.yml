@@ -21,5 +21,5 @@ addons:
       secure: "GFJCds9c7LcfVZE82Tz9t7F6bsPGDIX8KtDAC2m+mUzUWst8fVDvTBJ7bqGGWAMN6bc+Uot5WI5wGW15e87j1z3RtLkglVpoBgsyIrFLQY69BpjByGvw4010EU0ulEHsT93YjUEyugMxBV6zdsuqsP8vZCMMkl0oI+i3Lj1YlTabMKFWw3QyQlkpIoQo3C7c5puJSDTh0dBxtd7w1lvPEtZLXxqe7B8mUvqyDfMLFmU8bHIVMvrmlxsUvXD8qkCJQJy3XIr+XW8tGc9pIad9C2t8eUj9OE87yqp87eOGoQdbdFp98/GKaqBe+4rVRZFXkjfhM3ayLCDwTiWBYVoGCB0MlNz7WdGD+pUWTaYMD59yhFjSLnEM3+XBb0jqeviZEMCRH14/cDhXA74h6n+/cjzIks3pEIFpFnvK6XQVXTHA6poPvfnfylbD8dpiS51Vpf9LWvVf1fmRb0M7L3WO3Ar/QFydAL2mDF/ibSuYbvZAQ3xVLz+5XTg0QkJnGItfKxI+W/3tkVahgqXVh6BGFzCwB5kTgMjgZ6eij25i3f7N9W4j4wBxIsQXc9JEqP0ZBBafSASmC4cHUyOrTOfYfeEqDeOZA6exeVRdLPiwLL1gjjzq5ru6Ii90oCzBQHeSeOhYOvUQl9gMXduzX5cpSqHCGFpMYynmrDmsz1D94Sk="
 
 script:
-  - ./gradlew build --scan -s
+  - ./gradlew build jacocoTestReport --scan -s
   - sonar-scanner
