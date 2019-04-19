@@ -1,6 +1,7 @@
 # Frontend Gradle plugin
 
 [![Initial release upcoming](https://img.shields.io/badge/Initial%20release-Upcoming-blue.svg)](https://github.com/Siouan/frontend-gradle-plugin)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 This plugin integrates frontend build tasks into a Gradle build. It is inspired by the
 [frontend-maven-plugin][frontend-maven-plugin].
