@@ -3,8 +3,10 @@
 [![Initial release upcoming](https://img.shields.io/badge/Initial%20release-Upcoming-blue.svg)](https://github.com/Siouan/frontend-gradle-plugin)
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
 
-[![Build Status](https://travis-ci.org/Siouan/frontend-gradle-plugin.svg?branch=master)](https://travis-ci.org/Siouan/frontend-gradle-plugin)
-[![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=org.siouan.frontendgradleplugin&metric=alert_status)](https://sonarcloud.io/dashboard?id=Siouan_frontend-gradle-plugin)
+[![Build status](https://travis-ci.org/Siouan/frontend-gradle-plugin.svg?branch=master)](https://travis-ci.org/Siouan/frontend-gradle-plugin)
+[![Sonarcloud status](https://sonarcloud.io/api/project_badges/measure?project=Siouan_frontend-gradle-plugin&metric=alert_status)](https://sonarcloud.io/dashboard?id=Siouan_frontend-gradle-plugin)
+[![Code coverage](https://sonarcloud.io/api/project_badges/measure?project=Siouan_frontend-gradle-plugin&metric=coverage)](https://sonarcloud.io/dashboard?id=Siouan_frontend-gradle-plugin)
+[![Maintainability](https://sonarcloud.io/api/project_badges/measure?project=Siouan_frontend-gradle-plugin&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=Siouan_frontend-gradle-plugin)
 
 This plugin integrates frontend build tasks into a Gradle build. It is inspired by the
 [frontend-maven-plugin][frontend-maven-plugin].
