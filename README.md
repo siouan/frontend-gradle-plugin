@@ -1,6 +1,5 @@
 # Frontend Gradle plugin
 
-[![GitHub license](https://img.shields.io/github/license/Naereen/StrapDown.js.svg)](https://github.com/Siouan/frontend-gradle-plugin/blob/master/LICENSE)
 [![Initial release upcoming](https://img.shields.io/badge/Initial%20release-Upcoming-blue.svg)](https://github.com/Siouan/frontend-gradle-plugin)
 
 This plugin integrates frontend build tasks into a Gradle build. It is inspired by the
@@ -10,15 +9,15 @@ Detailed changes for each release are documented in the [release notes][release-
 
 ## Summary
 
-- Requirements
-- Installation
+- [Requirements](#requirements)
+- [Installation](#installation)
   - Using Gradle DSL
   - Using Gradle build script block
-- Configuration
+- [Configuration](#configuration)
   - DSL reference
   - Typical configuration with NPM
   - Typical configuration with Yarn
-- Tasks
+- [Tasks](#tasks)
   - Dependencies
   - Install Node
   - Install Yarn
@@ -28,8 +27,6 @@ Detailed changes for each release are documented in the [release notes][release-
   - Test frontend
   - Start frontend
   - Run custom NPM/Yarn script
-- FAQ
-- 
 
 ## Requirements
 
@@ -136,7 +133,7 @@ frontend {
 ```gradle
 // build.gradle
 frontend {
-    version = '<X.Y.Z>'
+    nodeVersion = '<X.Y.Z>'
     cleanScript = 'run clean'
     assembleScript = 'run assemble'
     checkScript = 'run check'
@@ -149,8 +146,8 @@ frontend {
 // build.gradle
 frontend {
     yarnEnabled = true
-    version = '<X.Y.Z>'
-    version = '<X.Y.Z>'
+    nodeVersion = '<X.Y.Z>'
+    yarnVersion = '<X.Y.Z>'
     cleanScript = 'run clean'
     assembleScript = 'run assemble'
     checkScript = 'run check'
