@@ -23,6 +23,12 @@ test {
     }
 }
 
+jacocoTestReport {
+    reports {
+        xml.enabled true
+    }
+}
+
 dependencies {
     implementation gradleApi()
 
