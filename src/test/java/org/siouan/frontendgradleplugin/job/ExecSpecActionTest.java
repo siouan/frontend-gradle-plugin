@@ -24,7 +24,7 @@ import org.mockito.MockitoAnnotations;
  */
 public class ExecSpecActionTest {
 
-    private static final String SCRIPT = "script";
+    private static final String SCRIPT = " run script ";
 
     private static final File NODE_INSTALL_DIRECTORY = new File("/usr/lib/node");
 
@@ -63,7 +63,7 @@ public class ExecSpecActionTest {
 
         final List<String> expectedArgs = new ArrayList<>();
         expectedArgs.add("/c");
-        expectedArgs.add(String.join(" ", ExecSpecAction.NPM_EXECUTABLE, script));
+        expectedArgs.add(String.join(" ", ExecSpecAction.NPM_EXECUTABLE, script.trim()));
         assertExecSpecWith(ExecSpecAction.CMD_EXECUTABLE, expectedArgs, pathEnvironment, true, false);
     }
 
@@ -79,7 +79,7 @@ public class ExecSpecActionTest {
 
         final List<String> expectedArgs = new ArrayList<>();
         expectedArgs.add("/c");
-        expectedArgs.add(String.join(" ", ExecSpecAction.YARN_EXECUTABLE, script));
+        expectedArgs.add(String.join(" ", ExecSpecAction.YARN_EXECUTABLE, script.trim()));
         assertExecSpecWith(ExecSpecAction.CMD_EXECUTABLE, expectedArgs, pathEnvironment, true, true);
     }
 
@@ -93,7 +93,11 @@ public class ExecSpecActionTest {
 
         action.execute(execSpec);
 
-        assertExecSpecWith(ExecSpecAction.NPM_EXECUTABLE, Collections.singletonList(script), pathEnvironment, true,
+        final List<String> expectedArgs = new ArrayList<>();
+        for (final String expectedArg : script.trim().split("\\s+")) {
+            expectedArgs.add(expectedArg);
+        }
+        assertExecSpecWith(ExecSpecAction.NPM_EXECUTABLE, expectedArgs, pathEnvironment, true,
             false);
     }
 
@@ -107,7 +111,11 @@ public class ExecSpecActionTest {
 
         action.execute(execSpec);
 
-        assertExecSpecWith(ExecSpecAction.YARN_EXECUTABLE, Collections.singletonList(script), pathEnvironment, true,
+        final List<String> expectedArgs = new ArrayList<>();
+        for (final String expectedArg : script.trim().split("\\s+")) {
+            expectedArgs.add(expectedArg);
+        }
+        assertExecSpecWith(ExecSpecAction.YARN_EXECUTABLE, expectedArgs, pathEnvironment, true,
             true);
     }
 

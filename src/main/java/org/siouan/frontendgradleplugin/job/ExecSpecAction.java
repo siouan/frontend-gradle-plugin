@@ -108,14 +108,16 @@ public class ExecSpecAction implements Action<ExecSpec> {
             }
             // The command that must be executed in the terminal must be a single argument on itself (like if it was
             // quoted).
-            args.add(scriptExecutable + ' ' + script);
+            args.add(scriptExecutable + ' ' + script.trim());
         } else {
             if (yarnEnabled) {
                 executable = YARN_EXECUTABLE;
             } else {
                 executable = NPM_EXECUTABLE;
             }
-            args.add(script);
+            for (final String arg : script.trim().split("\\s+")) {
+                args.add(arg);
+            }
         }
 
         // Prepend directories containing the Node and Yarn executables to the 'PATH' environment variable.
