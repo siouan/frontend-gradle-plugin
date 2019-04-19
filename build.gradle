@@ -2,6 +2,7 @@ plugins {
     id 'java-gradle-plugin'
     id 'maven-publish'
     id 'jacoco'
+    id 'com.gradle.build-scan' version '2.2.1'
 }
 
 wrapper {
@@ -17,6 +18,7 @@ repositories {
 test {
     useJUnitPlatform()
     testLogging {
+        events "passed", "skipped", "failed"
         exceptionFormat = 'full'
     }
 }
