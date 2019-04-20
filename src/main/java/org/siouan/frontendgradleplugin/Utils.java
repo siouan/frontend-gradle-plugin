@@ -8,15 +8,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 /**
  * This class provides utilities for the whole plugin.
  */
 public final class Utils {
-
-    private static final Logger LOGGER = Logger.getLogger(Utils.class.getName());
 
     private Utils() {
     }
@@ -75,22 +72,18 @@ public final class Utils {
     }
 
     /**
-     * Removes the frontend of a filename. In case of a compressed TAR archive, the method removes the whole frontend
+     * Removes the extension of a filename. In case of a compressed TAR archive, the method removes the whole extension
      * (e.g. '.tar.gz').
      *
      * @param filename Filename.
-     * @return The filename without the frontend.
+     * @return The filename without the extension.
      */
     public static String removeExtension(final String filename) {
         final String filenameWithoutExtension;
-        if (filename.endsWith(".tar.Z")) {
-            filenameWithoutExtension = filename.substring(0, filename.lastIndexOf(".tar.Z"));
+        if (filename.endsWith(".tar.gz")) {
+            filenameWithoutExtension = filename.substring(0, filename.lastIndexOf(".tar.gz"));
         } else {
-            if (filename.endsWith(".tar.gz")) {
-                filenameWithoutExtension = filename.substring(0, filename.lastIndexOf(".tar.gz"));
-            } else {
-                filenameWithoutExtension = filename.substring(0, filename.lastIndexOf('.'));
-            }
+            filenameWithoutExtension = filename.substring(0, filename.lastIndexOf('.'));
         }
         return filenameWithoutExtension;
     }
