@@ -1,7 +1,5 @@
 package org.siouan.frontendgradleplugin;
 
-import static org.siouan.frontendgradleplugin.Utils.closeOrWarn;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -30,17 +28,11 @@ public class DownloaderImpl implements Downloader {
     public void download(final URL resourceUrl, final File destinationFile) throws DownloadException {
         final String resourceName = new File(resourceUrl.getPath()).getName();
         final File downloadedFile = new File(temporaryDirectory, resourceName);
-        ReadableByteChannel readableByteChannel = null;
-        FileOutputStream fileOutputStream = null;
-        try {
-            readableByteChannel = Channels.newChannel(resourceUrl.openStream());
-            fileOutputStream = new FileOutputStream(downloadedFile);
+        try (final ReadableByteChannel readableByteChannel = Channels.newChannel(resourceUrl.openStream());
+             final FileOutputStream fileOutputStream = new FileOutputStream(downloadedFile)) {
             fileOutputStream.getChannel().transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
         } catch (final IOException e) {
             throw new DownloadException("Resource at '" + resourceUrl + "' could not be downloaded.", e);
-        } finally {
-            closeOrWarn(fileOutputStream);
-            closeOrWarn(readableByteChannel);
         }
 
         try {

@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -46,6 +48,9 @@ public class ExecSpecActionTest {
     @Mock
     private Consumer<ExecSpec> afterConfigured;
 
+    @Captor
+    private ArgumentCaptor<List<String>> argsCaptor;
+
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
@@ -56,7 +61,7 @@ public class ExecSpecActionTest {
         final String script = SCRIPT;
         final String pathEnvironment = PATH_ENVIRONMENT;
         final ExecSpecAction action = new ExecSpecAction(false, NODE_INSTALL_DIRECTORY, YARN_INSTALL_DIRECTORY, script,
-            afterConfigured::accept, "Windows NT");
+            afterConfigured, "Windows NT");
         when(execSpec.getEnvironment()).thenReturn(Collections.singletonMap("Path", pathEnvironment));
 
         action.execute(execSpec);
@@ -72,7 +77,7 @@ public class ExecSpecActionTest {
         final String script = SCRIPT;
         final String pathEnvironment = PATH_ENVIRONMENT;
         final ExecSpecAction action = new ExecSpecAction(true, NODE_INSTALL_DIRECTORY, YARN_INSTALL_DIRECTORY, script,
-            afterConfigured::accept, "Windows NT");
+            afterConfigured, "Windows NT");
         when(execSpec.getEnvironment()).thenReturn(Collections.singletonMap("PATH", pathEnvironment));
 
         action.execute(execSpec);
@@ -88,17 +93,13 @@ public class ExecSpecActionTest {
         final String script = SCRIPT;
         final String pathEnvironment = PATH_ENVIRONMENT;
         final ExecSpecAction action = new ExecSpecAction(false, NODE_INSTALL_DIRECTORY, YARN_INSTALL_DIRECTORY, script,
-            afterConfigured::accept, "Linux");
+            afterConfigured, "Linux");
         when(execSpec.getEnvironment()).thenReturn(Collections.singletonMap("Path", pathEnvironment));
 
         action.execute(execSpec);
 
-        final List<String> expectedArgs = new ArrayList<>();
-        for (final String expectedArg : script.trim().split("\\s+")) {
-            expectedArgs.add(expectedArg);
-        }
-        assertExecSpecWith(ExecSpecAction.NPM_EXECUTABLE, expectedArgs, pathEnvironment, true,
-            false);
+        assertExecSpecWith(ExecSpecAction.NPM_EXECUTABLE, Arrays.asList(script.trim().split("\\s+")), pathEnvironment,
+            true, false);
     }
 
     @Test
@@ -106,24 +107,19 @@ public class ExecSpecActionTest {
         final String script = SCRIPT;
         final String pathEnvironment = PATH_ENVIRONMENT;
         final ExecSpecAction action = new ExecSpecAction(true, NODE_INSTALL_DIRECTORY, YARN_INSTALL_DIRECTORY, script,
-            afterConfigured::accept, "Mac OS X");
+            afterConfigured, "Mac OS X");
         when(execSpec.getEnvironment()).thenReturn(Collections.singletonMap("PATH", pathEnvironment));
 
         action.execute(execSpec);
 
-        final List<String> expectedArgs = new ArrayList<>();
-        for (final String expectedArg : script.trim().split("\\s+")) {
-            expectedArgs.add(expectedArg);
-        }
-        assertExecSpecWith(ExecSpecAction.YARN_EXECUTABLE, expectedArgs, pathEnvironment, true,
-            true);
+        assertExecSpecWith(ExecSpecAction.YARN_EXECUTABLE, Arrays.asList(script.trim().split("\\s+")), pathEnvironment,
+            true, true);
     }
 
     private void assertExecSpecWith(final String expectedExecutable, final List<String> expectedArgs,
         final String initialPathEnvironment, final boolean nodeInstallPathIncluded,
         final boolean yarnInstallPathIncluded) {
         verify(execSpec).setExecutable(expectedExecutable);
-        final ArgumentCaptor<List<String>> argsCaptor = ArgumentCaptor.forClass(List.class);
         verify(execSpec).setArgs(argsCaptor.capture());
         final List<String> args = argsCaptor.getValue();
         assertThat(args).isEqualTo(expectedArgs);

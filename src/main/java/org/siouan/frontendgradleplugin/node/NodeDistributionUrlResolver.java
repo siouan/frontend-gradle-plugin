@@ -3,6 +3,7 @@ package org.siouan.frontendgradleplugin.node;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.util.Optional;
 
 import org.siouan.frontendgradleplugin.Utils;
 import org.siouan.frontendgradleplugin.job.DistributionUrlResolver;
@@ -54,35 +55,17 @@ public class NodeDistributionUrlResolver implements DistributionUrlResolver {
     public URL resolve() throws DistributionUrlResolverException {
         final String urlAsString;
         if (distributionUrl == null) {
-            final StringBuffer buffer = new StringBuffer();
+            final StringBuilder buffer = new StringBuilder();
             buffer.append("https://nodejs.org/dist/v");
             buffer.append(version);
             buffer.append("/node-v");
             buffer.append(version);
-            final String extension;
-            if (Utils.is64BitsArch(jreArch)) {
-                if (Utils.isWindowsOs(osName)) {
-                    extension = "-win-x64.zip";
-                } else if (Utils.isLinuxOs(osName)) {
-                    extension = "-linux-x64.tar.gz";
-                } else if (Utils.isMacOs(osName)) {
-                    extension = "-darwin-x64.tar.gz";
-                } else {
-                    extension = null;
-                }
+            final Optional<String> extension = resolveExtension();
+            if (extension.isPresent()) {
+                buffer.append(extension.get());
             } else {
-                if (Utils.isWindowsOs(osName)) {
-                    extension = "-win-x86.zip";
-                } else {
-                    extension = null;
-                }
-            }
-
-            if (extension == null) {
                 throw new DistributionUrlResolverException(
                     "This platform is not supported yet: " + osName + ", " + jreArch);
-            } else {
-                buffer.append(extension);
             }
 
             urlAsString = buffer.toString();
@@ -95,5 +78,28 @@ public class NodeDistributionUrlResolver implements DistributionUrlResolver {
         } catch (final MalformedURLException e) {
             throw new DistributionUrlResolverException(e);
         }
+    }
+
+    private Optional<String> resolveExtension() {
+        final String extension;
+        if (Utils.is64BitsArch(jreArch)) {
+            if (Utils.isWindowsOs(osName)) {
+                extension = "-win-x64.zip";
+            } else if (Utils.isLinuxOs(osName)) {
+                extension = "-linux-x64.tar.gz";
+            } else if (Utils.isMacOs(osName)) {
+                extension = "-darwin-x64.tar.gz";
+            } else {
+                extension = null;
+            }
+        } else {
+            if (Utils.isWindowsOs(osName)) {
+                extension = "-win-x86.zip";
+            } else {
+                extension = null;
+            }
+        }
+
+        return Optional.ofNullable(extension);
     }
 }

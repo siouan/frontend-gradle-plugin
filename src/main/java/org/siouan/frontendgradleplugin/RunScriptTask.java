@@ -29,6 +29,7 @@ public class RunScriptTask extends AbstractRunScriptTask {
         return script;
     }
 
+    @Override
     public void execute() {
         final FrontendExtension extension = getProject().getExtensions().findByType(FrontendExtension.class);
         yarnEnabled.set(extension.getYarnEnabled());

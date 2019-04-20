@@ -25,20 +25,8 @@ public abstract class AbstractJob {
         task.getLogger().error(formatMessage(message));
     }
 
-    protected void logError(final String message, final Throwable throwable) {
-        task.getLogger().error(formatMessage(message), throwable);
-    }
-
-    protected void logInfo(final String message) {
-        task.getLogger().info(formatMessage(message));
-    }
-
     protected void logLifecycle(final String message) {
         task.getLogger().lifecycle(formatMessage(message));
-    }
-
-    protected void logWarn(final String message) {
-        task.getLogger().warn(formatMessage(message));
     }
 
     protected void logWarn(final String message, final Throwable throwable) {

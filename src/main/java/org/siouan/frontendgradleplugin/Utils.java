@@ -1,6 +1,5 @@
 package org.siouan.frontendgradleplugin;
 
-import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -9,7 +8,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
@@ -21,21 +19,6 @@ public final class Utils {
     private static final Logger LOGGER = Logger.getLogger(Utils.class.getName());
 
     private Utils() {
-    }
-
-    /**
-     * Closes a resource and produces a WARN log if it fails.
-     *
-     * @param closeable Closeable resource.
-     */
-    public static void closeOrWarn(final Closeable closeable) {
-        if (closeable != null) {
-            try {
-                closeable.close();
-            } catch (final IOException e) {
-                LOGGER.log(Level.WARNING, "Resource not closed", e);
-            }
-        }
     }
 
     /**

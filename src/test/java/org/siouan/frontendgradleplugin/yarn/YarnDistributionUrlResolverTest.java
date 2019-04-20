@@ -28,7 +28,7 @@ public class YarnDistributionUrlResolverTest {
     @Test
     public void shouldFailWhenDistributionUrlIsInvalid() {
         final String distributionUrl = "siouan://test";
-        assertThatThrownBy(() -> new YarnDistributionUrlResolver(null, distributionUrl).resolve().toString())
+        assertThatThrownBy(() -> new YarnDistributionUrlResolver(null, distributionUrl).resolve())
             .isInstanceOf(DistributionUrlResolverException.class).hasCauseInstanceOf(MalformedURLException.class);
     }
 

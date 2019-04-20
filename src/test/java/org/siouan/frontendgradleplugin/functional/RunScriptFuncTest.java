@@ -61,9 +61,8 @@ public class RunScriptFuncTest {
             projectDirectory.toPath().resolve("package.json"));
         final Map<String, Object> properties = new HashMap<>();
         properties.put("nodeVersion", "10.15.3");
-        final StringBuffer customTaskDefinition = new StringBuffer();
         final String customTaskName = "e2e";
-        customTaskDefinition.append("tasks.register('");
+        final StringBuilder customTaskDefinition = new StringBuilder("tasks.register('");
         customTaskDefinition.append(customTaskName);
         customTaskDefinition.append("', org.siouan.frontendgradleplugin.RunScriptTask) {\n");
         customTaskDefinition.append("dependsOn installFrontend\n");

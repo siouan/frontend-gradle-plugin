@@ -51,7 +51,7 @@ public class FileHasherImpl implements FileHasher {
      * @return Hexadecimal string.
      */
     private String toHexadecimalString(final byte[] hash) {
-        final StringBuffer hexadecimalString = new StringBuffer();
+        final StringBuilder hexadecimalString = new StringBuilder();
         for (byte digit : hash) {
             String hexadecimalDigit = Integer.toHexString(0xff & digit);
             if (hexadecimalDigit.length() == 1) {

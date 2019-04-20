@@ -45,7 +45,7 @@ The plugin is officially supported with:
 
 ### Activation 
 
-2 options  are available.
+2 options are available.
 
 #### Using [Gradle DSL][gradle-dsl]
 
@@ -85,8 +85,8 @@ All settings are introduced hereafter, with default value for each property.
 ```gradle
 // build.gradle
 frontend {
-    // Whether Yarn shall be used instead of NPM when executing frontend tasks. Consequently, a distribution shall be
-    // downloaded and installed by the plugin. If enabled, the 'YARN SETTINGS' block below must be configured.
+    // Whether Yarn shall be used instead of NPM when executing frontend tasks. Consequently, a Yarn distribution will
+    // be downloaded and installed by the plugin. If enabled, the 'YARN SETTINGS' block below must be configured.
     yarnEnabled = false
 
     // NODE SETTINGS
@@ -101,10 +101,9 @@ frontend {
     nodeInstallDirectory = "${projectDir}/node"
 
     // YARN SETTINGS
-    // Yarn version, used to build the URL to download the corresponding distribution, if not set. This version number
-    // is also used to remove the root directory in the distribution archive. If a custom 'yarnDistributionUrl' property
-    // is set, the version of the distribution is expected to be the same as the one set in the 'yarnVersion' property,
-    // or this may lead to unexpected results.
+    // Yarn version, used to build the URL to download the corresponding distribution, if not set. If a custom
+    // 'yarnDistributionUrl' property is set, the version of the distribution is expected to be the same as the one set
+    // in the 'yarnVersion' property, or this may lead to unexpected results.
     yarnVersion = '1.15.2'
 
     // [Optional] Sets this property to force the download from a custom website. By default, this property is 'null',
@@ -115,8 +114,8 @@ frontend {
     yarnInstallDirectory = "${projectDir}/yarn"
 
     // OTHER SETTINGS
-    // Name of the NPM/Yarn scripts (see 'package.json' file) that shall be executing depending on the Gradle phase.
-    // The value will be passed as an argument of the 'npm' or 'yarn' executable.
+    // Name of the NPM/Yarn scripts (see 'package.json' file) that shall be executing depending on the Gradle lifecycle
+    // task. The values below are passed as argument of the 'npm' or 'yarn' executable.
 
     // [Optional] Use this property only if frontend's compiled resources are generated out of the '${project.buildDir}'
     // directory. Default value is <null>. This property is directly used by the 'cleanFrontend' task. The task is
@@ -191,23 +190,17 @@ distribution shall be installed, which, by default is the `${projectDir}/node` d
  
 ### Install Yarn
 
-*Dependencies: **`installYarn`** -> `installNode`*
-
 The `installYarn` task downloads a Yarn distribution, if `yarnEnabled` property is `true`. If the `distributionUrl`
 property is ommitted, the URL is guessed using the `version` property. Use the property `yarnInstallationDirectory`
 to set the directory where the distribution shall be installed, which, by default is the `${projectDir}/yarn` directory.
 
 ### Install frontend dependencies
 
-*Dependencies: **`installFrontend`** -> `installYarn` -> `installNode`*
-
 Depending on the value of the `yarnEnabled` property, the task `installFrontend` issues either a `npm install` command
 or a `yarn` command. If a `package.json` file is found in the task's directory, the command shall install
 dependencies and tools for frontend development.
 
 ### Clean frontend
-
-*Dependencies: `clean` -> **`cleanFrontend`** -> `installFrontend` -> `installYarn` -> `installNode`*
 
 The `cleanFrontend` task does nothing by default, considering frontend generated resources (pre-processed Typescript
 files, SCSS stylesheets...) are written in the `${project.buildDir}` directory. If it is not the case, this task may be
@@ -216,15 +209,11 @@ and the `cleanScript` property must be set to the corresponding NPM/Yarn command
 
 ### Assemble frontend
 
-*Dependencies: `assemble` -> **`assembleFrontend`** -> `installFrontend` -> `installYarn` -> `installNode`*
-
 The `assembleFrontend` task shall be used to integrate a frontend's build script into Gradle builds. The build script
 must be defined in the task's `package.json` file, and the `assembleScript` property must be set to the corresponding
 NPM/Yarn command.
 
 ### Check frontend
-
-*Dependencies: `check` -> **`checkFrontend`** -> `installFrontend` -> `installYarn` -> `installNode`*
 
 The `checkFrontend` task shall be used to integrate a frontend's check script into Gradle builds. The check script must
 be defined in the task's `package.json` file, and the `checkscript` property must be set with the corresponding
@@ -232,8 +221,6 @@ NPM/Yarn command. A typical check script defined in the project's `package.json`
 execute tests, and perform additional analysis tasks.
 
 ### Run custom NPM/Yarn script
-
-*Dependencies: **`runScriptFrontend`** -> `installFrontend` -> `installYarn` -> `installNode`*
 
 The `runScriptFrontend` task is provided as a task type, to create custom tasks. The `script` property must be set with
 the corresponding NPM/Yarn command. For instance, the code below added in the `build.gradle` file allows to run

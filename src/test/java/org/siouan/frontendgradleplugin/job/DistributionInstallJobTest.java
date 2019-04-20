@@ -19,11 +19,13 @@ import java.nio.file.Files;
 import org.gradle.api.Action;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
+import org.gradle.api.file.CopySpec;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.tasks.WorkResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
@@ -120,14 +122,14 @@ public class DistributionInstallJobTest {
         final DistributionInstallJob job = new DistributionInstallJob(task, urlResolver, null,
             new File(temporaryDirectory, "install"));
         // Emulate exploding distribution
-        when(project.copy(any(Action.class)))
+        when(project.copy(ArgumentMatchers.<Action<CopySpec>>any()))
             .then(invocation -> explodeArchive(invocation, distributionUrlAsString, installDirectory));
 
         job.install();
 
         verify(urlResolver).resolve();
         verifyNoMoreInteractions(urlResolver);
-        verify(project).copy(any(Action.class));
+        verify(project).copy(ArgumentMatchers.<Action<CopySpec>>any());
         assertThat(installDirectory.list()).isNotEmpty();
     }
 

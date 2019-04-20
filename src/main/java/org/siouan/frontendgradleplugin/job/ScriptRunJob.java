@@ -1,7 +1,6 @@
 package org.siouan.frontendgradleplugin.job;
 
 import java.io.File;
-import java.util.stream.Collectors;
 
 import org.gradle.api.Task;
 
@@ -40,8 +39,7 @@ public class ScriptRunJob extends AbstractJob {
         task.getProject()
             .exec(new ExecSpecAction(yarnEnabled, nodeInstallDirectory, yarnInstallDirectory, script, execSpec -> {
                 logDebug(execSpec.getEnvironment().toString());
-                logLifecycle("Running '" + execSpec.getExecutable() + ' ' + execSpec.getArgs().stream()
-                    .collect(Collectors.joining(" ")) + '\'');
+                logLifecycle("Running '" + execSpec.getExecutable() + ' ' + String.join(" ", execSpec.getArgs()));
             })).rethrowFailure().assertNormalExitValue();
     }
 }

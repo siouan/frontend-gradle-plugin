@@ -18,9 +18,9 @@ public class FrontendGradlePlugin implements Plugin<Project> {
 
     public static final String DEFAULT_YARN_INSTALL_DIRNAME = "yarn";
 
-    public static final String EXTENSION_NAME = "frontend";
+    private static final String EXTENSION_NAME = "frontend";
 
-    public static final String TASK_GROUP = "Frontend";
+    private static final String TASK_GROUP = "Frontend";
 
     public void apply(final Project project) {
         project.getPluginManager().apply(BasePlugin.class);
@@ -49,7 +49,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         projectTasks.register(AssembleTask.DEFAULT_NAME, AssembleTask.class, task -> configureTask(task, extension));
         projectTasks.named("assemble", task -> task.dependsOn(projectTasks.named(AssembleTask.DEFAULT_NAME)));
 
-        projectTasks.register(RunScriptTask.DEFAULT_NAME, RunScriptTask.class, task -> configureTask(task, extension));
+        projectTasks.register(RunScriptTask.DEFAULT_NAME, RunScriptTask.class, this::configureTask);
     }
 
     private void configureTask(final NodeInstallTask task, final FrontendExtension extension) {
@@ -67,7 +67,6 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.getYarnVersion().set(extension.getYarnVersion());
         task.getYarnDistributionUrl().set(extension.getYarnDistributionUrl());
         task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
-        task.dependsOn(NodeInstallTask.DEFAULT_NAME);
     }
 
     private void configureTask(final InstallTask task, FrontendExtension extension) {
@@ -109,7 +108,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.dependsOn(InstallTask.DEFAULT_NAME);
     }
 
-    private void configureTask(final RunScriptTask task, FrontendExtension extension) {
+    private void configureTask(final RunScriptTask task) {
         task.setGroup(TASK_GROUP);
         task.setDescription("Runs a frontend script.");
         task.dependsOn(InstallTask.DEFAULT_NAME);

@@ -2,6 +2,7 @@ package org.siouan.frontendgradleplugin.job;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -115,15 +116,13 @@ public class ExecSpecAction implements Action<ExecSpec> {
             } else {
                 executable = NPM_EXECUTABLE;
             }
-            for (final String arg : script.trim().split("\\s+")) {
-                args.add(arg);
-            }
+            args.addAll(Arrays.asList(script.trim().split("\\s+")));
         }
 
         // Prepend directories containing the Node and Yarn executables to the 'PATH' environment variable.
         final Map<String, Object> environment = execSpec.getEnvironment();
         final String pathVariable = findPathVariable(environment);
-        final StringBuffer pathValue = new StringBuffer(nodeInstallDirectory.getAbsolutePath());
+        final StringBuilder pathValue = new StringBuilder(nodeInstallDirectory.getAbsolutePath());
         pathValue.append(File.pathSeparatorChar);
         if (yarnEnabled) {
             pathValue.append(yarnInstallDirectory.getAbsolutePath());
