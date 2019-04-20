@@ -1,6 +1,6 @@
 # Frontend Gradle plugin
 
-[![Latest release 1.0.0](https://img.shields.io/badge/Latest%20release-1.0.0-blue.svg)](https://github.com/Siouan/frontend-gradle-plugin/releases/tag/1.0.0)
+[![Latest release 1.0.0](https://img.shields.io/badge/Latest%20release-1.0.0-blue.svg)](https://github.com/Siouan/frontend-gradle-plugin/releases/tag/v1.0.0)
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
 
 [![Build status](https://travis-ci.org/Siouan/frontend-gradle-plugin.svg?branch=master)](https://travis-ci.org/Siouan/frontend-gradle-plugin)

@@ -10,8 +10,7 @@ After ensuring the problem was not reported already, any issue may be created us
 
 - The `master` branch is a snapshot of the latest stable release. It is not intended to receive any commit/pull request
 directly.
-- A dedicated branch must always be created for any modification, starting from a relevant non-`master` branch. For
-instance, fixing an issue in release `1.0.0` shall be done by creating a dedicated branch from the `1.0` branch.
+- A dedicated branch must always be created for any modification, starting from the relevant `X.Y` branch.
 - A dedicated branch shall be named `feature/<my-feature>` or `fix/<my-issue>`.
 
 ### Modifying source code
