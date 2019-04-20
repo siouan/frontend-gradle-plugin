@@ -3,6 +3,7 @@ plugins {
     id 'maven-publish'
     id 'jacoco'
     id 'com.gradle.build-scan' version '2.2.1'
+    id 'com.gradle.plugin-publish' version '0.10.1'
 }
 
 wrapper {
@@ -50,17 +51,17 @@ gradlePlugin {
     plugins {
         frontend {
             id = 'org.siouan.frontend'
+            displayName = 'Frontend Gradle plugin'
+            description = 'Integrate your frontend NPM/Yarn build into a Gradle build.'
             implementationClass = 'org.siouan.frontendgradleplugin.FrontendGradlePlugin'
         }
     }
 }
 
-publishing {
-    repositories {
-        maven {
-            url 'maven-repo'
-        }
-    }
+pluginBundle {
+    website = 'https://github.com/Siouan/frontend-gradle-plugin'
+    vcsUrl = 'https://github.com/Siouan/frontend-gradle-plugin.git'
+    tags = ['gradle', 'plugin', 'node', 'npm', 'yarn', 'frontend']
 }
 
 buildScan {

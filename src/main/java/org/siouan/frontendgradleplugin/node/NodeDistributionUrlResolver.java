@@ -10,7 +10,7 @@ import org.siouan.frontendgradleplugin.job.DistributionUrlResolver;
 import org.siouan.frontendgradleplugin.job.DistributionUrlResolverException;
 
 /**
- * This resolver determines the name of a distribution supported by the underlying OS and JRE.
+ * Resolves the name of a distribution supported by the underlying OS and JRE.
  */
 public class NodeDistributionUrlResolver implements DistributionUrlResolver {
 
@@ -39,6 +39,8 @@ public class NodeDistributionUrlResolver implements DistributionUrlResolver {
      *
      * @param version Version.
      * @param distributionUrl URL to download the distribution.
+     * @param osName OS name.
+     * @param jreArch JRE architecture.
      */
     public NodeDistributionUrlResolver(final String version, final String distributionUrl, final String osName,
         final String jreArch) {

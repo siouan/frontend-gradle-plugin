@@ -17,9 +17,9 @@ import org.gradle.testkit.runner.TaskOutcome;
  */
 public final class FunctionalTestHelper {
 
-    public static final String BUILD_FILE_NAME = "build.gradle";
+    private static final String BUILD_FILE_NAME = "build.gradle";
 
-    public static final String PACKAGE_JSON_FILE_NAME = "package.json";
+    private static final String MINIMAL_GRADLE_VERSION = "5.1";
 
     private FunctionalTestHelper() {
     }
@@ -100,8 +100,8 @@ public final class FunctionalTestHelper {
      * @return The Gradle runner.
      */
     private static GradleRunner createGradleRunner(final File projectDirectory, final String taskName) {
-        return GradleRunner.create().withProjectDir(projectDirectory).withPluginClasspath()
-            .withArguments(taskName, "-s").withDebug(true).forwardOutput();
+        return GradleRunner.create().withGradleVersion(MINIMAL_GRADLE_VERSION).withProjectDir(projectDirectory)
+            .withPluginClasspath().withArguments(taskName, "-s").withDebug(true).forwardOutput();
     }
 
     private static void writeProperty(final FileWriter buildFileWriter, final String property, final Object value)

@@ -15,7 +15,7 @@ import org.siouan.frontendgradleplugin.job.DistributionValidator;
 import org.siouan.frontendgradleplugin.job.InvalidDistributionException;
 
 /**
- * Job that downloads and installs a Node distribution.
+ * Validates a Node distribution by comparing its SHA-256 hash against the one officially published.
  */
 public class NodeDistributionValidator extends AbstractJob implements DistributionValidator {
 

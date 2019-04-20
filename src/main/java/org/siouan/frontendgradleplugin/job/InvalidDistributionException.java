@@ -3,7 +3,7 @@ package org.siouan.frontendgradleplugin.job;
 import org.siouan.frontendgradleplugin.FrontendException;
 
 /**
- * Exception thrown when the checksum of a downloaded distribution is incorrect.
+ * Exception thrown when a downloaded distribution is invalid.
  */
 public class InvalidDistributionException extends FrontendException {
 

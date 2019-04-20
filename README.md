@@ -1,6 +1,6 @@
 # Frontend Gradle plugin
 
-[![Initial release upcoming](https://img.shields.io/badge/Initial%20release-Upcoming-blue.svg)](https://github.com/Siouan/frontend-gradle-plugin)
+[![Latest release 1.0.0](https://img.shields.io/badge/Latest%20release-1.0.0-blue.svg)](https://github.com/Siouan/frontend-gradle-plugin/releases/tag/1.0.0)
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
 
 [![Build status](https://travis-ci.org/Siouan/frontend-gradle-plugin.svg?branch=master)](https://travis-ci.org/Siouan/frontend-gradle-plugin)
@@ -11,7 +11,8 @@
 This plugin integrates frontend build tasks into a Gradle build. It is inspired by the
 [frontend-maven-plugin][frontend-maven-plugin].
 
-Detailed changes for each release are documented in the [release notes][release-notes].
+Detailed changes for each release are documented in the [release notes][release-notes]. The project uses [semantic
+versioning][semantic-versioning] for its releases.
 
 ## Summary
 
@@ -34,16 +35,17 @@ Detailed changes for each release are documented in the [release notes][release-
   - [Assemble frontend](#assemble-frontend)
   - [Check frontend](#check-frontend)
   - [Run custom NPM/Yarn script](#run-custom-npmyarn-script)
+- [Contributing][contributing]
 
 ## Requirements
 
 The plugin is officially supported with:
-- Gradle 5.3+
+- Gradle 5.1+
 - JDK 8+ 64 bits
 
 ## Installation
 
-### Activation 
+### Activation
 
 2 options are available.
 
@@ -233,9 +235,11 @@ tasks.register('e2e', org.siouan.frontendgradleplugin.RunScriptTask) {
 }
 ```
 
+[contributing]: <CONTRIBUTING.md> (Contributing to this project)
 [frontend-maven-plugin]: <https://github.com/eirslett/frontend-maven-plugin> (Frontend Maven plugin)
 [gradle-base-plugin]: <https://docs.gradle.org/current/userguide/base_plugin.html> (Gradle Base plugin)
 [gradle-build-script-block]: <https://docs.gradle.org/current/userguide/plugins.html#sec:applying_plugins_buildscript> (Gradle build script block)
 [gradle-dsl]: <https://docs.gradle.org/current/userguide/plugins.html#sec:plugins_block> (Gradle DSL)
 [release-notes]: <https://github.com/siouan/frontend-gradle-plugin/releases> (Release notes)
+[semantic-versioning]: <https://semver.org/> (Semantic versioning)
 [task-dependencies]: <task-dependencies.png>

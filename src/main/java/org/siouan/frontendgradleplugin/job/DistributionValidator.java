@@ -4,7 +4,7 @@ import java.io.File;
 import java.net.URL;
 
 /**
- * Interface of a component capable to validate a fresh downloaded distribution.
+ * Interface of a component capable to validate a downloaded distribution.
  */
 @FunctionalInterface
 public interface DistributionValidator {

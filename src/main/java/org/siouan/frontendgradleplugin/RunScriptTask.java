@@ -15,7 +15,6 @@ import org.gradle.api.tasks.Input;
  *     script = 'myscript'
  * }
  * </pre>
- * </p>
  */
 public class RunScriptTask extends AbstractRunScriptTask {
 

@@ -8,7 +8,7 @@ import org.siouan.frontendgradleplugin.job.DistributionUrlResolver;
 import org.siouan.frontendgradleplugin.job.DistributionUrlResolverException;
 
 /**
- * This resolver determines the name of a distribution supported by the underlying OS and JRE.
+ * Resolves the name of a distribution supported by the underlying OS and JRE.
  */
 public final class YarnDistributionUrlResolver implements DistributionUrlResolver {
 
