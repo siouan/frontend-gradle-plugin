@@ -6,8 +6,13 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.BasePlugin;
 import org.gradle.api.tasks.TaskContainer;
-import org.siouan.frontendgradleplugin.node.NodeInstallTask;
-import org.siouan.frontendgradleplugin.yarn.YarnInstallTask;
+import org.siouan.frontendgradleplugin.tasks.AssembleTask;
+import org.siouan.frontendgradleplugin.tasks.CheckTask;
+import org.siouan.frontendgradleplugin.tasks.CleanTask;
+import org.siouan.frontendgradleplugin.tasks.InstallTask;
+import org.siouan.frontendgradleplugin.tasks.NodeInstallTask;
+import org.siouan.frontendgradleplugin.tasks.RunScriptTask;
+import org.siouan.frontendgradleplugin.tasks.YarnInstallTask;
 
 /**
  * Main plugin class which bootstraps the plugin by declaring its DSL and its tasks.
@@ -63,7 +68,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
     private void configureTask(final YarnInstallTask task, FrontendExtension extension) {
         task.setGroup(TASK_GROUP);
         task.setDescription("Downloads and installs a Yarn distribution.");
-        task.getYarnEnabled().set(extension.getYarnEnabled());
+        task.setEnabled(extension.getYarnEnabled().get());
         task.getYarnVersion().set(extension.getYarnVersion());
         task.getYarnDistributionUrl().set(extension.getYarnDistributionUrl());
         task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());

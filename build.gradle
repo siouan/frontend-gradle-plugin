@@ -41,8 +41,8 @@ dependencies {
 }
 
 group 'org.siouan'
-version '1.0.0'
-description 'Integrate your frontend NPM/Yarn build into a Gradle build.'
+version '1.1.0'
+description 'Integrate your frontend NPM/Yarn build into Gradle.'
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
@@ -52,7 +52,7 @@ gradlePlugin {
         frontend {
             id = 'org.siouan.frontend'
             displayName = 'Frontend Gradle plugin'
-            description = 'Integrate your frontend NPM/Yarn build into a Gradle build.'
+            description = 'Integrate your frontend NPM/Yarn build into Gradle.'
             implementationClass = 'org.siouan.frontendgradleplugin.FrontendGradlePlugin'
         }
     }
@@ -61,7 +61,7 @@ gradlePlugin {
 pluginBundle {
     website = 'https://github.com/Siouan/frontend-gradle-plugin'
     vcsUrl = 'https://github.com/Siouan/frontend-gradle-plugin.git'
-    tags = ['gradle', 'plugin', 'node', 'npm', 'yarn', 'frontend']
+    tags = ['node', 'npm', 'yarn', 'frontend']
 }
 
 buildScan {

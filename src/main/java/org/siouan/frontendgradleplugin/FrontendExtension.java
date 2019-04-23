@@ -4,12 +4,9 @@ import java.io.File;
 
 import org.gradle.api.Project;
 import org.gradle.api.provider.Property;
-import org.gradle.api.tasks.Input;
-import org.gradle.api.tasks.Optional;
-import org.gradle.api.tasks.OutputDirectory;
 
 /**
- * Extension providing configuration properties to manage frontend build tools.
+ * Extension providing configuration properties for frontend tasks.
  */
 public class FrontendExtension {
 
@@ -76,61 +73,42 @@ public class FrontendExtension {
         checkScript = project.getObjects().property(String.class);
     }
 
-    @Input
-    @Optional
     public Property<Boolean> getYarnEnabled() {
         return yarnEnabled;
     }
 
-    @Input
     public Property<String> getNodeVersion() {
         return nodeVersion;
     }
 
-    @OutputDirectory
-    @Optional
     public Property<File> getNodeInstallDirectory() {
         return nodeInstallDirectory;
     }
 
-    @Input
-    @Optional
     public Property<String> getNodeDistributionUrl() {
         return nodeDistributionUrl;
     }
 
-    @Input
-    @Optional
     public Property<String> getYarnVersion() {
         return yarnVersion;
     }
 
-    @OutputDirectory
-    @Optional
     public Property<File> getYarnInstallDirectory() {
         return yarnInstallDirectory;
     }
 
-    @Input
-    @Optional
     public Property<String> getYarnDistributionUrl() {
         return yarnDistributionUrl;
     }
 
-    @Input
-    @Optional
     public Property<String> getCleanScript() {
         return cleanScript;
     }
 
-    @Input
-    @Optional
     public Property<String> getAssembleScript() {
         return assembleScript;
     }
 
-    @Input
-    @Optional
     public Property<String> getCheckScript() {
         return checkScript;
     }
