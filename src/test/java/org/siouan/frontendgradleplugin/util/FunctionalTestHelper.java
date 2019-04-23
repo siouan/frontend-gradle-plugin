@@ -13,7 +13,7 @@ import org.gradle.testkit.runner.GradleRunner;
 import org.gradle.testkit.runner.TaskOutcome;
 
 /**
- * Helper to prepare functional tests.
+ * Helper to prepare tasks tests.
  */
 public final class FunctionalTestHelper {
 
