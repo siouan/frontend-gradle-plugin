@@ -39,9 +39,11 @@ versioning][semantic-versioning] for its releases.
 
 ## Requirements
 
-The plugin is officially supported with:
+The plugin supports:
 - Gradle 5.1+
 - JDK 8+ 64 bits
+- Node 6.2.1+
+- Yarn 1.0.0+
 
 ## Installation
 
