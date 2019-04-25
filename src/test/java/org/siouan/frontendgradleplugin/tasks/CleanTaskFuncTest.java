@@ -50,7 +50,7 @@ public class CleanTaskFuncTest {
         assertTaskOutcome(result2, InstallTask.DEFAULT_NAME, TaskOutcome.SUCCESS);
         assertTaskOutcome(result2, GRADLE_CLEAN_TASK, TaskOutcome.UP_TO_DATE);
 
-        Files.delete(projectDirectory.toPath().resolve("package-lock.json"));
+        Files.deleteIfExists(projectDirectory.toPath().resolve("package-lock.json"));
         Files.copy(new File(getClass().getClassLoader().getResource("package-yarn.json").toURI()).toPath(),
             projectDirectory.toPath().resolve("package.json"), StandardCopyOption.REPLACE_EXISTING);
         properties.put("yarnEnabled", true);
