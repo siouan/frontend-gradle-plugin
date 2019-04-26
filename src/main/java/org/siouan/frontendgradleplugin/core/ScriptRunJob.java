@@ -39,7 +39,8 @@ public class ScriptRunJob extends AbstractJob {
         task.getProject()
             .exec(new ExecSpecAction(yarnEnabled, nodeInstallDirectory, yarnInstallDirectory, script, execSpec -> {
                 logDebug(execSpec.getEnvironment().toString());
-                logLifecycle("Running '" + execSpec.getExecutable() + ' ' + String.join(" ", execSpec.getArgs()) + '\'');
+                logLifecycle(
+                    "Running '" + execSpec.getExecutable() + ' ' + String.join(" ", execSpec.getArgs()) + '\'');
             })).rethrowFailure().assertNormalExitValue();
     }
 }

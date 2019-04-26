@@ -14,14 +14,13 @@ import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.TaskOutcome;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
 import org.siouan.frontendgradleplugin.util.FunctionalTestHelper;
 
 /**
  * Functional tests to verify the {@link NodeInstallTask} integration in a Gradle build.
  */
 class NodeInstallTaskFuncTest {
-
-    private static final String GRADLE_NODE_INSTALL_TASK = "installNode";
 
     @TempDir
     protected File projectDirectory;
@@ -30,18 +29,20 @@ class NodeInstallTaskFuncTest {
     public void shouldFailInstallingNodeWhenVersionIsNotSet() throws IOException {
         FunctionalTestHelper.createBuildFile(projectDirectory, Collections.emptyMap());
 
-        final BuildResult result = runGradleAndExpectFailure(projectDirectory, GRADLE_NODE_INSTALL_TASK);
+        final BuildResult result = runGradleAndExpectFailure(projectDirectory,
+            FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
 
-        assertTaskOutcome(result, NodeInstallTask.DEFAULT_NAME, TaskOutcome.FAILED);
+        assertTaskOutcome(result, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, TaskOutcome.FAILED);
     }
 
     @Test
     public void shouldFailInstallingNodeWhenDistributionCannotBeDownloadedWithUnknownVersion() throws IOException {
         FunctionalTestHelper.createBuildFile(projectDirectory, Collections.singletonMap("nodeVersion", "0.76.34"));
 
-        final BuildResult result = runGradleAndExpectFailure(projectDirectory, GRADLE_NODE_INSTALL_TASK);
+        final BuildResult result = runGradleAndExpectFailure(projectDirectory,
+            FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
 
-        assertTaskOutcome(result, NodeInstallTask.DEFAULT_NAME, TaskOutcome.FAILED);
+        assertTaskOutcome(result, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, TaskOutcome.FAILED);
     }
 
     @Test
@@ -51,9 +52,10 @@ class NodeInstallTaskFuncTest {
         properties.put("nodeDistributionUrl", "protocol://domain/unknown");
         FunctionalTestHelper.createBuildFile(projectDirectory, properties);
 
-        final BuildResult result = runGradleAndExpectFailure(projectDirectory, GRADLE_NODE_INSTALL_TASK);
+        final BuildResult result = runGradleAndExpectFailure(projectDirectory,
+            FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
 
-        assertTaskOutcome(result, NodeInstallTask.DEFAULT_NAME, TaskOutcome.FAILED);
+        assertTaskOutcome(result, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, TaskOutcome.FAILED);
     }
 
     @Test
@@ -63,12 +65,12 @@ class NodeInstallTaskFuncTest {
         properties.put("nodeDistributionUrl", getClass().getClassLoader().getResource("node-v10.15.3.zip").toString());
         FunctionalTestHelper.createBuildFile(projectDirectory, properties);
 
-        final BuildResult result1 = runGradle(projectDirectory, GRADLE_NODE_INSTALL_TASK);
+        final BuildResult result1 = runGradle(projectDirectory, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
 
-        assertTaskOutcome(result1, NodeInstallTask.DEFAULT_NAME, TaskOutcome.SUCCESS);
+        assertTaskOutcome(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, TaskOutcome.SUCCESS);
 
-        final BuildResult result2 = runGradle(projectDirectory, GRADLE_NODE_INSTALL_TASK);
+        final BuildResult result2 = runGradle(projectDirectory, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
 
-        assertTaskOutcome(result2, NodeInstallTask.DEFAULT_NAME, TaskOutcome.UP_TO_DATE);
+        assertTaskOutcome(result2, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, TaskOutcome.UP_TO_DATE);
     }
 }

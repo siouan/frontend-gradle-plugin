@@ -6,7 +6,8 @@ import java.io.IOException;
 /**
  * Component capable of hashing a file.
  */
-public interface FileHasher {
+@FunctionalInterface
+interface FileHasher {
 
     /**
      * Computes the hash of the file if not already done.

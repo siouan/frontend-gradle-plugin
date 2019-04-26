@@ -38,6 +38,24 @@ public class DistributionInstallJob extends AbstractJob {
         this.installDirectory = installDirectory;
     }
 
+    /**
+     * Installs a distribution:
+     * <ul>
+     * <li>Empty the install directory.</li>
+     * <li>Resolve the URL to download the distribution.</li>
+     * <li>Download the distribution.</li>
+     * <li>Validate the downloaded distribution.</li>
+     * <li>Explode the distribution archive.</li>
+     * <li>Deletes the distribution archive and all unnecessary files.</li>
+     * </ul>
+     *
+     * @throws InvalidDistributionException If the  distribution is invalid.
+     * @throws IOException If an I/O occurs when accessing the file system.
+     * @throws DistributionUrlResolverException If the URL to download the distribution could not be resolved.
+     * @throws DownloadException If the distribution could not be downloaded.
+     * @throws UnsupportedDistributionArchiveException If the distribution archive is not supported, and could not be
+     * exploded.
+     */
     public void install()
         throws InvalidDistributionException, IOException, DistributionUrlResolverException, DownloadException,
         UnsupportedDistributionArchiveException {

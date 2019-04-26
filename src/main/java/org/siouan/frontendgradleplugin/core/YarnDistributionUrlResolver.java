@@ -28,6 +28,7 @@ public final class YarnDistributionUrlResolver implements DistributionUrlResolve
         this.distributionUrl = distributionUrl;
     }
 
+    @Override
     public URL resolve() throws DistributionUrlResolverException {
         final String urlAsString;
         if (distributionUrl == null) {

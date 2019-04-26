@@ -7,7 +7,7 @@ import java.net.URL;
  * Functional interface of a component capable to download resources.
  */
 @FunctionalInterface
-public interface Downloader {
+interface Downloader {
 
     /**
      * Downloads a resource at a given URL, and moves it to a destination file once completed. Before calling this

@@ -12,23 +12,21 @@ import org.siouan.frontendgradleplugin.FrontendExtension;
  * A typical usage of this task in a 'build.gradle' file would be:
  * <pre>
  * tasks.register('mytask', org.siouan.frontendgradleplugin.tasks.RunScriptTask) {
- *     dependsOn installFrontend
+ *     dependsOn tasks.named('installFrontend')
  *     script = 'myscript'
  * }
  * </pre>
  */
 public class RunScriptTask extends AbstractRunScriptTask {
 
-    /**
-     * Default task name.
-     */
-    public static final String DEFAULT_NAME = "runScriptFrontend";
-
     @Input
     public Property<String> getScript() {
         return script;
     }
 
+    /**
+     * Executes the task by running the script with NPM/Yarn.
+     */
     @Override
     public void execute() {
         final FrontendExtension extension = getProject().getExtensions().findByType(FrontendExtension.class);

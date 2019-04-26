@@ -22,11 +22,6 @@ import org.siouan.frontendgradleplugin.core.YarnDistributionUrlResolver;
 public class YarnInstallTask extends DefaultTask {
 
     /**
-     * Default task name.
-     */
-    public static final String DEFAULT_NAME = "installYarn";
-
-    /**
      * Version of the distribution to download.
      */
     private final Property<String> yarnVersion;

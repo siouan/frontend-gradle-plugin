@@ -29,6 +29,7 @@ public class FileHasherImpl implements FileHasher {
         this.digest = MessageDigest.getInstance("SHA-256");
     }
 
+    @Override
     public String hash(final File inputFile) throws IOException {
         final ByteBuffer buffer = ByteBuffer.allocate(BUFFER_CAPACITY);
         try (final FileInputStream inputStream = new FileInputStream(inputFile)) {

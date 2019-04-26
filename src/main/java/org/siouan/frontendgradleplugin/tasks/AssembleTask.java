@@ -9,11 +9,6 @@ import org.gradle.api.tasks.Optional;
  */
 public class AssembleTask extends AbstractPredefinedRunScriptTask {
 
-    /**
-     * Default task name.
-     */
-    public static final String DEFAULT_NAME = "assembleFrontend";
-
     @Input
     @Optional
     public Property<String> getAssembleScript() {

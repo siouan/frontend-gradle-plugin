@@ -14,14 +14,13 @@ import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.TaskOutcome;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
 import org.siouan.frontendgradleplugin.util.FunctionalTestHelper;
 
 /**
  * Functional tests to verify the {@link YarnInstallTask} integration in a Gradle build.
  */
 class YarnInstallTaskFuncTest {
-
-    private static final String GRADLE_YARN_INSTALL_TASK = "installYarn";
 
     @TempDir
     protected File projectDirectory;
@@ -30,18 +29,19 @@ class YarnInstallTaskFuncTest {
     public void shouldSkipInstallWhenYarnIsNotEnabled() throws IOException {
         FunctionalTestHelper.createBuildFile(projectDirectory, Collections.emptyMap());
 
-        final BuildResult result = runGradle(projectDirectory, GRADLE_YARN_INSTALL_TASK);
+        final BuildResult result = runGradle(projectDirectory, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
 
-        assertTaskOutcome(result, YarnInstallTask.DEFAULT_NAME, TaskOutcome.SKIPPED);
+        assertTaskOutcome(result, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME, TaskOutcome.SKIPPED);
     }
 
     @Test
     public void shouldFailInstallingYarnWhenVersionIsNotSet() throws IOException {
         FunctionalTestHelper.createBuildFile(projectDirectory, Collections.singletonMap("yarnEnabled", true));
 
-        final BuildResult result = runGradleAndExpectFailure(projectDirectory, GRADLE_YARN_INSTALL_TASK);
+        final BuildResult result = runGradleAndExpectFailure(projectDirectory,
+            FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
 
-        assertTaskOutcome(result, YarnInstallTask.DEFAULT_NAME, TaskOutcome.FAILED);
+        assertTaskOutcome(result, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME, TaskOutcome.FAILED);
     }
 
     @Test
@@ -51,9 +51,10 @@ class YarnInstallTaskFuncTest {
         properties.put("yarnVersion", "0.56.3");
         FunctionalTestHelper.createBuildFile(projectDirectory, properties);
 
-        final BuildResult result = runGradleAndExpectFailure(projectDirectory, GRADLE_YARN_INSTALL_TASK);
+        final BuildResult result = runGradleAndExpectFailure(projectDirectory,
+            FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
 
-        assertTaskOutcome(result, YarnInstallTask.DEFAULT_NAME, TaskOutcome.FAILED);
+        assertTaskOutcome(result, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME, TaskOutcome.FAILED);
     }
 
     @Test
@@ -64,9 +65,10 @@ class YarnInstallTaskFuncTest {
         properties.put("yarnDistributionUrl", "protocol://domain/unknown");
         FunctionalTestHelper.createBuildFile(projectDirectory, properties);
 
-        final BuildResult result = runGradleAndExpectFailure(projectDirectory, GRADLE_YARN_INSTALL_TASK);
+        final BuildResult result = runGradleAndExpectFailure(projectDirectory,
+            FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
 
-        assertTaskOutcome(result, YarnInstallTask.DEFAULT_NAME, TaskOutcome.FAILED);
+        assertTaskOutcome(result, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME, TaskOutcome.FAILED);
     }
 
     @Test
@@ -78,12 +80,12 @@ class YarnInstallTaskFuncTest {
             .put("yarnDistributionUrl", getClass().getClassLoader().getResource("yarn-v1.15.2.tar.gz").toString());
         FunctionalTestHelper.createBuildFile(projectDirectory, properties);
 
-        final BuildResult result1 = runGradle(projectDirectory, GRADLE_YARN_INSTALL_TASK);
+        final BuildResult result1 = runGradle(projectDirectory, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
 
-        assertTaskOutcome(result1, YarnInstallTask.DEFAULT_NAME, TaskOutcome.SUCCESS);
+        assertTaskOutcome(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME, TaskOutcome.SUCCESS);
 
-        final BuildResult result2 = runGradle(projectDirectory, GRADLE_YARN_INSTALL_TASK);
+        final BuildResult result2 = runGradle(projectDirectory, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
 
-        assertTaskOutcome(result2, YarnInstallTask.DEFAULT_NAME, TaskOutcome.UP_TO_DATE);
+        assertTaskOutcome(result2, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME, TaskOutcome.UP_TO_DATE);
     }
 }

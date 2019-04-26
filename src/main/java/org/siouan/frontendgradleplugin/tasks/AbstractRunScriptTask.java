@@ -40,6 +40,9 @@ public abstract class AbstractRunScriptTask extends DefaultTask {
         script = getProject().getObjects().property(String.class);
     }
 
+    /**
+     * Executes the task. If a script has been provided, it is run with NPM/Yarn. Otherwise, the task does nothing.
+     */
     @TaskAction
     public void execute() {
         if (script.isPresent()) {

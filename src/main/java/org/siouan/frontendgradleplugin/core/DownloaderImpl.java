@@ -25,6 +25,7 @@ public class DownloaderImpl implements Downloader {
         this.temporaryDirectory = temporaryDirectory;
     }
 
+    @Override
     public void download(final URL resourceUrl, final File destinationFile) throws DownloadException {
         final String resourceName = new File(resourceUrl.getPath()).getName();
         final File downloadedFile = new File(temporaryDirectory, resourceName);
