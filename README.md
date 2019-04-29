@@ -263,8 +263,6 @@ tasks.register('e2e', org.siouan.frontendgradleplugin.tasks.RunScriptTask) {
 
 ## Usage guidelines
 
-The following guidelines
-
 ### How to assemble a frontend and a Java backend in a single artifact?
 
 If you plan to serve your frontend with a Java backend (e.g. a [Spring Boot][spring-boot] application), you will
