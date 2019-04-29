@@ -9,11 +9,6 @@ import org.gradle.api.tasks.Optional;
  */
 public class CheckTask extends AbstractPredefinedRunScriptTask {
 
-    /**
-     * Default task name.
-     */
-    public static final String DEFAULT_NAME = "checkFrontend";
-
     @Input
     @Optional
     public Property<String> getCheckScript() {

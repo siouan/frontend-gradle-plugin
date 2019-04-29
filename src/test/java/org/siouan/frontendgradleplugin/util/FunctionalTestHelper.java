@@ -7,8 +7,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
 import org.gradle.testkit.runner.BuildResult;
+import org.gradle.testkit.runner.BuildTask;
 import org.gradle.testkit.runner.GradleRunner;
 import org.gradle.testkit.runner.TaskOutcome;
 
@@ -33,7 +35,8 @@ public final class FunctionalTestHelper {
      */
     public static void assertTaskOutcome(final BuildResult result, final String taskName,
         final TaskOutcome expectedOutcome) {
-        assertThat(result.task(':' + taskName).getOutcome()).isEqualTo(expectedOutcome);
+        assertThat(Optional.ofNullable(result.task(':' + taskName)).map(BuildTask::getOutcome)
+            .orElseThrow(() -> new RuntimeException("Task not found: " + taskName))).isEqualTo(expectedOutcome);
     }
 
     /**

@@ -9,11 +9,6 @@ import org.gradle.api.tasks.Optional;
  */
 public class CleanTask extends AbstractPredefinedRunScriptTask {
 
-    /**
-     * Default task name.
-     */
-    public static final String DEFAULT_NAME = "cleanFrontend";
-
     @Input
     @Optional
     public Property<String> getCleanScript() {

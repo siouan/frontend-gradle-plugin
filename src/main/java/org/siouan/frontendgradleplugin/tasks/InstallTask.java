@@ -5,11 +5,6 @@ package org.siouan.frontendgradleplugin.tasks;
  */
 public class InstallTask extends AbstractPredefinedRunScriptTask {
 
-    /**
-     * Default task name.
-     */
-    public static final String DEFAULT_NAME = "installFrontend";
-
     public static final String INSTALL_SCRIPT = "install";
 
     public InstallTask() {

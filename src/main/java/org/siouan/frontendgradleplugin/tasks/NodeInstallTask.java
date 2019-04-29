@@ -27,11 +27,6 @@ import org.siouan.frontendgradleplugin.core.UnsupportedDistributionArchiveExcept
 public class NodeInstallTask extends DefaultTask {
 
     /**
-     * Default task name.
-     */
-    public static final String DEFAULT_NAME = "installNode";
-
-    /**
      * Version of the Node distribution to download.
      */
     private final Property<String> nodeVersion;
@@ -69,6 +64,17 @@ public class NodeInstallTask extends DefaultTask {
         return nodeInstallDirectory;
     }
 
+    /**
+     * Executes the task: downloads and installs the distribution.
+     *
+     * @throws IOException If an I/O error occured.
+     * @throws InvalidDistributionException If the downloaded distribution is invalid.
+     * @throws DistributionUrlResolverException If the URL to download the distribution cannot be downloaded.
+     * @throws UnsupportedDistributionArchiveException If the type of the distribution is not supported.
+     * @throws DownloadException If a download error occured.
+     * @throws NoSuchAlgorithmException If the hashing algorithm used to check the distribution integrity is not
+     * supported.
+     */
     @TaskAction
     public void execute() throws IOException, InvalidDistributionException, DistributionUrlResolverException,
         UnsupportedDistributionArchiveException, DownloadException, NoSuchAlgorithmException {

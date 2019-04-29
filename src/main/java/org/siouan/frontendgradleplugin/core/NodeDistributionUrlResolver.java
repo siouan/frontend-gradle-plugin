@@ -50,6 +50,7 @@ public class NodeDistributionUrlResolver implements DistributionUrlResolver {
         this.jreArch = jreArch;
     }
 
+    @Override
     public URL resolve() throws DistributionUrlResolverException {
         final String urlAsString;
         if (distributionUrl == null) {

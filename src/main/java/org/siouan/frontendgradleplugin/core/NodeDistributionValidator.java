@@ -13,14 +13,35 @@ import org.gradle.api.Task;
  */
 public class NodeDistributionValidator extends AbstractJob implements DistributionValidator {
 
+    /**
+     * Downloader used to get the file containing all checksums for a given distribution.
+     */
     private final Downloader downloader;
 
+    /**
+     * Reader that gives the checksum of the distribution from a file.
+     */
     private final NodeDistributionChecksumReader checksumReader;
 
+    /**
+     * Hasher used to check the distribution integrity.
+     */
     private final FileHasher fileHasher;
 
+    /**
+     * Install directory.
+     */
     private final File installDirectory;
 
+    /**
+     * Builds a validator of a Node distribution.
+     *
+     * @param task Refering task.
+     * @param downloader Downloader.
+     * @param checksumReader Reader of checksum's file.
+     * @param fileHasher Hasher.
+     * @param installDirectory Install directory.
+     */
     public NodeDistributionValidator(final Task task, final Downloader downloader,
         final NodeDistributionChecksumReader checksumReader, final FileHasher fileHasher, final File installDirectory) {
         super(task);
@@ -30,6 +51,7 @@ public class NodeDistributionValidator extends AbstractJob implements Distributi
         this.installDirectory = installDirectory;
     }
 
+    @Override
     public void validate(final URL distributionUrl, final File distributionFile) throws InvalidDistributionException {
         final String distributionUrlAsString = distributionUrl.toString();
 
