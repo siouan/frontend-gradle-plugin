@@ -7,6 +7,7 @@ import java.io.IOException;
  * A checksum reader allows to extract the checksum of a given distribution file, from a Node's file providing all
  * checksums for a given Node version.
  */
+@FunctionalInterface
 interface NodeDistributionChecksumReader {
 
     /**

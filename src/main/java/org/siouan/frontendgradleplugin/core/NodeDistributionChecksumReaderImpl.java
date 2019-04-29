@@ -11,6 +11,7 @@ import java.io.IOException;
  */
 public class NodeDistributionChecksumReaderImpl implements NodeDistributionChecksumReader {
 
+    @Override
     public String readHash(final File nodeDistributionChecksumFile, final String distributionFilename)
         throws NodeDistributionChecksumNotFoundException, IOException {
         final String trailingValue = "  " + distributionFilename;

@@ -15,14 +15,13 @@ import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.TaskOutcome;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
 import org.siouan.frontendgradleplugin.util.FunctionalTestHelper;
 
 /**
  * Functional tests to verify the {@link CheckTask} integration in a Gradle build.
  */
-public class CheckTaskFuncTest {
-
-    private static final String GRADLE_CHECK_TASK = "check";
+class CheckTaskFuncTest {
 
     @TempDir
     protected File projectDirectory;
@@ -36,19 +35,19 @@ public class CheckTaskFuncTest {
         properties.put("checkScript", "run check");
         FunctionalTestHelper.createBuildFile(projectDirectory, properties);
 
-        final BuildResult result1 = runGradle(projectDirectory, GRADLE_CHECK_TASK);
+        final BuildResult result1 = runGradle(projectDirectory, FrontendGradlePlugin.GRADLE_CHECK_TASK_NAME);
 
-        assertTaskOutcome(result1, NodeInstallTask.DEFAULT_NAME, TaskOutcome.SUCCESS);
-        assertTaskOutcome(result1, YarnInstallTask.DEFAULT_NAME, TaskOutcome.SKIPPED);
-        assertTaskOutcome(result1, InstallTask.DEFAULT_NAME, TaskOutcome.SUCCESS);
-        assertTaskOutcome(result1, GRADLE_CHECK_TASK, TaskOutcome.SUCCESS);
+        assertTaskOutcome(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, TaskOutcome.SUCCESS);
+        assertTaskOutcome(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME, TaskOutcome.SKIPPED);
+        assertTaskOutcome(result1, FrontendGradlePlugin.INSTALL_TASK_NAME, TaskOutcome.SUCCESS);
+        assertTaskOutcome(result1, FrontendGradlePlugin.GRADLE_CHECK_TASK_NAME, TaskOutcome.SUCCESS);
 
-        final BuildResult result2 = runGradle(projectDirectory, GRADLE_CHECK_TASK);
+        final BuildResult result2 = runGradle(projectDirectory, FrontendGradlePlugin.GRADLE_CHECK_TASK_NAME);
 
-        assertTaskOutcome(result2, NodeInstallTask.DEFAULT_NAME, TaskOutcome.UP_TO_DATE);
-        assertTaskOutcome(result2, YarnInstallTask.DEFAULT_NAME, TaskOutcome.SKIPPED);
-        assertTaskOutcome(result2, InstallTask.DEFAULT_NAME, TaskOutcome.SUCCESS);
-        assertTaskOutcome(result2, GRADLE_CHECK_TASK, TaskOutcome.SUCCESS);
+        assertTaskOutcome(result2, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, TaskOutcome.UP_TO_DATE);
+        assertTaskOutcome(result2, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME, TaskOutcome.SKIPPED);
+        assertTaskOutcome(result2, FrontendGradlePlugin.INSTALL_TASK_NAME, TaskOutcome.SUCCESS);
+        assertTaskOutcome(result2, FrontendGradlePlugin.GRADLE_CHECK_TASK_NAME, TaskOutcome.SUCCESS);
 
         Files.deleteIfExists(projectDirectory.toPath().resolve("package-lock.json"));
         Files.copy(new File(getClass().getClassLoader().getResource("package-yarn.json").toURI()).toPath(),
@@ -57,18 +56,18 @@ public class CheckTaskFuncTest {
         properties.put("yarnVersion", "1.15.2");
         FunctionalTestHelper.createBuildFile(projectDirectory, properties);
 
-        final BuildResult result3 = runGradle(projectDirectory, GRADLE_CHECK_TASK);
+        final BuildResult result3 = runGradle(projectDirectory, FrontendGradlePlugin.GRADLE_CHECK_TASK_NAME);
 
-        assertTaskOutcome(result3, NodeInstallTask.DEFAULT_NAME, TaskOutcome.UP_TO_DATE);
-        assertTaskOutcome(result3, YarnInstallTask.DEFAULT_NAME, TaskOutcome.SUCCESS);
-        assertTaskOutcome(result3, InstallTask.DEFAULT_NAME, TaskOutcome.SUCCESS);
-        assertTaskOutcome(result3, GRADLE_CHECK_TASK, TaskOutcome.SUCCESS);
+        assertTaskOutcome(result3, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, TaskOutcome.UP_TO_DATE);
+        assertTaskOutcome(result3, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME, TaskOutcome.SUCCESS);
+        assertTaskOutcome(result3, FrontendGradlePlugin.INSTALL_TASK_NAME, TaskOutcome.SUCCESS);
+        assertTaskOutcome(result3, FrontendGradlePlugin.GRADLE_CHECK_TASK_NAME, TaskOutcome.SUCCESS);
 
-        final BuildResult result4 = runGradle(projectDirectory, GRADLE_CHECK_TASK);
+        final BuildResult result4 = runGradle(projectDirectory, FrontendGradlePlugin.GRADLE_CHECK_TASK_NAME);
 
-        assertTaskOutcome(result4, NodeInstallTask.DEFAULT_NAME, TaskOutcome.UP_TO_DATE);
-        assertTaskOutcome(result4, YarnInstallTask.DEFAULT_NAME, TaskOutcome.UP_TO_DATE);
-        assertTaskOutcome(result4, InstallTask.DEFAULT_NAME, TaskOutcome.SUCCESS);
-        assertTaskOutcome(result4, GRADLE_CHECK_TASK, TaskOutcome.SUCCESS);
+        assertTaskOutcome(result4, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, TaskOutcome.UP_TO_DATE);
+        assertTaskOutcome(result4, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME, TaskOutcome.UP_TO_DATE);
+        assertTaskOutcome(result4, FrontendGradlePlugin.INSTALL_TASK_NAME, TaskOutcome.SUCCESS);
+        assertTaskOutcome(result4, FrontendGradlePlugin.GRADLE_CHECK_TASK_NAME, TaskOutcome.SUCCESS);
     }
 }

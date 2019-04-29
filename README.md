@@ -1,6 +1,6 @@
 # Frontend Gradle plugin
 
-[![Latest release 1.1.0](https://img.shields.io/badge/Latest%20release-1.1.0-blue.svg)](https://github.com/Siouan/frontend-gradle-plugin/releases/tag/v1.1.0)
+[![Latest release 1.1.1](https://img.shields.io/badge/Latest%20release-1.1.1-blue.svg)](https://github.com/Siouan/frontend-gradle-plugin/releases/tag/v1.1.1)
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
 
 [![Build status](https://travis-ci.org/Siouan/frontend-gradle-plugin.svg?branch=master)](https://travis-ci.org/Siouan/frontend-gradle-plugin)
@@ -26,9 +26,7 @@ versioning][semantic-versioning] for its releases.
     - [Typical configuration with NPM](#typical-configuration-with-npm)
     - [Typical configuration with Yarn](#typical-configuration-with-yarn)
   - [Final steps](#final-steps)
-    - [Install Node/NPM/Yarn/frontend dependencies](#install-nodenpmyarnfrontend-dependencies)
-    - [Use Node/NPM/Yarn apart from Gradle](#use-nodenpmyarn-apart-from-gradle)
-- [Tasks reference](#tasks-reference)
+- [Tasks](#tasks)
   - [Dependencies](#dependencies)
   - [Install Node](#install-node)
   - [Install Yarn](#install-yarn)
@@ -37,9 +35,6 @@ versioning][semantic-versioning] for its releases.
   - [Assemble frontend](#assemble-frontend)
   - [Check frontend](#check-frontend)
   - [Run custom NPM/Yarn script](#run-custom-npmyarn-script)
-- [Usage guidelines](#usage-guidelines)
-  - [How to assemble a frontend and a Java backend in a single artifact?](#how-to-assemble-a-frontend-and-a-java-backend-in-a-single-artifact)
-  - [What kind of script should I attach to the `checkFrontend` task?](#what-kind-of-script-should-i-attach-to-the-checkfrontend-task)
 - [Contributing][contributing]
 
 ## Requirements
@@ -63,7 +58,7 @@ This is the modern and recommended approach.
 ```gradle
 // build.gradle
 plugins {
-    id 'org.siouan.frontend' version '1.1.0'
+    id 'org.siouan.frontend' version '1.1.1'
 }
 ```
 
@@ -78,7 +73,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'org.siouan:frontend-gradle-plugin:1.1.0'
+        classpath 'org.siouan:frontend-gradle-plugin:1.1.1'
     }
 }
 
@@ -170,32 +165,20 @@ frontend {
 
 ### Final steps
 
-#### Install Node/NPM/Yarn/frontend dependencies
-
-Working with the frontend application requires the Node distribution, the Yarn distribution - if enabled, and 
-the frontend dependencies declared in the `package.json` file are all installed/up-to-date. If this is not the case, it
-is recommended to run the `installFrontend` task. Open a terminal, and execute the following command:
-
-```sh
-gradlew installFrontend
-```
-
-#### Use Node/NPM/Yarn apart from Gradle
- 
-If Node/NPM/Yarn may be used apart from Gradle, it is mandatory to apply the following steps:
+If the developer needs to use Node/NPM/Yarn apart from Gradle, it is mandatory to apply the following steps:
 
 - Create a `NODEJS_HOME` environment variable containing the real path set in the `nodeInstallationDirectory`
 property.
 - Add the `$NODEJS_HOME` (Unix-like OS) or `%NODEJS_HOME%` (Windows OS) path to the `PATH` environment variable.
 
-If Yarn is enabled, apply also the steps below:
+If Yarn is enabled, apply these latest steps.
 
 - Create a `YARN_HOME` environment variable containing the real path set in the
 `yarnInstallationDirectory` property.
 - Add the `$YARN_HOME/bin` (Unix-like OS) or `%YARN_HOME%\bin` (Windows OS) path to the `PATH`
 environment variable.
 
-## Tasks reference
+## Tasks
 
 The plugin registers multiple tasks, some having dependencies with other, and also with Gradle lifecycle tasks defined
 in the [Gradle base plugin][gradle-base-plugin].
@@ -209,8 +192,6 @@ in the [Gradle base plugin][gradle-base-plugin].
 The `installNode` task downloads a Node distribution. If the `distributionUrl` property is ommitted, the URL is
 guessed using the `version` property. Use the property `nodeInstallationDirectory` to set the directory where the
 distribution shall be installed, which, by default is the `${projectDir}/node` directory.
-
-This task should not be executed directly. It will be called automatically by Gradle, if another task depends on it.
  
 ### Install Yarn
 
@@ -218,16 +199,11 @@ The `installYarn` task downloads a Yarn distribution, if `yarnEnabled` property 
 property is ommitted, the URL is guessed using the `version` property. Use the property `yarnInstallationDirectory`
 to set the directory where the distribution shall be installed, which, by default is the `${projectDir}/yarn` directory.
 
-This task should not be executed directly. It will be called automatically by Gradle, if another task depends on it.
- 
 ### Install frontend dependencies
 
 Depending on the value of the `yarnEnabled` property, the task `installFrontend` issues either a `npm install` command
-or a `yarn install` command. If a `package.json` file is found in the project's directory, the command shall install
+or a `yarn` command. If a `package.json` file is found in the project's directory, the command shall install
 dependencies and tools for frontend development.
-
-This task may be executed directly, especially if the Node distribution and/or the Yarn distribution must be downloaded
-again.
 
 ### Clean frontend
 
@@ -262,85 +238,11 @@ tasks.register('e2e', org.siouan.frontendgradleplugin.tasks.RunScriptTask) {
 }
 ```
 
-## Usage guidelines
-
-### How to assemble a frontend and a Java backend in a single artifact?
-
-If you plan to serve your frontend with a Java backend (e.g. a [Spring Boot][spring-boot] application), you will
-probably use other Gradle plugins, such as the [Gradle Java plugin][gradle-java-plugin], the
-[Gradle Spring Boot plugin][gradle-spring-boot-plugin], or other ones of your choice.
-
-In this configuration, you may package your full-stack application as a JAR/WAR artifact. To do so, the frontend must be
-assembled before the backend, and generally provided in a special directory for the backend packaging task (e.g.
-`jar`/`war`/`bootJar`/`bootWar`... tasks). 
-
-Assembling the frontend before the backend shall not be difficult to setup in Gradle. Below is the task tree of the
-`assemble` task when this plugin is used with the [Gradle Java plugin][gradle-java-plugin] or a plugin depending on it:
-
-```sh
-gradlew taskTree --no-repeat assemble
-
-:build
-:assemble
-+--- :assembleFrontend
-|    \--- :installFrontend
-|         +--- :installNode
-|         \--- :installYarn
-+--- :jar
-     \--- :classes
-          +--- :compileJava
-          \--- :processResources
-```
-
-1. Considering the frontend assembling script generates the frontend artifacts (HTML, CSS, JS...) in the
-`${frontendBuildDir}` directory, these artifacts must be copied, generally in the
-`${project.buildDir}/resources/main/public` directory, so as they can be served by the backend.
-
-Let's create a custom task for this. Add the following lines in the `build.gradle` file:
-
-```groovy
-tasks.register('processFrontendResources', Copy) {
-    description 'Process frontend resources'
-    from "${frontendBuildDir}"
-    into "${project.buildDir}/resources/main/public"
-    dependsOn tasks.named('assembleFrontend')
-}
-```
-
-Finally, you should:
-
-- Replace the `${frontendBuildDir}` variable by any relevant directory, depending on where the frontend artifacts are
-generated by your assembling script.
-- Adapt the target directory under `${project.buildDir}/resources/main`, depending on the Java artifact built.
-
-2. The frontend must be assembled and the generated resources must be copied before the backend packaging task.
-
-Let's make the `processResources` task depend on the `processFrontendResources` task.
-
-```groovy
-tasks.named('processResources').configure {
-    dependsOn tasks.named('processFrontendResources')
-}
-```
-
-### What kind of script should I attach to the `checkFrontend` task?
-
-The `checkFrontend` task is a dependency of the `check` task. The Gradle official documentation states that the `check`
-task shall be used to `attach [...] verification tasks, such as ones that run tests [...]`. It's enough vague to let you
-consider any verification task. The script mapped to the `checkFrontend` task may run either automated unit tests, or
-functional tests, or a linter, or any other verification action, or even combine some or all of them. Every combination
-is possible, since you can define un script in your `package.json` file that executes in sequence the actions of your
-choice.
-
 [contributing]: <CONTRIBUTING.md> (Contributing to this project)
 [frontend-maven-plugin]: <https://github.com/eirslett/frontend-maven-plugin> (Frontend Maven plugin)
 [gradle-base-plugin]: <https://docs.gradle.org/current/userguide/base_plugin.html> (Gradle Base plugin)
 [gradle-build-script-block]: <https://docs.gradle.org/current/userguide/plugins.html#sec:applying_plugins_buildscript> (Gradle build script block)
 [gradle-dsl]: <https://docs.gradle.org/current/userguide/plugins.html#sec:plugins_block> (Gradle DSL)
-[gradle-java-plugin]: <https://docs.gradle.org/current/userguide/java_plugin.html> (Gradle Java plugin)
-[gradle-spring-boot-plugin]: <https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/html/> (Gradle Spring Boot plugin)
-[j2ee]: <https://www.oracle.com/technetwork/java/javaee/> (J2EE)
 [release-notes]: <https://github.com/siouan/frontend-gradle-plugin/releases> (Release notes)
 [semantic-versioning]: <https://semver.org/> (Semantic versioning)
-[spring-boot]: <https://spring.io/projects/spring-boot> (Spring Boot)
 [task-dependencies]: <task-dependencies.png>

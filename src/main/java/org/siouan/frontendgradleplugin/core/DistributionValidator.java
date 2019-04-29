@@ -7,7 +7,7 @@ import java.net.URL;
  * Interface of a component capable to validate a downloaded distribution.
  */
 @FunctionalInterface
-public interface DistributionValidator {
+interface DistributionValidator {
 
     /**
      * Validates the distribution in the given file.

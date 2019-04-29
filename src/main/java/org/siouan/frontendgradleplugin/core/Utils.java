@@ -94,7 +94,7 @@ public final class Utils {
                 }
             });
         }
-}
+    }
 
     /**
      * Removes the extension of a filename. In case of a compressed TAR archive, the method removes the whole extension
