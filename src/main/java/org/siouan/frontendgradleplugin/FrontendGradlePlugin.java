@@ -94,19 +94,21 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         extension.getYarnInstallDirectory().convention(new File(project.getProjectDir(), DEFAULT_YARN_INSTALL_DIRNAME));
 
         final TaskContainer projectTasks = project.getTasks();
-        projectTasks.register(NODE_INSTALL_TASK_NAME, NodeInstallTask.class, task -> configureTask(task, extension));
+        projectTasks
+            .register(NODE_INSTALL_TASK_NAME, NodeInstallTask.class, task -> configureNodeInstallTask(task, extension));
 
-        projectTasks.register(YARN_INSTALL_TASK_NAME, YarnInstallTask.class, task -> configureTask(task, extension));
+        projectTasks
+            .register(YARN_INSTALL_TASK_NAME, YarnInstallTask.class, task -> configureYarnInstallTask(task, extension));
 
-        projectTasks.register(INSTALL_TASK_NAME, InstallTask.class, task -> configureTask(task, extension));
+        projectTasks.register(INSTALL_TASK_NAME, InstallTask.class, task -> configureInstallTask(task, extension));
 
-        projectTasks.register(CLEAN_TASK_NAME, CleanTask.class, task -> configureTask(task, extension));
+        projectTasks.register(CLEAN_TASK_NAME, CleanTask.class, task -> configureCleanTask(task, extension));
         projectTasks.named(GRADLE_CLEAN_TASK_NAME, task -> task.dependsOn(projectTasks.named(CLEAN_TASK_NAME)));
 
-        projectTasks.register(CHECK_TASK_NAME, CheckTask.class, task -> configureTask(task, extension));
+        projectTasks.register(CHECK_TASK_NAME, CheckTask.class, task -> configureCheckTask(task, extension));
         projectTasks.named(GRADLE_CHECK_TASK_NAME, task -> task.dependsOn(projectTasks.named(CHECK_TASK_NAME)));
 
-        projectTasks.register(ASSEMBLE_TASK_NAME, AssembleTask.class, task -> configureTask(task, extension));
+        projectTasks.register(ASSEMBLE_TASK_NAME, AssembleTask.class, task -> configureAssembleTask(task, extension));
         projectTasks.named(GRADLE_ASSEMBLE_TASK_NAME, task -> task.dependsOn(projectTasks.named(ASSEMBLE_TASK_NAME)));
     }
 
@@ -116,7 +118,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      * @param task Task.
      * @param extension Plugin extension.
      */
-    private void configureTask(final NodeInstallTask task, final FrontendExtension extension) {
+    private void configureNodeInstallTask(final NodeInstallTask task, final FrontendExtension extension) {
         task.setGroup(TASK_GROUP);
         task.setDescription("Downloads and installs a Node distribution.");
         task.getNodeVersion().set(extension.getNodeVersion());
@@ -130,7 +132,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      * @param task Task.
      * @param extension Plugin extension.
      */
-    private void configureTask(final YarnInstallTask task, FrontendExtension extension) {
+    private void configureYarnInstallTask(final YarnInstallTask task, FrontendExtension extension) {
         task.setGroup(TASK_GROUP);
         task.setDescription("Downloads and installs a Yarn distribution.");
         task.setEnabled(extension.getYarnEnabled().get());
@@ -145,7 +147,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      * @param task Task.
      * @param extension Plugin extension.
      */
-    private void configureTask(final InstallTask task, FrontendExtension extension) {
+    private void configureInstallTask(final InstallTask task, FrontendExtension extension) {
         task.setGroup(TASK_GROUP);
         task.setDescription("Installs/updates frontend dependencies.");
         task.getYarnEnabled().set(extension.getYarnEnabled());
@@ -160,7 +162,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      * @param task Task.
      * @param extension Plugin extension.
      */
-    private void configureTask(final CleanTask task, FrontendExtension extension) {
+    private void configureCleanTask(final CleanTask task, FrontendExtension extension) {
         task.setGroup(TASK_GROUP);
         task.setDescription("Cleans frontend resources outside the build directory by running a specific script.");
         task.getYarnEnabled().set(extension.getYarnEnabled());
@@ -176,7 +178,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      * @param task Task.
      * @param extension Plugin extension.
      */
-    private void configureTask(final CheckTask task, FrontendExtension extension) {
+    private void configureCheckTask(final CheckTask task, FrontendExtension extension) {
         task.setGroup(TASK_GROUP);
         task.setDescription("Checks frontend by running a specific script.");
         task.getYarnEnabled().set(extension.getYarnEnabled());
@@ -192,7 +194,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      * @param task Task.
      * @param extension Plugin extension.
      */
-    private void configureTask(final AssembleTask task, FrontendExtension extension) {
+    private void configureAssembleTask(final AssembleTask task, FrontendExtension extension) {
         task.setGroup(TASK_GROUP);
         task.setDescription("Assembles the frontend by running a specific script.");
         task.getYarnEnabled().set(extension.getYarnEnabled());
