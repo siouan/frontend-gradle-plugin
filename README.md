@@ -1,6 +1,6 @@
 # Frontend Gradle plugin
 
-[![Latest release 1.1.1](https://img.shields.io/badge/Latest%20release-1.1.1-blue.svg)](https://github.com/Siouan/frontend-gradle-plugin/releases/tag/v1.1.1)
+[![Latest release 1.1.2](https://img.shields.io/badge/Latest%20release-1.1.2-blue.svg)](https://github.com/Siouan/frontend-gradle-plugin/releases/tag/v1.1.2)
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
 
 [![Build status](https://travis-ci.org/Siouan/frontend-gradle-plugin.svg?branch=master)](https://travis-ci.org/Siouan/frontend-gradle-plugin)
@@ -63,7 +63,7 @@ This is the modern and recommended approach.
 ```gradle
 // build.gradle
 plugins {
-    id 'org.siouan.frontend' version '1.1.1'
+    id 'org.siouan.frontend' version '1.1.2'
 }
 ```
 
@@ -78,7 +78,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'org.siouan:frontend-gradle-plugin:1.1.1'
+        classpath 'org.siouan:frontend-gradle-plugin:1.1.2'
     }
 }
 
