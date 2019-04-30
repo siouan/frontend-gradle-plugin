@@ -75,7 +75,7 @@ This approach is the legacy way to resolve and apply plugins.
 // build.gradle
 buildscript {
     repositories {
-        jcenter()
+        url 'https://plugins.gradle.org/m2/'
     }
     dependencies {
         classpath 'org.siouan:frontend-gradle-plugin:1.1.2'
@@ -124,7 +124,7 @@ frontend {
     yarnInstallDirectory = "${projectDir}/yarn"
 
     // OTHER SETTINGS
-    // Name of the NPM/Yarn scripts (see 'package.json' file) that shall be executing depending on the Gradle lifecycle
+    // Name of the NPM/Yarn scripts (see 'package.json' file) that shall be executed depending on the Gradle lifecycle
     // task. The values below are passed as argument of the 'npm' or 'yarn' executable.
 
     // [Optional] Use this property only if frontend's compiled resources are generated out of the '${project.buildDir}'
