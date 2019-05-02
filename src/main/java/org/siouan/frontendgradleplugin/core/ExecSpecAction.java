@@ -1,6 +1,7 @@
 package org.siouan.frontendgradleplugin.core;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,13 +16,7 @@ import org.gradle.process.ExecSpec;
  */
 public class ExecSpecAction implements Action<ExecSpec> {
 
-    public static final String SHELL_EXECUTABLE = "sh";
-
     public static final String CMD_EXECUTABLE = "cmd";
-
-    public static final String NPM_EXECUTABLE = "npm";
-
-    public static final String YARN_EXECUTABLE = "yarn";
 
     /**
      * Whether the script shall be run with Yarn instead of NPM.
@@ -39,6 +34,11 @@ public class ExecSpecAction implements Action<ExecSpec> {
     private final File yarnInstallDirectory;
 
     /**
+     * Name of the O/S.
+     */
+    private final String osName;
+
+    /**
      * Name of the script to execute.
      */
     private final String script;
@@ -49,24 +49,14 @@ public class ExecSpecAction implements Action<ExecSpec> {
     private final Consumer<ExecSpec> afterConfigured;
 
     /**
-     * Name of the O/S.
+     * Path to the Node executable.
      */
-    private final String osName;
+    private final Path nodeExecutablePath;
 
     /**
-     * Builds an action to run a frontend script on the local platform.
-     *
-     * @param yarnEnabled Whether the script shall be run with Yarn instead of NPM.
-     * @param nodeInstallDirectory Directory where the Node distribution is installed.
-     * @param yarnInstallDirectory Directory where the Yarn distribution is installed.
-     * @param script Name of the script to execute.
-     * @param afterConfigured A consumer called once the exec specification has been configured.
+     * Path to the script executable (i.e. NPM or Yarn).
      */
-    public ExecSpecAction(final boolean yarnEnabled, final File nodeInstallDirectory, final File yarnInstallDirectory,
-        final String script, final Consumer<ExecSpec> afterConfigured) {
-        this(yarnEnabled, nodeInstallDirectory, yarnInstallDirectory, script, afterConfigured,
-            System.getProperty("os.name"));
-    }
+    private final Path scriptExecutablePath;
 
     /**
      * Builds an action to run a frontend script on the local platform.
@@ -77,15 +67,27 @@ public class ExecSpecAction implements Action<ExecSpec> {
      * @param script Name of the script to execute.
      * @param afterConfigured A consumer called once the exec specification has been configured.
      * @param osName Name of the O/S.
+     * @throws ExecutableNotFoundException When an executable cannot be found (Node, NPM, Yarn).
      */
     public ExecSpecAction(final boolean yarnEnabled, final File nodeInstallDirectory, final File yarnInstallDirectory,
-        final String script, final Consumer<ExecSpec> afterConfigured, final String osName) {
+        final String osName, final String script, final Consumer<ExecSpec> afterConfigured)
+        throws ExecutableNotFoundException {
         this.yarnEnabled = yarnEnabled;
         this.nodeInstallDirectory = nodeInstallDirectory;
         this.yarnInstallDirectory = yarnInstallDirectory;
+        this.osName = osName;
         this.script = script;
         this.afterConfigured = afterConfigured;
-        this.osName = osName;
+
+        nodeExecutablePath = Utils.getNodeExecutablePath(nodeInstallDirectory.toPath(), osName)
+            .orElseThrow(ExecutableNotFoundException::newNodeExecutableNotFoundException);
+        if (yarnEnabled) {
+            scriptExecutablePath = Utils.getYarnExecutablePath(yarnInstallDirectory.toPath(), osName)
+                .orElseThrow(ExecutableNotFoundException::newYarnExecutableNotFoundException);
+        } else {
+            scriptExecutablePath = Utils.getNpmExecutablePath(nodeInstallDirectory.toPath(), osName)
+                .orElseThrow(ExecutableNotFoundException::newNpmExecutableNotFoundException);
+        }
     }
 
     /**
@@ -100,20 +102,15 @@ public class ExecSpecAction implements Action<ExecSpec> {
         if (Utils.isWindowsOs(osName)) {
             executable = CMD_EXECUTABLE;
             args.add("/c");
-            final String scriptExecutable;
-            if (yarnEnabled) {
-                scriptExecutable = YARN_EXECUTABLE;
-            } else {
-                scriptExecutable = NPM_EXECUTABLE;
-            }
             // The command that must be executed in the terminal must be a single argument on itself (like if it was
             // quoted).
-            args.add(scriptExecutable + ' ' + script.trim());
+            args.add('"' + scriptExecutablePath.toString() + "\" " + script.trim());
         } else {
             if (yarnEnabled) {
-                executable = YARN_EXECUTABLE;
+                executable = scriptExecutablePath.toString();
             } else {
-                executable = NPM_EXECUTABLE;
+                executable = nodeExecutablePath.toString();
+                args.add(scriptExecutablePath.toString());
             }
             args.addAll(Arrays.asList(script.trim().split("\\s+")));
         }
@@ -121,14 +118,8 @@ public class ExecSpecAction implements Action<ExecSpec> {
         // Prepend directories containing the Node and Yarn executables to the 'PATH' environment variable.
         final Map<String, Object> environment = execSpec.getEnvironment();
         final String pathVariable = findPathVariable(environment);
-        final StringBuilder pathValue = new StringBuilder(nodeInstallDirectory.getAbsolutePath());
+        final StringBuilder pathValue = new StringBuilder(nodeExecutablePath.getParent().toString());
         pathValue.append(File.pathSeparatorChar);
-        if (yarnEnabled) {
-            pathValue.append(yarnInstallDirectory.getAbsolutePath());
-            pathValue.append(File.separatorChar);
-            pathValue.append("bin");
-            pathValue.append(File.pathSeparatorChar);
-        }
         pathValue.append((String) environment.getOrDefault(pathVariable, ""));
 
         execSpec.environment(pathVariable, pathValue.toString());

@@ -8,6 +8,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.PosixFilePermission;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -30,15 +36,92 @@ public final class Utils {
     }
 
     /**
+     * Gets the path of the Node executable.
+     *
+     * @param nodeInstallDirectory Node install directory.
+     * @param osName O/S name.
+     * @return The path, may be {@code null} if it was not found.
+     * @see #getSystemOsName()
+     */
+    public static Optional<Path> getNodeExecutablePath(final Path nodeInstallDirectory, final String osName) {
+        final List<Path> possiblePaths = new ArrayList<>();
+        if (isWindowsOs(osName)) {
+            possiblePaths.add(nodeInstallDirectory.resolve("node.exe"));
+        } else {
+            possiblePaths.add(nodeInstallDirectory.resolve("bin").resolve("node"));
+        }
+
+        return possiblePaths.stream().filter(path -> Files.exists(path)).findFirst();
+    }
+
+    /**
+     * Gets the path of the NPM executable.
+     *
+     * @param nodeInstallDirectory Node install directory.
+     * @param osName O/S name.
+     * @return The path, may be {@code null} if it was not found.
+     * @see #getSystemOsName()
+     */
+    public static Optional<Path> getNpmExecutablePath(final Path nodeInstallDirectory, final String osName) {
+        final List<Path> possiblePaths = new ArrayList<>();
+        if (isWindowsOs(osName)) {
+            possiblePaths.add(nodeInstallDirectory.resolve("npm.cmd"));
+        } else {
+            possiblePaths.add(nodeInstallDirectory.resolve("lib").resolve("node_modules").resolve("npm").resolve("bin")
+                .resolve("npm-cli.js"));
+        }
+
+        return possiblePaths.stream().filter(path -> Files.exists(path)).findFirst();
+    }
+
+    /**
+     * Gets the path of Yarn executable.
+     *
+     * @param yarnInstallDirectory Yarn install directory.
+     * @param osName O/S name.
+     * @return The path, may be {@code null} if it was not found.
+     * @see #getSystemOsName()
+     */
+    public static Optional<Path> getYarnExecutablePath(final Path yarnInstallDirectory, final String osName) {
+        final List<Path> possiblePaths = new ArrayList<>();
+        if (isWindowsOs(osName)) {
+            possiblePaths.add(yarnInstallDirectory.resolve("bin").resolve("yarn.cmd"));
+        } else {
+            possiblePaths.add(yarnInstallDirectory.resolve("bin").resolve("yarn"));
+        }
+
+        return possiblePaths.stream().filter(path -> Files.exists(path)).findFirst();
+    }
+
+    /**
+     * Gets the current O/S architecture.
+     *
+     * @return String describing the O/S architecture.
+     */
+    public static String getSystemOsArch() {
+        return System.getProperty("os.arch");
+    }
+
+    /**
+     * Gets the current O/S name.
+     *
+     * @return String describing the O/S.
+     */
+    public static String getSystemOsName() {
+        return System.getProperty("os.name");
+    }
+
+    /**
      * Tells whether the given JRE architecture is a 64 bits one.
      *
      * @param jreArch JRE architecture.
      * @return {@code true} if the architecture is a 64 bits.
+     * @see #getSystemOsArch()
      */
     public static boolean is64BitsArch(final String jreArch) {
         final String jreArchLowered = jreArch.toLowerCase();
-        return jreArchLowered.contains("x64") || jreArchLowered.contains("amd64") || jreArchLowered.contains("ppc")
-            || jreArchLowered.contains("sparc");
+        return jreArchLowered.contains("x64") || jreArchLowered.contains("x86_64") || jreArchLowered.contains("amd64")
+            || jreArchLowered.contains("ppc") || jreArchLowered.contains("sparc");
     }
 
     /**
@@ -46,6 +129,7 @@ public final class Utils {
      *
      * @param osName OS name.
      * @return {@code true} if the OS name matches a Linux OS.
+     * @see #getSystemOsName()
      */
     public static boolean isLinuxOs(final String osName) {
         return osName.toLowerCase().contains("linux");
@@ -56,6 +140,7 @@ public final class Utils {
      *
      * @param osName OS name.
      * @return {@code true} if the OS name matches a Mac OS.
+     * @see #getSystemOsName()
      */
     public static boolean isMacOs(final String osName) {
         return osName.toLowerCase().contains("mac os");
@@ -66,6 +151,7 @@ public final class Utils {
      *
      * @param osName OS name.
      * @return {@code true} if the OS name matches a Windows OS.
+     * @see #getSystemOsName()
      */
     public static boolean isWindowsOs(final String osName) {
         return osName.toLowerCase().contains("windows");
@@ -111,6 +197,21 @@ public final class Utils {
             filenameWithoutExtension = filename.substring(0, filename.lastIndexOf('.'));
         }
         return filenameWithoutExtension;
+    }
+
+    /**
+     * Marks the file as executable. This method does nothing under Windows.
+     *
+     * @param path Path.
+     * @param osName OS name.
+     * @throws IOException If an I/O error occurs.
+     */
+    public static void setFileExecutable(final Path path, final String osName) throws IOException {
+        Set<PosixFilePermission> defaultPermissions = EnumSet
+            .of(PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE, PosixFilePermission.OWNER_EXECUTE);
+        if (!Utils.isWindowsOs(osName) && Files.exists(path) && !Files.isExecutable(path)) {
+            Files.setPosixFilePermissions(path, defaultPermissions);
+        }
     }
 
     /**

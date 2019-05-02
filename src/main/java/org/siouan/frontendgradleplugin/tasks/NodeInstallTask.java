@@ -10,7 +10,9 @@ import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
-import org.siouan.frontendgradleplugin.core.DistributionInstallJob;
+import org.siouan.frontendgradleplugin.core.DistributionInstaller;
+import org.siouan.frontendgradleplugin.core.DistributionInstallerSettings;
+import org.siouan.frontendgradleplugin.core.DistributionPostInstallException;
 import org.siouan.frontendgradleplugin.core.DistributionUrlResolverException;
 import org.siouan.frontendgradleplugin.core.DownloadException;
 import org.siouan.frontendgradleplugin.core.DownloaderImpl;
@@ -19,7 +21,9 @@ import org.siouan.frontendgradleplugin.core.InvalidDistributionException;
 import org.siouan.frontendgradleplugin.core.NodeDistributionChecksumReaderImpl;
 import org.siouan.frontendgradleplugin.core.NodeDistributionUrlResolver;
 import org.siouan.frontendgradleplugin.core.NodeDistributionValidator;
+import org.siouan.frontendgradleplugin.core.NodePostInstallAction;
 import org.siouan.frontendgradleplugin.core.UnsupportedDistributionArchiveException;
+import org.siouan.frontendgradleplugin.core.Utils;
 
 /**
  * Task that downloads and installs a Node distribution.
@@ -74,16 +78,20 @@ public class NodeInstallTask extends DefaultTask {
      * @throws DownloadException If a download error occured.
      * @throws NoSuchAlgorithmException If the hashing algorithm used to check the distribution integrity is not
      * supported.
+     * @throws DistributionPostInstallException If the post-install action has failed.
      */
     @TaskAction
     public void execute() throws IOException, InvalidDistributionException, DistributionUrlResolverException,
-        UnsupportedDistributionArchiveException, DownloadException, NoSuchAlgorithmException {
+        UnsupportedDistributionArchiveException, DownloadException, NoSuchAlgorithmException,
+        DistributionPostInstallException {
         final String version = nodeVersion.get();
         final String distributionUrl = nodeDistributionUrl.getOrNull();
         final File installDirectory = nodeInstallDirectory.get();
-        new DistributionInstallJob(this, new NodeDistributionUrlResolver(version, distributionUrl),
+        final DistributionInstallerSettings settings = new DistributionInstallerSettings(this, Utils.getSystemOsName(),
+            new NodeDistributionUrlResolver(version, distributionUrl),
             new NodeDistributionValidator(this, new DownloaderImpl(getTemporaryDir()),
-                new NodeDistributionChecksumReaderImpl(), new FileHasherImpl(), installDirectory), installDirectory)
-            .install();
+                new NodeDistributionChecksumReaderImpl(), new FileHasherImpl(), installDirectory), installDirectory,
+            new NodePostInstallAction());
+        new DistributionInstaller(settings).install();
     }
 }

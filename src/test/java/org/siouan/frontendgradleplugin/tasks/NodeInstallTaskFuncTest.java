@@ -18,7 +18,8 @@ import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
 import org.siouan.frontendgradleplugin.util.FunctionalTestHelper;
 
 /**
- * Functional tests to verify the {@link NodeInstallTask} integration in a Gradle build.
+ * Functional tests to verify the {@link NodeInstallTask} integration in a Gradle build. Test cases uses a fake Node
+ * distribution, to avoid the download overhead and because the 'node' and 'npm' executables are never called.
  */
 class NodeInstallTaskFuncTest {
 

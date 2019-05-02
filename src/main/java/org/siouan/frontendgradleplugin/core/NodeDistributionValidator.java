@@ -11,7 +11,7 @@ import org.gradle.api.Task;
 /**
  * Validates a Node distribution by comparing its SHA-256 hash against the one officially published.
  */
-public class NodeDistributionValidator extends AbstractJob implements DistributionValidator {
+public class NodeDistributionValidator extends AbstractTaskJob implements DistributionValidator {
 
     /**
      * Downloader used to get the file containing all checksums for a given distribution.

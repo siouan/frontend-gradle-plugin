@@ -18,7 +18,8 @@ import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
 import org.siouan.frontendgradleplugin.util.FunctionalTestHelper;
 
 /**
- * Functional tests to verify the {@link YarnInstallTask} integration in a Gradle build.
+ * Functional tests to verify the {@link YarnInstallTask} integration in a Gradle build. Test cases uses a fake Yarn
+ * distribution, to avoid the download overhead and because the 'yarn' executable is never called.
  */
 class YarnInstallTaskFuncTest {
 
