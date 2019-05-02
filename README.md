@@ -9,16 +9,14 @@
 [![Reliability](https://sonarcloud.io/api/project_badges/measure?project=Siouan_frontend-gradle-plugin&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=Siouan_frontend-gradle-plugin)
 
 This plugin allows to integrate a frontend NPM/Yarn build into Gradle. It is inspired by the
-[frontend-maven-plugin][frontend-maven-plugin].
-
-Detailed changes for each release are documented in the [release notes][release-notes]. The project uses [semantic
-versioning][semantic-versioning] for its releases.
+[frontend-maven-plugin][frontend-maven-plugin]. See the [quick start guide](#quick-start-guide) below to
+install/configure the plugin, and build your frontend application.
 
 ## Summary
 
-- [Requirements](#requirements)
-- [Installation](#installation)
-  - [Activation](#activation)
+- [Quick start guide](#quick-start-guide)
+  - [Requirements](#requirements)
+  - [Installation](#installation)
     - [Using Gradle DSL](#using-gradle-dsl)
     - [Using Gradle build script block](#using-gradle-build-script-block)
   - [Configuration](#configuration)
@@ -26,7 +24,7 @@ versioning][semantic-versioning] for its releases.
     - [Typical configuration with NPM](#typical-configuration-with-npm)
     - [Typical configuration with Yarn](#typical-configuration-with-yarn)
   - [Final steps](#final-steps)
-    - [Install Node/NPM/Yarn/frontend dependencies](#install-nodenpmyarnfrontend-dependencies)
+    - [Build the frontend](#build-the-frontend)
     - [Use Node/NPM/Yarn apart from Gradle](#use-nodenpmyarn-apart-from-gradle)
 - [Tasks reference](#tasks-reference)
   - [Task tree](#task-tree)
@@ -42,7 +40,9 @@ versioning][semantic-versioning] for its releases.
   - [What kind of script should I attach to the `checkFrontend` task?](#what-kind-of-script-should-i-attach-to-the-checkfrontend-task)
 - [Contributing][contributing]
 
-## Requirements
+## Quick start guide
+
+### Requirements
 
 The plugin supports:
 - [Gradle][gradle] 5.1+
@@ -50,9 +50,7 @@ The plugin supports:
 - [Node][node] 6.2.1+
 - [Yarn][yarn] 1.0.0+
 
-## Installation
-
-### Activation
+### Installation
 
 2 options are available.
 
@@ -128,7 +126,7 @@ frontend {
 
     // OTHER SETTINGS
     // Name of the NPM/Yarn scripts (see 'package.json' file) that shall be executed depending on the Gradle lifecycle
-    // task. The values below are passed as argument of the 'npm' or 'yarn' executable.
+    // task. The values below are passed as argument of the 'npm' or 'yarn' executables.
 
     // [Optional] Use this property only if frontend's compiled resources are generated out of the '${project.buildDir}'
     // directory. Default value is <null>. This property is directly used by the 'cleanFrontend' task. The task is
@@ -136,10 +134,10 @@ frontend {
     cleanScript = 'run clean'
 
     // [Optional] Script called to build frontend's artifacts. Default value is <null>. This property is directly used
-    // by the 'assembleFrontend' task. The task also run when the Gradle built-in 'assemble' task is run.
+    // by the 'assembleFrontend' task. The task is run when the Gradle built-in 'assemble' task is run.
     assembleScript = 'run assemble'
 
-    // [Optional] Script called to run frontend's tests. Default value is <null>. This property is directly used by the
+    // [Optional] Script called to check the frontend. Default value is <null>. This property is directly used by the
     // 'checkFrontend' task. The task is run when the Gradle built-in 'check' task is run.
     checkScript = 'run check'
 }
@@ -162,8 +160,8 @@ frontend {
 ```gradle
 // build.gradle
 frontend {
-    yarnEnabled = true
     nodeVersion = '<X.Y.Z>'
+    yarnEnabled = true
     yarnVersion = '<X.Y.Z>'
     cleanScript = 'run clean'
     assembleScript = 'run assemble'
@@ -173,16 +171,18 @@ frontend {
 
 ### Final steps
 
-#### Install Node/NPM/Yarn/frontend dependencies
+#### Build the frontend
 
-Working with the frontend application requires the Node distribution, the Yarn distribution - if enabled, and 
-the frontend dependencies declared in the `package.json` file are all installed/up-to-date. If this is not the case, it
-is recommended to run the `installFrontend` task. Open a terminal, and execute the following command in the project's
-directory:
+Now that the plugin is correctly installed and configured, open a terminal, and execute the following command in the
+project's directory:
 
 ```sh
-gradlew installFrontend
+gradle build
 ```
+
+If the frontend application is part of a full-stack Java artifact, take a look at
+[this guide](#how-to-assemble-a-frontend-and-a-java-backend-in-a-single-artifact) to assemble the frontend and the
+backend together.
 
 #### Use Node/NPM/Yarn apart from Gradle
  
@@ -341,7 +341,6 @@ actions of your choice.
 [gradle-dsl]: <https://docs.gradle.org/current/userguide/plugins.html#sec:plugins_block> (Gradle DSL)
 [gradle-java-plugin]: <https://docs.gradle.org/current/userguide/java_plugin.html> (Gradle Java plugin)
 [gradle-spring-boot-plugin]: <https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/html/> (Gradle Spring Boot plugin)
-[j2ee]: <https://www.oracle.com/technetwork/java/javaee/> (J2EE)
 [jdk]: <https://docs.oracle.com/en/java/javase/> (Java Development Kit)
 [node]: <https://nodejs.org/> (Node.js)
 [release-notes]: <https://github.com/siouan/frontend-gradle-plugin/releases> (Release notes)
