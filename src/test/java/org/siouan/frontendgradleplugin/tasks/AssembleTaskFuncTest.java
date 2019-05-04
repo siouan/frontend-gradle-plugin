@@ -29,7 +29,7 @@ class AssembleTaskFuncTest {
     protected File projectDirectory;
 
     @Test
-    public void shouldAssembleFrontendWithNpmOrYarn() throws IOException, URISyntaxException {
+    void shouldAssembleFrontendWithNpmOrYarn() throws IOException, URISyntaxException {
         Files.copy(new File(getClass().getClassLoader().getResource("package-npm.json").toURI()).toPath(),
             projectDirectory.toPath().resolve("package.json"));
         final Map<String, Object> properties = new HashMap<>();

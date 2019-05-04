@@ -27,7 +27,7 @@ class YarnInstallTaskFuncTest {
     protected File projectDirectory;
 
     @Test
-    public void shouldSkipInstallWhenYarnIsNotEnabled() throws IOException {
+    void shouldSkipInstallWhenYarnIsNotEnabled() throws IOException {
         FunctionalTestHelper.createBuildFile(projectDirectory, Collections.emptyMap());
 
         final BuildResult result = runGradle(projectDirectory, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
@@ -36,7 +36,7 @@ class YarnInstallTaskFuncTest {
     }
 
     @Test
-    public void shouldFailInstallingYarnWhenVersionIsNotSet() throws IOException {
+    void shouldFailInstallingYarnWhenVersionIsNotSet() throws IOException {
         FunctionalTestHelper.createBuildFile(projectDirectory, Collections.singletonMap("yarnEnabled", true));
 
         final BuildResult result = runGradleAndExpectFailure(projectDirectory,
@@ -46,7 +46,7 @@ class YarnInstallTaskFuncTest {
     }
 
     @Test
-    public void shouldFailInstallingYarnWhenDistributionCannotBeDownloadedWithUnknownVersion() throws IOException {
+    void shouldFailInstallingYarnWhenDistributionCannotBeDownloadedWithUnknownVersion() throws IOException {
         final Map<String, Object> properties = new HashMap<>();
         properties.put("yarnEnabled", true);
         properties.put("yarnVersion", "0.56.3");
@@ -59,7 +59,7 @@ class YarnInstallTaskFuncTest {
     }
 
     @Test
-    public void shouldFailInstallingYarnWhenDistributionCannotBeDownloadedWithInvalidUrl() throws IOException {
+    void shouldFailInstallingYarnWhenDistributionCannotBeDownloadedWithInvalidUrl() throws IOException {
         final Map<String, Object> properties = new HashMap<>();
         properties.put("yarnEnabled", true);
         properties.put("yarnVersion", "1.15.2");
@@ -73,7 +73,7 @@ class YarnInstallTaskFuncTest {
     }
 
     @Test
-    public void shouldInstallYarnFirstAndNothingMoreSecondly() throws IOException {
+    void shouldInstallYarnFirstAndNothingMoreSecondly() throws IOException {
         final Map<String, Object> properties = new HashMap<>();
         properties.put("yarnEnabled", true);
         properties.put("yarnVersion", "1.15.2");

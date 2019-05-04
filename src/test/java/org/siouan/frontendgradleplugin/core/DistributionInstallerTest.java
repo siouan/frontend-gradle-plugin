@@ -57,7 +57,7 @@ public class DistributionInstallerTest {
     private DistributionPostInstallAction listener;
 
     @BeforeEach
-    public void setUp() throws IOException {
+    void setUp() throws IOException {
         MockitoAnnotations.initMocks(this);
 
         when(task.getProject()).thenReturn(project);
@@ -68,7 +68,7 @@ public class DistributionInstallerTest {
     }
 
     @Test
-    public void shouldFailWhenDistributionNotFound() throws DistributionUrlResolverException, MalformedURLException {
+    void shouldFailWhenDistributionNotFound() throws DistributionUrlResolverException, MalformedURLException {
         when(urlResolver.resolve()).thenReturn(URI.create("https://pg.htrhjyt.gvdfciz/htrsdf").toURL());
         final DistributionInstaller job = new DistributionInstaller(
             new DistributionInstallerSettings(task, Utils.getSystemOsName(), urlResolver, null,
@@ -82,10 +82,9 @@ public class DistributionInstallerTest {
     }
 
     @Test
-    public void shouldFailWhenDistributionArchiveIsCorrupted()
+    void shouldFailWhenDistributionArchiveIsCorrupted()
         throws DistributionUrlResolverException, InvalidDistributionException {
         final URL distributionUrl = getClass().getClassLoader().getResource("distribution.tar.gz");
-        final File installDirectory = new File(temporaryDirectory, "install");
         when(urlResolver.resolve()).thenReturn(distributionUrl);
         final Exception expectedException = new InvalidDistributionException("");
         doThrow(expectedException).when(validator).validate(eq(distributionUrl), any(File.class));
@@ -102,9 +101,8 @@ public class DistributionInstallerTest {
     }
 
     @Test
-    public void shouldFailWhenDistributionArchiveIsNotSupported() throws DistributionUrlResolverException {
+    void shouldFailWhenDistributionArchiveIsNotSupported() throws DistributionUrlResolverException {
         final URL distributionUrl = getClass().getClassLoader().getResource("node-v10.15.1.txt");
-        final File installDirectory = new File(temporaryDirectory, "install");
         when(urlResolver.resolve()).thenReturn(distributionUrl);
         final DistributionInstaller job = new DistributionInstaller(
             new DistributionInstallerSettings(task, Utils.getSystemOsName(), urlResolver, null,
@@ -118,7 +116,7 @@ public class DistributionInstallerTest {
     }
 
     @Test
-    public void shouldDownloadDistribution()
+    void shouldDownloadDistribution()
         throws IOException, DistributionUrlResolverException, InvalidDistributionException,
         UnsupportedDistributionArchiveException, DownloadException, DistributionPostInstallException {
         final URL distributionUrl = getClass().getClassLoader().getResource("node-v10.15.3.zip");

@@ -6,7 +6,7 @@ import org.gradle.api.DefaultTask;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.TaskAction;
 import org.siouan.frontendgradleplugin.core.ExecutableNotFoundException;
-import org.siouan.frontendgradleplugin.core.ScriptRunJob;
+import org.siouan.frontendgradleplugin.core.RunScriptJob;
 import org.siouan.frontendgradleplugin.core.Utils;
 
 /**
@@ -50,7 +50,7 @@ public abstract class AbstractRunScriptTask extends DefaultTask {
     @TaskAction
     public void execute() throws ExecutableNotFoundException {
         if (script.isPresent()) {
-            new ScriptRunJob(this, yarnEnabled.get(), nodeInstallDirectory.get(), yarnInstallDirectory.get(),
+            new RunScriptJob(this, yarnEnabled.get(), nodeInstallDirectory.get(), yarnInstallDirectory.get(),
                 script.get(), Utils.getSystemOsName()).run();
         }
     }

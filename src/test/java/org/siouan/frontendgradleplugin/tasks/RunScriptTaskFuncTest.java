@@ -28,7 +28,7 @@ class RunScriptTaskFuncTest {
     protected File projectDirectory;
 
     @Test
-    public void shouldRunScriptFrontendWithNpmOrYarn() throws IOException, URISyntaxException {
+    void shouldRunScriptFrontendWithNpmOrYarn() throws IOException, URISyntaxException {
         Files.copy(new File(getClass().getClassLoader().getResource("package-npm.json").toURI()).toPath(),
             projectDirectory.toPath().resolve("package.json"));
         final Map<String, Object> properties = new HashMap<>();

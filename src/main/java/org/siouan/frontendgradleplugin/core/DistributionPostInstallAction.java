@@ -1,7 +1,7 @@
 package org.siouan.frontendgradleplugin.core;
 
 /**
- * Action callable once a distribution has been successfully installed.
+ * Action called once a distribution has been successfully installed.
  *
  * @since 1.1.2
  */

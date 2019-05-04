@@ -7,7 +7,7 @@ import org.gradle.api.Task;
 /**
  * This abstract class provides the reusable logic to run a NPM/Yarn script.
  */
-public class ScriptRunJob extends AbstractTaskJob {
+public class RunScriptJob extends AbstractTaskJob {
 
     /**
      * Whether a Yarn distribution shall be downloaded and installed.
@@ -44,7 +44,7 @@ public class ScriptRunJob extends AbstractTaskJob {
      * @param script The script run by the job.
      * @param osName O/S name.
      */
-    public ScriptRunJob(final Task task, final boolean yarnEnabled, final File nodeInstallDirectory,
+    public RunScriptJob(final Task task, final boolean yarnEnabled, final File nodeInstallDirectory,
         final File yarnInstallDirectory, final String script, final String osName) {
         super(task);
         this.yarnEnabled = yarnEnabled;

@@ -41,16 +41,6 @@ abstract class AbstractTaskJob {
     }
 
     /**
-     * Shortcut to log an ERROR message with the task's logger.
-     *
-     * @param message Message.
-     * @param throwable Throwable.
-     */
-    protected void logError(final String message, final Throwable throwable) {
-        task.getLogger().error(formatMessage(message), throwable);
-    }
-
-    /**
      * Shortcut to log a LIFECYCLE message with the task's logger.
      *
      * @param message Message.

@@ -27,7 +27,7 @@ class NodeInstallTaskFuncTest {
     protected File projectDirectory;
 
     @Test
-    public void shouldFailInstallingNodeWhenVersionIsNotSet() throws IOException {
+    void shouldFailInstallingNodeWhenVersionIsNotSet() throws IOException {
         FunctionalTestHelper.createBuildFile(projectDirectory, Collections.emptyMap());
 
         final BuildResult result = runGradleAndExpectFailure(projectDirectory,
@@ -37,7 +37,7 @@ class NodeInstallTaskFuncTest {
     }
 
     @Test
-    public void shouldFailInstallingNodeWhenDistributionCannotBeDownloadedWithUnknownVersion() throws IOException {
+    void shouldFailInstallingNodeWhenDistributionCannotBeDownloadedWithUnknownVersion() throws IOException {
         FunctionalTestHelper.createBuildFile(projectDirectory, Collections.singletonMap("nodeVersion", "0.76.34"));
 
         final BuildResult result = runGradleAndExpectFailure(projectDirectory,
@@ -47,7 +47,7 @@ class NodeInstallTaskFuncTest {
     }
 
     @Test
-    public void shouldFailInstallingNodeWhenDistributionCannotBeDownloadedWithInvalidUrl() throws IOException {
+    void shouldFailInstallingNodeWhenDistributionCannotBeDownloadedWithInvalidUrl() throws IOException {
         final Map<String, Object> properties = new HashMap<>();
         properties.put("nodeVersion", "10.15.3");
         properties.put("nodeDistributionUrl", "protocol://domain/unknown");
@@ -60,7 +60,7 @@ class NodeInstallTaskFuncTest {
     }
 
     @Test
-    public void shouldInstallNodeFirstAndNothingMoreSecondly() throws IOException {
+    void shouldInstallNodeFirstAndNothingMoreSecondly() throws IOException {
         final Map<String, Object> properties = new HashMap<>();
         properties.put("nodeVersion", "10.15.3");
         properties.put("nodeDistributionUrl", getClass().getClassLoader().getResource("node-v10.15.3.zip").toString());

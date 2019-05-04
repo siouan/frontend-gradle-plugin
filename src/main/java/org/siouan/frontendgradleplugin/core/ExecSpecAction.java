@@ -18,6 +18,8 @@ public class ExecSpecAction implements Action<ExecSpec> {
 
     public static final String CMD_EXECUTABLE = "cmd";
 
+    public static final String CMD_RUN_EXIT_FLAG = "/c";
+
     /**
      * Whether the script shall be run with Yarn instead of NPM.
      */
@@ -101,25 +103,25 @@ public class ExecSpecAction implements Action<ExecSpec> {
         final List<String> args = new ArrayList<>();
         if (Utils.isWindowsOs(osName)) {
             executable = CMD_EXECUTABLE;
-            args.add("/c");
+            args.add(CMD_RUN_EXIT_FLAG);
             // The command that must be executed in the terminal must be a single argument on itself (like if it was
             // quoted).
             args.add('"' + scriptExecutablePath.toString() + "\" " + script.trim());
         } else {
-            if (yarnEnabled) {
-                executable = scriptExecutablePath.toString();
-            } else {
-                executable = nodeExecutablePath.toString();
-                args.add(scriptExecutablePath.toString());
-            }
+            executable = scriptExecutablePath.toString();
             args.addAll(Arrays.asList(script.trim().split("\\s+")));
         }
 
         // Prepend directories containing the Node and Yarn executables to the 'PATH' environment variable.
+        // NPM is in the same directory than Node, do nothing for it.
         final Map<String, Object> environment = execSpec.getEnvironment();
         final String pathVariable = findPathVariable(environment);
         final StringBuilder pathValue = new StringBuilder(nodeExecutablePath.getParent().toString());
         pathValue.append(File.pathSeparatorChar);
+        if (yarnEnabled) {
+            pathValue.append(scriptExecutablePath.getParent().toString());
+            pathValue.append(File.pathSeparatorChar);
+        }
         pathValue.append((String) environment.getOrDefault(pathVariable, ""));
 
         execSpec.environment(pathVariable, pathValue.toString());
@@ -128,25 +130,45 @@ public class ExecSpecAction implements Action<ExecSpec> {
         afterConfigured.accept(execSpec);
     }
 
+    /**
+     * Whether Yarn is enabled and will be used at execution.
+     *
+     * @return {@code true} if Yarn is enabled.
+     */
     public boolean isYarnEnabled() {
         return yarnEnabled;
     }
 
+    /**
+     * Gets the install directory of Node.
+     *
+     * @return Directory.
+     */
     public File getNodeInstallDirectory() {
         return nodeInstallDirectory;
     }
 
+    /**
+     * Gets the install directory of Yarn.
+     *
+     * @return Directory.
+     */
     public File getYarnInstallDirectory() {
         return yarnInstallDirectory;
     }
 
+    /**
+     * Gets the script to be executed.
+     *
+     * @return Script.
+     */
     public String getScript() {
         return script;
     }
 
     /**
-     * Finds the name of the 'PATH' variable. Depending on the O/S, it may be a different value than the exact 'PATH'
-     * name.
+     * Finds the name of the 'PATH' variable. Depending on the O/S, it may be have a different case than the exact
+     * 'PATH' name.
      *
      * @param environment Map of environment variables.
      * @return The name of the 'PATH' variable.

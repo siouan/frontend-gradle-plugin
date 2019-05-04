@@ -26,7 +26,7 @@ public class NodeDistributionUrlResolver implements DistributionUrlResolver {
      * @param distributionUrl URL to download the distribution.
      */
     public NodeDistributionUrlResolver(final String version, final String distributionUrl) {
-        this(version, distributionUrl, Utils.getSystemOsName(), Utils.getSystemOsArch());
+        this(version, distributionUrl, Utils.getSystemOsName(), Utils.getSystemJvmArch());
     }
 
     /**

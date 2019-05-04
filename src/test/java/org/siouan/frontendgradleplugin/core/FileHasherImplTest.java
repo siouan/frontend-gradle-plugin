@@ -26,12 +26,12 @@ public class FileHasherImplTest {
     protected File temporaryDirectory;
 
     @Test
-    public void shouldFailWhenFileCannotBeRead() {
+    void shouldFailWhenFileCannotBeRead() {
         assertThatThrownBy(() -> new FileHasherImpl().hash(new File("/dummy"))).isInstanceOf(IOException.class);
     }
 
     @Test
-    public void shouldReturnValidSha256HashWithDefaultBufferingCapacity() throws IOException, NoSuchAlgorithmException {
+    void shouldReturnValidSha256HashWithDefaultBufferingCapacity() throws IOException, NoSuchAlgorithmException {
         final Path temporaryFile = Files
             .write(Paths.get(temporaryDirectory.getAbsolutePath(), "file-for-hashing.txt"), DATA.getBytes());
         final String hash = new FileHasherImpl().hash(temporaryFile.toFile());

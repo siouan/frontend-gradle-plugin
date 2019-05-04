@@ -29,7 +29,7 @@ class CleanTaskFuncTest {
     protected File projectDirectory;
 
     @Test
-    public void shouldCleanFrontendWithNpmOrYarn() throws IOException, URISyntaxException {
+    void shouldCleanFrontendWithNpmOrYarn() throws IOException, URISyntaxException {
         Files.copy(new File(getClass().getClassLoader().getResource("package-npm.json").toURI()).toPath(),
             projectDirectory.toPath().resolve("package.json"));
         final Map<String, Object> properties = new HashMap<>();

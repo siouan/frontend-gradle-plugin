@@ -47,11 +47,12 @@ public final class Utils {
         final List<Path> possiblePaths = new ArrayList<>();
         if (isWindowsOs(osName)) {
             possiblePaths.add(nodeInstallDirectory.resolve("node.exe"));
+            possiblePaths.add(nodeInstallDirectory.resolve("node.cmd"));
         } else {
             possiblePaths.add(nodeInstallDirectory.resolve("bin").resolve("node"));
         }
 
-        return possiblePaths.stream().filter(path -> Files.exists(path)).findFirst();
+        return possiblePaths.stream().filter(Files::exists).findFirst();
     }
 
     /**
@@ -67,11 +68,10 @@ public final class Utils {
         if (isWindowsOs(osName)) {
             possiblePaths.add(nodeInstallDirectory.resolve("npm.cmd"));
         } else {
-            possiblePaths.add(nodeInstallDirectory.resolve("lib").resolve("node_modules").resolve("npm").resolve("bin")
-                .resolve("npm-cli.js"));
+            possiblePaths.add(nodeInstallDirectory.resolve("bin").resolve("npm"));
         }
 
-        return possiblePaths.stream().filter(path -> Files.exists(path)).findFirst();
+        return possiblePaths.stream().filter(Files::exists).findFirst();
     }
 
     /**
@@ -90,15 +90,15 @@ public final class Utils {
             possiblePaths.add(yarnInstallDirectory.resolve("bin").resolve("yarn"));
         }
 
-        return possiblePaths.stream().filter(path -> Files.exists(path)).findFirst();
+        return possiblePaths.stream().filter(Files::exists).findFirst();
     }
 
     /**
-     * Gets the current O/S architecture.
+     * Gets the current JVM architecture.
      *
-     * @return String describing the O/S architecture.
+     * @return String describing the JVM architecture.
      */
-    public static String getSystemOsArch() {
+    public static String getSystemJvmArch() {
         return System.getProperty("os.arch");
     }
 
@@ -116,7 +116,7 @@ public final class Utils {
      *
      * @param jreArch JRE architecture.
      * @return {@code true} if the architecture is a 64 bits.
-     * @see #getSystemOsArch()
+     * @see #getSystemJvmArch()
      */
     public static boolean is64BitsArch(final String jreArch) {
         final String jreArchLowered = jreArch.toLowerCase();
@@ -204,14 +204,43 @@ public final class Utils {
      *
      * @param path Path.
      * @param osName OS name.
+     * @return {@code true} if the file permissions were touched, i.e. under a Non-Windows O/S, the file exists and has
+     * not the executable permission yet.
      * @throws IOException If an I/O error occurs.
      */
-    public static void setFileExecutable(final Path path, final String osName) throws IOException {
-        Set<PosixFilePermission> defaultPermissions = EnumSet
-            .of(PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE, PosixFilePermission.OWNER_EXECUTE);
+    public static boolean setFileExecutable(final Path path, final String osName) throws IOException {
+        final boolean touched;
         if (!Utils.isWindowsOs(osName) && Files.exists(path) && !Files.isExecutable(path)) {
-            Files.setPosixFilePermissions(path, defaultPermissions);
+            touched = setFileExecutable(path, Files.getPosixFilePermissions(path), osName);
+        } else {
+            touched = false;
         }
+        return touched;
+    }
+
+    /**
+     * Marks the file as executable. This method does nothing under Windows. This method allows to restore a file's
+     * permissions by providing the original permissions, in case they cannot be retrieved.
+     *
+     * @param path Path.
+     * @param originalPermissions Original file permissions.
+     * @param osName OS name.
+     * @return {@code true} if the file permissions were touched, i.e. under a Non-Windows O/S, the file exists and has
+     * not the executable permission yet.
+     * @throws IOException If an I/O error occurs.
+     */
+    public static boolean setFileExecutable(final Path path, final Set<PosixFilePermission> originalPermissions,
+        final String osName) throws IOException {
+        final boolean touched;
+        if (!Utils.isWindowsOs(osName) && Files.exists(path) && !Files.isExecutable(path)) {
+            final Set<PosixFilePermission> newPermissions = EnumSet.copyOf(originalPermissions);
+            newPermissions.add(PosixFilePermission.OWNER_EXECUTE);
+            Files.setPosixFilePermissions(path, newPermissions);
+            touched = true;
+        } else {
+            touched = false;
+        }
+        return touched;
     }
 
     /**
@@ -223,7 +252,7 @@ public final class Utils {
 
         private final boolean deleteRootEnabled;
 
-        public FileDeleteVisitor(final Path rootPath, final boolean deleteRootEnabled) {
+        FileDeleteVisitor(final Path rootPath, final boolean deleteRootEnabled) {
             this.rootPath = rootPath;
             this.deleteRootEnabled = deleteRootEnabled;
         }

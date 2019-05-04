@@ -15,25 +15,24 @@ class NodeDistributionUrlResolverTest {
     private static final String VERSION = "3.5.2";
 
     @Test
-    public void shouldFailWhenBuildingInstanceWithNullVersionAndNullDistributionUrl() {
+    void shouldFailWhenBuildingInstanceWithNullVersionAndNullDistributionUrl() {
         assertThatThrownBy(() -> new NodeDistributionUrlResolver(null, null))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    public void shouldFailWhenResolvingWithInvalidDistributionUrl() {
+    void shouldFailWhenResolvingWithInvalidDistributionUrl() {
         assertThatThrownBy(() -> new NodeDistributionUrlResolver(null, "fot://greg:://grrg:").resolve())
             .isInstanceOf(DistributionUrlResolverException.class).hasCauseInstanceOf(MalformedURLException.class);
     }
 
     @Test
-    public void shouldReturnDefaultUrlWhenResolvingWithVersionAndNoDistributionUrl()
-        throws DistributionUrlResolverException {
+    void shouldReturnDefaultUrlWhenResolvingWithVersionAndNoDistributionUrl() throws DistributionUrlResolverException {
         assertThat(new NodeDistributionUrlResolver(VERSION, null).resolve()).isNotNull();
     }
 
     @Test
-    public void shouldReturnDistributionUrlWhenResolvingWithNoVersionAndDistributionUrl()
+    void shouldReturnDistributionUrlWhenResolvingWithNoVersionAndDistributionUrl()
         throws DistributionUrlResolverException {
         final String distributionUrl = "http://url";
         assertThat(new NodeDistributionUrlResolver(null, distributionUrl).resolve().toString())
@@ -41,37 +40,37 @@ class NodeDistributionUrlResolverTest {
     }
 
     @Test
-    public void shouldResolveUrlWhenOsIsWindowsNTAndJreArchIsX86() throws DistributionUrlResolverException {
+    void shouldResolveUrlWhenOsIsWindowsNTAndJreArchIsX86() throws DistributionUrlResolverException {
         assertThat(new NodeDistributionUrlResolver(VERSION, null, "Windows NT", "x86").resolve().toString())
             .endsWith("-win-x86.zip");
     }
 
     @Test
-    public void shouldResolveUrlWhenOsIsWindowsNTAndJreArchIsX64() throws DistributionUrlResolverException {
+    void shouldResolveUrlWhenOsIsWindowsNTAndJreArchIsX64() throws DistributionUrlResolverException {
         assertThat(new NodeDistributionUrlResolver(VERSION, null, "Windows NT", "x64").resolve().toString())
             .endsWith("-win-x64.zip");
     }
 
     @Test
-    public void shouldResolveUrlWhenOsIsLinuxAndJreArchIsAmd64() throws DistributionUrlResolverException {
+    void shouldResolveUrlWhenOsIsLinuxAndJreArchIsAmd64() throws DistributionUrlResolverException {
         assertThat(new NodeDistributionUrlResolver(VERSION, null, "Linux", "amd64").resolve().toString())
             .endsWith("-linux-x64.tar.gz");
     }
 
     @Test
-    public void shouldFailWhenOsIsLinuxAndJreArchIsI386() {
+    void shouldFailWhenOsIsLinuxAndJreArchIsI386() {
         assertThatThrownBy(() -> new NodeDistributionUrlResolver(VERSION, null, "Linux", "i386").resolve())
             .isInstanceOf(DistributionUrlResolverException.class).hasNoCause();
     }
 
     @Test
-    public void shouldResolveUrlWhenOsIsMacAndJreArchIsPPC() throws DistributionUrlResolverException {
+    void shouldResolveUrlWhenOsIsMacAndJreArchIsPPC() throws DistributionUrlResolverException {
         assertThat(new NodeDistributionUrlResolver(VERSION, null, "Mac OS X", "ppc").resolve().toString())
             .endsWith("-darwin-x64.tar.gz");
     }
 
     @Test
-    public void shouldFailWhenOsIsSolarisAndJreArchIsSparc() {
+    void shouldFailWhenOsIsSolarisAndJreArchIsSparc() {
         assertThatThrownBy(() -> new NodeDistributionUrlResolver(VERSION, null, "Solaris", "sparc").resolve())
             .isInstanceOf(DistributionUrlResolverException.class).hasNoCause();
     }

@@ -23,9 +23,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 /**
- * Unit tests for the {@link ScriptRunJob} class.
+ * Unit tests for the {@link RunScriptJob} class.
  */
-class ScriptRunJobTest {
+class RunScriptJobTest {
 
     private static final String TASK_NAME = "task";
 
@@ -47,7 +47,7 @@ class ScriptRunJobTest {
     private ExecResult result;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.initMocks(this);
 
         when(task.getProject()).thenReturn(project);
@@ -61,7 +61,7 @@ class ScriptRunJobTest {
         Files.createFile(binDirectory.resolve("yarn.cmd"));
         final boolean yarnEnabled = true;
         final String script = SCRIPT;
-        final ScriptRunJob job = new ScriptRunJob(task, true, temporaryDirectory, temporaryDirectory, script,
+        final RunScriptJob job = new RunScriptJob(task, true, temporaryDirectory, temporaryDirectory, script,
             "Windows NT");
         final ExecResult execResult = mock(ExecResult.class);
         when(project.exec(any(ExecSpecAction.class))).thenReturn(execResult);

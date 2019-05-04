@@ -18,7 +18,6 @@ import org.siouan.frontendgradleplugin.core.InvalidDistributionException;
 import org.siouan.frontendgradleplugin.core.UnsupportedDistributionArchiveException;
 import org.siouan.frontendgradleplugin.core.Utils;
 import org.siouan.frontendgradleplugin.core.YarnDistributionUrlResolver;
-import org.siouan.frontendgradleplugin.core.YarnPostInstallAction;
 
 /**
  * Task that downloads and installs a Yarn distribution.
@@ -78,7 +77,7 @@ public class YarnInstallTask extends DefaultTask {
         UnsupportedDistributionArchiveException, DownloadException, DistributionPostInstallException {
         final DistributionInstallerSettings settings = new DistributionInstallerSettings(this, Utils.getSystemOsName(),
             new YarnDistributionUrlResolver(yarnVersion.get(), yarnDistributionUrl.getOrNull()), null,
-            yarnInstallDirectory.getOrNull(), new YarnPostInstallAction());
+            yarnInstallDirectory.getOrNull(), null);
         new DistributionInstaller(settings).install();
     }
 }

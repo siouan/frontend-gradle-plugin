@@ -34,10 +34,6 @@ public class ExecSpecActionTest {
 
     private static final String PATH_ENVIRONMENT = "/usr/bin:/usr/lib";
 
-    private static final String NPM_EXECUTABLE = "npm";
-
-    private static final String YARN_EXECUTABLE = "yarn";
-
     @TempDir
     protected File temporaryDirectory;
 
@@ -51,7 +47,7 @@ public class ExecSpecActionTest {
     private ArgumentCaptor<List<String>> argsCaptor;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.initMocks(this);
     }
 
@@ -64,22 +60,23 @@ public class ExecSpecActionTest {
 
     @Test
     void shouldFailBuildingActionWhenNpmExecutableCannotBeFound() throws IOException {
-        Files.createFile(temporaryDirectory.toPath().resolve("node"));
-        assertThatThrownBy(
-            () -> new ExecSpecAction(false, temporaryDirectory, temporaryDirectory, "", SCRIPT, afterConfigured))
-            .isInstanceOf(ExecutableNotFoundException.class).hasMessage(ExecutableNotFoundException.NPM);
+        Files.createFile(temporaryDirectory.toPath().resolve("node.exe"));
+        assertThatThrownBy(() -> new ExecSpecAction(false, temporaryDirectory, temporaryDirectory, "Windows NT", SCRIPT,
+            afterConfigured)).isInstanceOf(ExecutableNotFoundException.class)
+            .hasMessage(ExecutableNotFoundException.NPM);
     }
 
     @Test
     void shouldFailBuildingActionWhenYarnExecutableCannotBeFound() throws IOException {
-        Files.createFile(temporaryDirectory.toPath().resolve("node"));
+        final Path binDirectory = Files.createDirectory(temporaryDirectory.toPath().resolve("bin"));
+        Files.createFile(binDirectory.resolve("node"));
         assertThatThrownBy(
-            () -> new ExecSpecAction(true, temporaryDirectory, temporaryDirectory, "", SCRIPT, afterConfigured))
+            () -> new ExecSpecAction(true, temporaryDirectory, temporaryDirectory, "Mac OS X", SCRIPT, afterConfigured))
             .isInstanceOf(ExecutableNotFoundException.class).hasMessage(ExecutableNotFoundException.YARN);
     }
 
     @Test
-    public void shouldConfigureNpmCommandWithWindowsCmd() throws ExecutableNotFoundException, IOException {
+    void shouldConfigureNpmCommandWithWindowsCmd() throws ExecutableNotFoundException, IOException {
         final Path nodeExecutable = Files.createFile(temporaryDirectory.toPath().resolve("node.exe"));
         final Path npmExecutable = Files.createFile(temporaryDirectory.toPath().resolve("npm.cmd"));
         final String script = SCRIPT;
@@ -91,13 +88,13 @@ public class ExecSpecActionTest {
         action.execute(execSpec);
 
         final List<String> expectedArgs = new ArrayList<>();
-        expectedArgs.add("/c");
+        expectedArgs.add(ExecSpecAction.CMD_RUN_EXIT_FLAG);
         expectedArgs.add(String.join(" ", '"' + npmExecutable.toString() + '"', script.trim()));
         assertExecSpecWith(ExecSpecAction.CMD_EXECUTABLE, expectedArgs, pathEnvironment, nodeExecutable.getParent());
     }
 
     @Test
-    public void shouldConfigureYarnCommandWithWindowsCmd() throws ExecutableNotFoundException, IOException {
+    void shouldConfigureYarnCommandWithWindowsCmd() throws ExecutableNotFoundException, IOException {
         final Path nodeExecutable = Files.createFile(temporaryDirectory.toPath().resolve("node.exe"));
         final Path binDirectory = Files.createDirectory(temporaryDirectory.toPath().resolve("bin"));
         final Path yarnExecutable = Files.createFile(binDirectory.resolve("yarn.cmd"));
@@ -110,15 +107,16 @@ public class ExecSpecActionTest {
         action.execute(execSpec);
 
         final List<String> expectedArgs = new ArrayList<>();
-        expectedArgs.add("/c");
+        expectedArgs.add(ExecSpecAction.CMD_RUN_EXIT_FLAG);
         expectedArgs.add(String.join(" ", '"' + yarnExecutable.toString() + '"', script.trim()));
         assertExecSpecWith(ExecSpecAction.CMD_EXECUTABLE, expectedArgs, pathEnvironment, nodeExecutable.getParent());
     }
 
     @Test
-    public void shouldConfigureNpmCommandWithUnixShell() throws ExecutableNotFoundException, IOException {
-        final Path nodeExecutable = Files.createFile(temporaryDirectory.toPath().resolve("node"));
-        final Path npmExecutable = Files.createFile(temporaryDirectory.toPath().resolve("npm"));
+    void shouldConfigureNpmCommandWithUnixShell() throws ExecutableNotFoundException, IOException {
+        final Path binDirectory = Files.createDirectory(temporaryDirectory.toPath().resolve("bin"));
+        final Path nodeExecutable = Files.createFile(binDirectory.resolve("node"));
+        final Path npmExecutable = Files.createFile(binDirectory.resolve("npm"));
         final String script = SCRIPT;
         final String pathEnvironment = PATH_ENVIRONMENT;
         final ExecSpecAction action = new ExecSpecAction(false, temporaryDirectory, temporaryDirectory, "Linux", script,
@@ -132,9 +130,9 @@ public class ExecSpecActionTest {
     }
 
     @Test
-    public void shouldConfigureYarnCommandWithUnixShell() throws ExecutableNotFoundException, IOException {
-        final Path nodeExecutable = Files.createFile(temporaryDirectory.toPath().resolve("node"));
+    void shouldConfigureYarnCommandWithUnixShell() throws ExecutableNotFoundException, IOException {
         final Path binDirectory = Files.createDirectory(temporaryDirectory.toPath().resolve("bin"));
+        final Path nodeExecutable = Files.createFile(binDirectory.resolve("node"));
         final Path yarnExecutable = Files.createFile(binDirectory.resolve("yarn"));
         final String script = SCRIPT;
         final String pathEnvironment = PATH_ENVIRONMENT;

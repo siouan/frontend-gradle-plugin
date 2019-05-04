@@ -21,7 +21,7 @@ public class DownloaderImplTest {
     protected File temporaryDirectory;
 
     @Test
-    public void shouldFailWhenResourceNotFound() throws IOException {
+    void shouldFailWhenResourceNotFound() throws IOException {
         final File resourceFile = new File(temporaryDirectory, RESOURCE_NAME);
         final File downloadDirectory = new File(temporaryDirectory, "download");
         Files.createDirectory(downloadDirectory.toPath());
@@ -32,7 +32,7 @@ public class DownloaderImplTest {
     }
 
     @Test
-    public void shouldFailWhenDestinationFileCannotBeCreated() throws Exception {
+    void shouldFailWhenDestinationFileCannotBeCreated() throws Exception {
         final File resourceFile = new File(temporaryDirectory, RESOURCE_NAME);
         final File downloadDirectory = new File(temporaryDirectory, "download");
         final File destinationFile = new File("/volezp/gixkkle");
@@ -45,7 +45,7 @@ public class DownloaderImplTest {
     }
 
     @Test
-    public void shouldDownloadLocalResource() throws Exception {
+    void shouldDownloadLocalResource() throws Exception {
         final File resourceFile = new File(temporaryDirectory, RESOURCE_NAME);
         final File downloadDirectory = new File(temporaryDirectory, "download");
         final File destinationDirectory = new File(temporaryDirectory, "install");

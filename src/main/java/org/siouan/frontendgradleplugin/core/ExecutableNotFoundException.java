@@ -15,14 +15,29 @@ public class ExecutableNotFoundException extends FrontendException {
         super(executable);
     }
 
+    /**
+     * Builds the appropriate exception when the Node executable cannot be found.
+     *
+     * @return Exception.
+     */
     public static ExecutableNotFoundException newNodeExecutableNotFoundException() {
         return new ExecutableNotFoundException(NODE);
     }
 
+    /**
+     * Builds the appropriate exception when the NPM executable cannot be found.
+     *
+     * @return Exception.
+     */
     public static ExecutableNotFoundException newNpmExecutableNotFoundException() {
         return new ExecutableNotFoundException(NPM);
     }
 
+    /**
+     * Builds the appropriate exception when the Yarn executable cannot be found.
+     *
+     * @return Exception.
+     */
     public static ExecutableNotFoundException newYarnExecutableNotFoundException() {
         return new ExecutableNotFoundException(YARN);
     }
