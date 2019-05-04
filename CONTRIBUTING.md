@@ -54,4 +54,20 @@ gradlew pluginUnderTestMetadata
 'Fixed #<issue_number>'.
 - The automated test suite must be run and no test case must fail before any commit.
 
+### Continuous integration
+
+The project relies on [Travis CI Open Source][travis] to integrate continuously every change, pull request, in the
+repository. The configuration actually allows to build and test the plugin on the environments below:
+
+- Linux Ubuntu Xenial Xerus 16.04.6 LTS / OpenJDK 1.8.0_191 64 bits
+- Linux Ubuntu Trusty Tahr 14.04.5 LTS / OracleJDK 1.8.0_151 64 bits
+- Mac OS X 10.13 / OracleJDK 11.0.2 LTS 64 bits
+
+Ubuntu Xenial is the reference environment, used to analyze the source code with SonarCloud. By now, the plugin has been
+developed on Windows 10 Home with OracleJDK 1.8.0_202 64 bits and [JetBrains IntelliJ IDEA][intellij].
+
+*Note: continuous integration of Java projects on Windows is not supported by Travis yet.*
+
+[intellij]: <https://www.jetbrains.com/idea/> (IntelliJ IDEA)
 [issues]: <https://github.com/Siouan/frontend-gradle-plugin/issues> (Issues)
+[travis]: <https://travis-ci.org/> (Travis CI Open Source)
