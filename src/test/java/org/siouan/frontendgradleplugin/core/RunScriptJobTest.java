@@ -7,6 +7,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.gradle.api.Project;
 import org.gradle.api.Task;
@@ -14,18 +17,22 @@ import org.gradle.api.logging.Logger;
 import org.gradle.process.ExecResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 /**
- * Unit tests for the {@link ScriptRunJob} class.
+ * Unit tests for the {@link RunScriptJob} class.
  */
-class ScriptRunJobTest {
+class RunScriptJobTest {
 
     private static final String TASK_NAME = "task";
 
     private static final String SCRIPT = "script";
+
+    @TempDir
+    protected File temporaryDirectory;
 
     @Mock
     private Task task;
@@ -40,7 +47,7 @@ class ScriptRunJobTest {
     private ExecResult result;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.initMocks(this);
 
         when(task.getProject()).thenReturn(project);
@@ -48,12 +55,14 @@ class ScriptRunJobTest {
     }
 
     @Test
-    public void shouldRunScript() {
+    void shouldRunScript() throws ExecutableNotFoundException, IOException {
+        Files.createFile(temporaryDirectory.toPath().resolve("node.exe"));
+        final Path binDirectory = Files.createDirectory(temporaryDirectory.toPath().resolve("bin"));
+        Files.createFile(binDirectory.resolve("yarn.cmd"));
         final boolean yarnEnabled = true;
-        final File nodeInstallDirectory = new File("node");
-        final File yarnInstallDirectory = new File("yarn");
         final String script = SCRIPT;
-        final ScriptRunJob job = new ScriptRunJob(task, true, nodeInstallDirectory, yarnInstallDirectory, script);
+        final RunScriptJob job = new RunScriptJob(task, true, temporaryDirectory, temporaryDirectory, script,
+            "Windows NT");
         final ExecResult execResult = mock(ExecResult.class);
         when(project.exec(any(ExecSpecAction.class))).thenReturn(execResult);
         when(execResult.rethrowFailure()).thenReturn(execResult);
@@ -61,7 +70,7 @@ class ScriptRunJobTest {
         job.run();
 
         verify(project)
-            .exec(argThat(new ExecSpecActionMatcher(yarnEnabled, nodeInstallDirectory, yarnInstallDirectory, script)));
+            .exec(argThat(new ExecSpecActionMatcher(yarnEnabled, temporaryDirectory, temporaryDirectory, script)));
     }
 
     private static class ExecSpecActionMatcher implements ArgumentMatcher<ExecSpecAction> {

@@ -19,7 +19,8 @@ import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
 import org.siouan.frontendgradleplugin.util.FunctionalTestHelper;
 
 /**
- * Functional tests to verify the {@link RunScriptTask} integration in a Gradle build.
+ * Functional tests to verify the {@link RunScriptTask} integration in a Gradle build. This functional test is the only
+ * one that uses real Node/Yarn distributions.
  */
 class RunScriptTaskFuncTest {
 
@@ -27,7 +28,7 @@ class RunScriptTaskFuncTest {
     protected File projectDirectory;
 
     @Test
-    public void shouldRunScriptFrontendWithNpmOrYarn() throws IOException, URISyntaxException {
+    void shouldRunScriptFrontendWithNpmOrYarn() throws IOException, URISyntaxException {
         Files.copy(new File(getClass().getClassLoader().getResource("package-npm.json").toURI()).toPath(),
             projectDirectory.toPath().resolve("package.json"));
         final Map<String, Object> properties = new HashMap<>();
@@ -37,7 +38,7 @@ class RunScriptTaskFuncTest {
         customTaskDefinition.append(customTaskName);
         customTaskDefinition.append("', org.siouan.frontendgradleplugin.tasks.RunScriptTask) {\n");
         customTaskDefinition.append("dependsOn tasks.named('installFrontend')\n");
-        customTaskDefinition.append("script = 'run test'\n");
+        customTaskDefinition.append("script = 'run another-script'\n");
         customTaskDefinition.append("}\n");
         FunctionalTestHelper.createBuildFile(projectDirectory, properties, customTaskDefinition.toString());
 

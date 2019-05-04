@@ -1,11 +1,15 @@
 package org.siouan.frontendgradleplugin.core;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,15 +32,6 @@ public class ExecSpecActionTest {
 
     private static final String SCRIPT = " run script ";
 
-    private static final File NODE_INSTALL_DIRECTORY = new File("/usr/lib/node");
-
-    private static final File YARN_INSTALL_DIRECTORY = new File("/usr/lib/yarn");
-
-    private static final String NODE_INSTALL_PATH = NODE_INSTALL_DIRECTORY.getAbsolutePath() + File.pathSeparatorChar;
-
-    private static final String YARN_INSTALL_PATH =
-        YARN_INSTALL_DIRECTORY.getAbsolutePath() + File.separatorChar + "bin" + File.pathSeparatorChar;
-
     private static final String PATH_ENVIRONMENT = "/usr/bin:/usr/lib";
 
     @TempDir
@@ -52,73 +47,107 @@ public class ExecSpecActionTest {
     private ArgumentCaptor<List<String>> argsCaptor;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.initMocks(this);
     }
 
     @Test
-    public void shouldConfigureNpmCommandWithWindowsCmd() {
+    void shouldFailBuildingActionWhenNodeExecutableCannotBeFound() {
+        assertThatThrownBy(
+            () -> new ExecSpecAction(false, temporaryDirectory, temporaryDirectory, "", SCRIPT, afterConfigured))
+            .isInstanceOf(ExecutableNotFoundException.class).hasMessage(ExecutableNotFoundException.NODE);
+    }
+
+    @Test
+    void shouldFailBuildingActionWhenNpmExecutableCannotBeFound() throws IOException {
+        Files.createFile(temporaryDirectory.toPath().resolve("node.exe"));
+        assertThatThrownBy(() -> new ExecSpecAction(false, temporaryDirectory, temporaryDirectory, "Windows NT", SCRIPT,
+            afterConfigured)).isInstanceOf(ExecutableNotFoundException.class)
+            .hasMessage(ExecutableNotFoundException.NPM);
+    }
+
+    @Test
+    void shouldFailBuildingActionWhenYarnExecutableCannotBeFound() throws IOException {
+        final Path binDirectory = Files.createDirectory(temporaryDirectory.toPath().resolve("bin"));
+        Files.createFile(binDirectory.resolve("node"));
+        assertThatThrownBy(
+            () -> new ExecSpecAction(true, temporaryDirectory, temporaryDirectory, "Mac OS X", SCRIPT, afterConfigured))
+            .isInstanceOf(ExecutableNotFoundException.class).hasMessage(ExecutableNotFoundException.YARN);
+    }
+
+    @Test
+    void shouldConfigureNpmCommandWithWindowsCmd() throws ExecutableNotFoundException, IOException {
+        final Path nodeExecutable = Files.createFile(temporaryDirectory.toPath().resolve("node.exe"));
+        final Path npmExecutable = Files.createFile(temporaryDirectory.toPath().resolve("npm.cmd"));
         final String script = SCRIPT;
         final String pathEnvironment = PATH_ENVIRONMENT;
-        final ExecSpecAction action = new ExecSpecAction(false, NODE_INSTALL_DIRECTORY, YARN_INSTALL_DIRECTORY, script,
-            afterConfigured, "Windows NT");
+        final ExecSpecAction action = new ExecSpecAction(false, temporaryDirectory, temporaryDirectory, "Windows NT",
+            script, afterConfigured);
         when(execSpec.getEnvironment()).thenReturn(Collections.singletonMap("Path", pathEnvironment));
 
         action.execute(execSpec);
 
         final List<String> expectedArgs = new ArrayList<>();
-        expectedArgs.add("/c");
-        expectedArgs.add(String.join(" ", ExecSpecAction.NPM_EXECUTABLE, script.trim()));
-        assertExecSpecWith(ExecSpecAction.CMD_EXECUTABLE, expectedArgs, pathEnvironment, true, false);
+        expectedArgs.add(ExecSpecAction.CMD_RUN_EXIT_FLAG);
+        expectedArgs.add(String.join(" ", '"' + npmExecutable.toString() + '"', script.trim()));
+        assertExecSpecWith(ExecSpecAction.CMD_EXECUTABLE, expectedArgs, pathEnvironment, nodeExecutable.getParent());
     }
 
     @Test
-    public void shouldConfigureYarnCommandWithWindowsCmd() {
+    void shouldConfigureYarnCommandWithWindowsCmd() throws ExecutableNotFoundException, IOException {
+        final Path nodeExecutable = Files.createFile(temporaryDirectory.toPath().resolve("node.exe"));
+        final Path binDirectory = Files.createDirectory(temporaryDirectory.toPath().resolve("bin"));
+        final Path yarnExecutable = Files.createFile(binDirectory.resolve("yarn.cmd"));
         final String script = SCRIPT;
         final String pathEnvironment = PATH_ENVIRONMENT;
-        final ExecSpecAction action = new ExecSpecAction(true, NODE_INSTALL_DIRECTORY, YARN_INSTALL_DIRECTORY, script,
-            afterConfigured, "Windows NT");
+        final ExecSpecAction action = new ExecSpecAction(true, temporaryDirectory, temporaryDirectory, "Windows NT",
+            script, afterConfigured);
         when(execSpec.getEnvironment()).thenReturn(Collections.singletonMap("PATH", pathEnvironment));
 
         action.execute(execSpec);
 
         final List<String> expectedArgs = new ArrayList<>();
-        expectedArgs.add("/c");
-        expectedArgs.add(String.join(" ", ExecSpecAction.YARN_EXECUTABLE, script.trim()));
-        assertExecSpecWith(ExecSpecAction.CMD_EXECUTABLE, expectedArgs, pathEnvironment, true, true);
+        expectedArgs.add(ExecSpecAction.CMD_RUN_EXIT_FLAG);
+        expectedArgs.add(String.join(" ", '"' + yarnExecutable.toString() + '"', script.trim()));
+        assertExecSpecWith(ExecSpecAction.CMD_EXECUTABLE, expectedArgs, pathEnvironment, nodeExecutable.getParent());
     }
 
     @Test
-    public void shouldConfigureNpmCommandWithUnixShell() {
+    void shouldConfigureNpmCommandWithUnixShell() throws ExecutableNotFoundException, IOException {
+        final Path binDirectory = Files.createDirectory(temporaryDirectory.toPath().resolve("bin"));
+        final Path nodeExecutable = Files.createFile(binDirectory.resolve("node"));
+        final Path npmExecutable = Files.createFile(binDirectory.resolve("npm"));
         final String script = SCRIPT;
         final String pathEnvironment = PATH_ENVIRONMENT;
-        final ExecSpecAction action = new ExecSpecAction(false, NODE_INSTALL_DIRECTORY, YARN_INSTALL_DIRECTORY, script,
-            afterConfigured, "Linux");
+        final ExecSpecAction action = new ExecSpecAction(false, temporaryDirectory, temporaryDirectory, "Linux", script,
+            afterConfigured);
         when(execSpec.getEnvironment()).thenReturn(Collections.singletonMap("Path", pathEnvironment));
 
         action.execute(execSpec);
 
-        assertExecSpecWith(ExecSpecAction.NPM_EXECUTABLE, Arrays.asList(script.trim().split("\\s+")), pathEnvironment,
-            true, false);
+        assertExecSpecWith(npmExecutable.toString(), Arrays.asList(script.trim().split("\\s+")), pathEnvironment,
+            nodeExecutable.getParent());
     }
 
     @Test
-    public void shouldConfigureYarnCommandWithUnixShell() {
+    void shouldConfigureYarnCommandWithUnixShell() throws ExecutableNotFoundException, IOException {
+        final Path binDirectory = Files.createDirectory(temporaryDirectory.toPath().resolve("bin"));
+        final Path nodeExecutable = Files.createFile(binDirectory.resolve("node"));
+        final Path yarnExecutable = Files.createFile(binDirectory.resolve("yarn"));
         final String script = SCRIPT;
         final String pathEnvironment = PATH_ENVIRONMENT;
-        final ExecSpecAction action = new ExecSpecAction(true, NODE_INSTALL_DIRECTORY, YARN_INSTALL_DIRECTORY, script,
-            afterConfigured, "Mac OS X");
+        final ExecSpecAction action = new ExecSpecAction(true, temporaryDirectory, temporaryDirectory, "Mac OS X",
+            script, afterConfigured);
         when(execSpec.getEnvironment()).thenReturn(Collections.singletonMap("PATH", pathEnvironment));
 
         action.execute(execSpec);
 
-        assertExecSpecWith(ExecSpecAction.YARN_EXECUTABLE, Arrays.asList(script.trim().split("\\s+")), pathEnvironment,
-            true, true);
+        assertExecSpecWith(yarnExecutable.toString(), Arrays.asList(script.trim().split("\\s+")), pathEnvironment,
+            nodeExecutable.getParent());
     }
 
     private void assertExecSpecWith(final String expectedExecutable, final List<String> expectedArgs,
-        final String initialPathEnvironment, final boolean nodeInstallPathIncluded,
-        final boolean yarnInstallPathIncluded) {
+        final String initialPathEnvironment, final Path nodeExecutableDirectory) {
         verify(execSpec).setExecutable(expectedExecutable);
         verify(execSpec).setArgs(argsCaptor.capture());
         final List<String> args = argsCaptor.getValue();
@@ -130,16 +159,7 @@ public class ExecSpecActionTest {
         assertThat(pathVariableCaptor.getValue().toLowerCase()).isEqualTo("path");
         final String pathValue = pathValueCaptor.getValue().toString();
         assertThat(pathValue).contains(initialPathEnvironment);
-        if (nodeInstallPathIncluded) {
-            assertThat(pathValue).contains(NODE_INSTALL_PATH);
-        } else {
-            assertThat(pathValue).doesNotContain(NODE_INSTALL_PATH);
-        }
-        if (yarnInstallPathIncluded) {
-            assertThat(pathValue).contains(YARN_INSTALL_PATH);
-        } else {
-            assertThat(pathValue).doesNotContain(YARN_INSTALL_PATH);
-        }
+        assertThat(pathValue).contains(nodeExecutableDirectory.toString());
         verifyNoMoreInteractions(execSpec);
         verify(afterConfigured).accept(execSpec);
         verifyNoMoreInteractions(afterConfigured);

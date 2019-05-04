@@ -9,11 +9,14 @@ import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
-import org.siouan.frontendgradleplugin.core.DistributionInstallJob;
+import org.siouan.frontendgradleplugin.core.DistributionInstaller;
+import org.siouan.frontendgradleplugin.core.DistributionInstallerSettings;
+import org.siouan.frontendgradleplugin.core.DistributionPostInstallException;
 import org.siouan.frontendgradleplugin.core.DistributionUrlResolverException;
 import org.siouan.frontendgradleplugin.core.DownloadException;
 import org.siouan.frontendgradleplugin.core.InvalidDistributionException;
 import org.siouan.frontendgradleplugin.core.UnsupportedDistributionArchiveException;
+import org.siouan.frontendgradleplugin.core.Utils;
 import org.siouan.frontendgradleplugin.core.YarnDistributionUrlResolver;
 
 /**
@@ -59,11 +62,22 @@ public class YarnInstallTask extends DefaultTask {
         return yarnInstallDirectory;
     }
 
+    /**
+     * Executes the task: downloads and installs the distribution.
+     *
+     * @throws IOException If an I/O error occured.
+     * @throws InvalidDistributionException If the downloaded distribution is invalid.
+     * @throws DistributionUrlResolverException If the URL to download the distribution cannot be downloaded.
+     * @throws UnsupportedDistributionArchiveException If the type of the distribution is not supported.
+     * @throws DownloadException If a download error occured.
+     * @throws DistributionPostInstallException If the post-install action has failed.
+     */
     @TaskAction
     public void execute() throws IOException, InvalidDistributionException, DistributionUrlResolverException,
-        UnsupportedDistributionArchiveException, DownloadException {
-        new DistributionInstallJob(this,
+        UnsupportedDistributionArchiveException, DownloadException, DistributionPostInstallException {
+        final DistributionInstallerSettings settings = new DistributionInstallerSettings(this, Utils.getSystemOsName(),
             new YarnDistributionUrlResolver(yarnVersion.get(), yarnDistributionUrl.getOrNull()), null,
-            yarnInstallDirectory.getOrNull()).install();
+            yarnInstallDirectory.getOrNull(), null);
+        new DistributionInstaller(settings).install();
     }
 }

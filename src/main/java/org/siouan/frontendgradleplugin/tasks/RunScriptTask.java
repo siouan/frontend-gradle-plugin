@@ -3,6 +3,7 @@ package org.siouan.frontendgradleplugin.tasks;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.siouan.frontendgradleplugin.FrontendExtension;
+import org.siouan.frontendgradleplugin.core.ExecutableNotFoundException;
 
 /**
  * Task provided as a type to let developers implement custom task based on it. The task does not expose Node/Yarn
@@ -24,11 +25,8 @@ public class RunScriptTask extends AbstractRunScriptTask {
         return script;
     }
 
-    /**
-     * Executes the task by running the script with NPM/Yarn.
-     */
     @Override
-    public void execute() {
+    public void execute() throws ExecutableNotFoundException {
         final FrontendExtension extension = getProject().getExtensions().findByType(FrontendExtension.class);
         yarnEnabled.set(extension.getYarnEnabled());
         nodeInstallDirectory.set(extension.getNodeInstallDirectory());

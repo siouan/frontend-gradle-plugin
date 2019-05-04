@@ -10,7 +10,7 @@
   "dependencies": {
   },
   "scripts": {
-    "another-script": "echo 'Another frontend script executed'",
+    "another-script": "node -v && npm -v && echo 'Another frontend script executed' && npm run check",
     "assemble": "echo 'Frontend assembled'",
     "check": "npm run lint && npm run test",
     "clean": "echo 'Frontend cleaned'",

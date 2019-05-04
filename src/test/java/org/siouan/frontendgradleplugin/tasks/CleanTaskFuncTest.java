@@ -19,7 +19,9 @@ import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
 import org.siouan.frontendgradleplugin.util.FunctionalTestHelper;
 
 /**
- * Functional tests to verify the {@link CleanTask} integration in a Gradle build.
+ * Functional tests to verify the {@link CleanTask} integration in a Gradle build. Test cases uses fake Node/Yarn
+ * distributions, to avoid the download overhead. The 'yarn' and 'npm' executables in these distributions simply call
+ * the 'node' executable with the same arguments.
  */
 class CleanTaskFuncTest {
 
@@ -27,11 +29,12 @@ class CleanTaskFuncTest {
     protected File projectDirectory;
 
     @Test
-    public void shouldCleanFrontendWithNpmOrYarn() throws IOException, URISyntaxException {
+    void shouldCleanFrontendWithNpmOrYarn() throws IOException, URISyntaxException {
         Files.copy(new File(getClass().getClassLoader().getResource("package-npm.json").toURI()).toPath(),
             projectDirectory.toPath().resolve("package.json"));
         final Map<String, Object> properties = new HashMap<>();
         properties.put("nodeVersion", "10.15.3");
+        properties.put("nodeDistributionUrl", getClass().getClassLoader().getResource("node-v10.15.3.zip").toString());
         properties.put("cleanScript", "run clean");
         FunctionalTestHelper.createBuildFile(projectDirectory, properties);
 
@@ -54,6 +57,8 @@ class CleanTaskFuncTest {
             projectDirectory.toPath().resolve("package.json"), StandardCopyOption.REPLACE_EXISTING);
         properties.put("yarnEnabled", true);
         properties.put("yarnVersion", "1.15.2");
+        properties
+            .put("yarnDistributionUrl", getClass().getClassLoader().getResource("yarn-v1.15.2.tar.gz").toString());
         FunctionalTestHelper.createBuildFile(projectDirectory, properties);
 
         final BuildResult result3 = runGradle(projectDirectory, FrontendGradlePlugin.GRADLE_CLEAN_TASK_NAME);
