@@ -1,24 +1,22 @@
 # Frontend Gradle plugin
 
-[![Latest release 1.1.1](https://img.shields.io/badge/Latest%20release-1.1.1-blue.svg)](https://github.com/Siouan/frontend-gradle-plugin/releases/tag/v1.1.1)
+[![Latest release 1.1.2](https://img.shields.io/badge/Latest%20release-1.1.2-blue.svg)](https://github.com/Siouan/frontend-gradle-plugin/releases/tag/v1.1.2)
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
 
-[![Build status](https://travis-ci.org/Siouan/frontend-gradle-plugin.svg?branch=master)](https://travis-ci.org/Siouan/frontend-gradle-plugin)
+[![Build status](https://travis-ci.org/Siouan/frontend-gradle-plugin.svg?branch=1.1)](https://travis-ci.org/Siouan/frontend-gradle-plugin)
 [![Quality gate status](https://sonarcloud.io/api/project_badges/measure?project=Siouan_frontend-gradle-plugin&metric=alert_status)](https://sonarcloud.io/dashboard?id=Siouan_frontend-gradle-plugin)
 [![Code coverage](https://sonarcloud.io/api/project_badges/measure?project=Siouan_frontend-gradle-plugin&metric=coverage)](https://sonarcloud.io/dashboard?id=Siouan_frontend-gradle-plugin)
 [![Reliability](https://sonarcloud.io/api/project_badges/measure?project=Siouan_frontend-gradle-plugin&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=Siouan_frontend-gradle-plugin)
 
-This plugin integrates frontend build tasks into a Gradle build. It is inspired by the
-[frontend-maven-plugin][frontend-maven-plugin].
-
-Detailed changes for each release are documented in the [release notes][release-notes]. The project uses [semantic
-versioning][semantic-versioning] for its releases.
+This plugin allows to integrate a frontend NPM/Yarn build into Gradle. It is inspired by the
+[frontend-maven-plugin][frontend-maven-plugin]. See the [quick start guide](#quick-start-guide) below to
+install/configure the plugin, and build your frontend application.
 
 ## Summary
 
-- [Requirements](#requirements)
-- [Installation](#installation)
-  - [Activation](#activation)
+- [Quick start guide](#quick-start-guide)
+  - [Requirements](#requirements)
+  - [Installation](#installation)
     - [Using Gradle DSL](#using-gradle-dsl)
     - [Using Gradle build script block](#using-gradle-build-script-block)
   - [Configuration](#configuration)
@@ -26,10 +24,10 @@ versioning][semantic-versioning] for its releases.
     - [Typical configuration with NPM](#typical-configuration-with-npm)
     - [Typical configuration with Yarn](#typical-configuration-with-yarn)
   - [Final steps](#final-steps)
-    - [Install Node/NPM/Yarn/frontend dependencies](#install-nodenpmyarnfrontend-dependencies)
+    - [Build the frontend](#build-the-frontend)
     - [Use Node/NPM/Yarn apart from Gradle](#use-nodenpmyarn-apart-from-gradle)
 - [Tasks reference](#tasks-reference)
-  - [Dependencies](#dependencies)
+  - [Task tree](#task-tree)
   - [Install Node](#install-node)
   - [Install Yarn](#install-yarn)
   - [Install frontend dependencies](#install-frontend-dependencies)
@@ -42,7 +40,9 @@ versioning][semantic-versioning] for its releases.
   - [What kind of script should I attach to the `checkFrontend` task?](#what-kind-of-script-should-i-attach-to-the-checkfrontend-task)
 - [Contributing][contributing]
 
-## Requirements
+## Quick start guide
+
+### Requirements
 
 The plugin supports:
 - [Gradle][gradle] 5.1+
@@ -50,9 +50,10 @@ The plugin supports:
 - [Node][node] 6.2.1+
 - [Yarn][yarn] 1.0.0+
 
-## Installation
+The plugin is built and tested on Linux, Mac OS, Windows. For a full list of build environments used, see the
+[contributing notes][contributing].
 
-### Activation
+### Installation
 
 2 options are available.
 
@@ -63,7 +64,7 @@ This is the modern and recommended approach.
 ```gradle
 // build.gradle
 plugins {
-    id 'org.siouan.frontend' version '1.1.1'
+    id 'org.siouan.frontend' version '1.1.2'
 }
 ```
 
@@ -75,10 +76,10 @@ This approach is the legacy way to resolve and apply plugins.
 // build.gradle
 buildscript {
     repositories {
-        jcenter()
+        url 'https://plugins.gradle.org/m2/'
     }
     dependencies {
-        classpath 'org.siouan:frontend-gradle-plugin:1.1.1'
+        classpath 'org.siouan:frontend-gradle-plugin:1.1.2'
     }
 }
 
@@ -95,11 +96,14 @@ All settings are introduced hereafter, with default value for each property.
 // build.gradle
 frontend {
     // NODE SETTINGS
-    // Version of the distribution to download, used to build the URL to download the distribution, if not set.
+    // Node version, used to build the URL to download the corresponding distribution, if the 'nodeDistributionUrl'
+    // property is not set.
     nodeVersion = '10.15.3'
 
     // [Optional] Sets this property to force the download from a custom website. By default, this property is 'null',
     // and the plugin attempts to download the distribution compatible with the current platform from the Node website.
+    // The version of the distribution is expected to be the same as the one set in the 'nodeVersion' property, or this
+    // may lead to unexpected results.
     nodeDistributionUrl = 'https://nodejs.org/dist/vX.Y.Z/node-vX.Y.Z-win-x64.zip'
 
     // [Optional] Install directory where the distribution archive shall be exploded.
@@ -110,22 +114,22 @@ frontend {
     // be downloaded and installed by the plugin.
     yarnEnabled = false
 
-    // Yarn version, used to build the URL to download the corresponding distribution, if not set. If a custom
-    // 'yarnDistributionUrl' property is set, the version of the distribution is expected to be the same as the one set
-    // in the 'yarnVersion' property, or this may lead to unexpected results. This property is mandatory when the
-    // property 'yarnEnabled' is true.
+    // [Optional] Yarn version, used to build the URL to download the corresponding distribution, if the
+    // 'yarnDistributionUrl' property is not set. This property is mandatory when the 'yarnEnabled' property is true.
     yarnVersion = '1.15.2'
 
     // [Optional] Sets this property to force the download from a custom website. By default, this property is 'null',
     // and the plugin attempts to download the distribution compatible with the current platform from the Yarn website.
+    // The version of the distribution is expected to be the same as the one set in the 'yarnVersion' property, or this
+    // may lead to unexpected results.
     yarnDistributionUrl = 'https://github.com/yarnpkg/yarn/releases/download/vX.Y.Z/yarn-vX.Y.Z.tar.gz'
 
     // [Optional] Install directory where the distribution archive shall be exploded.
     yarnInstallDirectory = "${projectDir}/yarn"
 
     // OTHER SETTINGS
-    // Name of the NPM/Yarn scripts (see 'package.json' file) that shall be executing depending on the Gradle lifecycle
-    // task. The values below are passed as argument of the 'npm' or 'yarn' executable.
+    // Name of the NPM/Yarn scripts (see 'package.json' file) that shall be executed depending on the Gradle lifecycle
+    // task. The values below are passed as argument of the 'npm' or 'yarn' executables.
 
     // [Optional] Use this property only if frontend's compiled resources are generated out of the '${project.buildDir}'
     // directory. Default value is <null>. This property is directly used by the 'cleanFrontend' task. The task is
@@ -133,10 +137,10 @@ frontend {
     cleanScript = 'run clean'
 
     // [Optional] Script called to build frontend's artifacts. Default value is <null>. This property is directly used
-    // by the 'assembleFrontend' task. The task also run when the Gradle built-in 'assemble' task is run.
+    // by the 'assembleFrontend' task. The task is run when the Gradle built-in 'assemble' task is run.
     assembleScript = 'run assemble'
 
-    // [Optional] Script called to run frontend's tests. Default value is <null>. This property is directly used by the
+    // [Optional] Script called to check the frontend. Default value is <null>. This property is directly used by the
     // 'checkFrontend' task. The task is run when the Gradle built-in 'check' task is run.
     checkScript = 'run check'
 }
@@ -159,8 +163,8 @@ frontend {
 ```gradle
 // build.gradle
 frontend {
-    yarnEnabled = true
     nodeVersion = '<X.Y.Z>'
+    yarnEnabled = true
     yarnVersion = '<X.Y.Z>'
     cleanScript = 'run clean'
     assembleScript = 'run assemble'
@@ -170,16 +174,18 @@ frontend {
 
 ### Final steps
 
-#### Install Node/NPM/Yarn/frontend dependencies
+#### Build the frontend
 
-Working with the frontend application requires the Node distribution, the Yarn distribution - if enabled, and 
-the frontend dependencies declared in the `package.json` file are all installed/up-to-date. If this is not the case, it
-is recommended to run the `installFrontend` task. Open a terminal, and execute the following command in the project's
-directory:
+Now that the plugin is correctly installed and configured, open a terminal, and execute the following command in the
+project's directory:
 
 ```sh
-gradlew installFrontend
+gradle build
 ```
+
+If the frontend application is part of a full-stack Java artifact, take a look at
+[this guide](#how-to-assemble-a-frontend-and-a-java-backend-in-a-single-artifact) to assemble the frontend and the
+backend together.
 
 #### Use Node/NPM/Yarn apart from Gradle
  
@@ -199,9 +205,9 @@ environment variable.
 The plugin registers multiple tasks, some having dependencies with other, and also with Gradle lifecycle tasks defined
 in the [Gradle base plugin][gradle-base-plugin].
 
-### Dependencies
+### Task tree
 
-![Task dependencies][task-dependencies]
+![Task tree][task-tree]
 
 ### Install Node
 
@@ -279,7 +285,6 @@ Assembling the frontend before the backend shall not be difficult to setup in Gr
 ```sh
 gradlew taskTree --no-repeat assemble
 
-:build
 :assemble
 +--- :assembleFrontend
 |    \--- :installFrontend
@@ -324,12 +329,12 @@ tasks.named('processResources').configure {
 
 ### What kind of script should I attach to the `checkFrontend` task?
 
-The `checkFrontend` task is a dependency of the `check` task. The Gradle official documentation states that the `check`
-task shall be used to `attach [...] verification tasks, such as ones that run tests [...]`. It's enough vague to let you
-consider any verification task. The script mapped to the `checkFrontend` task may run either automated unit tests, or
-functional tests, or a linter, or any other verification action, or even combine some or all of them. Every combination
-is possible, since you can define a script in your `package.json` file that executes sequentially the actions of your
-choice.
+The `checkFrontend` task is attached to the lifecycle `check` task. The Gradle official documentation states that the
+`check` task shall be used to `attach [...] verification tasks, such as ones that run tests [...]`. It's enough vague to
+let you consider any verification task. The script mapped to the `checkFrontend` task may run either automated unit
+tests, or functional tests, or a linter, or any other verification action, or even combine some or all of them. Every
+combination is even possible, since you can define a script in your `package.json` file that executes sequentially the
+actions of your choice.
 
 [contributing]: <CONTRIBUTING.md> (Contributing to this project)
 [frontend-maven-plugin]: <https://github.com/eirslett/frontend-maven-plugin> (Frontend Maven plugin)
@@ -339,11 +344,10 @@ choice.
 [gradle-dsl]: <https://docs.gradle.org/current/userguide/plugins.html#sec:plugins_block> (Gradle DSL)
 [gradle-java-plugin]: <https://docs.gradle.org/current/userguide/java_plugin.html> (Gradle Java plugin)
 [gradle-spring-boot-plugin]: <https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/html/> (Gradle Spring Boot plugin)
-[j2ee]: <https://www.oracle.com/technetwork/java/javaee/> (J2EE)
 [jdk]: <https://docs.oracle.com/en/java/javase/> (Java Development Kit)
 [node]: <https://nodejs.org/> (Node.js)
 [release-notes]: <https://github.com/siouan/frontend-gradle-plugin/releases> (Release notes)
 [semantic-versioning]: <https://semver.org/> (Semantic versioning)
 [spring-boot]: <https://spring.io/projects/spring-boot> (Spring Boot)
-[task-dependencies]: <task-dependencies.png>
+[task-tree]: <task-tree.png>
 [yarn]: <https://yarnpkg.com/> (Yarn)

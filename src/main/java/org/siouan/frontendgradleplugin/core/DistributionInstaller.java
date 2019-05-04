@@ -4,38 +4,26 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Optional;
 import java.util.function.Function;
 
 import org.gradle.api.Project;
-import org.gradle.api.Task;
 import org.gradle.api.file.FileTree;
 
 /**
- * Job that downloads and installs a distribution.
+ * Component that downloads and installs a distribution.
  */
-public class DistributionInstallJob extends AbstractJob {
+public class DistributionInstaller extends AbstractTaskJob {
 
     /**
      * Directory where the distribution shall be installed.
      */
-    private final File installDirectory;
+    private final DistributionInstallerSettings settings;
 
-    /**
-     * Resolver of the distribution download URL.
-     */
-    private final DistributionUrlResolver urlResolver;
-
-    /**
-     * Validator of the distribution.
-     */
-    private final DistributionValidator validator;
-
-    public DistributionInstallJob(final Task task, final DistributionUrlResolver urlResolver,
-        final DistributionValidator validator, final File installDirectory) {
-        super(task);
-        this.urlResolver = urlResolver;
-        this.validator = validator;
-        this.installDirectory = installDirectory;
+    public DistributionInstaller(final DistributionInstallerSettings settings) {
+        super(settings.getTask());
+        this.settings = settings;
     }
 
     /**
@@ -55,27 +43,29 @@ public class DistributionInstallJob extends AbstractJob {
      * @throws DownloadException If the distribution could not be downloaded.
      * @throws UnsupportedDistributionArchiveException If the distribution archive is not supported, and could not be
      * exploded.
+     * @throws DistributionPostInstallException If the post-install action has failed.
      */
     public void install()
         throws InvalidDistributionException, IOException, DistributionUrlResolverException, DownloadException,
-        UnsupportedDistributionArchiveException {
+        UnsupportedDistributionArchiveException, DistributionPostInstallException {
         final Project project = task.getProject();
 
         checkInstallDirectory();
 
         // Resolve the URL to download the distribution
-        final URL distributionUrl = urlResolver.resolve();
+        final URL distributionUrl = settings.getUrlResolver().resolve();
 
         // Download the distribution
         final String distributionUrlAsString = distributionUrl.toString();
         logLifecycle("Downloading distribution at '" + distributionUrlAsString + "'");
         final DownloaderImpl downloader = new DownloaderImpl(task.getTemporaryDir());
-        final File distributionFile = new File(installDirectory,
+        final File distributionFile = new File(settings.getInstallDirectory(),
             distributionUrlAsString.substring(distributionUrlAsString.lastIndexOf('/') + 1));
         downloader.download(distributionUrl, distributionFile);
 
-        if (validator != null) {
-            validator.validate(distributionUrl, distributionFile);
+        final Optional<DistributionValidator> validator = settings.getValidator();
+        if (validator.isPresent()) {
+            validator.get().validate(distributionUrl, distributionFile);
         }
 
         // Explode the archive
@@ -103,13 +93,20 @@ public class DistributionInstallJob extends AbstractJob {
         logLifecycle("Removing distribution file '" + distributionFile.getAbsolutePath() + "'");
         Files.delete(distributionFile.toPath());
 
+        logLifecycle("Running post-install");
+        final Optional<DistributionPostInstallAction> listener = settings.getPostInstallAction();
+        if (listener.isPresent()) {
+            listener.get().onDistributionInstalled(settings);
+        }
+
         logLifecycle("Distribution installed in '" + distributionFile.getParent() + "'");
     }
 
     private void checkInstallDirectory() throws IOException {
-        Files.createDirectories(installDirectory.toPath());
+        final Path installPath = settings.getInstallDirectory().toPath();
+        Files.createDirectories(installPath);
 
-        logLifecycle("Removing content in install directory '" + installDirectory.getAbsolutePath() + "'.");
-        Utils.deleteRecursively(installDirectory.toPath(), false);
+        logLifecycle("Removing content in install directory '" + installPath.toString() + "'.");
+        Utils.deleteRecursively(installPath, false);
     }
 }

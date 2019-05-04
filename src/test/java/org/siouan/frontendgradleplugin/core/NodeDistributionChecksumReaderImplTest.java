@@ -24,14 +24,14 @@ class NodeDistributionChecksumReaderImplTest {
     protected File temporaryDirectory;
 
     @Test
-    public void shouldFailWhenChecksumFileNotReadable() {
+    void shouldFailWhenChecksumFileNotReadable() {
         assertThatThrownBy(
             () -> new NodeDistributionChecksumReaderImpl().readHash(new File("dummy-filename"), DISTRIBUTION_FILENAME))
             .isInstanceOf(IOException.class);
     }
 
     @Test
-    public void shouldFailWhenChecksumNotFound() throws IOException {
+    void shouldFailWhenChecksumNotFound() throws IOException {
         final File checksumFile = new File(temporaryDirectory, CHECKSUM_FILENAME);
         Files.createFile(checksumFile.toPath());
         assertThatThrownBy(() -> new NodeDistributionChecksumReaderImpl().readHash(checksumFile, DISTRIBUTION_FILENAME))
@@ -39,7 +39,7 @@ class NodeDistributionChecksumReaderImplTest {
     }
 
     @Test
-    public void shouldReturnChecksumWhenAtEndOfFileWithoutNewLine()
+    void shouldReturnChecksumWhenAtEndOfFileWithoutNewLine()
         throws IOException, NodeDistributionChecksumNotFoundException {
         final String checksum = "523ab86h853e86";
         final File checksumFile = new File(temporaryDirectory, CHECKSUM_FILENAME);
@@ -55,7 +55,7 @@ class NodeDistributionChecksumReaderImplTest {
     }
 
     @Test
-    public void shouldReturnChecksumWhenAtEndOfFileWithNewLine()
+    void shouldReturnChecksumWhenAtEndOfFileWithNewLine()
         throws IOException, NodeDistributionChecksumNotFoundException {
         final String checksum = "523ab86h853e86";
         final File checksumFile = new File(temporaryDirectory, CHECKSUM_FILENAME);

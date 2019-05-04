@@ -17,20 +17,22 @@ directly.
 
 - Apart from your preferred IDE, no other tools is required.
 - Use the integrated Gradle Wrapper executable `gradlew` to execute development tasks apart from an IDE.
-- It is an objective to keep the plugin independent, small. No dependencies shall be added without approbation.
-- All packages, classes, methods shall have a relevant documentation. A relevant documentation provides all information
-to identify the responsibility and behaviour of the class/method, such as developers don't have to inspect the code to
+- It is a requirement to keep the plugin independent, small. No dependencies shall be added without approbation.
+- All packages, classes, methods shall have a relevant documentation. A relevant documentation provides information to
+identify the responsibility and behaviour of the class/method, such as developers don't have to inspect the code to
 understand how to use it.
 - Prefer adding relevant documentation directly in the code instead of creating an implementation document, to guarantee
 accessibility for developers.
 - Designing automated unit tests with a good coverage for classes tightly coupled with Gradle API is not a
 trivial task, due to the design of this API. That's why all business processes in the plugin shall remain the most
 independent possible, away from this API, with an appropriate level of abstraction.
-- This separation between classes tightly coupled with Gradle API and classes containing business processes is
-implemented with 2 packages: `org.siouan.frontendgradleplugin.tasks` and `org.siouan.frontendgradleplugin.core`. 
-- Unit tests shall be written for all classes. Code coverage with unit tests shall be the highest possible, to avoid
-unknown behaviours at execution, and improve software maintainability, predictability, and reliability.
-- Functional tests shall be written for each task class. 
+- This separation between classes tightly coupled with Gradle API (inheritance) and classes containing business
+processes is implemented with 2 packages: `org.siouan.frontendgradleplugin.tasks` and
+`org.siouan.frontendgradleplugin.core`. 
+- Unit tests shall be written for each class in the `org.siouan.frontendgradleplugin.tasks` package. Code coverage with
+unit tests shall be the highest possible, to avoid unknown behaviours at execution, and improve software
+maintainability, predictability, and reliability.
+- Functional tests shall be written for each class in the `org.siouan.frontendgradleplugin.tasks` package.
 
 ### Executing functional tests from an IDE
 
@@ -52,4 +54,20 @@ gradlew pluginUnderTestMetadata
 'Fixed #<issue_number>'.
 - The automated test suite must be run and no test case must fail before any commit.
 
+### Continuous integration
+
+The project relies on [Travis CI Open Source][travis] to integrate continuously every change, pull request, in the
+repository. The configuration actually allows to build and test the plugin on the environments below:
+
+- Linux Ubuntu Xenial Xerus 16.04.6 LTS / OpenJDK 1.8.0_191 64 bits
+- Linux Ubuntu Trusty Tahr 14.04.5 LTS / OracleJDK 1.8.0_151 64 bits
+- Mac OS X 10.13 / OracleJDK 11.0.2 LTS 64 bits
+
+Ubuntu Xenial is the reference environment, used to analyze the source code with SonarCloud. By now, the plugin has been
+developed on Windows 10 Home with OracleJDK 1.8.0_202 64 bits and [JetBrains IntelliJ IDEA][intellij].
+
+*Note: continuous integration of Java projects on Windows is not supported by Travis yet.*
+
+[intellij]: <https://www.jetbrains.com/idea/> (IntelliJ IDEA)
 [issues]: <https://github.com/Siouan/frontend-gradle-plugin/issues> (Issues)
+[travis]: <https://travis-ci.org/> (Travis CI Open Source)

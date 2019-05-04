@@ -28,7 +28,7 @@ public class FrontendGradlePluginTest {
     private Project project;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.initMocks(this);
 
         project = ProjectBuilder.builder().build();
@@ -36,7 +36,7 @@ public class FrontendGradlePluginTest {
     }
 
     @Test
-    public void shouldRegisterTasksWithDefaultExtensionValuesWhenApplied() {
+    void shouldRegisterTasksWithDefaultExtensionValuesWhenApplied() {
         plugin.apply(project);
 
         final FrontendExtension extension = project.getExtensions().findByType(FrontendExtension.class);
@@ -100,7 +100,7 @@ public class FrontendGradlePluginTest {
     }
 
     @Test
-    public void shouldRegisterTasksWithCustomExtensionValuesWhenApplied() {
+    void shouldRegisterTasksWithCustomExtensionValuesWhenApplied() {
         plugin.apply(project);
 
         final FrontendExtension extension = project.getExtensions().findByType(FrontendExtension.class);

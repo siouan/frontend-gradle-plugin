@@ -5,7 +5,7 @@ import org.gradle.api.Task;
 /**
  * Class that provides common utilities for this plugin's jobs.
  */
-abstract class AbstractJob {
+abstract class AbstractTaskJob {
 
     protected final Task task;
 
@@ -14,7 +14,7 @@ abstract class AbstractJob {
      *
      * @param task Task.
      */
-    protected AbstractJob(final Task task) {
+    protected AbstractTaskJob(final Task task) {
         this.task = task;
     }
 
@@ -50,9 +50,10 @@ abstract class AbstractJob {
     }
 
     /**
-     * Shortcut to log a WARN LIFECYCLE message with the task's logger.
+     * Shortcut to log a WARN message with the task's logger.
      *
      * @param message Message.
+     * @param throwable Throwable.
      */
     protected void logWarn(final String message, final Throwable throwable) {
         task.getLogger().warn(formatMessage(message), throwable);

@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
@@ -28,12 +29,11 @@ import org.junit.jupiter.api.io.TempDir;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.invocation.InvocationOnMock;
 
 /**
- * Unit tests for the {@link DistributionInstallJob} class.
+ * Unit tests for the {@link DistributionInstaller} class.
  */
-public class DistributionInstallJobTest {
+public class DistributionInstallerTest {
 
     @TempDir
     protected File temporaryDirectory;
@@ -53,8 +53,11 @@ public class DistributionInstallJobTest {
     @Mock
     private DistributionValidator validator;
 
+    @Mock
+    private DistributionPostInstallAction listener;
+
     @BeforeEach
-    public void setUp() throws IOException {
+    void setUp() throws IOException {
         MockitoAnnotations.initMocks(this);
 
         when(task.getProject()).thenReturn(project);
@@ -65,74 +68,79 @@ public class DistributionInstallJobTest {
     }
 
     @Test
-    public void shouldFailWhenDistributionNotFound() throws DistributionUrlResolverException, MalformedURLException {
+    void shouldFailWhenDistributionNotFound() throws DistributionUrlResolverException, MalformedURLException {
         when(urlResolver.resolve()).thenReturn(URI.create("https://pg.htrhjyt.gvdfciz/htrsdf").toURL());
-        final DistributionInstallJob job = new DistributionInstallJob(task, urlResolver, null,
-            new File(temporaryDirectory, "install"));
+        final DistributionInstaller job = new DistributionInstaller(
+            new DistributionInstallerSettings(task, Utils.getSystemOsName(), urlResolver, null,
+                new File(temporaryDirectory, "install"), listener));
 
         assertThatThrownBy(job::install).isInstanceOf(DownloadException.class);
 
         verify(urlResolver).resolve();
         verifyNoMoreInteractions(urlResolver);
+        verifyZeroInteractions(validator, listener);
     }
 
     @Test
-    public void shouldFailWhenDistributionArchiveIsCorrupted()
+    void shouldFailWhenDistributionArchiveIsCorrupted()
         throws DistributionUrlResolverException, InvalidDistributionException {
         final URL distributionUrl = getClass().getClassLoader().getResource("distribution.tar.gz");
-        final File installDirectory = new File(temporaryDirectory, "install");
         when(urlResolver.resolve()).thenReturn(distributionUrl);
         final Exception expectedException = new InvalidDistributionException("");
         doThrow(expectedException).when(validator).validate(eq(distributionUrl), any(File.class));
-        final DistributionInstallJob job = new DistributionInstallJob(task, urlResolver, validator,
-            new File(temporaryDirectory, "install"));
+        final DistributionInstaller job = new DistributionInstaller(
+            new DistributionInstallerSettings(task, Utils.getSystemOsName(), urlResolver, validator,
+                new File(temporaryDirectory, "install"), listener));
 
         assertThatThrownBy(job::install).isEqualTo(expectedException);
 
         verify(urlResolver).resolve();
-        verifyNoMoreInteractions(urlResolver);
         verify(validator).validate(eq(distributionUrl), any(File.class));
-        verifyNoMoreInteractions(validator);
+        verifyNoMoreInteractions(urlResolver, validator);
+        verifyZeroInteractions(listener);
     }
 
     @Test
-    public void shouldFailWhenDistributionArchiveIsNotSupported() throws DistributionUrlResolverException {
+    void shouldFailWhenDistributionArchiveIsNotSupported() throws DistributionUrlResolverException {
         final URL distributionUrl = getClass().getClassLoader().getResource("node-v10.15.1.txt");
-        final File installDirectory = new File(temporaryDirectory, "install");
         when(urlResolver.resolve()).thenReturn(distributionUrl);
-        final DistributionInstallJob job = new DistributionInstallJob(task, urlResolver, null,
-            new File(temporaryDirectory, "install"));
+        final DistributionInstaller job = new DistributionInstaller(
+            new DistributionInstallerSettings(task, Utils.getSystemOsName(), urlResolver, null,
+                new File(temporaryDirectory, "install"), listener));
 
         assertThatThrownBy(job::install).isInstanceOf(UnsupportedDistributionArchiveException.class);
 
         verify(urlResolver).resolve();
         verifyNoMoreInteractions(urlResolver);
+        verifyZeroInteractions(validator, listener);
     }
 
     @Test
-    public void shouldDownloadDistribution()
+    void shouldDownloadDistribution()
         throws IOException, DistributionUrlResolverException, InvalidDistributionException,
-        UnsupportedDistributionArchiveException, DownloadException {
+        UnsupportedDistributionArchiveException, DownloadException, DistributionPostInstallException {
         final URL distributionUrl = getClass().getClassLoader().getResource("node-v10.15.3.zip");
         final String distributionUrlAsString = distributionUrl.toString();
         final File installDirectory = new File(temporaryDirectory, "install");
         when(urlResolver.resolve()).thenReturn(distributionUrl);
-        final DistributionInstallJob job = new DistributionInstallJob(task, urlResolver, null,
-            new File(temporaryDirectory, "install"));
+        final DistributionInstallerSettings settings = new DistributionInstallerSettings(task, Utils.getSystemOsName(),
+            urlResolver, null, new File(temporaryDirectory, "install"), listener);
+        final DistributionInstaller job = new DistributionInstaller(settings);
         // Emulate exploding distribution
         when(project.copy(ArgumentMatchers.<Action<CopySpec>>any()))
-            .then(invocation -> explodeArchive(invocation, distributionUrlAsString, installDirectory));
+            .then(invocation -> explodeArchive(distributionUrlAsString, installDirectory));
 
         job.install();
 
         verify(urlResolver).resolve();
-        verifyNoMoreInteractions(urlResolver);
         verify(project).copy(ArgumentMatchers.<Action<CopySpec>>any());
         assertThat(installDirectory.list()).isNotEmpty();
+        verify(listener).onDistributionInstalled(settings);
+        verifyNoMoreInteractions(urlResolver, listener);
+        verifyZeroInteractions(validator);
     }
 
-    private WorkResult explodeArchive(final InvocationOnMock invocation, final String distributionUrl,
-        final File installDirectory) throws IOException {
+    private WorkResult explodeArchive(final String distributionUrl, final File installDirectory) throws IOException {
         final String distributionFilename = distributionUrl.substring(distributionUrl.lastIndexOf('/') + 1);
         final File copyDestDirectory = new File(installDirectory, Utils.removeExtension(distributionFilename));
         Files.createDirectory(copyDestDirectory.toPath());

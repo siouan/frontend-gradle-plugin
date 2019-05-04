@@ -5,7 +5,9 @@ import java.io.File;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.TaskAction;
-import org.siouan.frontendgradleplugin.core.ScriptRunJob;
+import org.siouan.frontendgradleplugin.core.ExecutableNotFoundException;
+import org.siouan.frontendgradleplugin.core.RunScriptJob;
+import org.siouan.frontendgradleplugin.core.Utils;
 
 /**
  * This abstract class provides the reusable logic to run a NPM/Yarn script. Sub-classes must expose inputs and
@@ -42,12 +44,14 @@ public abstract class AbstractRunScriptTask extends DefaultTask {
 
     /**
      * Executes the task. If a script has been provided, it is run with NPM/Yarn. Otherwise, the task does nothing.
+     *
+     * @throws ExecutableNotFoundException When an executable cannot be found (Node, NPM, Yarn).
      */
     @TaskAction
-    public void execute() {
+    public void execute() throws ExecutableNotFoundException {
         if (script.isPresent()) {
-            new ScriptRunJob(this, yarnEnabled.get(), nodeInstallDirectory.get(), yarnInstallDirectory.get(),
-                script.get()).run();
+            new RunScriptJob(this, yarnEnabled.get(), nodeInstallDirectory.get(), yarnInstallDirectory.get(),
+                script.get(), Utils.getSystemOsName()).run();
         }
     }
 }

@@ -58,7 +58,7 @@ class NodeDistributionValidatorTest {
     private NodeDistributionValidator validator;
 
     @BeforeEach
-    public void setUp() throws IOException {
+    void setUp() throws IOException {
         MockitoAnnotations.initMocks(this);
 
         when(task.getProject()).thenReturn(project);
@@ -69,7 +69,7 @@ class NodeDistributionValidatorTest {
     }
 
     @Test
-    public void shouldFailWhenChecksumFileDownloadFails() throws DownloadException {
+    void shouldFailWhenChecksumFileDownloadFails() throws DownloadException {
         final Exception expectedException = mock(DownloadException.class);
         doThrow(expectedException).when(downloader).download(any(URL.class), any(File.class));
 
@@ -84,7 +84,7 @@ class NodeDistributionValidatorTest {
     }
 
     @Test
-    public void shouldFailWhenChecksumFileCannotBeRead()
+    void shouldFailWhenChecksumFileCannotBeRead()
         throws DownloadException, IOException, NodeDistributionChecksumNotFoundException {
         final URL distributionUrl = URI.create(DISTRIBUTION_URL).toURL();
         final Exception expectedException = mock(IOException.class);
@@ -103,7 +103,7 @@ class NodeDistributionValidatorTest {
     }
 
     @Test
-    public void shouldFailWhenDistributionFileCannotBeHashed()
+    void shouldFailWhenDistributionFileCannotBeHashed()
         throws DownloadException, IOException, NodeDistributionChecksumNotFoundException {
         final URL distributionUrl = URI.create(DISTRIBUTION_URL).toURL();
         final String distributionFilename = DISTRIBUTION_FILENAME;
@@ -125,7 +125,7 @@ class NodeDistributionValidatorTest {
     }
 
     @Test
-    public void shouldFailWhenDistributionFileHashIsInvalid()
+    void shouldFailWhenDistributionFileHashIsInvalid()
         throws DownloadException, IOException, NodeDistributionChecksumNotFoundException {
         final URL distributionUrl = URI.create(DISTRIBUTION_URL).toURL();
         final String distributionFilename = DISTRIBUTION_FILENAME;
@@ -147,7 +147,7 @@ class NodeDistributionValidatorTest {
     }
 
     @Test
-    public void shouldReturnWhenDistributionFileIsValid()
+    void shouldReturnWhenDistributionFileIsValid()
         throws DownloadException, IOException, NodeDistributionChecksumNotFoundException, InvalidDistributionException {
         final URL distributionUrl = URI.create(DISTRIBUTION_URL).toURL();
         final String distributionFilename = DISTRIBUTION_FILENAME;

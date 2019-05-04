@@ -5,7 +5,7 @@ package org.siouan.frontendgradleplugin.tasks;
  */
 public class InstallTask extends AbstractPredefinedRunScriptTask {
 
-    public static final String INSTALL_SCRIPT = "install";
+    private static final String INSTALL_SCRIPT = "install";
 
     public InstallTask() {
         super();
