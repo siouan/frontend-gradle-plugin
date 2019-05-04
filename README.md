@@ -50,6 +50,9 @@ The plugin supports:
 - [Node][node] 6.2.1+
 - [Yarn][yarn] 1.0.0+
 
+The plugin is built and tested on Linux, Mac OS, Windows. For a full list of build environments used, see the
+[contributing notes][contributing].
+
 ### Installation
 
 2 options are available.
