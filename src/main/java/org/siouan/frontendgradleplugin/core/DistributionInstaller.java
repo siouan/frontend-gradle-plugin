@@ -1,15 +1,18 @@
 package org.siouan.frontendgradleplugin.core;
 
-import java.io.File;
+import static java.util.stream.Collectors.toSet;
+
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
-import java.util.function.Function;
+import java.util.Set;
+import java.util.stream.Stream;
 
-import org.gradle.api.Project;
-import org.gradle.api.file.FileTree;
+import org.siouan.frontendgradleplugin.core.archivers.ArchiverException;
+import org.siouan.frontendgradleplugin.core.archivers.SlipAttackException;
+import org.siouan.frontendgradleplugin.core.archivers.UnsupportedEntryException;
 
 /**
  * Component that downloads and installs a distribution.
@@ -34,79 +37,76 @@ public class DistributionInstaller extends AbstractTaskJob {
      * <li>Download the distribution.</li>
      * <li>Validate the downloaded distribution.</li>
      * <li>Explode the distribution archive.</li>
-     * <li>Deletes the distribution archive and all unnecessary files.</li>
+     * <li>Delete the distribution archive and all unnecessary files.</li>
      * </ul>
      *
-     * @throws InvalidDistributionException If the  distribution is invalid.
-     * @throws IOException If an I/O occurs when accessing the file system.
-     * @throws DistributionUrlResolverException If the URL to download the distribution could not be resolved.
-     * @throws DownloadException If the distribution could not be downloaded.
-     * @throws UnsupportedDistributionArchiveException If the distribution archive is not supported, and could not be
-     * exploded.
-     * @throws DistributionPostInstallException If the post-install action has failed.
+     * @throws DistributionInstallerException If the installer failed.
      */
-    public void install()
-        throws InvalidDistributionException, IOException, DistributionUrlResolverException, DownloadException,
-        UnsupportedDistributionArchiveException, DistributionPostInstallException {
-        final Project project = task.getProject();
+    public void install() throws DistributionInstallerException {
+        try {
+            checkInstallDirectory();
 
-        checkInstallDirectory();
+            // Resolve the URL to download the distribution
+            final URL distributionUrl = settings.getUrlResolver().resolve();
 
-        // Resolve the URL to download the distribution
-        final URL distributionUrl = settings.getUrlResolver().resolve();
+            // Download the distribution
+            final String distributionUrlAsString = distributionUrl.toString();
+            logLifecycle("Downloading distribution at '" + distributionUrlAsString + "'");
+            final Path distributionFile = settings.getInstallDirectory()
+                .resolve(distributionUrlAsString.substring(distributionUrlAsString.lastIndexOf('/') + 1));
+            settings.getDownloader().download(distributionUrl, distributionFile);
 
-        // Download the distribution
-        final String distributionUrlAsString = distributionUrl.toString();
-        logLifecycle("Downloading distribution at '" + distributionUrlAsString + "'");
-        final DownloaderImpl downloader = new DownloaderImpl(task.getTemporaryDir());
-        final File distributionFile = new File(settings.getInstallDirectory(),
-            distributionUrlAsString.substring(distributionUrlAsString.lastIndexOf('/') + 1));
-        downloader.download(distributionUrl, distributionFile);
+            final Optional<DistributionValidator> validator = settings.getValidator();
+            if (validator.isPresent()) {
+                validator.get().validate(distributionUrl, distributionFile);
+            }
 
-        final Optional<DistributionValidator> validator = settings.getValidator();
-        if (validator.isPresent()) {
-            validator.get().validate(distributionUrl, distributionFile);
+
+            // Explodes the archive
+            logLifecycle("Exploding distribution into '" + distributionFile.getParent() + "'");
+            final ExplodeSettings explodeSettings = new ExplodeSettings(distributionFile, distributionFile.getParent(),
+                settings.getOsName());
+            final Optional<String> distributionFileExtension = Utils
+                .getExtension(distributionFile.getFileName().toString()).flatMap(extension -> {
+                    final Optional<String> newExtension;
+                    if (Utils.isGzipExtension(extension)) {
+                        newExtension = Utils
+                            .getExtension(Utils.removeExtension(distributionFile.getFileName().toString()))
+                            .map(ext -> ext + extension);
+                    } else {
+                        newExtension = Optional.of(extension);
+                    }
+                    return newExtension;
+                });
+            distributionFileExtension.flatMap(extension -> settings.getArchiverFactory().get(extension))
+                .orElseThrow(UnsupportedDistributionArchiveException::new).explode(explodeSettings);
+
+            // Removes the root directory of exploded content, if relevant.
+            final Set<Path> distributionFiles;
+            try (final Stream<Path> childFiles = Files.list(distributionFile.getParent())) {
+                distributionFiles = childFiles
+                    .filter(childFile -> !childFile.getFileName().equals(distributionFile.getFileName()))
+                    .collect(toSet());
+            }
+            if (distributionFiles.size() == 1) {
+                final Path distributionRootDirectory = distributionFiles.iterator().next();
+                Utils.moveFiles(distributionRootDirectory, distributionFile.getParent());
+                Files.delete(distributionRootDirectory);
+            }
+
+            logLifecycle("Removing distribution file '" + distributionFile + "'");
+            Files.delete(distributionFile);
+
+            logLifecycle("Distribution installed in '" + distributionFile.getParent() + "'");
+        } catch (final IOException | DistributionUrlResolverException | DownloadException | DistributionValidatorException | UnsupportedDistributionArchiveException | UnsupportedEntryException | SlipAttackException | ArchiverException e) {
+            throw new DistributionInstallerException(e);
         }
-
-        // Explode the archive
-        logLifecycle("Extracting distribution into '" + distributionFile.getParent() + "'");
-        final Function<Object, FileTree> extractFunction;
-        if (distributionFile.getName().endsWith(".zip")) {
-            extractFunction = project::zipTree;
-        } else if (distributionFile.getName().endsWith(".tar.gz")) {
-            extractFunction = project::tarTree;
-        } else {
-            logError("Unsupported type of archive: " + distributionFile.getName());
-            throw new UnsupportedDistributionArchiveException();
-        }
-        project.copy(copySpec -> {
-            copySpec.from(extractFunction.apply(distributionFile));
-            copySpec.into(distributionFile.getParent());
-        });
-
-        // Removes the root directory of exploded content
-        final File distributionRootDirectory = new File(distributionFile.getParentFile(),
-            Utils.removeExtension(distributionFile.getName()));
-        Utils.moveFiles(distributionRootDirectory, distributionFile.getParentFile());
-        Files.delete(distributionRootDirectory.toPath());
-
-        logLifecycle("Removing distribution file '" + distributionFile.getAbsolutePath() + "'");
-        Files.delete(distributionFile.toPath());
-
-        logLifecycle("Running post-install");
-        final Optional<DistributionPostInstallAction> listener = settings.getPostInstallAction();
-        if (listener.isPresent()) {
-            listener.get().onDistributionInstalled(settings);
-        }
-
-        logLifecycle("Distribution installed in '" + distributionFile.getParent() + "'");
     }
 
     private void checkInstallDirectory() throws IOException {
-        final Path installPath = settings.getInstallDirectory().toPath();
-        Files.createDirectories(installPath);
+        Files.createDirectories(settings.getInstallDirectory());
 
-        logLifecycle("Removing content in install directory '" + installPath.toString() + "'.");
-        Utils.deleteRecursively(installPath, false);
+        logLifecycle("Removing content in install directory '" + settings.getInstallDirectory() + "'.");
+        Utils.deleteRecursively(settings.getInstallDirectory(), false);
     }
 }

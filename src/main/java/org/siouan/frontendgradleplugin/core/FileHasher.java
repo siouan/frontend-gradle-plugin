@@ -1,7 +1,7 @@
 package org.siouan.frontendgradleplugin.core;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 /**
  * Component capable of hashing a file.
@@ -16,5 +16,5 @@ interface FileHasher {
      * @return The hash as an hexadecimal string.
      * @throws IOException If the input file is not readable.
      */
-    String hash(final File inputFile) throws IOException;
+    String hash(final Path inputFile) throws IOException;
 }

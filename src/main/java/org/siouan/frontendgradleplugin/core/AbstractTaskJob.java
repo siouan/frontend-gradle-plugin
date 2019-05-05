@@ -7,14 +7,14 @@ import org.gradle.api.Task;
  */
 abstract class AbstractTaskJob {
 
-    protected final Task task;
+    final Task task;
 
     /**
      * Builds a job instance related to the given task.
      *
      * @param task Task.
      */
-    protected AbstractTaskJob(final Task task) {
+    AbstractTaskJob(final Task task) {
         this.task = task;
     }
 
@@ -27,17 +27,8 @@ abstract class AbstractTaskJob {
      *
      * @param message Message.
      */
-    protected void logDebug(final String message) {
+    void logDebug(final String message) {
         task.getLogger().debug(formatMessage(message));
-    }
-
-    /**
-     * Shortcut to log an ERROR message with the task's logger.
-     *
-     * @param message Message.
-     */
-    protected void logError(final String message) {
-        task.getLogger().error(formatMessage(message));
     }
 
     /**
@@ -45,7 +36,7 @@ abstract class AbstractTaskJob {
      *
      * @param message Message.
      */
-    protected void logLifecycle(final String message) {
+    void logLifecycle(final String message) {
         task.getLogger().lifecycle(formatMessage(message));
     }
 
@@ -55,7 +46,7 @@ abstract class AbstractTaskJob {
      * @param message Message.
      * @param throwable Throwable.
      */
-    protected void logWarn(final String message, final Throwable throwable) {
+    void logWarn(final String message, final Throwable throwable) {
         task.getLogger().warn(formatMessage(message), throwable);
     }
 }

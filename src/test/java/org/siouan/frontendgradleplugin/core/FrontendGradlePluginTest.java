@@ -8,7 +8,8 @@ import org.gradle.api.Project;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockitoAnnotations;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.siouan.frontendgradleplugin.FrontendExtension;
 import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
 import org.siouan.frontendgradleplugin.tasks.AssembleTask;
@@ -21,7 +22,8 @@ import org.siouan.frontendgradleplugin.tasks.YarnInstallTask;
 /**
  * Unit tests for the {@link FrontendGradlePlugin} class.
  */
-public class FrontendGradlePluginTest {
+@ExtendWith(MockitoExtension.class)
+class FrontendGradlePluginTest {
 
     private FrontendGradlePlugin plugin;
 
@@ -29,8 +31,6 @@ public class FrontendGradlePluginTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.initMocks(this);
-
         project = ProjectBuilder.builder().build();
         plugin = new FrontendGradlePlugin();
     }

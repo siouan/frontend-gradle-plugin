@@ -19,6 +19,7 @@ test {
     useJUnitPlatform()
     testLogging {
         showStandardStreams = true
+        exceptionFormat = 'full'
         events "passed", "skipped", "failed"
     }
 }
@@ -32,9 +33,11 @@ jacocoTestReport {
 
 dependencies {
     implementation gradleApi()
+    implementation 'org.apache.commons:commons-compress:1.18'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.4.2'
     testImplementation 'org.mockito:mockito-core:2.27.0'
+    testImplementation 'org.mockito:mockito-junit-jupiter:2.27.0'
     testImplementation 'org.assertj:assertj-core:3.12.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.4.2'
 }
