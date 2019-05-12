@@ -33,9 +33,11 @@ class ZipArchiverContextTest {
     @Mock
     private ExplodeSettings settings;
 
+    @Mock
+    private Enumeration<ZipArchiveEntry> entries;
+
     @Test
     void shouldFailWhenClosingContextWithIOException() throws IOException {
-        final Enumeration<ZipArchiveEntry> entries = mock(Enumeration.class);
         when(zipFile.getEntries()).thenReturn(entries);
         final Exception expectedException = mock(IOException.class);
         doThrow(expectedException).when(zipFile).close();
@@ -53,7 +55,6 @@ class ZipArchiverContextTest {
 
     @Test
     void shouldCloseContext() throws IOException, ArchiverException {
-        final Enumeration<ZipArchiveEntry> entries = mock(Enumeration.class);
         when(zipFile.getEntries()).thenReturn(entries);
         final ZipArchiverContext context = new ZipArchiverContext(settings, zipFile);
         context.close();

@@ -2,6 +2,9 @@ package org.siouan.frontendgradleplugin.core.archivers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.siouan.frontendgradleplugin.core.archivers.AbstractArchiverTest.ArchiveEntryImpl.newDirectoryEntry;
 import static org.siouan.frontendgradleplugin.core.archivers.AbstractArchiverTest.ArchiveEntryImpl.newFileEntry;
@@ -57,7 +60,7 @@ class AbstractArchiverTest {
     }
 
     @Test
-    void shouldFailWhenTargetDirectoryDoesNotExist() {
+    void shouldFailExplodingWhenTargetDirectoryDoesNotExist() {
         final ExplodeSettings settings = new ExplodeSettings(null, targetDirectory.toPath().resolve("unknowndir"),
             Utils.getSystemOsName());
 
@@ -66,7 +69,7 @@ class AbstractArchiverTest {
     }
 
     @Test
-    void shouldFailWhenTargetIsNotADirectory() throws IOException {
+    void shouldFailExplodingWhenTargetIsNotADirectory() throws IOException {
         final Path targetFile = Files.createFile(targetDirectory.toPath().resolve("afile"));
         final ExplodeSettings settings = new ExplodeSettings(null, targetFile, Utils.getSystemOsName());
 
@@ -76,7 +79,7 @@ class AbstractArchiverTest {
     }
 
     @Test
-    void shouldFailWhenSlipAttackIsDetected() {
+    void shouldFailExplodingWhenSlipAttackIsDetected() {
         final ExplodeSettings settings = new ExplodeSettings(null, targetDirectory.toPath(), Utils.getSystemOsName());
         when(context.getSettings()).thenReturn(settings);
         entries.add(ArchiveEntryImpl.newDirectoryEntry("../out-file", 0));
@@ -86,13 +89,36 @@ class AbstractArchiverTest {
     }
 
     @Test
-    void shouldFailWhenArchiveContentIsInvalid() {
+    void shouldFailExplodingWhenContentInitializationFails() throws ArchiverException {
+        final ExplodeSettings settings = new ExplodeSettings(null, targetDirectory.toPath(), Utils.getSystemOsName());
+        final ArchiverException expectedException = mock(ArchiverException.class);
+
+        assertThatThrownBy(() -> new ArchiverImpl(context, entries, expectedException).explode(settings))
+            .isEqualTo(expectedException);
+        verify(context, never()).close();
+    }
+
+    @Test
+    void shouldFailExplodingWhenEntryCannotBeWritten() throws ArchiverException {
+        final ExplodeSettings settings = new ExplodeSettings(null, targetDirectory.toPath(), Utils.getSystemOsName());
+        when(context.getSettings()).thenReturn(settings);
+        entries.add(newFileEntry("unwritable-file", 0777, null));
+        final IOException expectedException = mock(IOException.class);
+
+        assertThatThrownBy(() -> new ArchiverImpl(context, entries, expectedException).explode(settings))
+            .isInstanceOf(ArchiverException.class).hasCause(expectedException);
+        verify(context).close();
+    }
+
+    @Test
+    void shouldFailExplodingWhenArchiveContentIsInvalid() throws ArchiverException {
         final ExplodeSettings settings = new ExplodeSettings(null, targetDirectory.toPath(), Utils.getSystemOsName());
         when(context.getSettings()).thenReturn(settings);
         entries.add(ArchiveEntryImpl.newUnknownEntry("name"));
 
         assertThatThrownBy(() -> new ArchiverImpl(context, entries).explode(settings))
             .isInstanceOf(UnsupportedEntryException.class);
+        verify(context).close();
     }
 
     @Test
@@ -170,6 +196,8 @@ class AbstractArchiverTest {
             expectedPermissions.put(rootFile, PosixFilePermissions.fromString("r------wx"));
             assertFilesHavePermissions(expectedPermissions);
         }
+
+        verify(context).close();
     }
 
     private void assertFilesHavePermissions(final Map<Path, Set<PosixFilePermission>> expectedPermissions) {
@@ -261,7 +289,7 @@ class AbstractArchiverTest {
     }
 
     /**
-     * Test implementation of an archiver.
+     * Test implementation of an archiver, that allows simulating various archive entries and I/O errors.
      */
     private static class ArchiverImpl extends AbstractArchiver<ArchiverContext, ArchiveEntryImpl> {
 
@@ -269,14 +297,39 @@ class AbstractArchiverTest {
 
         private final Iterator<ArchiveEntryImpl> entries;
 
+        private final ArchiverException initException;
+
+        private final IOException writeException;
+
         ArchiverImpl(final ArchiverContext context, final Collection<ArchiveEntryImpl> entries) {
+            this(context, entries, null, null);
+        }
+
+        ArchiverImpl(final ArchiverContext context, final Collection<ArchiveEntryImpl> entries,
+            final ArchiverException initException) {
+            this(context, entries, initException, null);
+        }
+
+        ArchiverImpl(final ArchiverContext context, final Collection<ArchiveEntryImpl> entries,
+            final IOException writeException) {
+            this(context, entries, null, writeException);
+        }
+
+        ArchiverImpl(final ArchiverContext context, final Collection<ArchiveEntryImpl> entries,
+            final ArchiverException initException, final IOException writeException) {
             this.context = context;
             this.entries = entries.iterator();
+            this.initException = initException;
+            this.writeException = writeException;
         }
 
         @Override
-        ArchiverContext initializeContext(final ExplodeSettings settings) {
-            return context;
+        ArchiverContext initializeContext(final ExplodeSettings settings) throws ArchiverException {
+            if (initException == null) {
+                return context;
+            } else {
+                throw initException;
+            }
         }
 
         @Override
@@ -292,8 +345,12 @@ class AbstractArchiverTest {
         @Override
         void writeRegularFile(final ArchiverContext context, final ArchiveEntryImpl entry, final Path targetFile)
             throws IOException {
-            try (final PrintWriter writer = new PrintWriter(targetFile.toFile())) {
-                writer.print(entry.getData());
+            if (writeException == null) {
+                try (final PrintWriter writer = new PrintWriter(targetFile.toFile())) {
+                    writer.print(entry.getData());
+                }
+            } else {
+                throw writeException;
             }
         }
     }

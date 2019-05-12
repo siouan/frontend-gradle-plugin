@@ -248,7 +248,35 @@ class DistributionInstallerTest {
     }
 
     @Test
-    void shouldDownloadDistribution()
+    void shouldInstallDistributionWithoutRootDirectory()
+        throws DistributionUrlResolverException, UnsupportedEntryException, SlipAttackException,
+        DistributionInstallerException, ArchiverException, DownloadException, IOException {
+        final URL distributionUrl = getClass().getClassLoader().getResource("dist-without-root-dir.zip");
+        final Path installDirectory = temporaryDirectory.toPath().resolve("install");
+        when(urlResolver.resolve()).thenReturn(distributionUrl);
+        doAnswer(new DownloaderAnswer()).when(downloader).download(eq(distributionUrl), any(Path.class));
+        final Archiver archiver = mock(Archiver.class);
+        when(archiverFactory.get(anyString())).thenReturn(Optional.of(archiver));
+        doAnswer(new ArchiverAnswer()).when(archiver).explode(any(ExplodeSettings.class));
+        final DistributionInstaller installer = new DistributionInstaller(
+            new DistributionInstallerSettings(task, Utils.getSystemOsName(), urlResolver, downloader, null,
+                archiverFactory, installDirectory));
+
+        installer.install();
+
+        verify(urlResolver).resolve();
+        try (final Stream<Path> childFiles = Files.list(installDirectory)) {
+            assertThat(childFiles.findAny()).isNotEmpty();
+        }
+        verify(downloader).download(eq(distributionUrl), any(Path.class));
+        verify(archiverFactory).get(anyString());
+        verify(archiver).explode(any(ExplodeSettings.class));
+        verifyNoMoreInteractions(urlResolver, archiverFactory, archiver);
+        verifyZeroInteractions(validator);
+    }
+
+    @Test
+    void shouldInstallDistributionAndRemoveRootDirectory()
         throws DistributionUrlResolverException, UnsupportedEntryException, SlipAttackException,
         DistributionInstallerException, ArchiverException, DownloadException, IOException {
         final URL distributionUrl = getClass().getClassLoader().getResource("yarn-v1.15.2.tar.gz");
