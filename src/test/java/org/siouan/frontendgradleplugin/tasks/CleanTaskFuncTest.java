@@ -1,22 +1,24 @@
 package org.siouan.frontendgradleplugin.tasks;
 
-import static org.siouan.frontendgradleplugin.util.FunctionalTestHelper.assertTaskOutcome;
-import static org.siouan.frontendgradleplugin.util.FunctionalTestHelper.runGradle;
+import static org.siouan.frontendgradleplugin.util.Helper.assertTaskOutcome;
+import static org.siouan.frontendgradleplugin.util.Helper.runGradle;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.TaskOutcome;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
-import org.siouan.frontendgradleplugin.util.FunctionalTestHelper;
+import org.siouan.frontendgradleplugin.util.Helper;
 
 /**
  * Functional tests to verify the {@link CleanTask} integration in a Gradle build. Test cases uses fake Node/Yarn
@@ -26,17 +28,24 @@ import org.siouan.frontendgradleplugin.util.FunctionalTestHelper;
 class CleanTaskFuncTest {
 
     @TempDir
-    protected File projectDirectory;
+    File tmpDirectory;
+
+    private Path projectDirectory;
+
+    @BeforeEach
+    void setUp() {
+        projectDirectory = tmpDirectory.toPath();
+    }
 
     @Test
     void shouldCleanFrontendWithNpmOrYarn() throws IOException, URISyntaxException {
         Files.copy(new File(getClass().getClassLoader().getResource("package-npm.json").toURI()).toPath(),
-            projectDirectory.toPath().resolve("package.json"));
+            projectDirectory.resolve("package.json"));
         final Map<String, Object> properties = new HashMap<>();
         properties.put("nodeVersion", "10.15.3");
         properties.put("nodeDistributionUrl", getClass().getClassLoader().getResource("node-v10.15.3.zip").toString());
         properties.put("cleanScript", "run clean");
-        FunctionalTestHelper.createBuildFile(projectDirectory, properties);
+        Helper.createBuildFile(projectDirectory, properties);
 
         final BuildResult result1 = runGradle(projectDirectory, FrontendGradlePlugin.GRADLE_CLEAN_TASK_NAME);
 
@@ -52,14 +61,14 @@ class CleanTaskFuncTest {
         assertTaskOutcome(result2, FrontendGradlePlugin.INSTALL_TASK_NAME, TaskOutcome.SUCCESS);
         assertTaskOutcome(result2, FrontendGradlePlugin.GRADLE_CLEAN_TASK_NAME, TaskOutcome.UP_TO_DATE);
 
-        Files.deleteIfExists(projectDirectory.toPath().resolve("package-lock.json"));
+        Files.deleteIfExists(projectDirectory.resolve("package-lock.json"));
         Files.copy(new File(getClass().getClassLoader().getResource("package-yarn.json").toURI()).toPath(),
-            projectDirectory.toPath().resolve("package.json"), StandardCopyOption.REPLACE_EXISTING);
+            projectDirectory.resolve("package.json"), StandardCopyOption.REPLACE_EXISTING);
         properties.put("yarnEnabled", true);
         properties.put("yarnVersion", "1.15.2");
         properties
             .put("yarnDistributionUrl", getClass().getClassLoader().getResource("yarn-v1.15.2.tar.gz").toString());
-        FunctionalTestHelper.createBuildFile(projectDirectory, properties);
+        Helper.createBuildFile(projectDirectory, properties);
 
         final BuildResult result3 = runGradle(projectDirectory, FrontendGradlePlugin.GRADLE_CLEAN_TASK_NAME);
 

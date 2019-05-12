@@ -18,24 +18,24 @@ public abstract class AbstractRunScriptTask extends DefaultTask {
     /**
      * Whether a Yarn distribution shall be downloaded and installed.
      */
-    protected final Property<Boolean> yarnEnabled;
+    final Property<Boolean> yarnEnabled;
 
     /**
      * Directory where the Node distribution is installed.
      */
-    protected final Property<File> nodeInstallDirectory;
+    final Property<File> nodeInstallDirectory;
 
     /**
      * Directory where the Yarn distribution is installed.
      */
-    protected final Property<File> yarnInstallDirectory;
+    final Property<File> yarnInstallDirectory;
 
     /**
      * The script to run with NPM/Yarn.
      */
-    protected final Property<String> script;
+    final Property<String> script;
 
-    protected AbstractRunScriptTask() {
+    AbstractRunScriptTask() {
         yarnEnabled = getProject().getObjects().property(Boolean.class);
         nodeInstallDirectory = getProject().getObjects().property(File.class);
         yarnInstallDirectory = getProject().getObjects().property(File.class);

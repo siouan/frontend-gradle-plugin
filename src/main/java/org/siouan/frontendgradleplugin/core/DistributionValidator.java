@@ -1,7 +1,7 @@
 package org.siouan.frontendgradleplugin.core;
 
-import java.io.File;
 import java.net.URL;
+import java.nio.file.Path;
 
 /**
  * Interface of a component capable to validate a downloaded distribution.
@@ -14,7 +14,7 @@ interface DistributionValidator {
      *
      * @param distributionUrl URL used to download the distribution.
      * @param distributionFile Distribution file.
-     * @throws InvalidDistributionException If the distribution is invalid.
+     * @throws DistributionValidatorException If the distribution is invalid.
      */
-    void validate(URL distributionUrl, File distributionFile) throws InvalidDistributionException;
+    void validate(URL distributionUrl, Path distributionFile) throws DistributionValidatorException;
 }

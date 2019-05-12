@@ -14,7 +14,7 @@ import org.gradle.process.ExecSpec;
 /**
  * Action that configures a {@link ExecSpec} instance to run a frontend script (NPM/Yarn) with Gradle.
  */
-public class ExecSpecAction implements Action<ExecSpec> {
+class ExecSpecAction implements Action<ExecSpec> {
 
     public static final String CMD_EXECUTABLE = "cmd";
 

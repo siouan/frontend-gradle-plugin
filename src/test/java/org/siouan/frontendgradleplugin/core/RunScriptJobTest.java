@@ -13,26 +13,25 @@ import java.nio.file.Path;
 
 import org.gradle.api.Project;
 import org.gradle.api.Task;
-import org.gradle.api.logging.Logger;
 import org.gradle.process.ExecResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
  * Unit tests for the {@link RunScriptJob} class.
  */
+@ExtendWith(MockitoExtension.class)
 class RunScriptJobTest {
-
-    private static final String TASK_NAME = "task";
 
     private static final String SCRIPT = "script";
 
     @TempDir
-    protected File temporaryDirectory;
+    File temporaryDirectory;
 
     @Mock
     private Task task;
@@ -40,18 +39,9 @@ class RunScriptJobTest {
     @Mock
     private Project project;
 
-    @Mock
-    private Logger logger;
-
-    @Mock
-    private ExecResult result;
-
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.initMocks(this);
-
         when(task.getProject()).thenReturn(project);
-        when(task.getLogger()).thenReturn(logger);
     }
 
     @Test
@@ -83,7 +73,7 @@ class RunScriptJobTest {
 
         private final String script;
 
-        public ExecSpecActionMatcher(final boolean yarnEnabled, final File nodeInstallDirectory,
+        ExecSpecActionMatcher(final boolean yarnEnabled, final File nodeInstallDirectory,
             final File yarnInstallDirectory, final String script) {
             this.yarnEnabled = yarnEnabled;
             this.nodeInstallDirectory = nodeInstallDirectory;

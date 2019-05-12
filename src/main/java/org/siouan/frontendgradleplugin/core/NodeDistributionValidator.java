@@ -1,10 +1,10 @@
 package org.siouan.frontendgradleplugin.core;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.gradle.api.Task;
 
@@ -31,7 +31,7 @@ public class NodeDistributionValidator extends AbstractTaskJob implements Distri
     /**
      * Install directory.
      */
-    private final File installDirectory;
+    private final Path installDirectory;
 
     /**
      * Builds a validator of a Node distribution.
@@ -43,7 +43,7 @@ public class NodeDistributionValidator extends AbstractTaskJob implements Distri
      * @param installDirectory Install directory.
      */
     public NodeDistributionValidator(final Task task, final Downloader downloader,
-        final NodeDistributionChecksumReader checksumReader, final FileHasher fileHasher, final File installDirectory) {
+        final NodeDistributionChecksumReader checksumReader, final FileHasher fileHasher, final Path installDirectory) {
         super(task);
         this.downloader = downloader;
         this.checksumReader = checksumReader;
@@ -52,14 +52,14 @@ public class NodeDistributionValidator extends AbstractTaskJob implements Distri
     }
 
     @Override
-    public void validate(final URL distributionUrl, final File distributionFile) throws InvalidDistributionException {
+    public void validate(final URL distributionUrl, final Path distributionFile) throws DistributionValidatorException {
         final String distributionUrlAsString = distributionUrl.toString();
 
         // Resolve the URL to download the checksum file
         final String checksumUrlAsString =
             distributionUrlAsString.substring(0, distributionUrlAsString.lastIndexOf('/') + 1) + "SHASUMS256.txt";
-        final File checksumFile = new File(installDirectory,
-            checksumUrlAsString.substring(checksumUrlAsString.lastIndexOf('/') + 1));
+        final Path checksumFile = installDirectory
+            .resolve(checksumUrlAsString.substring(checksumUrlAsString.lastIndexOf('/') + 1));
         try {
             final URL checksumUrl = URI.create(checksumUrlAsString).toURL();
 
@@ -69,17 +69,18 @@ public class NodeDistributionValidator extends AbstractTaskJob implements Distri
 
             // Verify the distribution integrity
             logLifecycle("Verifying distribution integrity");
-            final String expectedHash = checksumReader.readHash(checksumFile, distributionFile.getName());
+            final String expectedHash = checksumReader
+                .readHash(checksumFile, distributionFile.getFileName().toString());
             if (!fileHasher.hash(distributionFile).equals(expectedHash)) {
-                throw new InvalidDistributionException("Distribution corrupted: invalid checksum");
+                throw new DistributionValidatorException("Distribution corrupted: invalid checksum");
             }
         } catch (final IOException | DownloadException | NodeDistributionChecksumNotFoundException e) {
-            throw new InvalidDistributionException(e);
+            throw new DistributionValidatorException(e);
         } finally {
             try {
-                Files.deleteIfExists(checksumFile.toPath());
+                Files.deleteIfExists(checksumFile);
             } catch (final IOException e) {
-                logWarn("Checksum file could not be deleted: '" + checksumFile.getAbsolutePath() + '\'', e);
+                logWarn("Checksum file could not be deleted: '" + checksumFile + '\'', e);
             }
         }
     }
