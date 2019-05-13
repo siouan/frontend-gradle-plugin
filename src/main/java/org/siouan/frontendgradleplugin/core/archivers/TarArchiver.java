@@ -37,27 +37,52 @@ class TarArchiver extends AbstractArchiver<TarArchiverContext, TarEntry> {
 
     @Override
     TarArchiverContext initializeContext(final ExplodeSettings settings) throws ArchiverException {
-        final InputStream rootInputStream;
         final InputStream archiveInputStream;
         try {
             archiveInputStream = Files.newInputStream(settings.getArchiveFile());
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new ArchiverException(e);
         }
 
+        final InputStream uncompressedInputStream;
         try {
-            if (Utils.getExtension(settings.getArchiveFile().getFileName().toString()).filter(Utils::isGzipExtension)
-                .isPresent()) {
-                rootInputStream = new GzipCompressorInputStream(archiveInputStream);
-            } else {
-                rootInputStream = archiveInputStream;
-            }
+            uncompressedInputStream = uncompressInputStream(settings, archiveInputStream);
         } catch (final IOException e) {
             IOUtils.closeQuietly(archiveInputStream);
             throw new ArchiverException(e);
         }
 
-        return new TarArchiverContext(settings, new TarArchiveInputStream(rootInputStream));
+        return new TarArchiverContext(settings, buildLowLevelInputStream(uncompressedInputStream));
+    }
+
+    /**
+     * Uncompresses the given input stream, if needed.
+     *
+     * @param settings Explode settings.
+     * @param compressedInputStream An input stream that may be compressed.
+     * @return Uncompressed input stream, may be the same stream if it is not compressed.
+     * @throws IOException If an I/O error occurs.
+     */
+    InputStream uncompressInputStream(final ExplodeSettings settings, final InputStream compressedInputStream)
+        throws IOException {
+        final InputStream uncompressedInputStream;
+        if (Utils.getExtension(settings.getArchiveFile().getFileName().toString()).filter(Utils::isGzipExtension)
+            .isPresent()) {
+            uncompressedInputStream = new GzipCompressorInputStream(compressedInputStream);
+        } else {
+            uncompressedInputStream = compressedInputStream;
+        }
+        return uncompressedInputStream;
+    }
+
+    /**
+     * Builds the low-level input stream that will be used to read entries.
+     *
+     * @param inputStream High-level uncompressed input stream.
+     * @return Input stream.
+     */
+    TarArchiveInputStream buildLowLevelInputStream(final InputStream inputStream) {
+        return new TarArchiveInputStream(inputStream);
     }
 
     @Override
