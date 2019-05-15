@@ -3,7 +3,7 @@
 [![Latest release 1.1.3](https://img.shields.io/badge/Latest%20release-1.1.3-blue.svg)](https://github.com/Siouan/frontend-gradle-plugin/releases/tag/v1.1.3)
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
 
-[![Build status](https://travis-ci.org/Siouan/frontend-gradle-plugin.svg?branch=1.1)](https://travis-ci.org/Siouan/frontend-gradle-plugin)
+[![Build status](https://travis-ci.com/Siouan/frontend-gradle-plugin.svg?branch=1.1)](https://travis-ci.com/Siouan/frontend-gradle-plugin)
 [![Quality gate status](https://sonarcloud.io/api/project_badges/measure?project=Siouan_frontend-gradle-plugin&metric=alert_status)](https://sonarcloud.io/dashboard?id=Siouan_frontend-gradle-plugin)
 [![Code coverage](https://sonarcloud.io/api/project_badges/measure?project=Siouan_frontend-gradle-plugin&metric=coverage)](https://sonarcloud.io/dashboard?id=Siouan_frontend-gradle-plugin)
 [![Reliability](https://sonarcloud.io/api/project_badges/measure?project=Siouan_frontend-gradle-plugin&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=Siouan_frontend-gradle-plugin)
@@ -61,7 +61,7 @@ The plugin is built and tested on Linux, Mac OS, Windows. For a full list of bui
 
 This is the modern and recommended approach.
 
-```gradle
+```groovy
 // build.gradle
 plugins {
     id 'org.siouan.frontend' version '1.1.3'
@@ -72,7 +72,7 @@ plugins {
 
 This approach is the legacy way to resolve and apply plugins.
 
-```gradle
+```groovy
 // build.gradle
 buildscript {
     repositories {
@@ -92,7 +92,7 @@ apply plugin: 'org.siouan.frontend'
 
 All settings are introduced hereafter, with default value for each property.
 
-```gradle
+```groovy
 // build.gradle
 frontend {
     // NODE SETTINGS
@@ -150,7 +150,7 @@ frontend {
 
 #### Typical configuration with NPM
 
-```gradle
+```groovy
 // build.gradle
 frontend {
     nodeVersion = '<X.Y.Z>'
@@ -162,7 +162,7 @@ frontend {
 
 #### Typical configuration with Yarn
 
-```gradle
+```groovy
 // build.gradle
 frontend {
     nodeVersion = '<X.Y.Z>'
@@ -261,11 +261,11 @@ execute tests, and perform additional analysis tasks.
 
 ### Run custom NPM/Yarn script
 
-The `runScriptFrontend` task is provided as a task type, to create custom tasks. The `script` property must be set with
-the corresponding NPM/Yarn command. For instance, the code below added in the `build.gradle` file allows to run
-frontend's end-to-end tests in a custom task:
+The plugin provides the task type `org.siouan.frontendgradleplugin.tasks.RunScriptTask` that allows creating a custom
+task to launch a frontend script. The `script` property must be set with the corresponding NPM/Yarn command. For
+instance, the code below added in the `build.gradle` file allows to run frontend's end-to-end tests in a custom task:
 
-```gradle
+```groovy
 tasks.register('e2e', org.siouan.frontendgradleplugin.tasks.RunScriptTask) {
     dependsOn tasks.named('installFrontend')
     script = 'run e2e'
@@ -352,7 +352,6 @@ actions of your choice.
 [jdk]: <https://docs.oracle.com/en/java/javase/> (Java Development Kit)
 [node]: <https://nodejs.org/> (Node.js)
 [release-notes]: <https://github.com/siouan/frontend-gradle-plugin/releases> (Release notes)
-[semantic-versioning]: <https://semver.org/> (Semantic versioning)
 [spring-boot]: <https://spring.io/projects/spring-boot> (Spring Boot)
 [task-tree]: <task-tree.png>
 [yarn]: <https://yarnpkg.com/> (Yarn)
