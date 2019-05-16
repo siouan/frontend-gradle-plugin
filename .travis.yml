@@ -9,7 +9,7 @@ matrix:
         sonarcloud:
           organization: siouan
           token:
-            secure: "GFJCds9c7LcfVZE82Tz9t7F6bsPGDIX8KtDAC2m+mUzUWst8fVDvTBJ7bqGGWAMN6bc+Uot5WI5wGW15e87j1z3RtLkglVpoBgsyIrFLQY69BpjByGvw4010EU0ulEHsT93YjUEyugMxBV6zdsuqsP8vZCMMkl0oI+i3Lj1YlTabMKFWw3QyQlkpIoQo3C7c5puJSDTh0dBxtd7w1lvPEtZLXxqe7B8mUvqyDfMLFmU8bHIVMvrmlxsUvXD8qkCJQJy3XIr+XW8tGc9pIad9C2t8eUj9OE87yqp87eOGoQdbdFp98/GKaqBe+4rVRZFXkjfhM3ayLCDwTiWBYVoGCB0MlNz7WdGD+pUWTaYMD59yhFjSLnEM3+XBb0jqeviZEMCRH14/cDhXA74h6n+/cjzIks3pEIFpFnvK6XQVXTHA6poPvfnfylbD8dpiS51Vpf9LWvVf1fmRb0M7L3WO3Ar/QFydAL2mDF/ibSuYbvZAQ3xVLz+5XTg0QkJnGItfKxI+W/3tkVahgqXVh6BGFzCwB5kTgMjgZ6eij25i3f7N9W4j4wBxIsQXc9JEqP0ZBBafSASmC4cHUyOrTOfYfeEqDeOZA6exeVRdLPiwLL1gjjzq5ru6Ii90oCzBQHeSeOhYOvUQl9gMXduzX5cpSqHCGFpMYynmrDmsz1D94Sk="
+            secure: "I7ymzi1DWGQ3JZqmWRYyCb5UuNRhH0ieSSZlspzPsnoYxFJNhxYhkL2CaijPbhR06Acnvjn0txKeJrvTNxG4dq4efe5jCMHqzIjLJ7AGRVppBC1t4DszoZ0ovrXldsZ4MjILEwFZdUrPiAynUYgQR0z/cN5LBD0wn+dwjbmp2GvJWg/r1IlodShI2f5eFO3hy8g/4361xGkv3ROVvGbL7YmaSNJ80sJEcAGBKi1NDi91bZ3azUoQ2e7QVLTvWhfpB6HBm0lHH4oe2Ie/tJAFBiuf94QDS0C38pGI8YqnIig5uvoerZLxc96EoxyJ555OT8dcxYf1thSaW1Mo2HerOvmtQtt7+58l0SDX51VCwv0t7+Whh84DLKiU28PntGV8YXjfyuTsbxiCTpyh0CJzOocVH/XaMU5MO58spITo4X9xK9NYzvbKmKVvGYiQw0CUsJ5XYkhjqrGq5aZJSVrUFX72vvV31zw/KCwnqxO5lkZc+SOoynIHfn/s8l1dG40rLEs5/zXG4GXMsBe3T2S7ieZGy2TaJMQyiyg/0Yx8VvmV/ex0oxKRpe4a+/CyhhxDjDSDukSTdVY+gCq97ZVdafNi7ltIqndTUErOwt8BRsOMUFWzuwNq6UZuDjAQ4gHhKVO0827AH7/pD8hMBlBGsT1hp4njT/fwUPET0OoWz5M="
       cache:
         directories:
           - $HOME/.gradle/caches/

@@ -72,4 +72,4 @@ developed on Windows 10 Home with OracleJDK 1.8.0_202 64 bits and [JetBrains Int
 [apache-commons-compress]: <https://commons.apache.org/proper/commons-compress/> (Apache Commons Compress)
 [intellij]: <https://www.jetbrains.com/idea/> (IntelliJ IDEA)
 [issues]: <https://github.com/Siouan/frontend-gradle-plugin/issues> (Issues)
-[travis]: <https://travis-ci.org/> (Travis CI Open Source)
+[travis]: <https://travis-ci.com/> (Travis CI)
