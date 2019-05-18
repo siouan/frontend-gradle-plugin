@@ -1,22 +1,24 @@
 package org.siouan.frontendgradleplugin.tasks;
 
-import static org.siouan.frontendgradleplugin.util.FunctionalTestHelper.assertTaskOutcome;
-import static org.siouan.frontendgradleplugin.util.FunctionalTestHelper.runGradle;
+import static org.siouan.frontendgradleplugin.util.Helper.assertTaskOutcome;
+import static org.siouan.frontendgradleplugin.util.Helper.runGradle;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.TaskOutcome;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
-import org.siouan.frontendgradleplugin.util.FunctionalTestHelper;
+import org.siouan.frontendgradleplugin.util.Helper;
 
 /**
  * Functional tests to verify the {@link RunScriptTask} integration in a Gradle build. This functional test is the only
@@ -25,12 +27,19 @@ import org.siouan.frontendgradleplugin.util.FunctionalTestHelper;
 class RunScriptTaskFuncTest {
 
     @TempDir
-    protected File projectDirectory;
+    File tmpDirectory;
+
+    private Path projectDirectory;
+
+    @BeforeEach
+    void setUp() {
+        projectDirectory = tmpDirectory.toPath();
+    }
 
     @Test
     void shouldRunScriptFrontendWithNpmOrYarn() throws IOException, URISyntaxException {
         Files.copy(new File(getClass().getClassLoader().getResource("package-npm.json").toURI()).toPath(),
-            projectDirectory.toPath().resolve("package.json"));
+            projectDirectory.resolve("package.json"));
         final Map<String, Object> properties = new HashMap<>();
         properties.put("nodeVersion", "10.15.3");
         final String customTaskName = "e2e";
@@ -40,7 +49,7 @@ class RunScriptTaskFuncTest {
         customTaskDefinition.append("dependsOn tasks.named('installFrontend')\n");
         customTaskDefinition.append("script = 'run another-script'\n");
         customTaskDefinition.append("}\n");
-        FunctionalTestHelper.createBuildFile(projectDirectory, properties, customTaskDefinition.toString());
+        Helper.createBuildFile(projectDirectory, properties, customTaskDefinition.toString());
 
         final BuildResult result1 = runGradle(projectDirectory, customTaskName);
 
@@ -56,12 +65,12 @@ class RunScriptTaskFuncTest {
         assertTaskOutcome(result2, FrontendGradlePlugin.INSTALL_TASK_NAME, TaskOutcome.SUCCESS);
         assertTaskOutcome(result2, customTaskName, TaskOutcome.SUCCESS);
 
-        Files.deleteIfExists(projectDirectory.toPath().resolve("package-lock.json"));
+        Files.deleteIfExists(projectDirectory.resolve("package-lock.json"));
         Files.copy(new File(getClass().getClassLoader().getResource("package-yarn.json").toURI()).toPath(),
-            projectDirectory.toPath().resolve("package.json"), StandardCopyOption.REPLACE_EXISTING);
+            projectDirectory.resolve("package.json"), StandardCopyOption.REPLACE_EXISTING);
         properties.put("yarnEnabled", true);
         properties.put("yarnVersion", "1.15.2");
-        FunctionalTestHelper.createBuildFile(projectDirectory, properties, customTaskDefinition.toString());
+        Helper.createBuildFile(projectDirectory, properties, customTaskDefinition.toString());
 
         final BuildResult result3 = runGradle(projectDirectory, customTaskName);
 

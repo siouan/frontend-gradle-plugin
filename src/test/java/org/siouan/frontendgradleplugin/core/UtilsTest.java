@@ -18,17 +18,19 @@ import org.junit.jupiter.api.io.TempDir;
 class UtilsTest {
 
     @TempDir
-    protected File temporaryDirectory;
+    File temporaryDirectory;
 
     @Test
     void shouldFailWhenSourceDirectoryIsNotAValidDirectory() {
-        assertThatThrownBy(() -> Utils.moveFiles(new File(temporaryDirectory, "src"), temporaryDirectory))
+        assertThatThrownBy(
+            () -> Utils.moveFiles(temporaryDirectory.toPath().resolve("src"), temporaryDirectory.toPath()))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void shouldFailWhenDestDirectoryIsNotAValidDirectory() {
-        assertThatThrownBy(() -> Utils.moveFiles(temporaryDirectory, new File(temporaryDirectory, "dest")))
+        assertThatThrownBy(
+            () -> Utils.moveFiles(temporaryDirectory.toPath(), temporaryDirectory.toPath().resolve("dest")))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -40,5 +42,20 @@ class UtilsTest {
     @Test
     void shouldNotTouchFilePermissionsWhenFileNotFound() throws IOException {
         assertThat(Utils.setFileExecutable(Paths.get("afile"), "Linux")).isFalse();
+    }
+
+    @Test
+    void shouldTellExtensionIsGzipWhenExtensionEndsWithGz() {
+        assertThat(Utils.isGzipExtension(".gz")).isTrue();
+    }
+
+    @Test
+    void shouldTellExtensionIsGzipWhenExtensionEndsWithGzip() {
+        assertThat(Utils.isGzipExtension(".gzip")).isTrue();
+    }
+
+    @Test
+    void shouldTellExtensionIsNotGzipWhenExtensionEndsNeitherWithGzOrGzip() {
+        assertThat(Utils.isGzipExtension(".Z")).isFalse();
     }
 }

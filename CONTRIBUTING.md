@@ -17,7 +17,8 @@ directly.
 
 - Apart from your preferred IDE, no other tools is required.
 - Use the integrated Gradle Wrapper executable `gradlew` to execute development tasks apart from an IDE.
-- It is a requirement to keep the plugin independent, small. No dependencies shall be added without approbation.
+- It is a requirement to keep the plugin independent, small. That's why resorting to 3rd-party libraries is avoided
+unless mandatory (e.g. [Apache Commons Compress][apache-commons-compress] for ZIP/GZIP/TAR extraction).
 - All packages, classes, methods shall have a relevant documentation. A relevant documentation provides information to
 identify the responsibility and behaviour of the class/method, such as developers don't have to inspect the code to
 understand how to use it.
@@ -29,7 +30,7 @@ independent possible, away from this API, with an appropriate level of abstracti
 - This separation between classes tightly coupled with Gradle API (inheritance) and classes containing business
 processes is implemented with 2 packages: `org.siouan.frontendgradleplugin.tasks` and
 `org.siouan.frontendgradleplugin.core`. 
-- Unit tests shall be written for each class in the `org.siouan.frontendgradleplugin.tasks` package. Code coverage with
+- Unit tests shall be written for each class in the `org.siouan.frontendgradleplugin.core` package. Code coverage with
 unit tests shall be the highest possible, to avoid unknown behaviours at execution, and improve software
 maintainability, predictability, and reliability.
 - Functional tests shall be written for each class in the `org.siouan.frontendgradleplugin.tasks` package.
@@ -54,7 +55,7 @@ gradlew pluginUnderTestMetadata
 'Fixed #<issue_number>'.
 - The automated test suite must be run and no test case must fail before any commit.
 
-### Continuous integration
+## Continuous integration
 
 The project relies on [Travis CI Open Source][travis] to integrate continuously every change, pull request, in the
 repository. The configuration actually allows to build and test the plugin on the environments below:
@@ -68,6 +69,7 @@ developed on Windows 10 Home with OracleJDK 1.8.0_202 64 bits and [JetBrains Int
 
 *Note: continuous integration of Java projects on Windows is not supported by Travis yet.*
 
+[apache-commons-compress]: <https://commons.apache.org/proper/commons-compress/> (Apache Commons Compress)
 [intellij]: <https://www.jetbrains.com/idea/> (IntelliJ IDEA)
 [issues]: <https://github.com/Siouan/frontend-gradle-plugin/issues> (Issues)
-[travis]: <https://travis-ci.org/> (Travis CI Open Source)
+[travis]: <https://travis-ci.com/> (Travis CI)

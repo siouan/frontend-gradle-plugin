@@ -1,6 +1,5 @@
 package org.siouan.frontendgradleplugin.core;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.FileVisitResult;
@@ -33,6 +32,23 @@ public final class Utils {
      */
     public static void deleteRecursively(final Path rootPath, final boolean deleteRootEnabled) throws IOException {
         Files.walkFileTree(rootPath, new FileDeleteVisitor(rootPath, deleteRootEnabled));
+    }
+
+    /**
+     * Gets the extension of a file.
+     *
+     * @param fileName File name.
+     * @return Extension.
+     */
+    public static Optional<String> getExtension(final String fileName) {
+        final int index = fileName.lastIndexOf('.');
+        final String extension;
+        if (index == -1) {
+            extension = null;
+        } else {
+            extension = fileName.substring(fileName.lastIndexOf('.'));
+        }
+        return Optional.ofNullable(extension);
     }
 
     /**
@@ -75,6 +91,24 @@ public final class Utils {
     }
 
     /**
+     * Gets the current JVM architecture.
+     *
+     * @return String describing the JVM architecture.
+     */
+    public static String getSystemJvmArch() {
+        return System.getProperty("os.arch");
+    }
+
+    /**
+     * Gets the current O/S name.
+     *
+     * @return String describing the O/S.
+     */
+    public static String getSystemOsName() {
+        return System.getProperty("os.name");
+    }
+
+    /**
      * Gets the path of Yarn executable.
      *
      * @param yarnInstallDirectory Yarn install directory.
@@ -94,24 +128,6 @@ public final class Utils {
     }
 
     /**
-     * Gets the current JVM architecture.
-     *
-     * @return String describing the JVM architecture.
-     */
-    public static String getSystemJvmArch() {
-        return System.getProperty("os.arch");
-    }
-
-    /**
-     * Gets the current O/S name.
-     *
-     * @return String describing the O/S.
-     */
-    public static String getSystemOsName() {
-        return System.getProperty("os.name");
-    }
-
-    /**
      * Tells whether the given JRE architecture is a 64 bits one.
      *
      * @param jreArch JRE architecture.
@@ -122,6 +138,16 @@ public final class Utils {
         final String jreArchLowered = jreArch.toLowerCase();
         return jreArchLowered.contains("x64") || jreArchLowered.contains("x86_64") || jreArchLowered.contains("amd64")
             || jreArchLowered.contains("ppc") || jreArchLowered.contains("sparc");
+    }
+
+    /**
+     * Tells whether a file name extension is related to a GZIP file.
+     *
+     * @param extension Extension
+     * @return {@code true} if the extension is related to a GZIP file.
+     */
+    public static boolean isGzipExtension(final String extension) {
+        return extension.equals(".gz") || extension.equals(".gzip");
     }
 
     /**
@@ -166,15 +192,15 @@ public final class Utils {
      * @throws IllegalArgumentException If either the source directory or the destination directory is not an existing
      * directory.
      */
-    public static void moveFiles(final File srcDirectory, final File destDirectory) throws IOException {
-        if (!srcDirectory.isDirectory() || !destDirectory.isDirectory()) {
+    public static void moveFiles(final Path srcDirectory, final Path destDirectory) throws IOException {
+        if (!Files.isDirectory(srcDirectory) || !Files.isDirectory(destDirectory)) {
             throw new IllegalArgumentException();
         }
 
-        try (final Stream<Path> childPaths = Files.list(srcDirectory.toPath())) {
+        try (final Stream<Path> childPaths = Files.list(srcDirectory)) {
             childPaths.forEach(path -> {
                 try {
-                    Files.move(path, new File(destDirectory, path.getFileName().toString()).toPath());
+                    Files.move(path, destDirectory.resolve(path.getFileName().toString()));
                 } catch (IOException e) {
                     throw new UncheckedIOException(e);
                 }
@@ -190,13 +216,7 @@ public final class Utils {
      * @return The filename without the extension.
      */
     public static String removeExtension(final String filename) {
-        final String filenameWithoutExtension;
-        if (filename.endsWith(".tar.gz")) {
-            filenameWithoutExtension = filename.substring(0, filename.lastIndexOf(".tar.gz"));
-        } else {
-            filenameWithoutExtension = filename.substring(0, filename.lastIndexOf('.'));
-        }
-        return filenameWithoutExtension;
+        return filename.substring(0, filename.lastIndexOf('.'));
     }
 
     /**
@@ -241,6 +261,24 @@ public final class Utils {
             touched = false;
         }
         return touched;
+    }
+
+    /**
+     * Converts a binary buffer into an hexadecimal string, with a lower case.
+     *
+     * @param buffer Buffer.
+     * @return Hexadecimal string.
+     */
+    public static String toHexadecimalString(final byte[] buffer) {
+        final StringBuilder hexadecimalString = new StringBuilder();
+        for (byte digit : buffer) {
+            String hexadecimalDigit = Integer.toHexString(0xff & digit);
+            if (hexadecimalDigit.length() == 1) {
+                hexadecimalString.append(0);
+            }
+            hexadecimalString.append(hexadecimalDigit);
+        }
+        return hexadecimalString.toString();
     }
 
     /**

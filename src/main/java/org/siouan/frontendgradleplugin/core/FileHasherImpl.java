@@ -1,10 +1,10 @@
 package org.siouan.frontendgradleplugin.core;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
+import java.nio.channels.SeekableByteChannel;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -30,10 +30,9 @@ public class FileHasherImpl implements FileHasher {
     }
 
     @Override
-    public String hash(final File inputFile) throws IOException {
+    public String hash(final Path inputFile) throws IOException {
         final ByteBuffer buffer = ByteBuffer.allocate(BUFFER_CAPACITY);
-        try (final FileInputStream inputStream = new FileInputStream(inputFile)) {
-            final FileChannel inputChannel = inputStream.getChannel();
+        try (final SeekableByteChannel inputChannel = Files.newByteChannel(inputFile)) {
             int numberOfBytesRead = inputChannel.read(buffer);
             while (numberOfBytesRead != -1) {
                 buffer.flip();
@@ -42,24 +41,6 @@ public class FileHasherImpl implements FileHasher {
                 numberOfBytesRead = inputChannel.read(buffer);
             }
         }
-        return toHexadecimalString(digest.digest());
-    }
-
-    /**
-     * Converts a binary hash into an hexadecimal string, with a lower case.
-     *
-     * @param hash Hash.
-     * @return Hexadecimal string.
-     */
-    private String toHexadecimalString(final byte[] hash) {
-        final StringBuilder hexadecimalString = new StringBuilder();
-        for (byte digit : hash) {
-            String hexadecimalDigit = Integer.toHexString(0xff & digit);
-            if (hexadecimalDigit.length() == 1) {
-                hexadecimalString.append(0);
-            }
-            hexadecimalString.append(hexadecimalDigit);
-        }
-        return hexadecimalString.toString();
+        return Utils.toHexadecimalString(digest.digest());
     }
 }

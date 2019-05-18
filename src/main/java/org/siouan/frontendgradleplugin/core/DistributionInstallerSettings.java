@@ -1,9 +1,10 @@
 package org.siouan.frontendgradleplugin.core;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.Optional;
 
 import org.gradle.api.Task;
+import org.siouan.frontendgradleplugin.core.archivers.ArchiverFactory;
 
 /**
  * Settings for the distribution installer.
@@ -19,7 +20,7 @@ public class DistributionInstallerSettings {
     /**
      * Directory where the distribution shall be installed.
      */
-    private final File installDirectory;
+    private final Path installDirectory;
 
     /**
      * Resolver of the distribution download URL.
@@ -27,47 +28,104 @@ public class DistributionInstallerSettings {
     private final DistributionUrlResolver urlResolver;
 
     /**
+     * Downloader.
+     */
+    private final Downloader downloader;
+
+    /**
      * Validator of the distribution.
      */
     private final DistributionValidator validator;
 
     /**
-     * Listener called once the distribution is installed.
+     * Factory of archiver.
      */
-    private final DistributionPostInstallAction postInstallAction;
+    private final ArchiverFactory archiverFactory;
 
+    /**
+     * Builds an installer.
+     *
+     * @param task Related Gradle task.
+     * @param osName O/S name.
+     * @param urlResolver Resolver of the download URL.
+     * @param downloader Downloader.
+     * @param validator Distribution validator.
+     * @param archiverFactory Factory providing archivers.
+     * @param installDirectory Install directory.
+     */
     public DistributionInstallerSettings(final Task task, final String osName,
-        final DistributionUrlResolver urlResolver, final DistributionValidator validator, final File installDirectory,
-        final DistributionPostInstallAction postInstallAction) {
+        final DistributionUrlResolver urlResolver, final Downloader downloader, final DistributionValidator validator,
+        final ArchiverFactory archiverFactory, final Path installDirectory) {
         this.task = task;
         this.osName = osName;
         this.urlResolver = urlResolver;
+        this.downloader = downloader;
         this.validator = validator;
+        this.archiverFactory = archiverFactory;
         this.installDirectory = installDirectory;
-        this.postInstallAction = postInstallAction;
     }
 
+    /**
+     * Gets the related task.
+     *
+     * @return Task.
+     */
     public Task getTask() {
         return task;
     }
 
+    /**
+     * Gets the underlying O/S name.
+     *
+     * @return O/S name.
+     */
     public String getOsName() {
         return osName;
     }
 
-    public File getInstallDirectory() {
+    /**
+     * Gets the install directory.
+     *
+     * @return Install directory.
+     */
+    public Path getInstallDirectory() {
         return installDirectory;
     }
+
+    /**
+     * Gets the resolver of the distribution URL.
+     *
+     * @return URL.
+     */
 
     public DistributionUrlResolver getUrlResolver() {
         return urlResolver;
     }
 
+    /**
+     * Gest the downloader.
+     *
+     * @return Downloader.
+     */
+    public Downloader getDownloader() {
+        return downloader;
+    }
+
+    /**
+     * Gets the distribution validator.
+     *
+     * @return Validator.
+     */
     public Optional<DistributionValidator> getValidator() {
         return Optional.ofNullable(validator);
     }
 
-    public Optional<DistributionPostInstallAction> getPostInstallAction() {
-        return Optional.ofNullable(postInstallAction);
+    /**
+     * Gets the archiver factory.
+     *
+     * @return Factory.
+     */
+    public ArchiverFactory getArchiverFactory() {
+        return archiverFactory;
     }
 }

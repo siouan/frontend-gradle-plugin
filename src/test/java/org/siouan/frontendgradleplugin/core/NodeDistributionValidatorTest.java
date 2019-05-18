@@ -15,19 +15,21 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
-import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.logging.Logger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
  * Unit tests for the {@link NodeDistributionValidator} class.
  */
+@ExtendWith(MockitoExtension.class)
 class NodeDistributionValidatorTest {
 
     private static final String DISTRIBUTION_URL = "https://nodejs.org/dist/v9.2.4/node-v9.2.4-win-x64.zip";
@@ -35,10 +37,7 @@ class NodeDistributionValidatorTest {
     private static final String DISTRIBUTION_FILENAME = "distribution.zip";
 
     @TempDir
-    protected File temporaryDirectory;
-
-    @Mock
-    private Project project;
+    File temporaryDirectory;
 
     @Mock
     private Logger logger;
@@ -59,25 +58,22 @@ class NodeDistributionValidatorTest {
 
     @BeforeEach
     void setUp() throws IOException {
-        MockitoAnnotations.initMocks(this);
-
-        when(task.getProject()).thenReturn(project);
         when(task.getLogger()).thenReturn(logger);
-        final File installDirectory = new File(temporaryDirectory, "install");
-        Files.createDirectory(installDirectory.toPath());
+        final Path installDirectory = temporaryDirectory.toPath().resolve("install");
+        Files.createDirectory(installDirectory);
         validator = new NodeDistributionValidator(task, downloader, checksumReader, fileHasher, installDirectory);
     }
 
     @Test
     void shouldFailWhenChecksumFileDownloadFails() throws DownloadException {
         final Exception expectedException = mock(DownloadException.class);
-        doThrow(expectedException).when(downloader).download(any(URL.class), any(File.class));
+        doThrow(expectedException).when(downloader).download(any(URL.class), any(Path.class));
 
         assertThatThrownBy(() -> validator
-            .validate(URI.create(DISTRIBUTION_URL).toURL(), new File(temporaryDirectory, DISTRIBUTION_FILENAME)))
-            .isInstanceOf(InvalidDistributionException.class).hasCause(expectedException);
+            .validate(URI.create(DISTRIBUTION_URL).toURL(), temporaryDirectory.toPath().resolve(DISTRIBUTION_FILENAME)))
+            .isInstanceOf(DistributionValidatorException.class).hasCause(expectedException);
 
-        verify(downloader).download(any(URL.class), any(File.class));
+        verify(downloader).download(any(URL.class), any(Path.class));
         verifyNoMoreInteractions(downloader);
         verifyZeroInteractions(checksumReader);
         verifyZeroInteractions(fileHasher);
@@ -89,15 +85,15 @@ class NodeDistributionValidatorTest {
         final URL distributionUrl = URI.create(DISTRIBUTION_URL).toURL();
         final Exception expectedException = mock(IOException.class);
         final String distributionFilename = DISTRIBUTION_FILENAME;
-        when(checksumReader.readHash(any(File.class), eq(distributionFilename))).thenThrow(expectedException);
+        when(checksumReader.readHash(any(Path.class), eq(distributionFilename))).thenThrow(expectedException);
 
         assertThatThrownBy(
-            () -> validator.validate(distributionUrl, new File(temporaryDirectory, distributionFilename)))
-            .isInstanceOf(InvalidDistributionException.class).hasCause(expectedException);
+            () -> validator.validate(distributionUrl, temporaryDirectory.toPath().resolve(distributionFilename)))
+            .isInstanceOf(DistributionValidatorException.class).hasCause(expectedException);
 
-        verify(downloader).download(any(URL.class), any(File.class));
+        verify(downloader).download(any(URL.class), any(Path.class));
         verifyNoMoreInteractions(downloader);
-        verify(checksumReader).readHash(any(File.class), eq(distributionFilename));
+        verify(checksumReader).readHash(any(Path.class), eq(distributionFilename));
         verifyNoMoreInteractions(checksumReader);
         verifyZeroInteractions(fileHasher);
     }
@@ -108,17 +104,17 @@ class NodeDistributionValidatorTest {
         final URL distributionUrl = URI.create(DISTRIBUTION_URL).toURL();
         final String distributionFilename = DISTRIBUTION_FILENAME;
         final String hash = "0123456789abcdef";
-        when(checksumReader.readHash(any(File.class), eq(distributionFilename))).thenReturn(hash);
+        when(checksumReader.readHash(any(Path.class), eq(distributionFilename))).thenReturn(hash);
         final Exception expectedException = mock(IOException.class);
-        final File distributionFile = new File(temporaryDirectory, distributionFilename);
+        final Path distributionFile = temporaryDirectory.toPath().resolve(distributionFilename);
         when(fileHasher.hash(distributionFile)).thenThrow(expectedException);
 
         assertThatThrownBy(() -> validator.validate(distributionUrl, distributionFile))
-            .isInstanceOf(InvalidDistributionException.class).hasCause(expectedException);
+            .isInstanceOf(DistributionValidatorException.class).hasCause(expectedException);
 
-        verify(downloader).download(any(URL.class), any(File.class));
+        verify(downloader).download(any(URL.class), any(Path.class));
         verifyNoMoreInteractions(downloader);
-        verify(checksumReader).readHash(any(File.class), eq(distributionFilename));
+        verify(checksumReader).readHash(any(Path.class), eq(distributionFilename));
         verifyNoMoreInteractions(checksumReader);
         verify(fileHasher).hash(distributionFile);
         verifyNoMoreInteractions(fileHasher);
@@ -130,17 +126,17 @@ class NodeDistributionValidatorTest {
         final URL distributionUrl = URI.create(DISTRIBUTION_URL).toURL();
         final String distributionFilename = DISTRIBUTION_FILENAME;
         final String expectedHash = "0123456789abcdef";
-        when(checksumReader.readHash(any(File.class), eq(distributionFilename))).thenReturn(expectedHash);
-        final File distributionFile = new File(temporaryDirectory, distributionFilename);
+        when(checksumReader.readHash(any(Path.class), eq(distributionFilename))).thenReturn(expectedHash);
+        final Path distributionFile = temporaryDirectory.toPath().resolve(distributionFilename);
         final String hash = "fedcba98765543210";
         when(fileHasher.hash(distributionFile)).thenReturn(hash);
 
         assertThatThrownBy(() -> validator.validate(distributionUrl, distributionFile))
-            .isInstanceOf(InvalidDistributionException.class).hasNoCause();
+            .isInstanceOf(DistributionValidatorException.class).hasNoCause();
 
-        verify(downloader).download(any(URL.class), any(File.class));
+        verify(downloader).download(any(URL.class), any(Path.class));
         verifyNoMoreInteractions(downloader);
-        verify(checksumReader).readHash(any(File.class), eq(distributionFilename));
+        verify(checksumReader).readHash(any(Path.class), eq(distributionFilename));
         verifyNoMoreInteractions(checksumReader);
         verify(fileHasher).hash(distributionFile);
         verifyNoMoreInteractions(fileHasher);
@@ -148,19 +144,20 @@ class NodeDistributionValidatorTest {
 
     @Test
     void shouldReturnWhenDistributionFileIsValid()
-        throws DownloadException, IOException, NodeDistributionChecksumNotFoundException, InvalidDistributionException {
+        throws DownloadException, IOException, NodeDistributionChecksumNotFoundException,
+        DistributionValidatorException {
         final URL distributionUrl = URI.create(DISTRIBUTION_URL).toURL();
         final String distributionFilename = DISTRIBUTION_FILENAME;
         final String expectedHash = "0123456789abcdef";
-        when(checksumReader.readHash(any(File.class), eq(distributionFilename))).thenReturn(expectedHash);
-        final File distributionFile = new File(temporaryDirectory, distributionFilename);
+        when(checksumReader.readHash(any(Path.class), eq(distributionFilename))).thenReturn(expectedHash);
+        final Path distributionFile = temporaryDirectory.toPath().resolve(distributionFilename);
         when(fileHasher.hash(distributionFile)).thenReturn(expectedHash);
 
         validator.validate(distributionUrl, distributionFile);
 
-        verify(downloader).download(any(URL.class), any(File.class));
+        verify(downloader).download(any(URL.class), any(Path.class));
         verifyNoMoreInteractions(downloader);
-        verify(checksumReader).readHash(any(File.class), eq(distributionFilename));
+        verify(checksumReader).readHash(any(Path.class), eq(distributionFilename));
         verifyNoMoreInteractions(checksumReader);
         verify(fileHasher).hash(distributionFile);
         verifyNoMoreInteractions(fileHasher);

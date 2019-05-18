@@ -17,25 +17,26 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import org.gradle.process.ExecSpec;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
  * Unit tests for the {@link ExecSpecAction} class.
  */
-public class ExecSpecActionTest {
+@ExtendWith(MockitoExtension.class)
+class ExecSpecActionTest {
 
     private static final String SCRIPT = " run script ";
 
     private static final String PATH_ENVIRONMENT = "/usr/bin:/usr/lib";
 
     @TempDir
-    protected File temporaryDirectory;
+    File temporaryDirectory;
 
     @Mock
     private ExecSpec execSpec;
@@ -45,11 +46,6 @@ public class ExecSpecActionTest {
 
     @Captor
     private ArgumentCaptor<List<String>> argsCaptor;
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.initMocks(this);
-    }
 
     @Test
     void shouldFailBuildingActionWhenNodeExecutableCannotBeFound() {

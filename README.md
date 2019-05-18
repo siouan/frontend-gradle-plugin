@@ -1,9 +1,9 @@
 # Frontend Gradle plugin
 
-[![Latest release 1.1.2](https://img.shields.io/badge/Latest%20release-1.1.2-blue.svg)](https://github.com/Siouan/frontend-gradle-plugin/releases/tag/v1.1.2)
+[![Latest release 1.1.3](https://img.shields.io/badge/Latest%20release-1.1.3-blue.svg)](https://github.com/Siouan/frontend-gradle-plugin/releases/tag/v1.1.3)
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
 
-[![Build status](https://travis-ci.org/Siouan/frontend-gradle-plugin.svg?branch=1.1)](https://travis-ci.org/Siouan/frontend-gradle-plugin)
+[![Build status](https://travis-ci.com/Siouan/frontend-gradle-plugin.svg?branch=1.1)](https://travis-ci.com/Siouan/frontend-gradle-plugin)
 [![Quality gate status](https://sonarcloud.io/api/project_badges/measure?project=Siouan_frontend-gradle-plugin&metric=alert_status)](https://sonarcloud.io/dashboard?id=Siouan_frontend-gradle-plugin)
 [![Code coverage](https://sonarcloud.io/api/project_badges/measure?project=Siouan_frontend-gradle-plugin&metric=coverage)](https://sonarcloud.io/dashboard?id=Siouan_frontend-gradle-plugin)
 [![Reliability](https://sonarcloud.io/api/project_badges/measure?project=Siouan_frontend-gradle-plugin&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=Siouan_frontend-gradle-plugin)
@@ -36,7 +36,7 @@ install/configure the plugin, and build your frontend application.
   - [Check frontend](#check-frontend)
   - [Run custom NPM/Yarn script](#run-custom-npmyarn-script)
 - [Usage guidelines](#usage-guidelines)
-  - [How to assemble a frontend and a Java backend in a single artifact?](#how-to-assemble-a-frontend-and-a-java-backend-in-a-single-artifact)
+  - [How to assemble a frontend and a Java backend into a single artifact?](#how-to-assemble-a-frontend-and-a-java-backend-into-a-single-artifact)
   - [What kind of script should I attach to the `checkFrontend` task?](#what-kind-of-script-should-i-attach-to-the-checkfrontend-task)
 - [Contributing][contributing]
 
@@ -61,10 +61,10 @@ The plugin is built and tested on Linux, Mac OS, Windows. For a full list of bui
 
 This is the modern and recommended approach.
 
-```gradle
+```groovy
 // build.gradle
 plugins {
-    id 'org.siouan.frontend' version '1.1.2'
+    id 'org.siouan.frontend' version '1.1.3'
 }
 ```
 
@@ -72,14 +72,14 @@ plugins {
 
 This approach is the legacy way to resolve and apply plugins.
 
-```gradle
+```groovy
 // build.gradle
 buildscript {
     repositories {
         url 'https://plugins.gradle.org/m2/'
     }
     dependencies {
-        classpath 'org.siouan:frontend-gradle-plugin:1.1.2'
+        classpath 'org.siouan:frontend-gradle-plugin:1.1.3'
     }
 }
 
@@ -92,7 +92,7 @@ apply plugin: 'org.siouan.frontend'
 
 All settings are introduced hereafter, with default value for each property.
 
-```gradle
+```groovy
 // build.gradle
 frontend {
     // NODE SETTINGS
@@ -100,47 +100,49 @@ frontend {
     // property is not set.
     nodeVersion = '10.15.3'
 
-    // [Optional] Sets this property to force the download from a custom website. By default, this property is 'null',
-    // and the plugin attempts to download the distribution compatible with the current platform from the Node website.
-    // The version of the distribution is expected to be the same as the one set in the 'nodeVersion' property, or this
-    // may lead to unexpected results.
+    // [OPTIONAL] Sets this property to force the download from a custom website. By default, this property is
+    // 'null', and the plugin attempts to download the distribution compatible with the current platform from
+    // Node's website. The version of the distribution is expected to be the same as the one set in the
+    // 'nodeVersion' property, or this may lead to unexpected results.
     nodeDistributionUrl = 'https://nodejs.org/dist/vX.Y.Z/node-vX.Y.Z-win-x64.zip'
 
-    // [Optional] Install directory where the distribution archive shall be exploded.
+    // [OPTIONAL] Install directory where the distribution archive shall be exploded.
     nodeInstallDirectory = "${projectDir}/node"
 
     // YARN SETTINGS
-    // Whether Yarn shall be used instead of NPM when executing frontend tasks. Consequently, a Yarn distribution will
-    // be downloaded and installed by the plugin.
+    // [OPTIONAL] Whether Yarn shall be used instead of NPM when executing frontend tasks. Consequently, a Yarn
+    // distribution will be downloaded and installed by the plugin. If <true>, the 'yarnVersion' version property
+    // must be set.
     yarnEnabled = false
 
-    // [Optional] Yarn version, used to build the URL to download the corresponding distribution, if the
-    // 'yarnDistributionUrl' property is not set. This property is mandatory when the 'yarnEnabled' property is true.
+    // [OPTIONAL] Yarn version, used to build the URL to download the corresponding distribution, if the
+    // 'yarnDistributionUrl' property is not set. This property is mandatory when the 'yarnEnabled' property is
+    // true.
     yarnVersion = '1.15.2'
 
-    // [Optional] Sets this property to force the download from a custom website. By default, this property is 'null',
-    // and the plugin attempts to download the distribution compatible with the current platform from the Yarn website.
-    // The version of the distribution is expected to be the same as the one set in the 'yarnVersion' property, or this
-    // may lead to unexpected results.
+    // [OPTIONAL] Sets this property to force the download from a custom website. By default, this property is
+    // 'null', and the plugin attempts to download the distribution compatible with the current platform from
+    // Yarn's website. The version of the distribution is expected to be the same as the one set in the
+    // 'yarnVersion' property, or this may lead to unexpected results.
     yarnDistributionUrl = 'https://github.com/yarnpkg/yarn/releases/download/vX.Y.Z/yarn-vX.Y.Z.tar.gz'
 
-    // [Optional] Install directory where the distribution archive shall be exploded.
+    // [OPTIONAL] Install directory where the distribution archive shall be exploded.
     yarnInstallDirectory = "${projectDir}/yarn"
 
     // OTHER SETTINGS
-    // Name of the NPM/Yarn scripts (see 'package.json' file) that shall be executed depending on the Gradle lifecycle
-    // task. The values below are passed as argument of the 'npm' or 'yarn' executables.
+    // Name of the NPM/Yarn scripts (see 'package.json' file) that shall be executed depending on the Gradle
+    // lifecycle task. The values below are passed as argument of the 'npm' or 'yarn' executables.
 
-    // [Optional] Use this property only if frontend's compiled resources are generated out of the '${project.buildDir}'
-    // directory. Default value is <null>. This property is directly used by the 'cleanFrontend' task. The task is
-    // run when the Gradle built-in 'clean' task is run.
+    // [OPTIONAL] Use this property only if frontend's compiled resources are generated out of the
+    // '${project.buildDir}' directory. Default value is <null>. This property is used by the 'cleanFrontend' task.
+    // The task is run when the Gradle built-in 'clean' task is run.
     cleanScript = 'run clean'
 
-    // [Optional] Script called to build frontend's artifacts. Default value is <null>. This property is directly used
-    // by the 'assembleFrontend' task. The task is run when the Gradle built-in 'assemble' task is run.
+    // [OPTIONAL] Script called to build frontend's artifacts. Default value is <null>. This property is used by
+    // the 'assembleFrontend' task. The task is run when the Gradle built-in 'assemble' task is run.
     assembleScript = 'run assemble'
 
-    // [Optional] Script called to check the frontend. Default value is <null>. This property is directly used by the
+    // [OPTIONAL] Script called to check the frontend. Default value is <null>. This property is used by the
     // 'checkFrontend' task. The task is run when the Gradle built-in 'check' task is run.
     checkScript = 'run check'
 }
@@ -148,7 +150,7 @@ frontend {
 
 #### Typical configuration with NPM
 
-```gradle
+```groovy
 // build.gradle
 frontend {
     nodeVersion = '<X.Y.Z>'
@@ -160,7 +162,7 @@ frontend {
 
 #### Typical configuration with Yarn
 
-```gradle
+```groovy
 // build.gradle
 frontend {
     nodeVersion = '<X.Y.Z>'
@@ -180,25 +182,28 @@ Now that the plugin is correctly installed and configured, open a terminal, and 
 project's directory:
 
 ```sh
-gradle build
+gradlew build
 ```
 
-If the frontend application is part of a full-stack Java artifact, take a look at
-[this guide](#how-to-assemble-a-frontend-and-a-java-backend-in-a-single-artifact) to assemble the frontend and the
+If the frontend application is packaged with a Java backend into a single artifact, take a look at
+[this guide](#how-to-assemble-a-frontend-and-a-java-backend-into-a-single-artifact) to assemble the frontend and the
 backend together.
+
+*Note: the `package.json` file is expected to be in the project's root directory.*
 
 #### Use Node/NPM/Yarn apart from Gradle
  
-If Node/NPM/Yarn may be used apart from Gradle, it is mandatory to apply the following steps:
+If Node and NPM/Yarn may be used apart from Gradle, it is mandatory to apply the following steps:
 
 - Create a `NODEJS_HOME` environment variable containing the real path set in the `nodeInstallDirectory` property.
-- Add the `$NODEJS_HOME` (Unix-like OS) or `%NODEJS_HOME%` (Windows OS) path to the `PATH` environment variable.
-
-If Yarn is enabled, apply also the steps below:
-
-- Create a `YARN_HOME` environment variable containing the real path set in the `yarnInstallDirectory` property.
-- Add the `$YARN_HOME/bin` (Unix-like OS) or `%YARN_HOME%\bin` (Windows OS) path to the `PATH`
-environment variable.
+- Add the Node/NPM executables' directory to the `PATH` environment variable:
+  - On Unix-like O/S, add the `$NODEJS_HOME/bin` path.
+  - On Windows O/S, add `%NODEJS_HOME%` path.
+- If Yarn is enabled, create a `YARN_HOME` environment variable containing the real path set in the
+`yarnInstallDirectory` property.
+- Add the Yarn executable's directory to the `PATH` environment variable:
+  - On Unix-like O/S, add the `$YARN_HOME/bin` path.
+  - On Windows O/S, add the `%YARN_HOME%\bin` path.
 
 ## Tasks reference
 
@@ -256,11 +261,11 @@ execute tests, and perform additional analysis tasks.
 
 ### Run custom NPM/Yarn script
 
-The `runScriptFrontend` task is provided as a task type, to create custom tasks. The `script` property must be set with
-the corresponding NPM/Yarn command. For instance, the code below added in the `build.gradle` file allows to run
-frontend's end-to-end tests in a custom task:
+The plugin provides the task type `org.siouan.frontendgradleplugin.tasks.RunScriptTask` that allows creating a custom
+task to launch a frontend script. The `script` property must be set with the corresponding NPM/Yarn command. For
+instance, the code below added in the `build.gradle` file allows to run frontend's end-to-end tests in a custom task:
 
-```gradle
+```groovy
 tasks.register('e2e', org.siouan.frontendgradleplugin.tasks.RunScriptTask) {
     dependsOn tasks.named('installFrontend')
     script = 'run e2e'
@@ -269,7 +274,7 @@ tasks.register('e2e', org.siouan.frontendgradleplugin.tasks.RunScriptTask) {
 
 ## Usage guidelines
 
-### How to assemble a frontend and a Java backend in a single artifact?
+### How to assemble a frontend and a Java backend into a single artifact?
 
 If you plan to serve your frontend with a Java backend (e.g. a [Spring Boot][spring-boot] application), you will
 probably use other Gradle plugins, such as the [Gradle Java plugin][gradle-java-plugin], the
@@ -347,7 +352,6 @@ actions of your choice.
 [jdk]: <https://docs.oracle.com/en/java/javase/> (Java Development Kit)
 [node]: <https://nodejs.org/> (Node.js)
 [release-notes]: <https://github.com/siouan/frontend-gradle-plugin/releases> (Release notes)
-[semantic-versioning]: <https://semver.org/> (Semantic versioning)
 [spring-boot]: <https://spring.io/projects/spring-boot> (Spring Boot)
 [task-tree]: <task-tree.png>
 [yarn]: <https://yarnpkg.com/> (Yarn)
