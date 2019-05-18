@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.siouan.frontendgradleplugin.core.ExplodeSettings;
 
@@ -42,9 +43,8 @@ class ZipArchiver extends AbstractArchiver<ZipArchiverContext, ZipEntry> {
     @Override
     String getSymbolicLinkTarget(final ZipArchiverContext context, final ZipEntry entry) throws ArchiverException {
         final String target;
-        try (final BufferedReader reader = new BufferedReader(
-            new InputStreamReader(context.getZipFile().getInputStream(entry.getLowLevelEntry())))) {
-            target = reader.readLine();
+        try {
+            target = readSymbolicLinkTarget(context.getZipFile(), entry.getLowLevelEntry());
         } catch (final IOException e) {
             throw new ArchiverException(e);
         }
@@ -56,6 +56,12 @@ class ZipArchiver extends AbstractArchiver<ZipArchiverContext, ZipEntry> {
         throws IOException {
         try (final InputStream entryInputStream = context.getZipFile().getInputStream(entry.getLowLevelEntry())) {
             Files.copy(entryInputStream, targetFile);
+        }
+    }
+
+    String readSymbolicLinkTarget(final ZipFile zipFile, final ZipArchiveEntry entry) throws IOException {
+        try (final BufferedReader reader = new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry)))) {
+            return reader.readLine();
         }
     }
 }

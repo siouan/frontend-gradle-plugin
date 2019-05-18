@@ -3,6 +3,7 @@ package org.siouan.frontendgradleplugin.core.archivers;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.fail;
+import static org.mockito.Mockito.mock;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,6 +12,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.siouan.frontendgradleplugin.core.ExplodeSettings;
@@ -44,6 +47,30 @@ class ZipArchiverTest {
 
         assertThatThrownBy(() -> new ZipArchiver().initializeContext(settings)).isInstanceOf(ArchiverException.class)
             .hasCauseInstanceOf(IOException.class);
+    }
+
+    @Test
+    void shouldFailReadingSymbolicLinkTarget() throws URISyntaxException, ArchiverException {
+        final Path archiveFile = Paths.get(getClass().getClassLoader().getResource("archive-linux.zip").toURI());
+        final ExplodeSettings settings = new ExplodeSettings(archiveFile, targetDirectory.toPath(),
+            Utils.getSystemOsName());
+
+        final IOException expectedException = mock(IOException.class);
+        final ZipArchiver archiver = new ZipArchiverWithSymboliLinkFailure(expectedException);
+        final ZipArchiverContext context = archiver.initializeContext(settings);
+
+        Optional<ZipEntry> option = archiver.getNextEntry(context);
+        boolean failure = false;
+        while (option.isPresent()) {
+            final ZipEntry entry = option.get();
+            if (entry.isSymbolicLink()) {
+                assertThatThrownBy(() -> archiver.getSymbolicLinkTarget(context, entry))
+                    .isInstanceOf(ArchiverException.class).hasCause(expectedException);
+                failure = true;
+            }
+            option = archiver.getNextEntry(context);
+        }
+        assertThat(failure).isTrue();
     }
 
     @Test
@@ -96,5 +123,19 @@ class ZipArchiverTest {
             assertThat(symbolicLinkTarget).isEqualTo("./aFile");
         }
         assertThat(count).isEqualTo(expectedCount);
+    }
+
+    private static class ZipArchiverWithSymboliLinkFailure extends ZipArchiver {
+
+        private IOException exception;
+
+        ZipArchiverWithSymboliLinkFailure(final IOException exception) {
+            this.exception = exception;
+        }
+
+        @Override
+        String readSymbolicLinkTarget(final ZipFile zipFile, final ZipArchiveEntry entry) throws IOException {
+            throw exception;
+        }
     }
 }
