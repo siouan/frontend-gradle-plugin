@@ -36,8 +36,8 @@ dependencies {
     implementation 'org.apache.commons:commons-compress:1.18'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.4.2'
-    testImplementation 'org.mockito:mockito-core:2.27.0'
-    testImplementation 'org.mockito:mockito-junit-jupiter:2.27.0'
+    testImplementation 'org.mockito:mockito-core:2.28.2'
+    testImplementation 'org.mockito:mockito-junit-jupiter:2.28.2'
     testImplementation 'org.assertj:assertj-core:3.12.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.4.2'
 }
@@ -54,7 +54,7 @@ gradlePlugin {
         frontend {
             id = 'org.siouan.frontend'
             displayName = 'Frontend Gradle plugin'
-            description = 'Integrate your frontend NPM/Yarn build into Gradle.'
+            description = 'Integrate your frontend Node/NPM/Yarn build into Gradle.'
             implementationClass = 'org.siouan.frontendgradleplugin.FrontendGradlePlugin'
         }
     }

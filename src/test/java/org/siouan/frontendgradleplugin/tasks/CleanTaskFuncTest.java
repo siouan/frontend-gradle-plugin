@@ -42,8 +42,8 @@ class CleanTaskFuncTest {
         Files.copy(new File(getClass().getClassLoader().getResource("package-npm.json").toURI()).toPath(),
             projectDirectory.resolve("package.json"));
         final Map<String, Object> properties = new HashMap<>();
-        properties.put("nodeVersion", "10.15.3");
-        properties.put("nodeDistributionUrl", getClass().getClassLoader().getResource("node-v10.15.3.zip").toString());
+        properties.put("nodeVersion", "10.16.0");
+        properties.put("nodeDistributionUrl", getClass().getClassLoader().getResource("node-v10.16.0.zip").toString());
         properties.put("cleanScript", "run clean");
         Helper.createBuildFile(projectDirectory, properties);
 
@@ -65,9 +65,9 @@ class CleanTaskFuncTest {
         Files.copy(new File(getClass().getClassLoader().getResource("package-yarn.json").toURI()).toPath(),
             projectDirectory.resolve("package.json"), StandardCopyOption.REPLACE_EXISTING);
         properties.put("yarnEnabled", true);
-        properties.put("yarnVersion", "1.15.2");
+        properties.put("yarnVersion", "1.16.0");
         properties
-            .put("yarnDistributionUrl", getClass().getClassLoader().getResource("yarn-v1.15.2.tar.gz").toString());
+            .put("yarnDistributionUrl", getClass().getClassLoader().getResource("yarn-v1.16.0.tar.gz").toString());
         Helper.createBuildFile(projectDirectory, properties);
 
         final BuildResult result3 = runGradle(projectDirectory, FrontendGradlePlugin.GRADLE_CLEAN_TASK_NAME);
