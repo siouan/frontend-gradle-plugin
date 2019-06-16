@@ -153,6 +153,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.getYarnEnabled().set(extension.getYarnEnabled());
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
         task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
+        task.getInstallScript().set(extension.getInstallScript());
         task.dependsOn(NODE_INSTALL_TASK_NAME, YARN_INSTALL_TASK_NAME);
     }
 

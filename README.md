@@ -3,7 +3,7 @@
 [![Latest release 1.2.0](https://img.shields.io/badge/Latest%20release-1.2.0-blue.svg)](https://github.com/Siouan/frontend-gradle-plugin/releases/tag/v1.2.0)
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
 
-[![Build status](https://travis-ci.com/Siouan/frontend-gradle-plugin.svg?branch=master)](https://travis-ci.com/Siouan/frontend-gradle-plugin)
+[![Build status](https://travis-ci.com/Siouan/frontend-gradle-plugin.svg?branch=1.2)](https://travis-ci.com/Siouan/frontend-gradle-plugin)
 [![Quality gate status](https://sonarcloud.io/api/project_badges/measure?project=Siouan_frontend-gradle-plugin&metric=alert_status)](https://sonarcloud.io/dashboard?id=Siouan_frontend-gradle-plugin)
 [![Code coverage](https://sonarcloud.io/api/project_badges/measure?project=Siouan_frontend-gradle-plugin&metric=coverage)](https://sonarcloud.io/dashboard?id=Siouan_frontend-gradle-plugin)
 [![Reliability](https://sonarcloud.io/api/project_badges/measure?project=Siouan_frontend-gradle-plugin&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=Siouan_frontend-gradle-plugin)
@@ -98,7 +98,7 @@ frontend {
     // NODE SETTINGS
     // Node version, used to build the URL to download the corresponding distribution, if the 'nodeDistributionUrl'
     // property is not set.
-    nodeVersion = '10.15.3'
+    nodeVersion = '10.16.0'
 
     // [OPTIONAL] Sets this property to force the download from a custom website. By default, this property is
     // 'null', and the plugin attempts to download the distribution compatible with the current platform from
@@ -132,6 +132,10 @@ frontend {
     // OTHER SETTINGS
     // Name of the NPM/Yarn scripts (see 'package.json' file) that shall be executed depending on the Gradle
     // lifecycle task. The values below are passed as argument of the 'npm' or 'yarn' executables.
+
+    // [OPTIONAL] Use this property to customize the command line used to install frontend dependencies. This property
+    // is used by the 'installFrontend' task.
+    installScript = 'install'
 
     // [OPTIONAL] Use this property only if frontend's compiled resources are generated out of the
     // '${project.buildDir}' directory. Default value is <null>. This property is used by the 'cleanFrontend' task.
@@ -233,8 +237,10 @@ This task should not be executed directly. It will be called automatically by Gr
 ### Install frontend dependencies
 
 Depending on the value of the `yarnEnabled` property, the `installFrontend` task issues either a `npm install` command
-or a `yarn install` command. If a `package.json` file is found in the project's directory, the command shall install
-dependencies and tools for frontend development.
+or a `yarn install` command, by default. If a `package.json` file is found in the project's directory, the command shall
+install dependencies and tools for frontend development. Optionally, this command may be customized (e.g. to run a
+`npm ci` command instead of a `npm install` command). To do so, the `installScript` must be set to the corresponding
+NPM/Yarn command.
 
 This task may be executed directly, especially if the Node distribution and/or the Yarn distribution must be downloaded
 again.
@@ -330,6 +336,23 @@ Our recommendation is the `processResources` task depends on the `processFronten
 tasks.named('processResources').configure {
     dependsOn tasks.named('processFrontendResources')
 }
+```
+
+The resulting task tree shall be as below:
+
+```sh
+gradlew taskTree --no-repeat assemble
+
+:assemble
++--- :jar
+     \--- :classes
+          +--- :compileJava
+          \--- :processResources
+               +--- :processFrontendResources
+                    +--- :assembleFrontend
+                         \--- :installFrontend
+                              +--- :installNode
+                              \--- :installYarn
 ```
 
 ### What kind of script should I attach to the `checkFrontend` task?
