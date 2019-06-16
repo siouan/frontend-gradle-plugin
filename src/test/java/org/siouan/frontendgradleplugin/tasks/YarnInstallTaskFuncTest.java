@@ -71,7 +71,7 @@ class YarnInstallTaskFuncTest {
     void shouldFailInstallingYarnWhenDistributionCannotBeDownloadedWithInvalidUrl() throws IOException {
         final Map<String, Object> properties = new HashMap<>();
         properties.put("yarnEnabled", true);
-        properties.put("yarnVersion", "1.16.0");
+        properties.put("yarnVersion", "1.15.2");
         properties.put("yarnDistributionUrl", "protocol://domain/unknown");
         Helper.createBuildFile(projectDirectory, properties);
 
@@ -85,9 +85,9 @@ class YarnInstallTaskFuncTest {
     void shouldInstallYarnFirstAndNothingMoreSecondly() throws IOException {
         final Map<String, Object> properties = new HashMap<>();
         properties.put("yarnEnabled", true);
-        properties.put("yarnVersion", "1.16.0");
+        properties.put("yarnVersion", "1.15.2");
         properties
-            .put("yarnDistributionUrl", getClass().getClassLoader().getResource("yarn-v1.16.0.tar.gz").toString());
+            .put("yarnDistributionUrl", getClass().getClassLoader().getResource("yarn-v1.15.2.tar.gz").toString());
         Helper.createBuildFile(projectDirectory, properties);
 
         final BuildResult result1 = runGradle(projectDirectory, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);

@@ -279,7 +279,7 @@ class DistributionInstallerTest {
     void shouldInstallDistributionAndRemoveRootDirectory()
         throws DistributionUrlResolverException, UnsupportedEntryException, SlipAttackException,
         DistributionInstallerException, ArchiverException, DownloadException, IOException {
-        final URL distributionUrl = getClass().getClassLoader().getResource("yarn-v1.16.0.tar.gz");
+        final URL distributionUrl = getClass().getClassLoader().getResource("yarn-v1.15.2.tar.gz");
         final Path installDirectory = temporaryDirectory.toPath().resolve("install");
         when(urlResolver.resolve()).thenReturn(distributionUrl);
         doAnswer(new DownloaderAnswer()).when(downloader).download(eq(distributionUrl), any(Path.class));

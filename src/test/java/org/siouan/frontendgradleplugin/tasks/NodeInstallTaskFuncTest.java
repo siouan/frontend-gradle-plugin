@@ -58,7 +58,7 @@ class NodeInstallTaskFuncTest {
     @Test
     void shouldFailInstallingNodeWhenDistributionCannotBeDownloadedWithInvalidUrl() throws IOException {
         final Map<String, Object> properties = new HashMap<>();
-        properties.put("nodeVersion", "10.16.0");
+        properties.put("nodeVersion", "10.15.3");
         properties.put("nodeDistributionUrl", "protocol://domain/unknown");
         Helper.createBuildFile(projectDirectory, properties);
 
@@ -71,8 +71,8 @@ class NodeInstallTaskFuncTest {
     @Test
     void shouldInstallNodeFirstAndNothingMoreSecondly() throws IOException {
         final Map<String, Object> properties = new HashMap<>();
-        properties.put("nodeVersion", "10.16.0");
-        properties.put("nodeDistributionUrl", getClass().getClassLoader().getResource("node-v10.16.0.zip").toString());
+        properties.put("nodeVersion", "10.15.3");
+        properties.put("nodeDistributionUrl", getClass().getClassLoader().getResource("node-v10.15.3.zip").toString());
         Helper.createBuildFile(projectDirectory, properties);
 
         final BuildResult result1 = runGradle(projectDirectory, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);

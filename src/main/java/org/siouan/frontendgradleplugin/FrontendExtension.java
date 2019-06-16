@@ -46,22 +46,17 @@ public class FrontendExtension {
     private final Property<String> yarnDistributionUrl;
 
     /**
-     * The NPM/Yarn script to execute to install frontend dependencies.
-     */
-    private final Property<String> installScript;
-
-    /**
-     * The NPM/Yarn script to execute to clean frontend resources.
+     * The NPM/Yarn myscript to execute to clean frontend resources.
      */
     private final Property<String> cleanScript;
 
     /**
-     * The NPM/Yarn script to execute to assemble frontend artifacts.
+     * The NPM/Yarn myscript to execute to assemble frontend artifacts.
      */
     private final Property<String> assembleScript;
 
     /**
-     * The NPM/Yarn script to execute to check the frontend.
+     * The NPM/Yarn myscript to execute to check the frontend.
      */
     private final Property<String> checkScript;
 
@@ -73,7 +68,6 @@ public class FrontendExtension {
         yarnVersion = project.getObjects().property(String.class);
         yarnInstallDirectory = project.getObjects().property(File.class);
         yarnDistributionUrl = project.getObjects().property(String.class);
-        installScript = project.getObjects().property(String.class);
         cleanScript = project.getObjects().property(String.class);
         assembleScript = project.getObjects().property(String.class);
         checkScript = project.getObjects().property(String.class);
@@ -105,10 +99,6 @@ public class FrontendExtension {
 
     public Property<String> getYarnDistributionUrl() {
         return yarnDistributionUrl;
-    }
-
-    public Property<String> getInstallScript() {
-        return installScript;
     }
 
     public Property<String> getCleanScript() {
