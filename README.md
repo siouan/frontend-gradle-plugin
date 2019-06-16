@@ -1,6 +1,6 @@
 # Frontend Gradle plugin
 
-[![Latest release 1.1.3](https://img.shields.io/badge/Latest%20release-1.1.3-blue.svg)](https://github.com/Siouan/frontend-gradle-plugin/releases/tag/v1.1.3)
+[![Latest release 1.2.0](https://img.shields.io/badge/Latest%20release-1.2.0-blue.svg)](https://github.com/Siouan/frontend-gradle-plugin/releases/tag/v1.2.0)
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
 
 [![Build status](https://travis-ci.com/Siouan/frontend-gradle-plugin.svg?branch=master)](https://travis-ci.com/Siouan/frontend-gradle-plugin)
@@ -64,7 +64,7 @@ This is the modern and recommended approach.
 ```groovy
 // build.gradle
 plugins {
-    id 'org.siouan.frontend' version '1.1.3'
+    id 'org.siouan.frontend' version '1.2.0'
 }
 ```
 
@@ -79,7 +79,7 @@ buildscript {
         url 'https://plugins.gradle.org/m2/'
     }
     dependencies {
-        classpath 'org.siouan:frontend-gradle-plugin:1.1.3'
+        classpath 'org.siouan:frontend-gradle-plugin:1.2.0'
     }
 }
 
