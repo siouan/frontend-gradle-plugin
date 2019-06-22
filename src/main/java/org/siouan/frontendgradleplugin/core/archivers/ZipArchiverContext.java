@@ -28,9 +28,8 @@ class ZipArchiverContext implements ArchiverContext {
      *
      * @param settings Explode settings.
      * @param zipFile ZIP file.
-     * @throws IOException If the archive file cannot be read or is not a valid ZIP file.
      */
-    ZipArchiverContext(final ExplodeSettings settings, final ZipFile zipFile) throws IOException {
+    ZipArchiverContext(final ExplodeSettings settings, final ZipFile zipFile) {
         this.settings = settings;
         this.zipFile = zipFile;
         this.entries = this.zipFile.getEntries();

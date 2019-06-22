@@ -8,11 +8,9 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 
-import org.gradle.api.Task;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.BuildTask;
 import org.gradle.testkit.runner.GradleRunner;
@@ -85,10 +83,8 @@ public final class Helper {
     public static int getDirectorySize(final Path directory) throws IOException {
         int size = 0;
         try (final DirectoryStream<Path> childFileStream = Files.newDirectoryStream(directory)) {
-            final Iterator<Path> childFileIterator = childFileStream.iterator();
-            while (childFileIterator.hasNext()) {
+            for (final Path childFile : childFileStream) {
                 size++;
-                childFileIterator.next();
             }
         }
         return size;
