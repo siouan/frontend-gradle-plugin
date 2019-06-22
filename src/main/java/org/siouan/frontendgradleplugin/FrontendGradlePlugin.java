@@ -104,7 +104,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         projectTasks.register(CHECK_TASK_NAME, CheckTask.class, task -> configureCheckTask(task, extension));
         projectTasks.register(ASSEMBLE_TASK_NAME, AssembleTask.class, task -> configureAssembleTask(task, extension));
 
-        projectTasks.named(INSTALL_TASK_NAME, task -> {
+        projectTasks.named(INSTALL_TASK_NAME, InstallTask.class, task -> {
             task.dependsOn(NODE_INSTALL_TASK_NAME);
             final TaskProvider<YarnInstallTask> yarnInstallTask = projectTasks
                 .named(YARN_INSTALL_TASK_NAME, YarnInstallTask.class);
@@ -112,17 +112,42 @@ public class FrontendGradlePlugin implements Plugin<Project> {
                 task.dependsOn(yarnInstallTask.getName());
             }
         });
-        projectTasks.named(CLEAN_TASK_NAME, task -> task.dependsOn(INSTALL_TASK_NAME));
-        projectTasks.named(ASSEMBLE_TASK_NAME, task -> task.dependsOn(INSTALL_TASK_NAME));
-        projectTasks.named(CHECK_TASK_NAME, task -> task.dependsOn(INSTALL_TASK_NAME));
+        projectTasks.named(CLEAN_TASK_NAME, CleanTask.class, task -> {
+            final TaskProvider<InstallTask> installTask = projectTasks.named(INSTALL_TASK_NAME, InstallTask.class);
+            if (task.getCleanScript().isPresent()) {
+                task.dependsOn(installTask.getName());
+            }
+        });
+        projectTasks.named(ASSEMBLE_TASK_NAME, AssembleTask.class, task -> {
+            final TaskProvider<InstallTask> installTask = projectTasks.named(INSTALL_TASK_NAME, InstallTask.class);
+            if (task.getAssembleScript().isPresent()) {
+                task.dependsOn(installTask.getName());
+            }
+        });
+        projectTasks.named(CHECK_TASK_NAME, CheckTask.class, task -> {
+            final TaskProvider<InstallTask> installTask = projectTasks.named(INSTALL_TASK_NAME, InstallTask.class);
+            if (task.getCheckScript().isPresent()) {
+                task.dependsOn(installTask.getName());
+            }
+        });
         projectTasks.named(GRADLE_CLEAN_TASK_NAME, task -> {
             final TaskProvider<CleanTask> cleanTask = projectTasks.named(CLEAN_TASK_NAME, CleanTask.class);
             if (cleanTask.isPresent() && cleanTask.get().getCleanScript().isPresent()) {
                 task.dependsOn(cleanTask.getName());
             }
         });
-        projectTasks.named(GRADLE_CHECK_TASK_NAME, task -> task.dependsOn(projectTasks.named(CHECK_TASK_NAME)));
-        projectTasks.named(GRADLE_ASSEMBLE_TASK_NAME, task -> task.dependsOn(projectTasks.named(ASSEMBLE_TASK_NAME)));
+        projectTasks.named(GRADLE_ASSEMBLE_TASK_NAME, task -> {
+            final TaskProvider<AssembleTask> assembleTask = projectTasks.named(ASSEMBLE_TASK_NAME, AssembleTask.class);
+            if (assembleTask.isPresent() && assembleTask.get().getAssembleScript().isPresent()) {
+                task.dependsOn(assembleTask.getName());
+            }
+        });
+        projectTasks.named(GRADLE_CHECK_TASK_NAME, task -> {
+            final TaskProvider<CheckTask> checkTask = projectTasks.named(CHECK_TASK_NAME, CheckTask.class);
+            if (checkTask.isPresent() && checkTask.get().getCheckScript().isPresent()) {
+                task.dependsOn(checkTask.getName());
+            }
+        });
     }
 
     /**

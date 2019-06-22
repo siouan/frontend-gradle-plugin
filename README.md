@@ -140,15 +140,17 @@ frontend {
 
     // [OPTIONAL] Use this property only if frontend's compiled resources are generated out of the
     // '${project.buildDir}' directory. Default value is <null>. This property is used by the 'cleanFrontend' task.
-    // The task is run when the Gradle built-in 'clean' task is run.
+    // The task is also executed when the Gradle built-in 'clean' task is executed, if this property is set.
     cleanScript = 'run clean'
 
     // [OPTIONAL] Script called to build frontend's artifacts. Default value is <null>. This property is used by
-    // the 'assembleFrontend' task. The task is run when the Gradle built-in 'assemble' task is run.
+    // the 'assembleFrontend' task.
+    // The task is also executed when the Gradle built-in 'assemble' task is executed, if this property is set.
     assembleScript = 'run assemble'
 
     // [OPTIONAL] Script called to check the frontend. Default value is <null>. This property is used by the
     // 'checkFrontend' task. The task is run when the Gradle built-in 'check' task is run.
+    // The task is also executed when the Gradle built-in 'check' task is executed, if this property is set.
     checkScript = 'run check'
 }
 ```
@@ -221,9 +223,9 @@ in the [Gradle base plugin][gradle-base-plugin].
 
 ### Install Node
 
-The `installNode` task downloads a Node distribution. If the `distributionUrl` property is ommitted, the URL is
-guessed using the `version` property. Use the property `nodeInstallDirectory` to set the directory where the
-distribution shall be installed, which, by default is the `${projectDir}/node` directory.
+The `installNode` task downloads a Node distribution and verifies its integrity. If the `distributionUrl` property is
+ommitted, the URL is guessed using the `version` property. Use the property `nodeInstallDirectory` to set the directory
+where the distribution shall be installed, which, by default is the `${projectDir}/node` directory.
 
 This task should not be executed directly. It will be called automatically by Gradle, if another task depends on it.
  
@@ -241,7 +243,8 @@ Depending on the value of the `yarnEnabled` property, the `installFrontend` task
 or a `yarn install` command, by default. If a `package.json` file is found in the project's directory, the command shall
 install dependencies and tools for frontend development. Optionally, this command may be customized (e.g. to run a
 `npm ci` command instead of a `npm install` command). To do so, the `installScript` must be set to the corresponding
-NPM/Yarn command.
+NPM/Yarn command. This task depends on the `installNode` task, and optionally on the `installYarn` task if the
+`yarnEnabled` property is `true`.
 
 This task may be executed directly, especially if the Node distribution and/or the Yarn distribution must be downloaded
 again.
@@ -251,20 +254,22 @@ again.
 The `cleanFrontend` task does nothing by default, considering frontend generated resources (pre-processed Typescript
 files, SCSS stylesheets...) are written in the `${project.buildDir}` directory. If it is not the case, this task may be
 useful to clean the relevant directory. To do so, a clean script must be defined in the project's `package.json` file,
-and the `cleanScript` property must be set to the corresponding NPM/Yarn command.
+and the `cleanScript` property must be set to the corresponding NPM/Yarn command. This task depends on the
+`installFrontend` task if the `cleanScript` property is set.
 
 ### Assemble frontend
 
 The `assembleFrontend` task shall be used to integrate a frontend's build script into Gradle builds. The build script
 must be defined in the project's `package.json` file, and the `assembleScript` property must be set to the corresponding
-NPM/Yarn command.
+NPM/Yarn command. This task depends on the `installFrontend` task if the `assembleScript` property is set.
 
 ### Check frontend
 
 The `checkFrontend` task shall be used to integrate a frontend's check script into Gradle builds. The check script must
 be defined in the project's `package.json` file, and the `checkscript` property must be set with the corresponding
 NPM/Yarn command. A typical check script defined in the project's `package.json` file may lint frontend source files,
-execute tests, and perform additional analysis tasks.
+execute tests, and perform additional analysis tasks. This task depends on the `installFrontend` task if the
+`checkScript` property is set.
 
 ### Run custom Node script
 
