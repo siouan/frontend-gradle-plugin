@@ -1,5 +1,6 @@
 package org.siouan.frontendgradleplugin.tasks;
 
+import static org.siouan.frontendgradleplugin.util.Helper.assertTaskIgnored;
 import static org.siouan.frontendgradleplugin.util.Helper.assertTaskOutcome;
 import static org.siouan.frontendgradleplugin.util.Helper.runGradle;
 
@@ -50,14 +51,14 @@ class CheckTaskFuncTest {
         final BuildResult result1 = runGradle(projectDirectory, FrontendGradlePlugin.GRADLE_CHECK_TASK_NAME);
 
         assertTaskOutcome(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, TaskOutcome.SUCCESS);
-        assertTaskOutcome(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME, TaskOutcome.SKIPPED);
+        assertTaskIgnored(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskOutcome(result1, FrontendGradlePlugin.INSTALL_TASK_NAME, TaskOutcome.SUCCESS);
         assertTaskOutcome(result1, FrontendGradlePlugin.GRADLE_CHECK_TASK_NAME, TaskOutcome.SUCCESS);
 
         final BuildResult result2 = runGradle(projectDirectory, FrontendGradlePlugin.GRADLE_CHECK_TASK_NAME);
 
         assertTaskOutcome(result2, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, TaskOutcome.UP_TO_DATE);
-        assertTaskOutcome(result2, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME, TaskOutcome.SKIPPED);
+        assertTaskIgnored(result2, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskOutcome(result2, FrontendGradlePlugin.INSTALL_TASK_NAME, TaskOutcome.SUCCESS);
         assertTaskOutcome(result2, FrontendGradlePlugin.GRADLE_CHECK_TASK_NAME, TaskOutcome.SUCCESS);
 

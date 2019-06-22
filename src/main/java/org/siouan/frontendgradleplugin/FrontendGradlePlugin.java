@@ -6,6 +6,7 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.BasePlugin;
 import org.gradle.api.tasks.TaskContainer;
+import org.gradle.api.tasks.TaskProvider;
 import org.siouan.frontendgradleplugin.tasks.AssembleTask;
 import org.siouan.frontendgradleplugin.tasks.CheckTask;
 import org.siouan.frontendgradleplugin.tasks.CleanTask;
@@ -96,19 +97,31 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         final TaskContainer projectTasks = project.getTasks();
         projectTasks
             .register(NODE_INSTALL_TASK_NAME, NodeInstallTask.class, task -> configureNodeInstallTask(task, extension));
-
         projectTasks
             .register(YARN_INSTALL_TASK_NAME, YarnInstallTask.class, task -> configureYarnInstallTask(task, extension));
-
         projectTasks.register(INSTALL_TASK_NAME, InstallTask.class, task -> configureInstallTask(task, extension));
-
         projectTasks.register(CLEAN_TASK_NAME, CleanTask.class, task -> configureCleanTask(task, extension));
-        projectTasks.named(GRADLE_CLEAN_TASK_NAME, task -> task.dependsOn(projectTasks.named(CLEAN_TASK_NAME)));
-
         projectTasks.register(CHECK_TASK_NAME, CheckTask.class, task -> configureCheckTask(task, extension));
-        projectTasks.named(GRADLE_CHECK_TASK_NAME, task -> task.dependsOn(projectTasks.named(CHECK_TASK_NAME)));
-
         projectTasks.register(ASSEMBLE_TASK_NAME, AssembleTask.class, task -> configureAssembleTask(task, extension));
+
+        projectTasks.named(INSTALL_TASK_NAME, task -> {
+            task.dependsOn(NODE_INSTALL_TASK_NAME);
+            final TaskProvider<YarnInstallTask> yarnInstallTask = projectTasks
+                .named(YARN_INSTALL_TASK_NAME, YarnInstallTask.class);
+            if (yarnInstallTask.isPresent() && yarnInstallTask.get().isEnabled()) {
+                task.dependsOn(yarnInstallTask.getName());
+            }
+        });
+        projectTasks.named(CLEAN_TASK_NAME, task -> task.dependsOn(INSTALL_TASK_NAME));
+        projectTasks.named(ASSEMBLE_TASK_NAME, task -> task.dependsOn(INSTALL_TASK_NAME));
+        projectTasks.named(CHECK_TASK_NAME, task -> task.dependsOn(INSTALL_TASK_NAME));
+        projectTasks.named(GRADLE_CLEAN_TASK_NAME, task -> {
+            final TaskProvider<CleanTask> cleanTask = projectTasks.named(CLEAN_TASK_NAME, CleanTask.class);
+            if (cleanTask.isPresent() && cleanTask.get().getCleanScript().isPresent()) {
+                task.dependsOn(cleanTask.getName());
+            }
+        });
+        projectTasks.named(GRADLE_CHECK_TASK_NAME, task -> task.dependsOn(projectTasks.named(CHECK_TASK_NAME)));
         projectTasks.named(GRADLE_ASSEMBLE_TASK_NAME, task -> task.dependsOn(projectTasks.named(ASSEMBLE_TASK_NAME)));
     }
 
@@ -154,7 +167,6 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
         task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
         task.getInstallScript().set(extension.getInstallScript());
-        task.dependsOn(NODE_INSTALL_TASK_NAME, YARN_INSTALL_TASK_NAME);
     }
 
     /**
@@ -170,7 +182,6 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
         task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
         task.getCleanScript().set(extension.getCleanScript());
-        task.dependsOn(INSTALL_TASK_NAME);
     }
 
     /**
@@ -186,7 +197,6 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
         task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
         task.getCheckScript().set(extension.getCheckScript());
-        task.dependsOn(INSTALL_TASK_NAME);
     }
 
     /**
@@ -202,6 +212,5 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
         task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
         task.getAssembleScript().set(extension.getAssembleScript());
-        task.dependsOn(INSTALL_TASK_NAME);
     }
 }
