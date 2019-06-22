@@ -39,6 +39,23 @@ class CleanTaskFuncTest {
     }
 
     @Test
+    void shouldDoNothingWhenScriptUndefined() throws IOException, URISyntaxException {
+        Files.copy(new File(getClass().getClassLoader().getResource("package-npm.json").toURI()).toPath(),
+            projectDirectory.resolve("package.json"));
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put("nodeVersion", "10.16.0");
+        properties.put("nodeDistributionUrl", getClass().getClassLoader().getResource("node-v10.16.0.zip").toString());
+        Helper.createBuildFile(projectDirectory, properties);
+
+        final BuildResult result1 = runGradle(projectDirectory, FrontendGradlePlugin.CLEAN_TASK_NAME);
+
+        assertTaskIgnored(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        assertTaskIgnored(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
+        assertTaskIgnored(result1, FrontendGradlePlugin.INSTALL_TASK_NAME);
+        assertTaskOutcome(result1, FrontendGradlePlugin.CLEAN_TASK_NAME, TaskOutcome.SUCCESS);
+    }
+
+    @Test
     void shouldCleanWithoutFrontendTasks() throws IOException, URISyntaxException {
         Files.copy(new File(getClass().getClassLoader().getResource("package-npm.json").toURI()).toPath(),
             projectDirectory.resolve("package.json"));
@@ -54,23 +71,6 @@ class CleanTaskFuncTest {
         assertTaskIgnored(result1, FrontendGradlePlugin.INSTALL_TASK_NAME);
         assertTaskIgnored(result1, FrontendGradlePlugin.CLEAN_TASK_NAME);
         assertTaskOutcome(result1, FrontendGradlePlugin.GRADLE_CLEAN_TASK_NAME, TaskOutcome.UP_TO_DATE);
-
-        Files.deleteIfExists(projectDirectory.resolve("package-lock.json"));
-        Files.copy(new File(getClass().getClassLoader().getResource("package-yarn.json").toURI()).toPath(),
-            projectDirectory.resolve("package.json"), StandardCopyOption.REPLACE_EXISTING);
-        properties.put("yarnEnabled", true);
-        properties.put("yarnVersion", "1.16.0");
-        properties
-            .put("yarnDistributionUrl", getClass().getClassLoader().getResource("yarn-v1.16.0.tar.gz").toString());
-        Helper.createBuildFile(projectDirectory, properties);
-
-        final BuildResult result2 = runGradle(projectDirectory, FrontendGradlePlugin.GRADLE_CLEAN_TASK_NAME);
-
-        assertTaskIgnored(result2, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
-        assertTaskIgnored(result2, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
-        assertTaskIgnored(result2, FrontendGradlePlugin.INSTALL_TASK_NAME);
-        assertTaskIgnored(result2, FrontendGradlePlugin.CLEAN_TASK_NAME);
-        assertTaskOutcome(result2, FrontendGradlePlugin.GRADLE_CLEAN_TASK_NAME, TaskOutcome.UP_TO_DATE);
     }
 
     @Test

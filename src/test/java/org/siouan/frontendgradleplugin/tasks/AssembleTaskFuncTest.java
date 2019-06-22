@@ -39,6 +39,41 @@ class AssembleTaskFuncTest {
     }
 
     @Test
+    void shouldDoNothingWhenScriptUndefined() throws IOException, URISyntaxException {
+        Files.copy(new File(getClass().getClassLoader().getResource("package-npm.json").toURI()).toPath(),
+            projectDirectory.resolve("package.json"));
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put("nodeVersion", "10.16.0");
+        properties.put("nodeDistributionUrl", getClass().getClassLoader().getResource("node-v10.16.0.zip").toString());
+        Helper.createBuildFile(projectDirectory, properties);
+
+        final BuildResult result1 = runGradle(projectDirectory, FrontendGradlePlugin.ASSEMBLE_TASK_NAME);
+
+        assertTaskIgnored(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        assertTaskIgnored(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
+        assertTaskIgnored(result1, FrontendGradlePlugin.INSTALL_TASK_NAME);
+        assertTaskOutcome(result1, FrontendGradlePlugin.ASSEMBLE_TASK_NAME, TaskOutcome.SUCCESS);
+    }
+
+    @Test
+    void shouldAssembleWithoutFrontendTasks() throws IOException, URISyntaxException {
+        Files.copy(new File(getClass().getClassLoader().getResource("package-npm.json").toURI()).toPath(),
+            projectDirectory.resolve("package.json"));
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put("nodeVersion", "10.16.0");
+        properties.put("nodeDistributionUrl", getClass().getClassLoader().getResource("node-v10.16.0.zip").toString());
+        Helper.createBuildFile(projectDirectory, properties);
+
+        final BuildResult result1 = runGradle(projectDirectory, FrontendGradlePlugin.GRADLE_ASSEMBLE_TASK_NAME);
+
+        assertTaskIgnored(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        assertTaskIgnored(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
+        assertTaskIgnored(result1, FrontendGradlePlugin.INSTALL_TASK_NAME);
+        assertTaskIgnored(result1, FrontendGradlePlugin.ASSEMBLE_TASK_NAME);
+        assertTaskOutcome(result1, FrontendGradlePlugin.GRADLE_ASSEMBLE_TASK_NAME, TaskOutcome.UP_TO_DATE);
+    }
+
+    @Test
     void shouldAssembleFrontendWithNpmOrYarn() throws IOException, URISyntaxException {
         Files.copy(new File(getClass().getClassLoader().getResource("package-npm.json").toURI()).toPath(),
             projectDirectory.resolve("package.json"));
