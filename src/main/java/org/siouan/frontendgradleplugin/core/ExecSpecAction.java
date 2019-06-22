@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import javax.annotation.Nonnull;
 
 import org.gradle.api.Action;
 import org.gradle.process.ExecSpec;
@@ -106,7 +107,7 @@ class ExecSpecAction implements Action<ExecSpec> {
      * @param execSpec Execute specification.
      */
     @Override
-    public void execute(final ExecSpec execSpec) {
+    public void execute(@Nonnull final ExecSpec execSpec) {
         final String executable;
         final List<String> args = new ArrayList<>();
         if (Utils.isWindowsOs(osName)) {
