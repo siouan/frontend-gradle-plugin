@@ -10,9 +10,9 @@ import org.gradle.api.Task;
 public class RunScriptJob extends AbstractTaskJob {
 
     /**
-     * Whether a Yarn distribution shall be downloaded and installed.
+     * Executor use to run the script.
      */
-    private final boolean yarnEnabled;
+    private final Executor executor;
 
     /**
      * Directory where the Node distribution is installed.
@@ -38,16 +38,16 @@ public class RunScriptJob extends AbstractTaskJob {
      * Builds a job to run a script.
      *
      * @param task Parent task.
-     * @param yarnEnabled Whether Yarn shall be used instead of NPM to run the script.
+     * @param executor Executor to use to run the script.
      * @param nodeInstallDirectory Node install directory.
      * @param yarnInstallDirectory Yarn install directory.
      * @param script The script run by the job.
      * @param osName O/S name.
      */
-    public RunScriptJob(final Task task, final boolean yarnEnabled, final File nodeInstallDirectory,
+    public RunScriptJob(final Task task, final Executor executor, final File nodeInstallDirectory,
         final File yarnInstallDirectory, final String script, final String osName) {
         super(task);
-        this.yarnEnabled = yarnEnabled;
+        this.executor = executor;
         this.nodeInstallDirectory = nodeInstallDirectory;
         this.yarnInstallDirectory = yarnInstallDirectory;
         this.script = script;
@@ -55,8 +55,8 @@ public class RunScriptJob extends AbstractTaskJob {
     }
 
     public void run() throws ExecutableNotFoundException {
-        task.getProject().exec(
-            new ExecSpecAction(yarnEnabled, nodeInstallDirectory, yarnInstallDirectory, osName, script, execSpec -> {
+        task.getProject()
+            .exec(new ExecSpecAction(executor, nodeInstallDirectory, yarnInstallDirectory, osName, script, execSpec -> {
                 logDebug(execSpec.getEnvironment().toString());
                 logLifecycle(
                     "Running '" + execSpec.getExecutable() + ' ' + String.join(" ", execSpec.getArgs()) + '\'');

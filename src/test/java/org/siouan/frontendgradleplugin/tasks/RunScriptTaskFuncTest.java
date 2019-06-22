@@ -21,8 +21,8 @@ import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
 import org.siouan.frontendgradleplugin.util.Helper;
 
 /**
- * Functional tests to verify the {@link RunScriptTask} integration in a Gradle build. This functional test is the only
- * one that uses real Node/Yarn distributions.
+ * Functional tests to verify the {@link RunScriptTask} integration in a Gradle build. This functional test relies on
+ * real Node/Yarn distributions.
  */
 class RunScriptTaskFuncTest {
 

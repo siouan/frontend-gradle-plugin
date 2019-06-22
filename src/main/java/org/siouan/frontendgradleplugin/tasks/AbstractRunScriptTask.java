@@ -6,6 +6,7 @@ import org.gradle.api.DefaultTask;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.TaskAction;
 import org.siouan.frontendgradleplugin.core.ExecutableNotFoundException;
+import org.siouan.frontendgradleplugin.core.Executor;
 import org.siouan.frontendgradleplugin.core.RunScriptJob;
 import org.siouan.frontendgradleplugin.core.Utils;
 
@@ -42,6 +43,10 @@ public abstract class AbstractRunScriptTask extends DefaultTask {
         script = getProject().getObjects().property(String.class);
     }
 
+    protected Executor getExecutionType() {
+        return yarnEnabled.get() ? Executor.YARN : Executor.NPM;
+    }
+
     /**
      * Executes the task. If a script has been provided, it is run with NPM/Yarn. Otherwise, the task does nothing.
      *
@@ -50,7 +55,7 @@ public abstract class AbstractRunScriptTask extends DefaultTask {
     @TaskAction
     public void execute() throws ExecutableNotFoundException {
         if (script.isPresent()) {
-            new RunScriptJob(this, yarnEnabled.get(), nodeInstallDirectory.get(), yarnInstallDirectory.get(),
+            new RunScriptJob(this, getExecutionType(), nodeInstallDirectory.get(), yarnInstallDirectory.get(),
                 script.get(), Utils.getSystemOsName()).run();
         }
     }
