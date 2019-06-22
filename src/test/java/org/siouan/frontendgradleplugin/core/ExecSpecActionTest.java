@@ -1,5 +1,6 @@
 package org.siouan.frontendgradleplugin.core;
 
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
@@ -11,7 +12,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
@@ -49,16 +49,17 @@ class ExecSpecActionTest {
 
     @Test
     void shouldFailBuildingActionWhenNodeExecutableCannotBeFound() {
-        assertThatThrownBy(
-            () -> new ExecSpecAction(false, temporaryDirectory, temporaryDirectory, "", SCRIPT, afterConfigured))
-            .isInstanceOf(ExecutableNotFoundException.class).hasMessage(ExecutableNotFoundException.NODE);
+        assertThatThrownBy(() -> new ExecSpecAction(Executor.NODE, temporaryDirectory, temporaryDirectory, "", SCRIPT,
+            afterConfigured)).isInstanceOf(ExecutableNotFoundException.class)
+            .hasMessage(ExecutableNotFoundException.NODE);
     }
 
     @Test
     void shouldFailBuildingActionWhenNpmExecutableCannotBeFound() throws IOException {
         Files.createFile(temporaryDirectory.toPath().resolve("node.exe"));
-        assertThatThrownBy(() -> new ExecSpecAction(false, temporaryDirectory, temporaryDirectory, "Windows NT", SCRIPT,
-            afterConfigured)).isInstanceOf(ExecutableNotFoundException.class)
+        assertThatThrownBy(
+            () -> new ExecSpecAction(Executor.NPM, temporaryDirectory, temporaryDirectory, "Windows NT", SCRIPT,
+                afterConfigured)).isInstanceOf(ExecutableNotFoundException.class)
             .hasMessage(ExecutableNotFoundException.NPM);
     }
 
@@ -67,8 +68,25 @@ class ExecSpecActionTest {
         final Path binDirectory = Files.createDirectory(temporaryDirectory.toPath().resolve("bin"));
         Files.createFile(binDirectory.resolve("node"));
         assertThatThrownBy(
-            () -> new ExecSpecAction(true, temporaryDirectory, temporaryDirectory, "Mac OS X", SCRIPT, afterConfigured))
-            .isInstanceOf(ExecutableNotFoundException.class).hasMessage(ExecutableNotFoundException.YARN);
+            () -> new ExecSpecAction(Executor.YARN, temporaryDirectory, temporaryDirectory, "Mac OS X", SCRIPT,
+                afterConfigured)).isInstanceOf(ExecutableNotFoundException.class)
+            .hasMessage(ExecutableNotFoundException.YARN);
+    }
+
+    @Test
+    void shouldConfigureNodeCommandWithWindowsCmd() throws ExecutableNotFoundException, IOException {
+        final Path nodeExecutable = Files.createFile(temporaryDirectory.toPath().resolve("node.exe"));
+        final String script = SCRIPT;
+        final ExecSpecAction action = new ExecSpecAction(Executor.NODE, temporaryDirectory, temporaryDirectory,
+            "Windows NT", script, afterConfigured);
+        when(execSpec.getEnvironment()).thenReturn(Collections.singletonMap("Path", PATH_ENVIRONMENT));
+
+        action.execute(execSpec);
+
+        final List<String> expectedArgs = new ArrayList<>();
+        expectedArgs.add(ExecSpecAction.CMD_RUN_EXIT_FLAG);
+        expectedArgs.add(String.join(" ", '"' + nodeExecutable.toString() + '"', script.trim()));
+        assertExecSpecWith(ExecSpecAction.CMD_EXECUTABLE, expectedArgs, nodeExecutable.getParent());
     }
 
     @Test
@@ -76,17 +94,16 @@ class ExecSpecActionTest {
         final Path nodeExecutable = Files.createFile(temporaryDirectory.toPath().resolve("node.exe"));
         final Path npmExecutable = Files.createFile(temporaryDirectory.toPath().resolve("npm.cmd"));
         final String script = SCRIPT;
-        final String pathEnvironment = PATH_ENVIRONMENT;
-        final ExecSpecAction action = new ExecSpecAction(false, temporaryDirectory, temporaryDirectory, "Windows NT",
-            script, afterConfigured);
-        when(execSpec.getEnvironment()).thenReturn(Collections.singletonMap("Path", pathEnvironment));
+        final ExecSpecAction action = new ExecSpecAction(Executor.NPM, temporaryDirectory, temporaryDirectory,
+            "Windows NT", script, afterConfigured);
+        when(execSpec.getEnvironment()).thenReturn(Collections.singletonMap("Path", PATH_ENVIRONMENT));
 
         action.execute(execSpec);
 
         final List<String> expectedArgs = new ArrayList<>();
         expectedArgs.add(ExecSpecAction.CMD_RUN_EXIT_FLAG);
         expectedArgs.add(String.join(" ", '"' + npmExecutable.toString() + '"', script.trim()));
-        assertExecSpecWith(ExecSpecAction.CMD_EXECUTABLE, expectedArgs, pathEnvironment, nodeExecutable.getParent());
+        assertExecSpecWith(ExecSpecAction.CMD_EXECUTABLE, expectedArgs, nodeExecutable.getParent());
     }
 
     @Test
@@ -95,17 +112,30 @@ class ExecSpecActionTest {
         final Path binDirectory = Files.createDirectory(temporaryDirectory.toPath().resolve("bin"));
         final Path yarnExecutable = Files.createFile(binDirectory.resolve("yarn.cmd"));
         final String script = SCRIPT;
-        final String pathEnvironment = PATH_ENVIRONMENT;
-        final ExecSpecAction action = new ExecSpecAction(true, temporaryDirectory, temporaryDirectory, "Windows NT",
-            script, afterConfigured);
-        when(execSpec.getEnvironment()).thenReturn(Collections.singletonMap("PATH", pathEnvironment));
+        final ExecSpecAction action = new ExecSpecAction(Executor.YARN, temporaryDirectory, temporaryDirectory,
+            "Windows NT", script, afterConfigured);
+        when(execSpec.getEnvironment()).thenReturn(Collections.singletonMap("PATH", PATH_ENVIRONMENT));
 
         action.execute(execSpec);
 
         final List<String> expectedArgs = new ArrayList<>();
         expectedArgs.add(ExecSpecAction.CMD_RUN_EXIT_FLAG);
         expectedArgs.add(String.join(" ", '"' + yarnExecutable.toString() + '"', script.trim()));
-        assertExecSpecWith(ExecSpecAction.CMD_EXECUTABLE, expectedArgs, pathEnvironment, nodeExecutable.getParent());
+        assertExecSpecWith(ExecSpecAction.CMD_EXECUTABLE, expectedArgs, nodeExecutable.getParent());
+    }
+
+    @Test
+    void shouldConfigureNodeCommandWithUnixShell() throws ExecutableNotFoundException, IOException {
+        final Path binDirectory = Files.createDirectory(temporaryDirectory.toPath().resolve("bin"));
+        final Path nodeExecutable = Files.createFile(binDirectory.resolve("node"));
+        final String script = SCRIPT;
+        final ExecSpecAction action = new ExecSpecAction(Executor.NODE, temporaryDirectory, temporaryDirectory, "Linux",
+            script, afterConfigured);
+        when(execSpec.getEnvironment()).thenReturn(Collections.singletonMap("Path", PATH_ENVIRONMENT));
+
+        action.execute(execSpec);
+
+        assertExecSpecWith(nodeExecutable.toString(), asList(script.trim().split("\\s+")), nodeExecutable.getParent());
     }
 
     @Test
@@ -114,15 +144,13 @@ class ExecSpecActionTest {
         final Path nodeExecutable = Files.createFile(binDirectory.resolve("node"));
         final Path npmExecutable = Files.createFile(binDirectory.resolve("npm"));
         final String script = SCRIPT;
-        final String pathEnvironment = PATH_ENVIRONMENT;
-        final ExecSpecAction action = new ExecSpecAction(false, temporaryDirectory, temporaryDirectory, "Linux", script,
-            afterConfigured);
-        when(execSpec.getEnvironment()).thenReturn(Collections.singletonMap("Path", pathEnvironment));
+        final ExecSpecAction action = new ExecSpecAction(Executor.NPM, temporaryDirectory, temporaryDirectory, "Linux",
+            script, afterConfigured);
+        when(execSpec.getEnvironment()).thenReturn(Collections.singletonMap("Path", PATH_ENVIRONMENT));
 
         action.execute(execSpec);
 
-        assertExecSpecWith(npmExecutable.toString(), Arrays.asList(script.trim().split("\\s+")), pathEnvironment,
-            nodeExecutable.getParent());
+        assertExecSpecWith(npmExecutable.toString(), asList(script.trim().split("\\s+")), nodeExecutable.getParent());
     }
 
     @Test
@@ -131,19 +159,17 @@ class ExecSpecActionTest {
         final Path nodeExecutable = Files.createFile(binDirectory.resolve("node"));
         final Path yarnExecutable = Files.createFile(binDirectory.resolve("yarn"));
         final String script = SCRIPT;
-        final String pathEnvironment = PATH_ENVIRONMENT;
-        final ExecSpecAction action = new ExecSpecAction(true, temporaryDirectory, temporaryDirectory, "Mac OS X",
-            script, afterConfigured);
-        when(execSpec.getEnvironment()).thenReturn(Collections.singletonMap("PATH", pathEnvironment));
+        final ExecSpecAction action = new ExecSpecAction(Executor.YARN, temporaryDirectory, temporaryDirectory,
+            "Mac OS X", script, afterConfigured);
+        when(execSpec.getEnvironment()).thenReturn(Collections.singletonMap("PATH", PATH_ENVIRONMENT));
 
         action.execute(execSpec);
 
-        assertExecSpecWith(yarnExecutable.toString(), Arrays.asList(script.trim().split("\\s+")), pathEnvironment,
-            nodeExecutable.getParent());
+        assertExecSpecWith(yarnExecutable.toString(), asList(script.trim().split("\\s+")), nodeExecutable.getParent());
     }
 
     private void assertExecSpecWith(final String expectedExecutable, final List<String> expectedArgs,
-        final String initialPathEnvironment, final Path nodeExecutableDirectory) {
+        final Path nodeExecutableDirectory) {
         verify(execSpec).setExecutable(expectedExecutable);
         verify(execSpec).setArgs(argsCaptor.capture());
         final List<String> args = argsCaptor.getValue();
@@ -154,7 +180,7 @@ class ExecSpecActionTest {
         verify(execSpec).environment(pathVariableCaptor.capture(), pathValueCaptor.capture());
         assertThat(pathVariableCaptor.getValue().toLowerCase()).isEqualTo("path");
         final String pathValue = pathValueCaptor.getValue().toString();
-        assertThat(pathValue).contains(initialPathEnvironment);
+        assertThat(pathValue).contains(PATH_ENVIRONMENT);
         assertThat(pathValue).contains(nodeExecutableDirectory.toString());
         verifyNoMoreInteractions(execSpec);
         verify(afterConfigured).accept(execSpec);

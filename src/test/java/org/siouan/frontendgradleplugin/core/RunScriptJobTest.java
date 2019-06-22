@@ -49,9 +49,9 @@ class RunScriptJobTest {
         Files.createFile(temporaryDirectory.toPath().resolve("node.exe"));
         final Path binDirectory = Files.createDirectory(temporaryDirectory.toPath().resolve("bin"));
         Files.createFile(binDirectory.resolve("yarn.cmd"));
-        final boolean yarnEnabled = true;
+        final Executor executor = Executor.YARN;
         final String script = SCRIPT;
-        final RunScriptJob job = new RunScriptJob(task, true, temporaryDirectory, temporaryDirectory, script,
+        final RunScriptJob job = new RunScriptJob(task, executor, temporaryDirectory, temporaryDirectory, script,
             "Windows NT");
         final ExecResult execResult = mock(ExecResult.class);
         when(project.exec(any(ExecSpecAction.class))).thenReturn(execResult);
@@ -60,12 +60,12 @@ class RunScriptJobTest {
         job.run();
 
         verify(project)
-            .exec(argThat(new ExecSpecActionMatcher(yarnEnabled, temporaryDirectory, temporaryDirectory, script)));
+            .exec(argThat(new ExecSpecActionMatcher(executor, temporaryDirectory, temporaryDirectory, script)));
     }
 
     private static class ExecSpecActionMatcher implements ArgumentMatcher<ExecSpecAction> {
 
-        private final boolean yarnEnabled;
+        private final Executor executor;
 
         private final File nodeInstallDirectory;
 
@@ -73,9 +73,9 @@ class RunScriptJobTest {
 
         private final String script;
 
-        ExecSpecActionMatcher(final boolean yarnEnabled, final File nodeInstallDirectory,
-            final File yarnInstallDirectory, final String script) {
-            this.yarnEnabled = yarnEnabled;
+        ExecSpecActionMatcher(final Executor executor, final File nodeInstallDirectory, final File yarnInstallDirectory,
+            final String script) {
+            this.executor = executor;
             this.nodeInstallDirectory = nodeInstallDirectory;
             this.yarnInstallDirectory = yarnInstallDirectory;
             this.script = script;
@@ -83,9 +83,8 @@ class RunScriptJobTest {
 
         @Override
         public boolean matches(final ExecSpecAction action) {
-            return (yarnEnabled == action.isYarnEnabled()) && nodeInstallDirectory
-                .equals(action.getNodeInstallDirectory()) && yarnInstallDirectory
-                .equals(action.getYarnInstallDirectory()) && script.equals(action.getScript());
+            return (executor == action.getExecutor()) && nodeInstallDirectory.equals(action.getNodeInstallDirectory())
+                && yarnInstallDirectory.equals(action.getYarnInstallDirectory()) && script.equals(action.getScript());
         }
     }
 }

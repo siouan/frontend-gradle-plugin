@@ -8,7 +8,7 @@
 [![Code coverage](https://sonarcloud.io/api/project_badges/measure?project=Siouan_frontend-gradle-plugin&metric=coverage)](https://sonarcloud.io/dashboard?id=Siouan_frontend-gradle-plugin)
 [![Reliability](https://sonarcloud.io/api/project_badges/measure?project=Siouan_frontend-gradle-plugin&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=Siouan_frontend-gradle-plugin)
 
-This plugin allows to integrate a frontend NPM/Yarn build into Gradle. It is inspired by the
+This plugin allows to integrate a frontend Node/NPM/Yarn build into Gradle. It is inspired by the
 [frontend-maven-plugin][frontend-maven-plugin]. See the [quick start guide](#quick-start-guide) below to
 install/configure the plugin, and build your frontend application.
 
@@ -34,6 +34,7 @@ install/configure the plugin, and build your frontend application.
   - [Clean frontend](#clean-frontend)
   - [Assemble frontend](#assemble-frontend)
   - [Check frontend](#check-frontend)
+  - [Run custom Node script](#run-custom-node-script)
   - [Run custom NPM/Yarn script](#run-custom-npmyarn-script)
 - [Usage guidelines](#usage-guidelines)
   - [How to assemble a frontend and a Java backend into a single artifact?](#how-to-assemble-a-frontend-and-a-java-backend-into-a-single-artifact)
@@ -118,7 +119,7 @@ frontend {
     // [OPTIONAL] Yarn version, used to build the URL to download the corresponding distribution, if the
     // 'yarnDistributionUrl' property is not set. This property is mandatory when the 'yarnEnabled' property is
     // true.
-    yarnVersion = '1.15.2'
+    yarnVersion = '1.16.0'
 
     // [OPTIONAL] Sets this property to force the download from a custom website. By default, this property is
     // 'null', and the plugin attempts to download the distribution compatible with the current platform from
@@ -264,6 +265,22 @@ The `checkFrontend` task shall be used to integrate a frontend's check script in
 be defined in the project's `package.json` file, and the `checkscript` property must be set with the corresponding
 NPM/Yarn command. A typical check script defined in the project's `package.json` file may lint frontend source files,
 execute tests, and perform additional analysis tasks.
+
+### Run custom Node script
+
+The plugin provides the task type `org.siouan.frontendgradleplugin.tasks.RunNodeTask` that allows creating a custom
+task to launch a frontend script. The `script` property must be set with the corresponding Node command. For
+instance, the code below added in the `build.gradle` file allows to run a JS `my-custom-script.js` with Node:
+
+```groovy
+tasks.register('myCustomScript', org.siouan.frontendgradleplugin.tasks.RunNodeTask) {
+    // Choose whether Node only is required, or if additional dependencies located in the package.json file should be
+    // installed: make the task either depends on 'installNode' task or on 'installFrontend' task.
+    // dependsOn tasks.named('installNode')
+    // dependsOn tasks.named('installFrontend')
+    script = 'my-custom-script.js'
+}
+```
 
 ### Run custom NPM/Yarn script
 
