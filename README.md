@@ -134,8 +134,8 @@ frontend {
     // Name of the NPM/Yarn scripts (see 'package.json' file) that shall be executed depending on the Gradle
     // lifecycle task. The values below are passed as argument of the 'npm' or 'yarn' executables.
 
-    // [OPTIONAL] Use this property to customize the command line used to install frontend dependencies. This property
-    // is used by the 'installFrontend' task.
+    // [OPTIONAL] Use this property to customize the command line used to install frontend dependencies. This
+    // property is used by the 'installFrontend' task.
     installScript = 'install'
 
     // [OPTIONAL] Use this property only if frontend's compiled resources are generated out of the
@@ -200,14 +200,16 @@ backend together.
 
 #### Use Node/NPM/Yarn apart from Gradle
  
-If Node and NPM/Yarn may be used apart from Gradle, it is mandatory to apply the following steps:
+If you plan to use the downloaded distributions of Node/NPM/Yarn apart from Gradle, apply the following steps:
 
 - Create a `NODEJS_HOME` environment variable containing the real path set in the `nodeInstallDirectory` property.
 - Add the Node/NPM executables' directory to the `PATH` environment variable:
   - On Unix-like O/S, add the `$NODEJS_HOME/bin` path.
   - On Windows O/S, add `%NODEJS_HOME%` path.
-- If Yarn is enabled, create a `YARN_HOME` environment variable containing the real path set in the
-`yarnInstallDirectory` property.
+
+Optionally, if Yarn is enabled and you don't want to enter Yarn's executable absolute path on a command line:
+
+- Create a `YARN_HOME` environment variable containing the real path set in the `yarnInstallDirectory` property.
 - Add the Yarn executable's directory to the `PATH` environment variable:
   - On Unix-like O/S, add the `$YARN_HOME/bin` path.
   - On Windows O/S, add the `%YARN_HOME%\bin` path.
@@ -279,8 +281,8 @@ instance, the code below added in the `build.gradle` file allows to run a JS `my
 
 ```groovy
 tasks.register('myCustomScript', org.siouan.frontendgradleplugin.tasks.RunNodeTask) {
-    // Choose whether Node only is required, or if additional dependencies located in the package.json file should be
-    // installed: make the task either depends on 'installNode' task or on 'installFrontend' task.
+    // Choose whether Node only is required, or if additional dependencies located in the package.json file should
+    // be installed: make the task either depends on 'installNode' task or on 'installFrontend' task.
     // dependsOn tasks.named('installNode')
     // dependsOn tasks.named('installFrontend')
     script = 'my-custom-script.js'

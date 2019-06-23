@@ -19,6 +19,8 @@ import org.siouan.frontendgradleplugin.core.Executor;
  *     script = 'myscript'
  * }
  * </pre>
+ *
+ * @since 1.2.0
  */
 public class RunNodeTask extends AbstractRunScriptTask {
 

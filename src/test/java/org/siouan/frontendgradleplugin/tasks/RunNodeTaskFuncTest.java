@@ -22,6 +22,8 @@ import org.siouan.frontendgradleplugin.util.Helper;
 /**
  * Functional tests to verify the {@link RunNodeTask} integration in a Gradle build. This functional test relies on a
  * real Node distribution.
+ *
+ * @since 1.2.0
  */
 class RunNodeTaskFuncTest {
 
