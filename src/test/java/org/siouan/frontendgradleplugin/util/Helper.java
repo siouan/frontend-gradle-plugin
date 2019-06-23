@@ -8,7 +8,6 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 
@@ -30,6 +29,26 @@ public final class Helper {
     }
 
     /**
+     * Gets the task ID for future reference with Gradle API.
+     *
+     * @param taskName Task name.
+     * @return Task ID.
+     */
+    public static String getTaskId(final String taskName) {
+        return ':' + taskName;
+    }
+
+    /**
+     * Asserts a task was not part of a build.
+     *
+     * @param result Build result.
+     * @param taskName Task name.
+     */
+    public static void assertTaskIgnored(final BuildResult result, final String taskName) {
+        assertThat(getBuildResultTask(result, taskName)).isEmpty();
+    }
+
+    /**
      * Asserts a task was part of a build result, and finishes with a given outcome.
      *
      * @param result Build result.
@@ -38,7 +57,7 @@ public final class Helper {
      */
     public static void assertTaskOutcome(final BuildResult result, final String taskName,
         final TaskOutcome expectedOutcome) {
-        assertThat(Optional.ofNullable(result.task(':' + taskName)).map(BuildTask::getOutcome)
+        assertThat(getBuildResultTask(result, taskName).map(BuildTask::getOutcome)
             .orElseThrow(() -> new RuntimeException("Task not found: " + taskName))).isEqualTo(expectedOutcome);
     }
 
@@ -64,10 +83,8 @@ public final class Helper {
     public static int getDirectorySize(final Path directory) throws IOException {
         int size = 0;
         try (final DirectoryStream<Path> childFileStream = Files.newDirectoryStream(directory)) {
-            final Iterator<Path> childFileIterator = childFileStream.iterator();
-            while (childFileIterator.hasNext()) {
+            for (final Path childFile : childFileStream) {
                 size++;
-                childFileIterator.next();
             }
         }
         return size;
@@ -147,5 +164,9 @@ public final class Helper {
             buildFileWriter.append('\'');
         }
         buildFileWriter.append('\n');
+    }
+
+    private static Optional<BuildTask> getBuildResultTask(final BuildResult result, final String taskName) {
+        return Optional.ofNullable(result.task(getTaskId(taskName)));
     }
 }

@@ -1,5 +1,6 @@
 package org.siouan.frontendgradleplugin.tasks;
 
+import static org.siouan.frontendgradleplugin.util.Helper.assertTaskIgnored;
 import static org.siouan.frontendgradleplugin.util.Helper.assertTaskOutcome;
 import static org.siouan.frontendgradleplugin.util.Helper.runGradle;
 
@@ -42,29 +43,30 @@ class InstallTaskFuncTest {
         Files.copy(new File(getClass().getClassLoader().getResource("package-npm.json").toURI()).toPath(),
             projectDirectory.resolve("package.json"));
         final Map<String, Object> properties = new HashMap<>();
-        properties.put("nodeVersion", "10.15.3");
-        properties.put("nodeDistributionUrl", getClass().getClassLoader().getResource("node-v10.15.3.zip").toString());
+        properties.put("nodeVersion", "10.16.0");
+        properties.put("nodeDistributionUrl", getClass().getClassLoader().getResource("node-v10.16.0.zip").toString());
+        properties.put("installScript", "ci");
         Helper.createBuildFile(projectDirectory, properties);
 
         final BuildResult result1 = runGradle(projectDirectory, FrontendGradlePlugin.INSTALL_TASK_NAME);
 
         assertTaskOutcome(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, TaskOutcome.SUCCESS);
-        assertTaskOutcome(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME, TaskOutcome.SKIPPED);
+        assertTaskIgnored(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskOutcome(result1, FrontendGradlePlugin.INSTALL_TASK_NAME, TaskOutcome.SUCCESS);
 
         final BuildResult result2 = runGradle(projectDirectory, FrontendGradlePlugin.INSTALL_TASK_NAME);
 
         assertTaskOutcome(result2, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, TaskOutcome.UP_TO_DATE);
-        assertTaskOutcome(result2, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME, TaskOutcome.SKIPPED);
+        assertTaskIgnored(result2, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskOutcome(result2, FrontendGradlePlugin.INSTALL_TASK_NAME, TaskOutcome.SUCCESS);
 
         Files.deleteIfExists(projectDirectory.resolve("package-lock.json"));
         Files.copy(new File(getClass().getClassLoader().getResource("package-yarn.json").toURI()).toPath(),
             projectDirectory.resolve("package.json"), StandardCopyOption.REPLACE_EXISTING);
         properties.put("yarnEnabled", true);
-        properties.put("yarnVersion", "1.15.2");
+        properties.put("yarnVersion", "1.16.0");
         properties
-            .put("yarnDistributionUrl", getClass().getClassLoader().getResource("yarn-v1.15.2.tar.gz").toString());
+            .put("yarnDistributionUrl", getClass().getClassLoader().getResource("yarn-v1.16.0.tar.gz").toString());
         Helper.createBuildFile(projectDirectory, properties);
 
         final BuildResult result3 = runGradle(projectDirectory, FrontendGradlePlugin.INSTALL_TASK_NAME);

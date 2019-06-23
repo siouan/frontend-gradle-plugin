@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import javax.annotation.Nonnull;
 
 import org.gradle.api.Action;
 import org.gradle.process.ExecSpec;
@@ -23,7 +24,7 @@ class ExecSpecAction implements Action<ExecSpec> {
     /**
      * Whether the script shall be run with Yarn instead of NPM.
      */
-    private final boolean yarnEnabled;
+    private final Executor executor;
 
     /**
      * Directory where the Node distribution is installed.
@@ -63,7 +64,7 @@ class ExecSpecAction implements Action<ExecSpec> {
     /**
      * Builds an action to run a frontend script on the local platform.
      *
-     * @param yarnEnabled Whether the script shall be run with Yarn instead of NPM.
+     * @param executor Type of execution.
      * @param nodeInstallDirectory Directory where the Node distribution is installed.
      * @param yarnInstallDirectory Directory where the Yarn distribution is installed.
      * @param script Name of the script to execute.
@@ -71,10 +72,10 @@ class ExecSpecAction implements Action<ExecSpec> {
      * @param osName Name of the O/S.
      * @throws ExecutableNotFoundException When an executable cannot be found (Node, NPM, Yarn).
      */
-    public ExecSpecAction(final boolean yarnEnabled, final File nodeInstallDirectory, final File yarnInstallDirectory,
+    public ExecSpecAction(final Executor executor, final File nodeInstallDirectory, final File yarnInstallDirectory,
         final String osName, final String script, final Consumer<ExecSpec> afterConfigured)
         throws ExecutableNotFoundException {
-        this.yarnEnabled = yarnEnabled;
+        this.executor = executor;
         this.nodeInstallDirectory = nodeInstallDirectory;
         this.yarnInstallDirectory = yarnInstallDirectory;
         this.osName = osName;
@@ -83,12 +84,20 @@ class ExecSpecAction implements Action<ExecSpec> {
 
         nodeExecutablePath = Utils.getNodeExecutablePath(nodeInstallDirectory.toPath(), osName)
             .orElseThrow(ExecutableNotFoundException::newNodeExecutableNotFoundException);
-        if (yarnEnabled) {
-            scriptExecutablePath = Utils.getYarnExecutablePath(yarnInstallDirectory.toPath(), osName)
-                .orElseThrow(ExecutableNotFoundException::newYarnExecutableNotFoundException);
-        } else {
+        switch (executor) {
+        case NODE:
+            scriptExecutablePath = nodeExecutablePath;
+            break;
+        case NPM:
             scriptExecutablePath = Utils.getNpmExecutablePath(nodeInstallDirectory.toPath(), osName)
                 .orElseThrow(ExecutableNotFoundException::newNpmExecutableNotFoundException);
+            break;
+        case YARN:
+            scriptExecutablePath = Utils.getYarnExecutablePath(yarnInstallDirectory.toPath(), osName)
+                .orElseThrow(ExecutableNotFoundException::newYarnExecutableNotFoundException);
+            break;
+        default:
+            throw new IllegalArgumentException("Unsupported type of execution: " + executor);
         }
     }
 
@@ -98,7 +107,7 @@ class ExecSpecAction implements Action<ExecSpec> {
      * @param execSpec Execute specification.
      */
     @Override
-    public void execute(final ExecSpec execSpec) {
+    public void execute(@Nonnull final ExecSpec execSpec) {
         final String executable;
         final List<String> args = new ArrayList<>();
         if (Utils.isWindowsOs(osName)) {
@@ -118,7 +127,7 @@ class ExecSpecAction implements Action<ExecSpec> {
         final String pathVariable = findPathVariable(environment);
         final StringBuilder pathValue = new StringBuilder(nodeExecutablePath.getParent().toString());
         pathValue.append(File.pathSeparatorChar);
-        if (yarnEnabled) {
+        if (executor == Executor.YARN) {
             pathValue.append(scriptExecutablePath.getParent().toString());
             pathValue.append(File.pathSeparatorChar);
         }
@@ -131,12 +140,12 @@ class ExecSpecAction implements Action<ExecSpec> {
     }
 
     /**
-     * Whether Yarn is enabled and will be used at execution.
+     * Gets the executor used to run the script.
      *
-     * @return {@code true} if Yarn is enabled.
+     * @return Executor.
      */
-    public boolean isYarnEnabled() {
-        return yarnEnabled;
+    public Executor getExecutor() {
+        return executor;
     }
 
     /**

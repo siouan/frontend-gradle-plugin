@@ -1,6 +1,6 @@
 # Frontend Gradle plugin
 
-[![Latest release 1.1.3](https://img.shields.io/badge/Latest%20release-1.1.3-blue.svg)](https://github.com/Siouan/frontend-gradle-plugin/releases/tag/v1.1.3)
+[![Latest release 1.2.0](https://img.shields.io/badge/Latest%20release-1.2.0-blue.svg)](https://github.com/Siouan/frontend-gradle-plugin/releases/tag/v1.2.0)
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
 
 [![Build status](https://travis-ci.com/Siouan/frontend-gradle-plugin.svg?branch=master)](https://travis-ci.com/Siouan/frontend-gradle-plugin)
@@ -8,7 +8,7 @@
 [![Code coverage](https://sonarcloud.io/api/project_badges/measure?project=Siouan_frontend-gradle-plugin&metric=coverage)](https://sonarcloud.io/dashboard?id=Siouan_frontend-gradle-plugin)
 [![Reliability](https://sonarcloud.io/api/project_badges/measure?project=Siouan_frontend-gradle-plugin&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=Siouan_frontend-gradle-plugin)
 
-This plugin allows to integrate a frontend NPM/Yarn build into Gradle. It is inspired by the
+This plugin allows to integrate a frontend Node/NPM/Yarn build into Gradle. It is inspired by the
 [frontend-maven-plugin][frontend-maven-plugin]. See the [quick start guide](#quick-start-guide) below to
 install/configure the plugin, and build your frontend application.
 
@@ -34,6 +34,7 @@ install/configure the plugin, and build your frontend application.
   - [Clean frontend](#clean-frontend)
   - [Assemble frontend](#assemble-frontend)
   - [Check frontend](#check-frontend)
+  - [Run custom Node script](#run-custom-node-script)
   - [Run custom NPM/Yarn script](#run-custom-npmyarn-script)
 - [Usage guidelines](#usage-guidelines)
   - [How to assemble a frontend and a Java backend into a single artifact?](#how-to-assemble-a-frontend-and-a-java-backend-into-a-single-artifact)
@@ -64,7 +65,7 @@ This is the modern and recommended approach.
 ```groovy
 // build.gradle
 plugins {
-    id 'org.siouan.frontend' version '1.1.3'
+    id 'org.siouan.frontend' version '1.2.0'
 }
 ```
 
@@ -79,7 +80,7 @@ buildscript {
         url 'https://plugins.gradle.org/m2/'
     }
     dependencies {
-        classpath 'org.siouan:frontend-gradle-plugin:1.1.3'
+        classpath 'org.siouan:frontend-gradle-plugin:1.2.0'
     }
 }
 
@@ -98,7 +99,7 @@ frontend {
     // NODE SETTINGS
     // Node version, used to build the URL to download the corresponding distribution, if the 'nodeDistributionUrl'
     // property is not set.
-    nodeVersion = '10.15.3'
+    nodeVersion = '10.16.0'
 
     // [OPTIONAL] Sets this property to force the download from a custom website. By default, this property is
     // 'null', and the plugin attempts to download the distribution compatible with the current platform from
@@ -118,7 +119,7 @@ frontend {
     // [OPTIONAL] Yarn version, used to build the URL to download the corresponding distribution, if the
     // 'yarnDistributionUrl' property is not set. This property is mandatory when the 'yarnEnabled' property is
     // true.
-    yarnVersion = '1.15.2'
+    yarnVersion = '1.16.0'
 
     // [OPTIONAL] Sets this property to force the download from a custom website. By default, this property is
     // 'null', and the plugin attempts to download the distribution compatible with the current platform from
@@ -133,17 +134,23 @@ frontend {
     // Name of the NPM/Yarn scripts (see 'package.json' file) that shall be executed depending on the Gradle
     // lifecycle task. The values below are passed as argument of the 'npm' or 'yarn' executables.
 
+    // [OPTIONAL] Use this property to customize the command line used to install frontend dependencies. This
+    // property is used by the 'installFrontend' task.
+    installScript = 'install'
+
     // [OPTIONAL] Use this property only if frontend's compiled resources are generated out of the
     // '${project.buildDir}' directory. Default value is <null>. This property is used by the 'cleanFrontend' task.
-    // The task is run when the Gradle built-in 'clean' task is run.
+    // The task is also executed when the Gradle built-in 'clean' task is executed, if this property is set.
     cleanScript = 'run clean'
 
     // [OPTIONAL] Script called to build frontend's artifacts. Default value is <null>. This property is used by
-    // the 'assembleFrontend' task. The task is run when the Gradle built-in 'assemble' task is run.
+    // the 'assembleFrontend' task.
+    // The task is also executed when the Gradle built-in 'assemble' task is executed, if this property is set.
     assembleScript = 'run assemble'
 
     // [OPTIONAL] Script called to check the frontend. Default value is <null>. This property is used by the
     // 'checkFrontend' task. The task is run when the Gradle built-in 'check' task is run.
+    // The task is also executed when the Gradle built-in 'check' task is executed, if this property is set.
     checkScript = 'run check'
 }
 ```
@@ -193,14 +200,16 @@ backend together.
 
 #### Use Node/NPM/Yarn apart from Gradle
  
-If Node and NPM/Yarn may be used apart from Gradle, it is mandatory to apply the following steps:
+If you plan to use the downloaded distributions of Node/NPM/Yarn apart from Gradle, apply the following steps:
 
 - Create a `NODEJS_HOME` environment variable containing the real path set in the `nodeInstallDirectory` property.
 - Add the Node/NPM executables' directory to the `PATH` environment variable:
   - On Unix-like O/S, add the `$NODEJS_HOME/bin` path.
   - On Windows O/S, add `%NODEJS_HOME%` path.
-- If Yarn is enabled, create a `YARN_HOME` environment variable containing the real path set in the
-`yarnInstallDirectory` property.
+
+Optionally, if Yarn is enabled and you don't want to enter Yarn's executable absolute path on a command line:
+
+- Create a `YARN_HOME` environment variable containing the real path set in the `yarnInstallDirectory` property.
 - Add the Yarn executable's directory to the `PATH` environment variable:
   - On Unix-like O/S, add the `$YARN_HOME/bin` path.
   - On Windows O/S, add the `%YARN_HOME%\bin` path.
@@ -216,9 +225,9 @@ in the [Gradle base plugin][gradle-base-plugin].
 
 ### Install Node
 
-The `installNode` task downloads a Node distribution. If the `distributionUrl` property is ommitted, the URL is
-guessed using the `version` property. Use the property `nodeInstallDirectory` to set the directory where the
-distribution shall be installed, which, by default is the `${projectDir}/node` directory.
+The `installNode` task downloads a Node distribution and verifies its integrity. If the `distributionUrl` property is
+ommitted, the URL is guessed using the `version` property. Use the property `nodeInstallDirectory` to set the directory
+where the distribution shall be installed, which, by default is the `${projectDir}/node` directory.
 
 This task should not be executed directly. It will be called automatically by Gradle, if another task depends on it.
  
@@ -233,8 +242,11 @@ This task should not be executed directly. It will be called automatically by Gr
 ### Install frontend dependencies
 
 Depending on the value of the `yarnEnabled` property, the `installFrontend` task issues either a `npm install` command
-or a `yarn install` command. If a `package.json` file is found in the project's directory, the command shall install
-dependencies and tools for frontend development.
+or a `yarn install` command, by default. If a `package.json` file is found in the project's directory, the command shall
+install dependencies and tools for frontend development. Optionally, this command may be customized (e.g. to run a
+`npm ci` command instead of a `npm install` command). To do so, the `installScript` must be set to the corresponding
+NPM/Yarn command. This task depends on the `installNode` task, and optionally on the `installYarn` task if the
+`yarnEnabled` property is `true`.
 
 This task may be executed directly, especially if the Node distribution and/or the Yarn distribution must be downloaded
 again.
@@ -244,20 +256,38 @@ again.
 The `cleanFrontend` task does nothing by default, considering frontend generated resources (pre-processed Typescript
 files, SCSS stylesheets...) are written in the `${project.buildDir}` directory. If it is not the case, this task may be
 useful to clean the relevant directory. To do so, a clean script must be defined in the project's `package.json` file,
-and the `cleanScript` property must be set to the corresponding NPM/Yarn command.
+and the `cleanScript` property must be set to the corresponding NPM/Yarn command. This task depends on the
+`installFrontend` task if the `cleanScript` property is set.
 
 ### Assemble frontend
 
 The `assembleFrontend` task shall be used to integrate a frontend's build script into Gradle builds. The build script
 must be defined in the project's `package.json` file, and the `assembleScript` property must be set to the corresponding
-NPM/Yarn command.
+NPM/Yarn command. This task depends on the `installFrontend` task if the `assembleScript` property is set.
 
 ### Check frontend
 
 The `checkFrontend` task shall be used to integrate a frontend's check script into Gradle builds. The check script must
 be defined in the project's `package.json` file, and the `checkscript` property must be set with the corresponding
 NPM/Yarn command. A typical check script defined in the project's `package.json` file may lint frontend source files,
-execute tests, and perform additional analysis tasks.
+execute tests, and perform additional analysis tasks. This task depends on the `installFrontend` task if the
+`checkScript` property is set.
+
+### Run custom Node script
+
+The plugin provides the task type `org.siouan.frontendgradleplugin.tasks.RunNodeTask` that allows creating a custom
+task to launch a frontend script. The `script` property must be set with the corresponding Node command. For
+instance, the code below added in the `build.gradle` file allows to run a JS `my-custom-script.js` with Node:
+
+```groovy
+tasks.register('myCustomScript', org.siouan.frontendgradleplugin.tasks.RunNodeTask) {
+    // Choose whether Node only is required, or if additional dependencies located in the package.json file should
+    // be installed: make the task either depends on 'installNode' task or on 'installFrontend' task.
+    // dependsOn tasks.named('installNode')
+    // dependsOn tasks.named('installFrontend')
+    script = 'my-custom-script.js'
+}
+```
 
 ### Run custom NPM/Yarn script
 
@@ -330,6 +360,23 @@ Our recommendation is the `processResources` task depends on the `processFronten
 tasks.named('processResources').configure {
     dependsOn tasks.named('processFrontendResources')
 }
+```
+
+The resulting task tree shall be as below:
+
+```sh
+gradlew taskTree --no-repeat assemble
+
+:assemble
++--- :jar
+     \--- :classes
+          +--- :compileJava
+          \--- :processResources
+               +--- :processFrontendResources
+                    +--- :assembleFrontend
+                         \--- :installFrontend
+                              +--- :installNode
+                              \--- :installYarn
 ```
 
 ### What kind of script should I attach to the `checkFrontend` task?

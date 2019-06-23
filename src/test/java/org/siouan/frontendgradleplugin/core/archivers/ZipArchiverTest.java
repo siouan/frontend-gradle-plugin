@@ -127,7 +127,7 @@ class ZipArchiverTest {
 
     private static class ZipArchiverWithSymboliLinkFailure extends ZipArchiver {
 
-        private IOException exception;
+        private final IOException exception;
 
         ZipArchiverWithSymboliLinkFailure(final IOException exception) {
             this.exception = exception;

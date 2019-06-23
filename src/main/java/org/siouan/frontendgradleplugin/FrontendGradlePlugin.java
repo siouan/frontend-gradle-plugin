@@ -1,11 +1,14 @@
 package org.siouan.frontendgradleplugin;
 
 import java.io.File;
+import java.util.function.BiPredicate;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.Task;
 import org.gradle.api.plugins.BasePlugin;
 import org.gradle.api.tasks.TaskContainer;
+import org.gradle.api.tasks.TaskProvider;
 import org.siouan.frontendgradleplugin.tasks.AssembleTask;
 import org.siouan.frontendgradleplugin.tasks.CheckTask;
 import org.siouan.frontendgradleplugin.tasks.CleanTask;
@@ -96,20 +99,30 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         final TaskContainer projectTasks = project.getTasks();
         projectTasks
             .register(NODE_INSTALL_TASK_NAME, NodeInstallTask.class, task -> configureNodeInstallTask(task, extension));
-
         projectTasks
             .register(YARN_INSTALL_TASK_NAME, YarnInstallTask.class, task -> configureYarnInstallTask(task, extension));
-
         projectTasks.register(INSTALL_TASK_NAME, InstallTask.class, task -> configureInstallTask(task, extension));
-
         projectTasks.register(CLEAN_TASK_NAME, CleanTask.class, task -> configureCleanTask(task, extension));
-        projectTasks.named(GRADLE_CLEAN_TASK_NAME, task -> task.dependsOn(projectTasks.named(CLEAN_TASK_NAME)));
-
         projectTasks.register(CHECK_TASK_NAME, CheckTask.class, task -> configureCheckTask(task, extension));
-        projectTasks.named(GRADLE_CHECK_TASK_NAME, task -> task.dependsOn(projectTasks.named(CHECK_TASK_NAME)));
-
         projectTasks.register(ASSEMBLE_TASK_NAME, AssembleTask.class, task -> configureAssembleTask(task, extension));
-        projectTasks.named(GRADLE_ASSEMBLE_TASK_NAME, task -> task.dependsOn(projectTasks.named(ASSEMBLE_TASK_NAME)));
+
+        configureDependency(projectTasks, INSTALL_TASK_NAME, InstallTask.class, YARN_INSTALL_TASK_NAME,
+            YarnInstallTask.class, (installTask, yarnInstallTask) -> {
+                installTask.dependsOn(NODE_INSTALL_TASK_NAME);
+                return yarnInstallTask.isEnabled();
+            });
+        configureDependency(projectTasks, CLEAN_TASK_NAME, CleanTask.class, INSTALL_TASK_NAME, InstallTask.class,
+            (cleanTask, installTask) -> cleanTask.getCleanScript().isPresent());
+        configureDependency(projectTasks, ASSEMBLE_TASK_NAME, AssembleTask.class, INSTALL_TASK_NAME, InstallTask.class,
+            (assembleTask, installTask) -> assembleTask.getAssembleScript().isPresent());
+        configureDependency(projectTasks, CHECK_TASK_NAME, CheckTask.class, INSTALL_TASK_NAME, InstallTask.class,
+            (checkTask, installTask) -> checkTask.getCheckScript().isPresent());
+        configureDependency(projectTasks, GRADLE_CLEAN_TASK_NAME, Task.class, CLEAN_TASK_NAME, CleanTask.class,
+            (gradleCleanTask, cleanTask) -> cleanTask.getCleanScript().isPresent());
+        configureDependency(projectTasks, GRADLE_ASSEMBLE_TASK_NAME, Task.class, ASSEMBLE_TASK_NAME, AssembleTask.class,
+            (gradleAssembleTask, assembleTask) -> assembleTask.getAssembleScript().isPresent());
+        configureDependency(projectTasks, GRADLE_CHECK_TASK_NAME, Task.class, CHECK_TASK_NAME, CheckTask.class,
+            (gradleCheckTask, checkTask) -> checkTask.getCheckScript().isPresent());
     }
 
     /**
@@ -153,7 +166,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.getYarnEnabled().set(extension.getYarnEnabled());
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
         task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
-        task.dependsOn(NODE_INSTALL_TASK_NAME, YARN_INSTALL_TASK_NAME);
+        task.getInstallScript().set(extension.getInstallScript());
     }
 
     /**
@@ -169,7 +182,6 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
         task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
         task.getCleanScript().set(extension.getCleanScript());
-        task.dependsOn(INSTALL_TASK_NAME);
     }
 
     /**
@@ -185,7 +197,6 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
         task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
         task.getCheckScript().set(extension.getCheckScript());
-        task.dependsOn(INSTALL_TASK_NAME);
     }
 
     /**
@@ -201,6 +212,45 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
         task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
         task.getAssembleScript().set(extension.getAssembleScript());
-        task.dependsOn(INSTALL_TASK_NAME);
+    }
+
+    /**
+     * Configures a dynamic dependency between 2 tasks, based on a condition evaluation.
+     *
+     * @param taskContainer Task container.
+     * @param taskName Name of the task that may depend on another task.
+     * @param taskClass Task class.
+     * @param dependsOnTaskName Name of the depending task.
+     * @param dependsOnTaskClass Depending task class.
+     * @param condition Function to configure any of the 2 tasks and return a decision to make the task depends on the
+     * depending task.
+     * @param <T> Type of the dependent task.
+     * @param <D> Type of the depending task.
+     */
+    private <T extends Task, D extends Task> void configureDependency(final TaskContainer taskContainer,
+        final String taskName, final Class<T> taskClass, final String dependsOnTaskName,
+        final Class<D> dependsOnTaskClass, final BiPredicate<T, D> condition) {
+        taskContainer.named(taskName, taskClass, task -> {
+            final TaskProvider<D> dependsOnTask = taskContainer.named(dependsOnTaskName, dependsOnTaskClass);
+            if (canDependOn(task, dependsOnTask, condition)) {
+                task.dependsOn(dependsOnTask.getName());
+            }
+        });
+    }
+
+    /**
+     * Whether the given task can depend on the depending task using its provider.
+     *
+     * @param task Task.
+     * @param dependsOnTaskProvider Provider of the depending task.
+     * @param condition Function to configure any of the 2 tasks and return a decision to make the task depends on the
+     * depending task.
+     * @param <T> Type of the dependent task.
+     * @param <D> Type of the depending task.
+     * @return {@code true} if the depending task exists in the provider and if the condition is met.
+     */
+    private <T extends Task, D extends Task> boolean canDependOn(final T task,
+        final TaskProvider<D> dependsOnTaskProvider, final BiPredicate<T, D> condition) {
+        return dependsOnTaskProvider.isPresent() && condition.test(task, dependsOnTaskProvider.get());
     }
 }

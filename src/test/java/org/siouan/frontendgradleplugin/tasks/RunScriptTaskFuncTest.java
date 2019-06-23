@@ -1,5 +1,6 @@
 package org.siouan.frontendgradleplugin.tasks;
 
+import static org.siouan.frontendgradleplugin.util.Helper.assertTaskIgnored;
 import static org.siouan.frontendgradleplugin.util.Helper.assertTaskOutcome;
 import static org.siouan.frontendgradleplugin.util.Helper.runGradle;
 
@@ -21,8 +22,8 @@ import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
 import org.siouan.frontendgradleplugin.util.Helper;
 
 /**
- * Functional tests to verify the {@link RunScriptTask} integration in a Gradle build. This functional test is the only
- * one that uses real Node/Yarn distributions.
+ * Functional tests to verify the {@link RunScriptTask} integration in a Gradle build. This functional test relies on
+ * real Node/Yarn distributions.
  */
 class RunScriptTaskFuncTest {
 
@@ -41,7 +42,7 @@ class RunScriptTaskFuncTest {
         Files.copy(new File(getClass().getClassLoader().getResource("package-npm.json").toURI()).toPath(),
             projectDirectory.resolve("package.json"));
         final Map<String, Object> properties = new HashMap<>();
-        properties.put("nodeVersion", "10.15.3");
+        properties.put("nodeVersion", "10.16.0");
         final String customTaskName = "e2e";
         final StringBuilder customTaskDefinition = new StringBuilder("tasks.register('");
         customTaskDefinition.append(customTaskName);
@@ -54,14 +55,14 @@ class RunScriptTaskFuncTest {
         final BuildResult result1 = runGradle(projectDirectory, customTaskName);
 
         assertTaskOutcome(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, TaskOutcome.SUCCESS);
-        assertTaskOutcome(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME, TaskOutcome.SKIPPED);
+        assertTaskIgnored(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskOutcome(result1, FrontendGradlePlugin.INSTALL_TASK_NAME, TaskOutcome.SUCCESS);
         assertTaskOutcome(result1, customTaskName, TaskOutcome.SUCCESS);
 
         final BuildResult result2 = runGradle(projectDirectory, customTaskName);
 
         assertTaskOutcome(result2, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, TaskOutcome.UP_TO_DATE);
-        assertTaskOutcome(result2, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME, TaskOutcome.SKIPPED);
+        assertTaskIgnored(result2, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskOutcome(result2, FrontendGradlePlugin.INSTALL_TASK_NAME, TaskOutcome.SUCCESS);
         assertTaskOutcome(result2, customTaskName, TaskOutcome.SUCCESS);
 
@@ -69,7 +70,7 @@ class RunScriptTaskFuncTest {
         Files.copy(new File(getClass().getClassLoader().getResource("package-yarn.json").toURI()).toPath(),
             projectDirectory.resolve("package.json"), StandardCopyOption.REPLACE_EXISTING);
         properties.put("yarnEnabled", true);
-        properties.put("yarnVersion", "1.15.2");
+        properties.put("yarnVersion", "1.16.0");
         Helper.createBuildFile(projectDirectory, properties, customTaskDefinition.toString());
 
         final BuildResult result3 = runGradle(projectDirectory, customTaskName);
