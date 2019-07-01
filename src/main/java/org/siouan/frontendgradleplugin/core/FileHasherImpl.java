@@ -1,6 +1,7 @@
 package org.siouan.frontendgradleplugin.core;
 
 import java.io.IOException;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
@@ -35,12 +36,23 @@ public class FileHasherImpl implements FileHasher {
         try (final SeekableByteChannel inputChannel = Files.newByteChannel(inputFile)) {
             int numberOfBytesRead = inputChannel.read(buffer);
             while (numberOfBytesRead != -1) {
-                buffer.flip();
+                // Since JDK 9, ByteBuffer class overrides some methods and their return type in the Buffer class. To
+                // ensure compatibility with JDK 8, calling the 'flipBuffer' and 'clearBuffer' methods forces using the
+                // JDK 8 Buffer's methods signature, and avoids explicit casts.
+                flipBuffer(buffer);
                 digest.update(buffer);
-                buffer.clear();
+                clearBuffer(buffer);
                 numberOfBytesRead = inputChannel.read(buffer);
             }
         }
         return Utils.toHexadecimalString(digest.digest());
+    }
+
+    private void flipBuffer(Buffer buffer) {
+        buffer.flip();
+    }
+
+    private void clearBuffer(Buffer buffer) {
+        buffer.clear();
     }
 }
