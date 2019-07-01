@@ -61,7 +61,7 @@ The project relies on [Travis CI Open Source][travis] to integrate continuously 
 repository. The configuration actually allows to build and test the plugin on the environments below:
 
 - Linux Ubuntu Xenial Xerus 16.04.6 LTS / OpenJDK 1.8.0_191 64 bits
-- Linux Ubuntu Trusty Tahr 14.04.5 LTS / OracleJDK 1.8.0_151 64 bits
+- Linux Ubuntu Xenial Xerus 16.04.6 LTS / OracleJDK 1.8.0_151 64 bits
 - Mac OS X 10.13 / OracleJDK 11.0.2 LTS 64 bits
 
 Ubuntu Xenial is the reference environment, used to analyze the source code with SonarCloud. By now, the plugin has been
