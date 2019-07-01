@@ -43,7 +43,7 @@ dependencies {
 }
 
 group 'org.siouan'
-version '1.2.0'
+version '1.2.1'
 description 'Integrate your frontend Node/NPM/Yarn build into Gradle.'
 
 sourceCompatibility = JavaVersion.VERSION_1_8
