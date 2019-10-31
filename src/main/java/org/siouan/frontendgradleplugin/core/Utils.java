@@ -200,7 +200,19 @@ public final class Utils {
         try (final Stream<Path> childPaths = Files.list(srcDirectory)) {
             childPaths.forEach(path -> {
                 try {
-                    Files.move(path, destDirectory.resolve(path.getFileName().toString()));
+                    if(!path.toFile().isDirectory()) {
+                        Files.move(path, destDirectory.resolve(path.getFileName().toString()));
+                    } else {
+                        Path newDestDirectory = destDirectory.resolve(path.getFileName());
+                        Path newSrcDirectory = srcDirectory.resolve(path.getFileName());
+
+                        if(!Files.exists(newDestDirectory)) {
+                            Files.createDirectory(newDestDirectory);
+                        }
+
+                        moveFiles(newSrcDirectory, newDestDirectory);
+                        Files.delete(newSrcDirectory);
+                    }
                 } catch (IOException e) {
                     throw new UncheckedIOException(e);
                 }
