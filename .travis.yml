@@ -20,8 +20,8 @@ matrix:
         - sonar-scanner
 
     - os: linux
-      dist: xenial
-      jdk: oraclejdk8
+      dist: bionic
+      jdk: openjdk11
 
     - os: osx
       osx_image: xcode9.4
