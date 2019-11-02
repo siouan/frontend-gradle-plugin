@@ -42,7 +42,7 @@ class RunScriptTaskFuncTest {
         Files.copy(new File(getClass().getClassLoader().getResource("package-npm.json").toURI()).toPath(),
             projectDirectory.resolve("package.json"));
         final Map<String, Object> properties = new HashMap<>();
-        properties.put("nodeVersion", "10.16.0");
+        properties.put("nodeVersion", "12.13.0");
         final String customTaskName = "e2e";
         final StringBuilder customTaskDefinition = new StringBuilder("tasks.register('");
         customTaskDefinition.append(customTaskName);
@@ -70,7 +70,7 @@ class RunScriptTaskFuncTest {
         Files.copy(new File(getClass().getClassLoader().getResource("package-yarn.json").toURI()).toPath(),
             projectDirectory.resolve("package.json"), StandardCopyOption.REPLACE_EXISTING);
         properties.put("yarnEnabled", true);
-        properties.put("yarnVersion", "1.16.0");
+        properties.put("yarnVersion", "1.19.1");
         Helper.createBuildFile(projectDirectory, properties, customTaskDefinition.toString());
 
         final BuildResult result3 = runGradle(projectDirectory, customTaskName);
