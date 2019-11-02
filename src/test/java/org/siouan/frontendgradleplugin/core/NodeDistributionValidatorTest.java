@@ -74,9 +74,7 @@ class NodeDistributionValidatorTest {
             .isInstanceOf(DistributionValidatorException.class).hasCause(expectedException);
 
         verify(downloader).download(any(URL.class), any(Path.class));
-        verifyNoMoreInteractions(downloader);
-        verifyZeroInteractions(checksumReader);
-        verifyZeroInteractions(fileHasher);
+        verifyNoMoreInteractions(downloader, checksumReader, fileHasher);
     }
 
     @Test
@@ -94,8 +92,7 @@ class NodeDistributionValidatorTest {
         verify(downloader).download(any(URL.class), any(Path.class));
         verifyNoMoreInteractions(downloader);
         verify(checksumReader).readHash(any(Path.class), eq(distributionFilename));
-        verifyNoMoreInteractions(checksumReader);
-        verifyZeroInteractions(fileHasher);
+        verifyNoMoreInteractions(checksumReader, fileHasher);
     }
 
     @Test
