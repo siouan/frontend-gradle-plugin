@@ -76,9 +76,9 @@ public class NodeInstallTask extends DefaultTask {
         final String distributionUrl = nodeDistributionUrl.getOrNull();
         final File installDirectory = nodeInstallDirectory.get();
         final DistributionInstallerSettings settings = new DistributionInstallerSettings(this, Utils.getSystemOsName(),
-            new NodeDistributionUrlResolver(version, distributionUrl), new DownloaderImpl(getTemporaryDir().toPath()),
+            getTemporaryDir().toPath(), new NodeDistributionUrlResolver(version, distributionUrl), new DownloaderImpl(getTemporaryDir().toPath()),
             new NodeDistributionValidator(this, new DownloaderImpl(getTemporaryDir().toPath()),
-                new NodeDistributionChecksumReaderImpl(), new FileHasherImpl(), installDirectory.toPath()),
+                new NodeDistributionChecksumReaderImpl(), new FileHasherImpl(), getTemporaryDir().toPath()),
             new ArchiverFactoryImpl(), installDirectory.toPath());
         new DistributionInstaller(settings).install();
     }

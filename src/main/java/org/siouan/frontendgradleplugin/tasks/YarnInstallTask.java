@@ -67,7 +67,7 @@ public class YarnInstallTask extends DefaultTask {
     @TaskAction
     public void execute() throws DistributionInstallerException {
         final DistributionInstallerSettings settings = new DistributionInstallerSettings(this, Utils.getSystemOsName(),
-            new YarnDistributionUrlResolver(yarnVersion.get(), yarnDistributionUrl.getOrNull()),
+            getTemporaryDir().toPath(), new YarnDistributionUrlResolver(yarnVersion.get(), yarnDistributionUrl.getOrNull()),
             new DownloaderImpl(getTemporaryDir().toPath()), null, new ArchiverFactoryImpl(),
             yarnInstallDirectory.map(File::toPath).getOrNull());
         new DistributionInstaller(settings).install();

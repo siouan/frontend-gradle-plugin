@@ -44,7 +44,7 @@ public class DistributionInstaller extends AbstractTaskJob {
      */
     public void install() throws DistributionInstallerException {
         try {
-            checkInstallDirectory();
+            deleteInstallDirectory();
 
             // Resolve the URL to download the distribution
             final URL distributionUrl = settings.getUrlResolver().resolve();
@@ -52,7 +52,8 @@ public class DistributionInstaller extends AbstractTaskJob {
             // Download the distribution
             final String distributionUrlAsString = distributionUrl.toString();
             logLifecycle("Downloading distribution at '" + distributionUrlAsString + "'");
-            final Path distributionFile = settings.getInstallDirectory()
+            final Path distributionFile = settings
+                .getTemporaryDirectory()
                 .resolve(distributionUrlAsString.substring(distributionUrlAsString.lastIndexOf('/') + 1));
             settings.getDownloader().download(distributionUrl, distributionFile);
 
@@ -61,13 +62,14 @@ public class DistributionInstaller extends AbstractTaskJob {
                 validator.get().validate(distributionUrl, distributionFile);
             }
 
-
             // Explodes the archive
-            logLifecycle("Exploding distribution into '" + distributionFile.getParent() + "'");
-            final ExplodeSettings explodeSettings = new ExplodeSettings(distributionFile, distributionFile.getParent(),
+            final Path explodeTargetDirectory = Files.createDirectory(distributionFile.resolveSibling("extract"));
+            logLifecycle("Exploding distribution into '" + explodeTargetDirectory + "'");
+            final ExplodeSettings explodeSettings = new ExplodeSettings(distributionFile, explodeTargetDirectory,
                 settings.getOsName());
             final Optional<String> distributionFileExtension = Utils
-                .getExtension(distributionFile.getFileName().toString()).flatMap(extension -> {
+                .getExtension(distributionFile.getFileName().toString())
+                .flatMap(extension -> {
                     final Optional<String> newExtension;
                     if (Utils.isGzipExtension(extension)) {
                         newExtension = Utils
@@ -78,35 +80,40 @@ public class DistributionInstaller extends AbstractTaskJob {
                     }
                     return newExtension;
                 });
-            distributionFileExtension.flatMap(extension -> settings.getArchiverFactory().get(extension))
-                .orElseThrow(UnsupportedDistributionArchiveException::new).explode(explodeSettings);
+            distributionFileExtension
+                .flatMap(extension -> settings.getArchiverFactory().get(extension))
+                .orElseThrow(UnsupportedDistributionArchiveException::new)
+                .explode(explodeSettings);
 
+            logLifecycle("Moving distribution into '" + settings.getInstallDirectory() + "'");
             // Removes the root directory of exploded content, if relevant.
             final Set<Path> distributionFiles;
-            try (final Stream<Path> childFiles = Files.list(distributionFile.getParent())) {
+            try (final Stream<Path> childFiles = Files.list(explodeTargetDirectory)) {
                 distributionFiles = childFiles
                     .filter(childFile -> !childFile.getFileName().equals(distributionFile.getFileName()))
                     .collect(toSet());
             }
+            final Path distributionRootDirectory;
             if (distributionFiles.size() == 1) {
-                final Path distributionRootDirectory = distributionFiles.iterator().next();
-                Utils.moveFiles(distributionRootDirectory, distributionFile.getParent());
-                Files.delete(distributionRootDirectory);
+                distributionRootDirectory = distributionFiles.iterator().next();
+            } else {
+                distributionRootDirectory = explodeTargetDirectory;
             }
+            Utils.moveFiles(distributionRootDirectory, settings.getInstallDirectory());
 
+            logLifecycle("Removing explode directory '" + explodeTargetDirectory + "'");
+            Files.deleteIfExists(explodeTargetDirectory);
             logLifecycle("Removing distribution file '" + distributionFile + "'");
             Files.delete(distributionFile);
 
-            logLifecycle("Distribution installed in '" + distributionFile.getParent() + "'");
+            logLifecycle("Distribution installed in '" + settings.getInstallDirectory() + "'");
         } catch (final IOException | DistributionUrlResolverException | DownloadException | DistributionValidatorException | UnsupportedDistributionArchiveException | UnsupportedEntryException | SlipAttackException | ArchiverException e) {
             throw new DistributionInstallerException(e);
         }
     }
 
-    private void checkInstallDirectory() throws IOException {
-        Files.createDirectories(settings.getInstallDirectory());
-
-        logLifecycle("Removing content in install directory '" + settings.getInstallDirectory() + "'.");
-        Utils.deleteRecursively(settings.getInstallDirectory(), false);
+    private void deleteInstallDirectory() throws IOException {
+        logLifecycle("Removing install directory '" + settings.getInstallDirectory() + "'.");
+        Utils.deleteRecursively(settings.getInstallDirectory(), true);
     }
 }
