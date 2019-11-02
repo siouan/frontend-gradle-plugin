@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.PosixFilePermission;
@@ -31,10 +30,7 @@ public final class Utils {
      */
     public static void deleteRecursively(final Path rootPath, final boolean deleteRootEnabled) throws IOException {
         if (Files.exists(rootPath)) {
-            Files.walkFileTree(rootPath, new FileDeleteVisitor());
-            if (deleteRootEnabled) {
-                Files.delete(rootPath);
-            }
+            Files.walkFileTree(rootPath, new FileDeleteVisitor(rootPath, deleteRootEnabled));
         }
     }
 
@@ -203,16 +199,14 @@ public final class Utils {
      * located in the same logical drive, since the implementation uses a rename operation, which would fail if child
      * files need to be copied from a location to another.
      *
-     * @param sourceDirectory Source directory.
-     * @param targetDirectory Target directory.
+     * @param sourcePath Source path.
+     * @param targetPath Target path.
      * @throws IOException If an I/O error occurs.
      * @throws IllegalArgumentException If either the source directory or the destination directory is not an existing
      * directory.
      */
-    public static void moveFiles(final Path sourceDirectory, final Path targetDirectory) throws IOException {
-        Files.move(sourceDirectory, targetDirectory);
-        // Files.walkFileTree(sourceDirectory, new FileCopyVisitor(sourceDirectory, targetDirectory));
-        // deleteRecursively(sourceDirectory, true);
+    public static void moveFiles(final Path sourcePath, final Path targetPath) throws IOException {
+        Files.move(sourcePath, targetPath);
     }
 
     /**
@@ -293,10 +287,31 @@ public final class Utils {
      */
     private static class FileDeleteVisitor extends SimpleFileVisitor<Path> {
 
+        private final Path rootPath;
+
+        private final boolean deleteRootEnabled;
+
+        FileDeleteVisitor(final Path rootPath, final boolean deleteRootEnabled) {
+            this.rootPath = rootPath;
+            this.deleteRootEnabled = deleteRootEnabled;
+        }
+
         @Override
         public FileVisitResult visitFile(final Path file, final BasicFileAttributes attributes) throws IOException {
             Files.delete(file);
             return FileVisitResult.CONTINUE;
+        }
+
+        @Override
+        public FileVisitResult postVisitDirectory(final Path directory, final IOException e) throws IOException {
+            if (e == null) {
+                if (deleteRootEnabled || !directory.equals(rootPath)) {
+                    Files.delete(directory);
+                }
+                return FileVisitResult.CONTINUE;
+            } else {
+                throw e;
+            }
         }
     }
 
@@ -326,11 +341,5 @@ public final class Utils {
             Files.copy(file, targetPath.resolve(rootPath.relativize(file)).normalize());
             return FileVisitResult.CONTINUE;
         }
-    }
-
-    public static void main(String[] args) throws IOException {
-        final Path sourceDirectory = Paths.get("/home/vboriesazeau/dev/code/siouan/frontend-gradle-plugin/src");
-        final Path targetDirectory = Paths.get("/home/vboriesazeau/src-old");
-        copyRecursively(sourceDirectory, targetDirectory);
     }
 }
