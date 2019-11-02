@@ -27,11 +27,30 @@ matrix:
       osx_image: xcode9.4
       jdk: oraclejdk11
 
+    - os: windows
+      # Java is not yet supported on Windows, so the build would block.
+      # You do not need any setup from Travis, use a plain bash build
+      language: bash
+      env:
+        global:
+          # This is a convenience variable for shortening download commands
+          - GRAVIS="https://raw.githubusercontent.com/DanySK/Gravis-CI/master/"
+          # If you use Windows, you may want to disable Windows Defender. It slows down the builds
+          # dramatically, also during cache setup. From a Tanzinul Islam's idea: http://bit.ly/348VPYS,
+          # This work around disables it before caching
+          - NO_WIN_DEFENDER=$(curl "${GRAVIS}.disable-windows-defender.sh" --output .no-defender.sh && source .no-defender.sh)
+        matrix:
+          # List any JDK you want to build your software with.
+          # You can see the list of supported environments by installing Jabba and using ls-remote:
+          # https://github.com/shyiko/jabba#usage
+          - JDK="adopt-openj9@1.8"
+
 language: java
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+  - if [ -n "${GRAVIS}" ]; then curl "${GRAVIS}.clean_gradle_cache.sh" --output ~/.clean_gradle_cache.sh; bash ~/.clean_gradle_cache.sh; fi
 
 cache:
   directories:
@@ -40,6 +59,10 @@ cache:
 
 git:
   depth: 3
+
+before_install:
+  # Download the script, and download, install, configue the JDK, and export the configuration to the current shell
+  - if [ -n "${GRAVIS}" ]; then curl "${GRAVIS}.install-jdk-travis.sh" --output ~/.install-jdk-travis.sh; source ~/.install-jdk-travis.sh; fi
 
 script:
   - ./gradlew check --scan
