@@ -17,6 +17,8 @@ public class DistributionInstallerSettings {
 
     private final String osName;
 
+    private final Path temporaryDirectory;
+
     /**
      * Directory where the distribution shall be installed.
      */
@@ -53,11 +55,12 @@ public class DistributionInstallerSettings {
      * @param archiverFactory Factory providing archivers.
      * @param installDirectory Install directory.
      */
-    public DistributionInstallerSettings(final Task task, final String osName,
+    public DistributionInstallerSettings(final Task task, final String osName, final Path temporaryDirectory,
         final DistributionUrlResolver urlResolver, final Downloader downloader, final DistributionValidator validator,
         final ArchiverFactory archiverFactory, final Path installDirectory) {
         this.task = task;
         this.osName = osName;
+        this.temporaryDirectory = temporaryDirectory;
         this.urlResolver = urlResolver;
         this.downloader = downloader;
         this.validator = validator;
@@ -81,6 +84,10 @@ public class DistributionInstallerSettings {
      */
     public String getOsName() {
         return osName;
+    }
+
+    public Path getTemporaryDirectory() {
+        return temporaryDirectory;
     }
 
     /**

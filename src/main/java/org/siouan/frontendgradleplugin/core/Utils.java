@@ -1,10 +1,10 @@
 package org.siouan.frontendgradleplugin.core;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.PosixFilePermission;
@@ -13,7 +13,6 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Stream;
 
 /**
  * This class provides utilities for the whole plugin.
@@ -31,7 +30,23 @@ public final class Utils {
      * @throws IOException If an I/O error occurs.
      */
     public static void deleteRecursively(final Path rootPath, final boolean deleteRootEnabled) throws IOException {
-        Files.walkFileTree(rootPath, new FileDeleteVisitor(rootPath, deleteRootEnabled));
+        if (Files.exists(rootPath)) {
+            Files.walkFileTree(rootPath, new FileDeleteVisitor());
+            if (deleteRootEnabled) {
+                Files.delete(rootPath);
+            }
+        }
+    }
+
+    /**
+     * Copies a file at the given path, recursively if it is a directory.
+     *
+     * @param sourcePath Source path.
+     * @param targetPath Target Path.
+     * @throws IOException If an I/O error occurs.
+     */
+    public static void copyRecursively(final Path sourcePath, final Path targetPath) throws IOException {
+        Files.walkFileTree(sourcePath, new FileCopyVisitor(sourcePath, targetPath));
     }
 
     /**
@@ -184,28 +199,20 @@ public final class Utils {
     }
 
     /**
-     * Moves all files/directories from a source directory into a destination directory.
+     * Moves all files/directories from a source directory into a destination directory. Both directories must be
+     * located in the same logical drive, since the implementation uses a rename operation, which would fail if child
+     * files need to be copied from a location to another.
      *
-     * @param srcDirectory Source directory.
-     * @param destDirectory Destination directory.
+     * @param sourceDirectory Source directory.
+     * @param targetDirectory Target directory.
      * @throws IOException If an I/O error occurs.
      * @throws IllegalArgumentException If either the source directory or the destination directory is not an existing
      * directory.
      */
-    public static void moveFiles(final Path srcDirectory, final Path destDirectory) throws IOException {
-        if (!Files.isDirectory(srcDirectory) || !Files.isDirectory(destDirectory)) {
-            throw new IllegalArgumentException();
-        }
-
-        try (final Stream<Path> childPaths = Files.list(srcDirectory)) {
-            childPaths.forEach(path -> {
-                try {
-                    Files.move(path, destDirectory.resolve(path.getFileName().toString()));
-                } catch (IOException e) {
-                    throw new UncheckedIOException(e);
-                }
-            });
-        }
+    public static void moveFiles(final Path sourceDirectory, final Path targetDirectory) throws IOException {
+        Files.move(sourceDirectory, targetDirectory);
+        // Files.walkFileTree(sourceDirectory, new FileCopyVisitor(sourceDirectory, targetDirectory));
+        // deleteRecursively(sourceDirectory, true);
     }
 
     /**
@@ -286,31 +293,44 @@ public final class Utils {
      */
     private static class FileDeleteVisitor extends SimpleFileVisitor<Path> {
 
-        private final Path rootPath;
-
-        private final boolean deleteRootEnabled;
-
-        FileDeleteVisitor(final Path rootPath, final boolean deleteRootEnabled) {
-            this.rootPath = rootPath;
-            this.deleteRootEnabled = deleteRootEnabled;
-        }
-
         @Override
         public FileVisitResult visitFile(final Path file, final BasicFileAttributes attributes) throws IOException {
             Files.delete(file);
             return FileVisitResult.CONTINUE;
         }
+    }
+
+    /**
+     * A visitor of paths that copies the corresponding file and/or directory before all child files are copied.
+     */
+    private static class FileCopyVisitor extends SimpleFileVisitor<Path> {
+
+        private final Path rootPath;
+
+        private final Path targetPath;
+
+        FileCopyVisitor(final Path rootPath, final Path targetPath) {
+            this.rootPath = rootPath;
+            this.targetPath = targetPath;
+        }
 
         @Override
-        public FileVisitResult postVisitDirectory(final Path directory, final IOException e) throws IOException {
-            if (e == null) {
-                if (deleteRootEnabled || !directory.equals(rootPath)) {
-                    Files.delete(directory);
-                }
-                return FileVisitResult.CONTINUE;
-            } else {
-                throw e;
-            }
+        public FileVisitResult preVisitDirectory(final Path file, BasicFileAttributes basicFileAttributes)
+            throws IOException {
+            Files.copy(file, targetPath.resolve(rootPath.relativize(file)).normalize());
+            return FileVisitResult.CONTINUE;
         }
+
+        @Override
+        public FileVisitResult visitFile(final Path file, final BasicFileAttributes attributes) throws IOException {
+            Files.copy(file, targetPath.resolve(rootPath.relativize(file)).normalize());
+            return FileVisitResult.CONTINUE;
+        }
+    }
+
+    public static void main(String[] args) throws IOException {
+        final Path sourceDirectory = Paths.get("/home/vboriesazeau/dev/code/siouan/frontend-gradle-plugin/src");
+        final Path targetDirectory = Paths.get("/home/vboriesazeau/src-old");
+        copyRecursively(sourceDirectory, targetDirectory);
     }
 }
