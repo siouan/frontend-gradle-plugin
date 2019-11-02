@@ -10,7 +10,6 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
@@ -88,8 +87,7 @@ class DistributionInstallerTest {
             .hasCause(expectedException);
 
         verify(urlResolver).resolve();
-        verifyNoMoreInteractions(urlResolver);
-        verifyZeroInteractions(downloader, validator, archiverFactory);
+        verifyNoMoreInteractions(urlResolver, downloader, validator, archiverFactory);
     }
 
     @Test
@@ -108,8 +106,7 @@ class DistributionInstallerTest {
 
         verify(urlResolver).resolve();
         verify(downloader).download(eq(distributionUrl), any(Path.class));
-        verifyNoMoreInteractions(urlResolver, downloader);
-        verifyZeroInteractions(validator, archiverFactory);
+        verifyNoMoreInteractions(urlResolver, downloader, validator, archiverFactory);
     }
 
     @Test
@@ -130,8 +127,7 @@ class DistributionInstallerTest {
         verify(urlResolver).resolve();
         verify(downloader).download(eq(distributionUrl), any(Path.class));
         verify(validator).validate(eq(distributionUrl), any(Path.class));
-        verifyNoMoreInteractions(urlResolver, downloader, validator);
-        verifyZeroInteractions(archiverFactory);
+        verifyNoMoreInteractions(urlResolver, downloader, validator, archiverFactory);
     }
 
     @Test
@@ -148,8 +144,7 @@ class DistributionInstallerTest {
 
         verify(urlResolver).resolve();
         verify(downloader).download(eq(distributionUrl), any(Path.class));
-        verifyNoMoreInteractions(urlResolver, downloader);
-        verifyZeroInteractions(validator, archiverFactory);
+        verifyNoMoreInteractions(urlResolver, downloader, validator, archiverFactory);
     }
 
     @Test
@@ -168,8 +163,7 @@ class DistributionInstallerTest {
         verify(urlResolver).resolve();
         verify(downloader).download(eq(distributionUrl), any(Path.class));
         verify(archiverFactory).get(anyString());
-        verifyNoMoreInteractions(urlResolver, downloader, archiverFactory);
-        verifyZeroInteractions(validator);
+        verifyNoMoreInteractions(urlResolver, downloader, archiverFactory, validator);
     }
 
     @Test
@@ -193,8 +187,7 @@ class DistributionInstallerTest {
         verify(downloader).download(eq(distributionUrl), any(Path.class));
         verify(archiverFactory).get(anyString());
         verify(archiver).explode(any(ExplodeSettings.class));
-        verifyNoMoreInteractions(urlResolver, downloader, archiverFactory);
-        verifyZeroInteractions(validator);
+        verifyNoMoreInteractions(urlResolver, downloader, archiverFactory, validator);
     }
 
     @Test
@@ -218,8 +211,7 @@ class DistributionInstallerTest {
         verify(downloader).download(eq(distributionUrl), any(Path.class));
         verify(archiverFactory).get(anyString());
         verify(archiver).explode(any(ExplodeSettings.class));
-        verifyNoMoreInteractions(urlResolver, downloader, archiverFactory);
-        verifyZeroInteractions(validator);
+        verifyNoMoreInteractions(urlResolver, downloader, archiverFactory, validator);
     }
 
     @Test
@@ -243,8 +235,7 @@ class DistributionInstallerTest {
         verify(downloader).download(eq(distributionUrl), any(Path.class));
         verify(archiverFactory).get(anyString());
         verify(archiver).explode(any(ExplodeSettings.class));
-        verifyNoMoreInteractions(urlResolver, downloader, archiverFactory);
-        verifyZeroInteractions(validator);
+        verifyNoMoreInteractions(urlResolver, downloader, archiverFactory, validator);
     }
 
     @Test
@@ -271,8 +262,7 @@ class DistributionInstallerTest {
         verify(downloader).download(eq(distributionUrl), any(Path.class));
         verify(archiverFactory).get(anyString());
         verify(archiver).explode(any(ExplodeSettings.class));
-        verifyNoMoreInteractions(urlResolver, archiverFactory, archiver);
-        verifyZeroInteractions(validator);
+        verifyNoMoreInteractions(urlResolver, archiverFactory, archiver, validator);
     }
 
     @Test
@@ -299,8 +289,7 @@ class DistributionInstallerTest {
         verify(downloader).download(eq(distributionUrl), any(Path.class));
         verify(archiverFactory).get(anyString());
         verify(archiver).explode(any(ExplodeSettings.class));
-        verifyNoMoreInteractions(urlResolver, archiverFactory, archiver);
-        verifyZeroInteractions(validator);
+        verifyNoMoreInteractions(urlResolver, archiverFactory, archiver, validator);
     }
 
     /**
