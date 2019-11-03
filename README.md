@@ -107,8 +107,7 @@ frontend {
     // 'nodeVersion' property, or this may lead to unexpected results.
     nodeDistributionUrl = 'https://nodejs.org/dist/vX.Y.Z/node-vX.Y.Z-win-x64.zip'
 
-    // [OPTIONAL] Install directory where the distribution archive shall be exploded. It is recommended this
-    // directory is in the same volume than the '${project.buildDir}' directory to avoid I/O errors.
+    // [OPTIONAL] Install directory where the distribution archive shall be exploded.
     nodeInstallDirectory = "${projectDir}/node"
 
     // YARN SETTINGS
@@ -128,8 +127,7 @@ frontend {
     // 'yarnVersion' property, or this may lead to unexpected results.
     yarnDistributionUrl = 'https://github.com/yarnpkg/yarn/releases/download/vX.Y.Z/yarn-vX.Y.Z.tar.gz'
 
-    // [OPTIONAL] Install directory where the distribution archive shall be exploded. It is recommended this
-    // directory is in the same volume than the '${project.buildDir}' directory to avoid I/O errors.
+    // [OPTIONAL] Install directory where the distribution archive shall be exploded.
     yarnInstallDirectory = "${projectDir}/yarn"
 
     // OTHER SETTINGS
