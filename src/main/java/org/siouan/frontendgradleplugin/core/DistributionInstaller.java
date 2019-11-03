@@ -99,7 +99,7 @@ public class DistributionInstaller extends AbstractTaskJob {
             } else {
                 distributionRootDirectory = explodeTargetDirectory;
             }
-            Utils.moveFiles(distributionRootDirectory, settings.getInstallDirectory());
+            Utils.moveFileTree(distributionRootDirectory, settings.getInstallDirectory());
 
             logLifecycle("Removing explode directory '" + explodeTargetDirectory + "'");
             Files.deleteIfExists(explodeTargetDirectory);
@@ -114,6 +114,6 @@ public class DistributionInstaller extends AbstractTaskJob {
 
     private void deleteInstallDirectory() throws IOException {
         logLifecycle("Removing install directory '" + settings.getInstallDirectory() + "'.");
-        Utils.deleteRecursively(settings.getInstallDirectory(), true);
+        Utils.deleteFileTree(settings.getInstallDirectory(), true);
     }
 }

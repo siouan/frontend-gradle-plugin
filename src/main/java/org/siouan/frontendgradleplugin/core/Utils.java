@@ -1,5 +1,8 @@
 package org.siouan.frontendgradleplugin.core;
 
+import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
+import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
+
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -22,27 +25,45 @@ public final class Utils {
     }
 
     /**
-     * Deletes a file at the given path, recursively if it is a directory.
+     * Deletes a file or a directory at the given path. If the root path is a directory, its content is deleted
+     * recursively before the directory itself.
      *
      * @param rootPath Root path.
      * @param deleteRootEnabled Whether the file at the root path itself must also be deleted.
      * @throws IOException If an I/O error occurs.
      */
-    public static void deleteRecursively(final Path rootPath, final boolean deleteRootEnabled) throws IOException {
+    public static void deleteFileTree(final Path rootPath, final boolean deleteRootEnabled) throws IOException {
         if (Files.exists(rootPath)) {
             Files.walkFileTree(rootPath, new FileDeleteVisitor(rootPath, deleteRootEnabled));
         }
     }
 
     /**
-     * Copies a file at the given path, recursively if it is a directory.
+     * Copies a file at the given path, recursively if it is a directory. File attributes and symlinks are preserved.
      *
      * @param sourcePath Source path.
      * @param targetPath Target Path.
      * @throws IOException If an I/O error occurs.
      */
-    public static void copyRecursively(final Path sourcePath, final Path targetPath) throws IOException {
+    public static void copyFileTree(final Path sourcePath, final Path targetPath) throws IOException {
         Files.walkFileTree(sourcePath, new FileCopyVisitor(sourcePath, targetPath));
+    }
+
+    /**
+     * Moves all files/directories from a source directory into a destination directory. The destination directory is
+     * created, and therefore must not exist before this method is called. All directories/files in the source path are
+     * copied first, preserving file attributes and symlinks. Finally the source path is deleted. Such method ensures
+     * any file tree can be moved from a volume to another.
+     *
+     * @param sourcePath Source path.
+     * @param targetPath Target path.
+     * @throws IOException If an I/O error occurs.
+     * @throws IllegalArgumentException If either the source directory or the destination directory is not an existing
+     * directory.
+     */
+    public static void moveFileTree(final Path sourcePath, final Path targetPath) throws IOException {
+        copyFileTree(sourcePath, targetPath);
+        deleteFileTree(sourcePath, true);
     }
 
     /**
@@ -195,21 +216,6 @@ public final class Utils {
     }
 
     /**
-     * Moves all files/directories from a source directory into a destination directory. Both directories must be
-     * located in the same logical drive, since the implementation uses a rename operation, which would fail if child
-     * files need to be copied from a location to another.
-     *
-     * @param sourcePath Source path.
-     * @param targetPath Target path.
-     * @throws IOException If an I/O error occurs.
-     * @throws IllegalArgumentException If either the source directory or the destination directory is not an existing
-     * directory.
-     */
-    public static void moveFiles(final Path sourcePath, final Path targetPath) throws IOException {
-        Files.move(sourcePath, targetPath);
-    }
-
-    /**
      * Removes the extension of a filename. In case of a compressed TAR archive, the method removes the whole extension
      * (e.g. '.tar.gz').
      *
@@ -332,13 +338,13 @@ public final class Utils {
         @Override
         public FileVisitResult preVisitDirectory(final Path file, BasicFileAttributes basicFileAttributes)
             throws IOException {
-            Files.copy(file, targetPath.resolve(rootPath.relativize(file)).normalize());
+            Files.copy(file, targetPath.resolve(rootPath.relativize(file)).normalize(), COPY_ATTRIBUTES, NOFOLLOW_LINKS);
             return FileVisitResult.CONTINUE;
         }
 
         @Override
         public FileVisitResult visitFile(final Path file, final BasicFileAttributes attributes) throws IOException {
-            Files.copy(file, targetPath.resolve(rootPath.relativize(file)).normalize());
+            Files.copy(file, targetPath.resolve(rootPath.relativize(file)).normalize(), COPY_ATTRIBUTES, NOFOLLOW_LINKS);
             return FileVisitResult.CONTINUE;
         }
     }
