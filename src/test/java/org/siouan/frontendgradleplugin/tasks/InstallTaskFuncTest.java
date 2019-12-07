@@ -39,7 +39,50 @@ class InstallTaskFuncTest {
     }
 
     @Test
-    void shouldInstallFrontendWithNpmOrYarn() throws IOException, URISyntaxException {
+    void shouldInstallFrontendWithNpmOrYarnAndDefaultScript() throws IOException, URISyntaxException {
+        Files.copy(new File(getClass().getClassLoader().getResource("package-npm.json").toURI()).toPath(),
+            projectDirectory.resolve("package.json"));
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put("nodeVersion", "10.16.0");
+        properties.put("nodeDistributionUrl", getClass().getClassLoader().getResource("node-v10.16.0.zip").toString());
+        Helper.createBuildFile(projectDirectory, properties);
+
+        final BuildResult result1 = runGradle(projectDirectory, FrontendGradlePlugin.INSTALL_TASK_NAME);
+
+        assertTaskOutcome(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, TaskOutcome.SUCCESS);
+        assertTaskIgnored(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
+        assertTaskOutcome(result1, FrontendGradlePlugin.INSTALL_TASK_NAME, TaskOutcome.SUCCESS);
+
+        final BuildResult result2 = runGradle(projectDirectory, FrontendGradlePlugin.INSTALL_TASK_NAME);
+
+        assertTaskOutcome(result2, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, TaskOutcome.UP_TO_DATE);
+        assertTaskIgnored(result2, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
+        assertTaskOutcome(result2, FrontendGradlePlugin.INSTALL_TASK_NAME, TaskOutcome.SUCCESS);
+
+        Files.deleteIfExists(projectDirectory.resolve("package-lock.json"));
+        Files.copy(new File(getClass().getClassLoader().getResource("package-yarn.json").toURI()).toPath(),
+            projectDirectory.resolve("package.json"), StandardCopyOption.REPLACE_EXISTING);
+        properties.put("yarnEnabled", true);
+        properties.put("yarnVersion", "1.16.0");
+        properties
+            .put("yarnDistributionUrl", getClass().getClassLoader().getResource("yarn-v1.16.0.tar.gz").toString());
+        Helper.createBuildFile(projectDirectory, properties);
+
+        final BuildResult result3 = runGradle(projectDirectory, FrontendGradlePlugin.INSTALL_TASK_NAME);
+
+        assertTaskOutcome(result3, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, TaskOutcome.UP_TO_DATE);
+        assertTaskOutcome(result3, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME, TaskOutcome.SUCCESS);
+        assertTaskOutcome(result3, FrontendGradlePlugin.INSTALL_TASK_NAME, TaskOutcome.SUCCESS);
+
+        final BuildResult result4 = runGradle(projectDirectory, FrontendGradlePlugin.INSTALL_TASK_NAME);
+
+        assertTaskOutcome(result4, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, TaskOutcome.UP_TO_DATE);
+        assertTaskOutcome(result4, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME, TaskOutcome.UP_TO_DATE);
+        assertTaskOutcome(result4, FrontendGradlePlugin.INSTALL_TASK_NAME, TaskOutcome.SUCCESS);
+    }
+
+    @Test
+    void shouldInstallFrontendWithNpmOrYarnAndCustomScript() throws IOException, URISyntaxException {
         Files.copy(new File(getClass().getClassLoader().getResource("package-npm.json").toURI()).toPath(),
             projectDirectory.resolve("package.json"));
         final Map<String, Object> properties = new HashMap<>();

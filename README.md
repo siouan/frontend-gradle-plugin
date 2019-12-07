@@ -99,7 +99,7 @@ frontend {
     // NODE SETTINGS
     // Node version, used to build the URL to download the corresponding distribution, if the 'nodeDistributionUrl'
     // property is not set.
-    nodeVersion = '12.13.0'
+    nodeVersion = '12.13.1'
 
     // [OPTIONAL] Sets this property to force the download from a custom website. By default, this property is
     // 'null', and the plugin attempts to download the distribution compatible with the current platform from
@@ -119,7 +119,7 @@ frontend {
     // [OPTIONAL] Yarn version, used to build the URL to download the corresponding distribution, if the
     // 'yarnDistributionUrl' property is not set. This property is mandatory when the 'yarnEnabled' property is
     // true.
-    yarnVersion = '1.19.1'
+    yarnVersion = '1.19.2'
 
     // [OPTIONAL] Sets this property to force the download from a custom website. By default, this property is
     // 'null', and the plugin attempts to download the distribution compatible with the current platform from

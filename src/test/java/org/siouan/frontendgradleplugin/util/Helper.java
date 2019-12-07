@@ -151,8 +151,8 @@ public final class Helper {
         buildFileWriter.append(property);
         if (value instanceof Map) {
             buildFileWriter.append(" {\n");
-            for (final Object key : ((Map) value).keySet()) {
-                writeProperty(buildFileWriter, key.toString(), ((Map) value).get(key));
+            for (final Object key : ((Map<?, ?>) value).keySet()) {
+                writeProperty(buildFileWriter, key.toString(), ((Map<?, ?>) value).get(key));
             }
             buildFileWriter.append("}");
         } else if ((value instanceof Boolean) || (value instanceof Number)) {
