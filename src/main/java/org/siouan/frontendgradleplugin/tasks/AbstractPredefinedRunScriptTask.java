@@ -12,6 +12,10 @@ import org.gradle.api.tasks.Optional;
  */
 public abstract class AbstractPredefinedRunScriptTask extends AbstractRunScriptTask {
 
+    AbstractPredefinedRunScriptTask(boolean failOnMissingScriptEnabled) {
+        super(failOnMissingScriptEnabled);
+    }
+
     @Input
     public Property<Boolean> getYarnEnabled() {
         return yarnEnabled;

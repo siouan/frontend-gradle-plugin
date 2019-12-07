@@ -47,6 +47,11 @@ public class FrontendGradlePlugin implements Plugin<Project> {
     public static final String CLEAN_TASK_NAME = "cleanFrontend";
 
     /**
+     * Name of the NPM/Yarn command that shall be executed to install frontend dependencies.
+     */
+    private static final String DEFAULT_INSTALL_SCRIPT = "install";
+
+    /**
      * Name of the task that installs a Node distribution.
      */
     public static final String DEFAULT_NODE_INSTALL_DIRNAME = "node";
@@ -95,6 +100,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         extension.getNodeInstallDirectory().convention(new File(project.getProjectDir(), DEFAULT_NODE_INSTALL_DIRNAME));
         extension.getYarnEnabled().convention(false);
         extension.getYarnInstallDirectory().convention(new File(project.getProjectDir(), DEFAULT_YARN_INSTALL_DIRNAME));
+        extension.getInstallScript().convention(DEFAULT_INSTALL_SCRIPT);
 
         final TaskContainer projectTasks = project.getTasks();
         projectTasks

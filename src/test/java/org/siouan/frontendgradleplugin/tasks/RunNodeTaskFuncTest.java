@@ -42,17 +42,17 @@ class RunNodeTaskFuncTest {
         final Path tmpScriptPath = tmpDirectory.toPath().resolve("script.js");
         createScriptFile(tmpScriptPath);
         final Map<String, Object> properties = new HashMap<>();
-        properties.put("nodeVersion", "12.13.0");
+        properties.put("nodeVersion", "12.13.1");
         final String customTaskName = "helloMyFriend";
-        final StringBuilder customTaskDefinition = new StringBuilder("tasks.register('");
-        customTaskDefinition.append(customTaskName);
-        customTaskDefinition.append("', org.siouan.frontendgradleplugin.tasks.RunNodeTask) {\n");
-        customTaskDefinition.append("dependsOn tasks.named('installNode')\n");
-        customTaskDefinition.append("script = '");
-        customTaskDefinition.append(tmpScriptPath.toString().replaceAll("\\\\", "\\\\\\\\"));
-        customTaskDefinition.append("'\n");
-        customTaskDefinition.append("}\n");
-        Helper.createBuildFile(projectDirectory, properties, customTaskDefinition.toString());
+        final String customTaskDefinition = "tasks.register('"
+            + customTaskName
+            + "', org.siouan.frontendgradleplugin.tasks.RunNodeTask) {\n"
+            + "dependsOn tasks.named('installNode')\n"
+            + "script = '"
+            + tmpScriptPath.toString().replaceAll("\\\\", "\\\\\\\\")
+            + "'\n"
+            + "}\n";
+        Helper.createBuildFile(projectDirectory, properties, customTaskDefinition);
 
         final BuildResult result1 = runGradle(projectDirectory, customTaskName);
 
