@@ -60,9 +60,10 @@ gradlew pluginUnderTestMetadata
 The project relies on [Travis CI Open Source][travis] to integrate continuously every change, pull request, in the
 repository. The configuration actually allows to build and test the plugin on the environments below:
 
-- Linux Ubuntu Xenial Xerus 16.04.6 LTS / OpenJDK 1.8.0_191 64 bits
-- Linux Ubuntu Xenial Xerus 16.04.6 LTS / OracleJDK 1.8.0_151 64 bits
-- Mac OS X 10.13 / OracleJDK 11.0.2 LTS 64 bits
+- Linux Ubuntu Xenial 16.04.6 LTS / OpenJDK 1.8.0_222 64 bits
+- Linux Ubuntu Bionic 18.04.3 LTS / OpenJDK 11.0.2 64 bits
+- Mac OS X 10.13.3 / OpenJDK 11.0.2 64 bits
+- Windows Server 2016 version 1803 / AdoptOpenJDK OpenJ9 1.8.0-232 64 bits
 
 Ubuntu Xenial is the reference environment, used to analyze the source code with SonarCloud. By now, the plugin has been
 developed on Windows 10 Home with OracleJDK 1.8.0_202 64 bits and [JetBrains IntelliJ IDEA][intellij].

@@ -10,7 +10,6 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
@@ -81,15 +80,14 @@ class DistributionInstallerTest {
         final Exception expectedException = mock(DistributionUrlResolverException.class);
         when(urlResolver.resolve()).thenThrow(expectedException);
         final DistributionInstaller installer = new DistributionInstaller(
-            new DistributionInstallerSettings(task, Utils.getSystemOsName(), urlResolver, downloader, null,
+            new DistributionInstallerSettings(task, Utils.getSystemOsName(), temporaryDirectory.toPath(), urlResolver, downloader, null,
                 archiverFactory, temporaryDirectory.toPath().resolve("install")));
 
         assertThatThrownBy(installer::install).isInstanceOf(DistributionInstallerException.class)
             .hasCause(expectedException);
 
         verify(urlResolver).resolve();
-        verifyNoMoreInteractions(urlResolver);
-        verifyZeroInteractions(downloader, validator, archiverFactory);
+        verifyNoMoreInteractions(urlResolver, downloader, validator, archiverFactory);
     }
 
     @Test
@@ -100,7 +98,7 @@ class DistributionInstallerTest {
         final Exception expectedException = mock(DownloadException.class);
         doThrow(expectedException).when(downloader).download(eq(distributionUrl), any(Path.class));
         final DistributionInstaller installer = new DistributionInstaller(
-            new DistributionInstallerSettings(task, Utils.getSystemOsName(), urlResolver, downloader, null,
+            new DistributionInstallerSettings(task, Utils.getSystemOsName(), temporaryDirectory.toPath(), urlResolver, downloader, null,
                 archiverFactory, temporaryDirectory.toPath().resolve("install")));
 
         assertThatThrownBy(installer::install).isInstanceOf(DistributionInstallerException.class)
@@ -108,8 +106,7 @@ class DistributionInstallerTest {
 
         verify(urlResolver).resolve();
         verify(downloader).download(eq(distributionUrl), any(Path.class));
-        verifyNoMoreInteractions(urlResolver, downloader);
-        verifyZeroInteractions(validator, archiverFactory);
+        verifyNoMoreInteractions(urlResolver, downloader, validator, archiverFactory);
     }
 
     @Test
@@ -121,7 +118,7 @@ class DistributionInstallerTest {
         final Exception expectedException = mock(DistributionValidatorException.class);
         doThrow(expectedException).when(validator).validate(eq(distributionUrl), any(Path.class));
         final DistributionInstaller installer = new DistributionInstaller(
-            new DistributionInstallerSettings(task, Utils.getSystemOsName(), urlResolver, downloader, validator,
+            new DistributionInstallerSettings(task, Utils.getSystemOsName(), temporaryDirectory.toPath(), urlResolver, downloader, validator,
                 archiverFactory, temporaryDirectory.toPath().resolve("install")));
 
         assertThatThrownBy(installer::install).isInstanceOf(DistributionInstallerException.class)
@@ -130,8 +127,7 @@ class DistributionInstallerTest {
         verify(urlResolver).resolve();
         verify(downloader).download(eq(distributionUrl), any(Path.class));
         verify(validator).validate(eq(distributionUrl), any(Path.class));
-        verifyNoMoreInteractions(urlResolver, downloader, validator);
-        verifyZeroInteractions(archiverFactory);
+        verifyNoMoreInteractions(urlResolver, downloader, validator, archiverFactory);
     }
 
     @Test
@@ -140,7 +136,7 @@ class DistributionInstallerTest {
         final URL distributionUrl = URI.create(DISTRIBUTION_URL_WITHOUT_EXTENSION).toURL();
         when(urlResolver.resolve()).thenReturn(distributionUrl);
         final DistributionInstaller installer = new DistributionInstaller(
-            new DistributionInstallerSettings(task, Utils.getSystemOsName(), urlResolver, downloader, null,
+            new DistributionInstallerSettings(task, Utils.getSystemOsName(), temporaryDirectory.toPath(), urlResolver, downloader, null,
                 archiverFactory, temporaryDirectory.toPath().resolve("install")));
 
         assertThatThrownBy(installer::install).isInstanceOf(DistributionInstallerException.class)
@@ -148,8 +144,7 @@ class DistributionInstallerTest {
 
         verify(urlResolver).resolve();
         verify(downloader).download(eq(distributionUrl), any(Path.class));
-        verifyNoMoreInteractions(urlResolver, downloader);
-        verifyZeroInteractions(validator, archiverFactory);
+        verifyNoMoreInteractions(urlResolver, downloader, validator, archiverFactory);
     }
 
     @Test
@@ -159,7 +154,7 @@ class DistributionInstallerTest {
         when(urlResolver.resolve()).thenReturn(distributionUrl);
         when(archiverFactory.get(anyString())).thenReturn(Optional.empty());
         final DistributionInstaller installer = new DistributionInstaller(
-            new DistributionInstallerSettings(task, Utils.getSystemOsName(), urlResolver, downloader, null,
+            new DistributionInstallerSettings(task, Utils.getSystemOsName(), temporaryDirectory.toPath(), urlResolver, downloader, null,
                 archiverFactory, temporaryDirectory.toPath().resolve("install")));
 
         assertThatThrownBy(installer::install).isInstanceOf(DistributionInstallerException.class)
@@ -168,8 +163,7 @@ class DistributionInstallerTest {
         verify(urlResolver).resolve();
         verify(downloader).download(eq(distributionUrl), any(Path.class));
         verify(archiverFactory).get(anyString());
-        verifyNoMoreInteractions(urlResolver, downloader, archiverFactory);
-        verifyZeroInteractions(validator);
+        verifyNoMoreInteractions(urlResolver, downloader, archiverFactory, validator);
     }
 
     @Test
@@ -183,7 +177,7 @@ class DistributionInstallerTest {
         final Exception expectedException = mock(SlipAttackException.class);
         doThrow(expectedException).when(archiver).explode(any(ExplodeSettings.class));
         final DistributionInstaller installer = new DistributionInstaller(
-            new DistributionInstallerSettings(task, Utils.getSystemOsName(), urlResolver, downloader, null,
+            new DistributionInstallerSettings(task, Utils.getSystemOsName(), temporaryDirectory.toPath(), urlResolver, downloader, null,
                 archiverFactory, temporaryDirectory.toPath().resolve("install")));
 
         assertThatThrownBy(installer::install).isInstanceOf(DistributionInstallerException.class)
@@ -193,8 +187,7 @@ class DistributionInstallerTest {
         verify(downloader).download(eq(distributionUrl), any(Path.class));
         verify(archiverFactory).get(anyString());
         verify(archiver).explode(any(ExplodeSettings.class));
-        verifyNoMoreInteractions(urlResolver, downloader, archiverFactory);
-        verifyZeroInteractions(validator);
+        verifyNoMoreInteractions(urlResolver, downloader, archiverFactory, validator);
     }
 
     @Test
@@ -208,7 +201,7 @@ class DistributionInstallerTest {
         final Exception expectedException = mock(UnsupportedEntryException.class);
         doThrow(expectedException).when(archiver).explode(any(ExplodeSettings.class));
         final DistributionInstaller installer = new DistributionInstaller(
-            new DistributionInstallerSettings(task, Utils.getSystemOsName(), urlResolver, downloader, null,
+            new DistributionInstallerSettings(task, Utils.getSystemOsName(), temporaryDirectory.toPath(), urlResolver, downloader, null,
                 archiverFactory, temporaryDirectory.toPath().resolve("install")));
 
         assertThatThrownBy(installer::install).isInstanceOf(DistributionInstallerException.class)
@@ -218,8 +211,7 @@ class DistributionInstallerTest {
         verify(downloader).download(eq(distributionUrl), any(Path.class));
         verify(archiverFactory).get(anyString());
         verify(archiver).explode(any(ExplodeSettings.class));
-        verifyNoMoreInteractions(urlResolver, downloader, archiverFactory);
-        verifyZeroInteractions(validator);
+        verifyNoMoreInteractions(urlResolver, downloader, archiverFactory, validator);
     }
 
     @Test
@@ -233,7 +225,7 @@ class DistributionInstallerTest {
         final Exception expectedException = mock(ArchiverException.class);
         doThrow(expectedException).when(archiver).explode(any(ExplodeSettings.class));
         final DistributionInstaller installer = new DistributionInstaller(
-            new DistributionInstallerSettings(task, Utils.getSystemOsName(), urlResolver, downloader, null,
+            new DistributionInstallerSettings(task, Utils.getSystemOsName(), temporaryDirectory.toPath(), urlResolver, downloader, null,
                 archiverFactory, temporaryDirectory.toPath().resolve("install")));
 
         assertThatThrownBy(installer::install).isInstanceOf(DistributionInstallerException.class)
@@ -243,8 +235,7 @@ class DistributionInstallerTest {
         verify(downloader).download(eq(distributionUrl), any(Path.class));
         verify(archiverFactory).get(anyString());
         verify(archiver).explode(any(ExplodeSettings.class));
-        verifyNoMoreInteractions(urlResolver, downloader, archiverFactory);
-        verifyZeroInteractions(validator);
+        verifyNoMoreInteractions(urlResolver, downloader, archiverFactory, validator);
     }
 
     @Test
@@ -259,7 +250,7 @@ class DistributionInstallerTest {
         when(archiverFactory.get(anyString())).thenReturn(Optional.of(archiver));
         doAnswer(new ArchiverAnswer()).when(archiver).explode(any(ExplodeSettings.class));
         final DistributionInstaller installer = new DistributionInstaller(
-            new DistributionInstallerSettings(task, Utils.getSystemOsName(), urlResolver, downloader, null,
+            new DistributionInstallerSettings(task, Utils.getSystemOsName(), temporaryDirectory.toPath(), urlResolver, downloader, null,
                 archiverFactory, installDirectory));
 
         installer.install();
@@ -271,8 +262,7 @@ class DistributionInstallerTest {
         verify(downloader).download(eq(distributionUrl), any(Path.class));
         verify(archiverFactory).get(anyString());
         verify(archiver).explode(any(ExplodeSettings.class));
-        verifyNoMoreInteractions(urlResolver, archiverFactory, archiver);
-        verifyZeroInteractions(validator);
+        verifyNoMoreInteractions(urlResolver, archiverFactory, archiver, validator);
     }
 
     @Test
@@ -287,7 +277,7 @@ class DistributionInstallerTest {
         when(archiverFactory.get(anyString())).thenReturn(Optional.of(archiver));
         doAnswer(new ArchiverAnswer()).when(archiver).explode(any(ExplodeSettings.class));
         final DistributionInstaller installer = new DistributionInstaller(
-            new DistributionInstallerSettings(task, Utils.getSystemOsName(), urlResolver, downloader, null,
+            new DistributionInstallerSettings(task, Utils.getSystemOsName(), temporaryDirectory.toPath(), urlResolver, downloader, null,
                 archiverFactory, installDirectory));
 
         installer.install();
@@ -299,8 +289,7 @@ class DistributionInstallerTest {
         verify(downloader).download(eq(distributionUrl), any(Path.class));
         verify(archiverFactory).get(anyString());
         verify(archiver).explode(any(ExplodeSettings.class));
-        verifyNoMoreInteractions(urlResolver, archiverFactory, archiver);
-        verifyZeroInteractions(validator);
+        verifyNoMoreInteractions(urlResolver, archiverFactory, archiver, validator);
     }
 
     /**
@@ -328,8 +317,8 @@ class DistributionInstallerTest {
             final String distributionFilename = settings.getArchiveFile().getFileName().toString();
             final Path copyDestDirectory = settings.getTargetDirectory()
                 .resolve(Utils.removeExtension(distributionFilename));
-            Files.createDirectory(copyDestDirectory);
-            Files.copy(settings.getTargetDirectory().resolve(distributionFilename), copyDestDirectory.resolve("node"));
+            Files.createDirectories(copyDestDirectory);
+            Files.copy(settings.getArchiveFile(), copyDestDirectory.resolve("node"));
             return null;
         }
     }

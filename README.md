@@ -1,6 +1,6 @@
 # Frontend Gradle plugin
 
-[![Latest release 1.2.1](https://img.shields.io/badge/Latest%20release-1.2.1-blue.svg)](https://github.com/Siouan/frontend-gradle-plugin/releases/tag/v1.2.1)
+[![Latest release 1.3.0](https://img.shields.io/badge/Latest%20release-1.3.0-blue.svg)](https://github.com/Siouan/frontend-gradle-plugin/releases/tag/v1.3.0)
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
 
 [![Build status](https://travis-ci.com/Siouan/frontend-gradle-plugin.svg?branch=master)](https://travis-ci.com/Siouan/frontend-gradle-plugin)
@@ -65,7 +65,7 @@ This is the modern and recommended approach.
 ```groovy
 // build.gradle
 plugins {
-    id 'org.siouan.frontend' version '1.2.1'
+    id 'org.siouan.frontend' version '1.3.0'
 }
 ```
 
@@ -80,7 +80,7 @@ buildscript {
         url 'https://plugins.gradle.org/m2/'
     }
     dependencies {
-        classpath 'org.siouan:frontend-gradle-plugin:1.2.1'
+        classpath 'org.siouan:frontend-gradle-plugin:1.3.0'
     }
 }
 
@@ -99,7 +99,7 @@ frontend {
     // NODE SETTINGS
     // Node version, used to build the URL to download the corresponding distribution, if the 'nodeDistributionUrl'
     // property is not set.
-    nodeVersion = '10.16.0'
+    nodeVersion = '12.13.1'
 
     // [OPTIONAL] Sets this property to force the download from a custom website. By default, this property is
     // 'null', and the plugin attempts to download the distribution compatible with the current platform from
@@ -119,7 +119,7 @@ frontend {
     // [OPTIONAL] Yarn version, used to build the URL to download the corresponding distribution, if the
     // 'yarnDistributionUrl' property is not set. This property is mandatory when the 'yarnEnabled' property is
     // true.
-    yarnVersion = '1.16.0'
+    yarnVersion = '1.19.2'
 
     // [OPTIONAL] Sets this property to force the download from a custom website. By default, this property is
     // 'null', and the plugin attempts to download the distribution compatible with the current platform from

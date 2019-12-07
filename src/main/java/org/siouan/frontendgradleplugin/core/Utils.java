@@ -1,7 +1,9 @@
 package org.siouan.frontendgradleplugin.core;
 
+import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
+import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
+
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,7 +15,6 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Stream;
 
 /**
  * This class provides utilities for the whole plugin.
@@ -24,14 +25,45 @@ public final class Utils {
     }
 
     /**
-     * Deletes a file at the given path, recursively if it is a directory.
+     * Deletes a file or a directory at the given path. If the root path is a directory, its content is deleted
+     * recursively before the directory itself.
      *
      * @param rootPath Root path.
      * @param deleteRootEnabled Whether the file at the root path itself must also be deleted.
      * @throws IOException If an I/O error occurs.
      */
-    public static void deleteRecursively(final Path rootPath, final boolean deleteRootEnabled) throws IOException {
-        Files.walkFileTree(rootPath, new FileDeleteVisitor(rootPath, deleteRootEnabled));
+    public static void deleteFileTree(final Path rootPath, final boolean deleteRootEnabled) throws IOException {
+        if (Files.exists(rootPath)) {
+            Files.walkFileTree(rootPath, new FileDeleteVisitor(rootPath, deleteRootEnabled));
+        }
+    }
+
+    /**
+     * Copies a file at the given path, recursively if it is a directory. File attributes and symlinks are preserved.
+     *
+     * @param sourcePath Source path.
+     * @param targetPath Target Path.
+     * @throws IOException If an I/O error occurs.
+     */
+    public static void copyFileTree(final Path sourcePath, final Path targetPath) throws IOException {
+        Files.walkFileTree(sourcePath, new FileCopyVisitor(sourcePath, targetPath));
+    }
+
+    /**
+     * Moves all files/directories from a source directory into a destination directory. The destination directory is
+     * created, and therefore must not exist before this method is called. All directories/files in the source path are
+     * copied first, preserving file attributes and symlinks. Finally the source path is deleted. Such method ensures
+     * any file tree can be moved from a volume to another.
+     *
+     * @param sourcePath Source path.
+     * @param targetPath Target path.
+     * @throws IOException If an I/O error occurs.
+     * @throws IllegalArgumentException If either the source directory or the destination directory is not an existing
+     * directory.
+     */
+    public static void moveFileTree(final Path sourcePath, final Path targetPath) throws IOException {
+        copyFileTree(sourcePath, targetPath);
+        deleteFileTree(sourcePath, true);
     }
 
     /**
@@ -184,31 +216,6 @@ public final class Utils {
     }
 
     /**
-     * Moves all files/directories from a source directory into a destination directory.
-     *
-     * @param srcDirectory Source directory.
-     * @param destDirectory Destination directory.
-     * @throws IOException If an I/O error occurs.
-     * @throws IllegalArgumentException If either the source directory or the destination directory is not an existing
-     * directory.
-     */
-    public static void moveFiles(final Path srcDirectory, final Path destDirectory) throws IOException {
-        if (!Files.isDirectory(srcDirectory) || !Files.isDirectory(destDirectory)) {
-            throw new IllegalArgumentException();
-        }
-
-        try (final Stream<Path> childPaths = Files.list(srcDirectory)) {
-            childPaths.forEach(path -> {
-                try {
-                    Files.move(path, destDirectory.resolve(path.getFileName().toString()));
-                } catch (IOException e) {
-                    throw new UncheckedIOException(e);
-                }
-            });
-        }
-    }
-
-    /**
      * Removes the extension of a filename. In case of a compressed TAR archive, the method removes the whole extension
      * (e.g. '.tar.gz').
      *
@@ -311,6 +318,34 @@ public final class Utils {
             } else {
                 throw e;
             }
+        }
+    }
+
+    /**
+     * A visitor of paths that copies the corresponding file and/or directory before all child files are copied.
+     */
+    private static class FileCopyVisitor extends SimpleFileVisitor<Path> {
+
+        private final Path rootPath;
+
+        private final Path targetPath;
+
+        FileCopyVisitor(final Path rootPath, final Path targetPath) {
+            this.rootPath = rootPath;
+            this.targetPath = targetPath;
+        }
+
+        @Override
+        public FileVisitResult preVisitDirectory(final Path file, BasicFileAttributes basicFileAttributes)
+            throws IOException {
+            Files.copy(file, targetPath.resolve(rootPath.relativize(file)).normalize(), COPY_ATTRIBUTES, NOFOLLOW_LINKS);
+            return FileVisitResult.CONTINUE;
+        }
+
+        @Override
+        public FileVisitResult visitFile(final Path file, final BasicFileAttributes attributes) throws IOException {
+            Files.copy(file, targetPath.resolve(rootPath.relativize(file)).normalize(), COPY_ATTRIBUTES, NOFOLLOW_LINKS);
+            return FileVisitResult.CONTINUE;
         }
     }
 }

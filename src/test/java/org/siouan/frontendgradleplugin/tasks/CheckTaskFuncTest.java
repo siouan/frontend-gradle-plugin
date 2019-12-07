@@ -39,7 +39,7 @@ class CheckTaskFuncTest {
     }
 
     @Test
-    void shouldDoNothingWhenScriptUndefined() throws IOException, URISyntaxException {
+    void shouldDoNothingWhenScriptIsNotDefined() throws IOException, URISyntaxException {
         Files.copy(new File(getClass().getClassLoader().getResource("package-npm.json").toURI()).toPath(),
             projectDirectory.resolve("package.json"));
         final Map<String, Object> properties = new HashMap<>();
