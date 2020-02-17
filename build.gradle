@@ -34,6 +34,7 @@ jacocoTestReport {
 dependencies {
     implementation gradleApi()
     implementation 'org.apache.commons:commons-compress:1.19'
+    implementation 'org.apache.commons:commons-exec:1.3'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.2'
     testImplementation 'org.mockito:mockito-core:3.2.0'

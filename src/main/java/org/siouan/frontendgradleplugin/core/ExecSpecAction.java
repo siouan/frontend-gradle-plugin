@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import javax.annotation.Nonnull;
 
+import org.apache.commons.exec.CommandLine;
 import org.gradle.api.Action;
 import org.gradle.process.ExecSpec;
 
@@ -118,7 +119,7 @@ class ExecSpecAction implements Action<ExecSpec> {
             args.add('"' + scriptExecutablePath.toString() + "\" " + script.trim());
         } else {
             executable = scriptExecutablePath.toString();
-            args.addAll(Arrays.asList(script.trim().split("\\s+")));
+            args.addAll(Arrays.asList(parseArguments(script)));
         }
 
         // Prepend directories containing the Node and Yarn executables to the 'PATH' environment variable.
@@ -190,5 +191,17 @@ class ExecSpecAction implements Action<ExecSpec> {
             pathVariable = "PATH";
         }
         return pathVariable;
+    }
+
+    /**
+     * Parses arguments of a script, handling possible whitespace & quotation marks
+     *
+     * @param args the raw argument string
+     * @return the split arguments with whitespaces and quotation marks handled
+     */
+    private static String[] parseArguments(String args) {
+        CommandLine cmd = new CommandLine("sh");
+        cmd.addArguments(args, false);
+        return cmd.getArguments();
     }
 }
