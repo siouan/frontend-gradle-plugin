@@ -39,6 +39,46 @@ public final class Helper {
     }
 
     /**
+     * Asserts a task was part of a build result, and was executed successfully.
+     *
+     * @param result Build result.
+     * @param taskName Task name.
+     */
+    public static void assertTaskSuccess(final BuildResult result, final String taskName) {
+        assertTaskOutcome(result, taskName, TaskOutcome.SUCCESS);
+    }
+
+    /**
+     * Asserts a task was part of a build result, and was not executed as it is already up-to-date.
+     *
+     * @param result Build result.
+     * @param taskName Task name.
+     */
+    public static void assertTaskUpToDate(final BuildResult result, final String taskName) {
+        assertTaskOutcome(result, taskName, TaskOutcome.UP_TO_DATE);
+    }
+
+    /**
+     * Asserts a task was part of a build result, and was skipped.
+     *
+     * @param result Build result.
+     * @param taskName Task name.
+     */
+    public static void assertTaskSkipped(final BuildResult result, final String taskName) {
+        assertTaskOutcome(result, taskName, TaskOutcome.SKIPPED);
+    }
+
+    /**
+     * Asserts a task was part of a build result, and failed.
+     *
+     * @param result Build result.
+     * @param taskName Task name.
+     */
+    public static void assertTaskFailed(final BuildResult result, final String taskName) {
+        assertTaskOutcome(result, taskName, TaskOutcome.FAILED);
+    }
+
+    /**
      * Asserts a task was not part of a build.
      *
      * @param result Build result.
@@ -55,7 +95,7 @@ public final class Helper {
      * @param taskName Task name.
      * @param expectedOutcome Expected outcome.
      */
-    public static void assertTaskOutcome(final BuildResult result, final String taskName,
+    private static void assertTaskOutcome(final BuildResult result, final String taskName,
         final TaskOutcome expectedOutcome) {
         assertThat(getBuildResultTask(result, taskName).map(BuildTask::getOutcome)
             .orElseThrow(() -> new RuntimeException("Task not found: " + taskName))).isEqualTo(expectedOutcome);

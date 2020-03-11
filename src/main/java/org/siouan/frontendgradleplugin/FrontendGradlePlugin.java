@@ -112,12 +112,11 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         projectTasks.register(CHECK_TASK_NAME, CheckTask.class, task -> configureCheckTask(task, extension));
         projectTasks.register(ASSEMBLE_TASK_NAME, AssembleTask.class, task -> configureAssembleTask(task, extension));
 
+        configureDependency(projectTasks, INSTALL_TASK_NAME, InstallTask.class, NODE_INSTALL_TASK_NAME,
+            NodeInstallTask.class);
         configureDependency(projectTasks, INSTALL_TASK_NAME, InstallTask.class, YARN_INSTALL_TASK_NAME,
-            YarnInstallTask.class, (installTask, yarnInstallTask) -> {
-                installTask.dependsOn(NODE_INSTALL_TASK_NAME);
-                return yarnInstallTask.isEnabled();
-            });
-        configureDependency(projectTasks, CLEAN_TASK_NAME, CleanTask.class, INSTALL_TASK_NAME, InstallTask.class,
+            YarnInstallTask.class);
+       configureDependency(projectTasks, CLEAN_TASK_NAME, CleanTask.class, INSTALL_TASK_NAME, InstallTask.class,
             (cleanTask, installTask) -> cleanTask.getCleanScript().isPresent());
         configureDependency(projectTasks, ASSEMBLE_TASK_NAME, AssembleTask.class, INSTALL_TASK_NAME, InstallTask.class,
             (assembleTask, installTask) -> assembleTask.getAssembleScript().isPresent());
@@ -151,10 +150,10 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      * @param task Task.
      * @param extension Plugin extension.
      */
-    private void configureYarnInstallTask(final YarnInstallTask task, FrontendExtension extension) {
+    private void configureYarnInstallTask(final YarnInstallTask task, final FrontendExtension extension) {
         task.setGroup(TASK_GROUP);
         task.setDescription("Downloads and installs a Yarn distribution.");
-        task.setEnabled(extension.getYarnEnabled().get());
+        task.setOnlyIf(t -> extension.getYarnEnabled().get());
         task.getYarnVersion().set(extension.getYarnVersion());
         task.getYarnDistributionUrl().set(extension.getYarnDistributionUrl());
         task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
@@ -166,7 +165,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      * @param task Task.
      * @param extension Plugin extension.
      */
-    private void configureInstallTask(final InstallTask task, FrontendExtension extension) {
+    private void configureInstallTask(final InstallTask task, final FrontendExtension extension) {
         task.setGroup(TASK_GROUP);
         task.setDescription("Installs/updates frontend dependencies.");
         task.getYarnEnabled().set(extension.getYarnEnabled());
@@ -181,7 +180,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      * @param task Task.
      * @param extension Plugin extension.
      */
-    private void configureCleanTask(final CleanTask task, FrontendExtension extension) {
+    private void configureCleanTask(final CleanTask task, final FrontendExtension extension) {
         task.setGroup(TASK_GROUP);
         task.setDescription("Cleans frontend resources outside the build directory by running a specific script.");
         task.getYarnEnabled().set(extension.getYarnEnabled());
@@ -196,7 +195,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      * @param task Task.
      * @param extension Plugin extension.
      */
-    private void configureCheckTask(final CheckTask task, FrontendExtension extension) {
+    private void configureCheckTask(final CheckTask task, final FrontendExtension extension) {
         task.setGroup(TASK_GROUP);
         task.setDescription("Checks frontend by running a specific script.");
         task.getYarnEnabled().set(extension.getYarnEnabled());
@@ -211,7 +210,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      * @param task Task.
      * @param extension Plugin extension.
      */
-    private void configureAssembleTask(final AssembleTask task, FrontendExtension extension) {
+    private void configureAssembleTask(final AssembleTask task, final FrontendExtension extension) {
         task.setGroup(TASK_GROUP);
         task.setDescription("Assembles the frontend by running a specific script.");
         task.getYarnEnabled().set(extension.getYarnEnabled());
@@ -221,7 +220,25 @@ public class FrontendGradlePlugin implements Plugin<Project> {
     }
 
     /**
-     * Configures a dynamic dependency between 2 tasks, based on a condition evaluation.
+     * Configures a static dependency between 2 tasks.
+     *
+     * @param taskContainer Task container.
+     * @param taskName Name of the task that may depend on another task.
+     * @param taskClass Task class.
+     * @param dependsOnTaskName Name of the depending task.
+     * @param dependsOnTaskClass Depending task class.
+     * @param <T> Type of the dependent task.
+     * @param <D> Type of the depending task.
+     */
+    private <T extends Task, D extends Task> void configureDependency(final TaskContainer taskContainer,
+        final String taskName, final Class<T> taskClass, final String dependsOnTaskName,
+        final Class<D> dependsOnTaskClass) {
+        taskContainer.named(taskName, taskClass,
+            task -> task.dependsOn(taskContainer.named(dependsOnTaskName, dependsOnTaskClass).getName()));
+    }
+
+    /**
+     * Configures a dynamic dependency between 2 tasks, based on the evaluation of a condition.
      *
      * @param taskContainer Task container.
      * @param taskName Name of the task that may depend on another task.

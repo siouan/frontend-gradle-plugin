@@ -56,7 +56,7 @@ class FrontendGradlePluginTest {
 
         final YarnInstallTask yarnInstallTask = project.getTasks()
             .named(FrontendGradlePlugin.YARN_INSTALL_TASK_NAME, YarnInstallTask.class).get();
-        assertThat(yarnInstallTask.isEnabled()).isEqualTo(extension.getYarnEnabled().get());
+        assertThat(yarnInstallTask.getOnlyIf()).isNotNull();
         assertThat(yarnInstallTask.getYarnVersion().isPresent()).isFalse();
         assertThat(yarnInstallTask.getYarnDistributionUrl().isPresent()).isFalse();
         assertThat(yarnInstallTask.getYarnInstallDirectory().get())
@@ -70,7 +70,8 @@ class FrontendGradlePluginTest {
             .isEqualTo(extension.getNodeInstallDirectory().get());
         assertThat(frontendInstallTask.getYarnInstallDirectory().get())
             .isEqualTo(extension.getYarnInstallDirectory().get());
-        assertThat(frontendInstallTask.getDependsOn()).containsExactlyInAnyOrder(nodeInstallTask.getName());
+        assertThat(frontendInstallTask.getDependsOn())
+            .containsExactlyInAnyOrder(nodeInstallTask.getName(), yarnInstallTask.getName());
 
         final CleanTask frontendCleanTask = project.getTasks()
             .named(FrontendGradlePlugin.CLEAN_TASK_NAME, CleanTask.class).get();
@@ -135,7 +136,7 @@ class FrontendGradlePluginTest {
 
         final YarnInstallTask yarnInstallTask = project.getTasks()
             .named(FrontendGradlePlugin.YARN_INSTALL_TASK_NAME, YarnInstallTask.class).get();
-        assertThat(yarnInstallTask.isEnabled()).isEqualTo(extension.getYarnEnabled().get());
+        assertThat(yarnInstallTask.getOnlyIf()).isNotNull();
         assertThat(yarnInstallTask.getYarnVersion().get()).isEqualTo(extension.getYarnVersion().get());
         assertThat(yarnInstallTask.getYarnDistributionUrl().get()).isEqualTo(extension.getYarnDistributionUrl().get());
         assertThat(yarnInstallTask.getYarnInstallDirectory().get())

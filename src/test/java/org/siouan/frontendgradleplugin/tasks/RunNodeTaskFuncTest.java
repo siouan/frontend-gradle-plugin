@@ -1,6 +1,7 @@
 package org.siouan.frontendgradleplugin.tasks;
 
-import static org.siouan.frontendgradleplugin.util.Helper.assertTaskOutcome;
+import static org.siouan.frontendgradleplugin.util.Helper.assertTaskSuccess;
+import static org.siouan.frontendgradleplugin.util.Helper.assertTaskUpToDate;
 import static org.siouan.frontendgradleplugin.util.Helper.runGradle;
 
 import java.io.File;
@@ -12,7 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.gradle.testkit.runner.BuildResult;
-import org.gradle.testkit.runner.TaskOutcome;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -56,13 +56,13 @@ class RunNodeTaskFuncTest {
 
         final BuildResult result1 = runGradle(projectDirectory, customTaskName);
 
-        assertTaskOutcome(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, TaskOutcome.SUCCESS);
-        assertTaskOutcome(result1, customTaskName, TaskOutcome.SUCCESS);
+        assertTaskSuccess(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        assertTaskSuccess(result1, customTaskName);
 
         final BuildResult result2 = runGradle(projectDirectory, customTaskName);
 
-        assertTaskOutcome(result2, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, TaskOutcome.UP_TO_DATE);
-        assertTaskOutcome(result2, customTaskName, TaskOutcome.SUCCESS);
+        assertTaskUpToDate(result2, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        assertTaskSuccess(result2, customTaskName);
     }
 
     private void createScriptFile(final Path scriptPath) throws IOException {
