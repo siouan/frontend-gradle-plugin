@@ -43,6 +43,8 @@ install/configure the plugin, and build your frontend application.
 
 ## Quick start guide
 
+For convenience, configuration blocks in this guide are introduced with both Groovy and Kotlin syntaxes.
+
 ### Requirements
 
 The plugin supports:
@@ -62,6 +64,8 @@ The plugin is built and tested on Linux, Mac OS, Windows. For a full list of bui
 
 This is the modern and recommended approach.
 
+- Groovy syntax:
+
 ```groovy
 // build.gradle
 plugins {
@@ -69,9 +73,20 @@ plugins {
 }
 ```
 
+- Kotlin syntax:
+
+```kotlin
+// build.gradle.kts
+plugins {
+    id("org.siouan.frontend") version "1.3.1"
+}
+```
+
 #### Using [Gradle build script block][gradle-build-script-block]
 
 This approach is the legacy way to resolve and apply plugins.
+
+- Groovy syntax:
 
 ```groovy
 // build.gradle
@@ -87,11 +102,29 @@ buildscript {
 apply plugin: 'org.siouan.frontend'
 ```
 
+- Kotlin syntax:
+
+```kotlin
+// build.gradle.kts
+buildscript {
+    repositories {
+        url = uri("https://plugins.gradle.org/m2/")
+    }
+    dependencies {
+        classpath("org.siouan:frontend-gradle-plugin:1.3.1")
+    }
+}
+
+apply(plugin = "org.siouan.frontend")
+```
+
 ### Configuration
 
 #### DSL reference
 
 All settings are introduced hereafter, with default value for each property.
+
+- Groovy syntax:
 
 ```groovy
 // build.gradle
@@ -155,6 +188,25 @@ frontend {
     // run. The task is also executed when the Gradle built-in 'check' task is executed, if this
     // property is set.
     checkScript = 'run check'
+}
+```
+
+- Kotlin syntax:
+
+```kotlin
+// build.gradle.kts
+frontend {
+    nodeVersion.set("12.16.1")
+    nodeDistributionUrl.set("https://nodejs.org/dist/vX.Y.Z/node-vX.Y.Z-win-x64.zip")
+    nodeInstallDirectory.set(project.layout.projectDirectory.dir("node"))
+    yarnEnabled.set(false)
+    yarnVersion.set("1.22.4")
+    yarnDistributionUrl.set("https://github.com/yarnpkg/yarn/releases/download/vX.Y.Z/yarn-vX.Y.Z.tar.gz")
+    yarnInstallDirectory.set(project.layout.projectDirectory.dir("yarn"))
+    installScript.set("install")
+    cleanScript.set("run clean")
+    assembleScript.set("run assemble")
+    checkScript.set("run check")
 }
 ```
 
@@ -298,30 +350,58 @@ execute tests, and perform additional analysis tasks. This task depends on the `
 ### Run custom Node script
 
 The plugin provides the task type `org.siouan.frontendgradleplugin.tasks.RunNodeTask` that allows creating a custom
-task to launch a frontend script. The `script` property must be set with the corresponding Node command. For
-instance, the code below added in the `build.gradle` file allows to run a JS `my-custom-script.js` with Node:
+task to launch a frontend script. The `script` property must be set with the corresponding Node command. Then, choose
+whether Node only is required, or if additional dependencies located in the `package.json` file should be installed:
+make the task either depends on `installNode` task or on `installFrontend` task.
+
+The code below shows the configuration required to run a JS `my-custom-script.js` with Node:
+
+- Groovy syntax:
 
 ```groovy
+// build.gradle
 tasks.register('myCustomScript', org.siouan.frontendgradleplugin.tasks.RunNodeTask) {
-    // Choose whether Node only is required, or if additional dependencies located in the
-    // package.json file should be installed: make the task either depends on 'installNode' task or
-    // on 'installFrontend' task.
     // dependsOn tasks.named('installNode')
     // dependsOn tasks.named('installFrontend')
     script = 'my-custom-script.js'
 }
 ```
 
+- Kotlin syntax:
+
+```kotlin
+// build.gradle.kts
+tasks.register<org.siouan.frontendgradleplugin.tasks.RunNodeTask>("myCustomScript") {
+    // dependsOn(tasks.named("installNode"))
+    // dependsOn(tasks.named("installFrontend"))
+    script.set("my-custom-script.js")
+}
+```
+
 ### Run custom NPM/Yarn script
 
 The plugin provides the task type `org.siouan.frontendgradleplugin.tasks.RunScriptTask` that allows creating a custom
-task to launch a frontend script. The `script` property must be set with the corresponding NPM/Yarn command. For
-instance, the code below added in the `build.gradle` file allows to run frontend's end-to-end tests in a custom task:
+task to launch a frontend script. The `script` property must be set with the corresponding NPM/Yarn command.
+
+The code below shows the configuration required to run frontend's end-to-end tests in a custom task:
+
+- Groovy syntax:
 
 ```groovy
+// build.gradle
 tasks.register('e2e', org.siouan.frontendgradleplugin.tasks.RunScriptTask) {
     dependsOn tasks.named('installFrontend')
     script = 'run e2e'
+}
+```
+
+- Kotlin syntax:
+
+```kotlin
+// build.gradle.kts
+tasks.register<org.siouan.frontendgradleplugin.tasks.RunScriptTask>("e2e") {
+    dependsOn(tasks.named("installFrontend"))
+    script.set("run e2e")
 }
 ```
 
@@ -358,14 +438,29 @@ gradlew taskTree --no-repeat assemble
 `${frontendBuildDir}` directory, these artifacts must be copied, generally in the
 `${project.buildDir}/resources/main/public` directory, so as they can be served by the backend.
 
-Let's create a custom task for this. Add the following lines in the `build.gradle` file:
+Let's create a custom task for this.
+
+- Groovy syntax:
 
 ```groovy
+// build.gradle
 tasks.register('processFrontendResources', Copy) {
     description 'Process frontend resources'
     from "${frontendBuildDir}"
     into "${project.buildDir}/resources/main/public"
     dependsOn tasks.named('assembleFrontend')
+}
+```
+
+- Kotlin syntax:
+
+```kotlin
+// build.gradle.kts
+tasks.register<Copy>("processFrontendResources") {
+    description = "Process frontend resources"
+    from(file("${frontendBuildDir}"))
+    into(file("${project.buildDir}/resources/main/public"))
+    dependsOn(tasks.named("assembleFrontend"))
 }
 ```
 
@@ -379,9 +474,21 @@ generated by your assembling script.
 
 Our recommendation is the `processResources` task depends on the `processFrontendResources` task.
 
+- Groovy syntax:
+
 ```groovy
+// build.gradle
 tasks.named('processResources').configure {
     dependsOn tasks.named('processFrontendResources')
+}
+```
+
+- Kotlin syntax:
+
+```kotlin
+// build.gradle.kts
+tasks.named("processResources").configure {
+    dependsOn(tasks.named("processFrontendResources"))
 }
 ```
 
