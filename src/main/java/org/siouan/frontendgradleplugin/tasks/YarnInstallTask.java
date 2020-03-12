@@ -3,6 +3,7 @@ package org.siouan.frontendgradleplugin.tasks;
 import java.io.File;
 
 import org.gradle.api.DefaultTask;
+import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
@@ -29,7 +30,7 @@ public class YarnInstallTask extends DefaultTask {
     /**
      * Directory where the distribution shall be installed.
      */
-    private final Property<File> yarnInstallDirectory;
+    private final DirectoryProperty yarnInstallDirectory;
 
     /**
      * URL to download the distribution.
@@ -38,7 +39,7 @@ public class YarnInstallTask extends DefaultTask {
 
     public YarnInstallTask() {
         yarnVersion = getProject().getObjects().property(String.class);
-        yarnInstallDirectory = getProject().getObjects().property(File.class);
+        yarnInstallDirectory = getProject().getObjects().directoryProperty();
         yarnDistributionUrl = getProject().getObjects().property(String.class);
     }
 
@@ -55,7 +56,7 @@ public class YarnInstallTask extends DefaultTask {
 
     @OutputDirectory
     @Optional
-    public Property<File> getYarnInstallDirectory() {
+    public DirectoryProperty getYarnInstallDirectory() {
         return yarnInstallDirectory;
     }
 
@@ -69,7 +70,7 @@ public class YarnInstallTask extends DefaultTask {
         final DistributionInstallerSettings settings = new DistributionInstallerSettings(this, Utils.getSystemOsName(),
             getTemporaryDir().toPath(), new YarnDistributionUrlResolver(yarnVersion.get(), yarnDistributionUrl.getOrNull()),
             new DownloaderImpl(getTemporaryDir().toPath()), null, new ArchiverFactoryImpl(),
-            yarnInstallDirectory.map(File::toPath).getOrNull());
+            yarnInstallDirectory.getAsFile().map(File::toPath).getOrNull());
         new DistributionInstaller(settings).install();
     }
 }

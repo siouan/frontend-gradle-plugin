@@ -49,6 +49,7 @@ public class DistributionInstallerSettings {
      *
      * @param task Related Gradle task.
      * @param osName O/S name.
+     * @param temporaryDirectory Directory where the distribution being downloaded will be temporarily stored.
      * @param urlResolver Resolver of the download URL.
      * @param downloader Downloader.
      * @param validator Distribution validator.

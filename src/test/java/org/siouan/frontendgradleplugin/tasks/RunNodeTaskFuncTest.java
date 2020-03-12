@@ -42,7 +42,7 @@ class RunNodeTaskFuncTest {
         final Path tmpScriptPath = tmpDirectory.toPath().resolve("script.js");
         createScriptFile(tmpScriptPath);
         final Map<String, Object> properties = new HashMap<>();
-        properties.put("nodeVersion", "12.13.1");
+        properties.put("nodeVersion", "12.16.1");
         final String customTaskName = "helloMyFriend";
         final String customTaskDefinition = "tasks.register('"
             + customTaskName
