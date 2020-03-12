@@ -1,6 +1,5 @@
 package org.siouan.frontendgradleplugin;
 
-import java.io.File;
 import java.util.function.BiPredicate;
 
 import org.gradle.api.Plugin;
@@ -97,9 +96,11 @@ public class FrontendGradlePlugin implements Plugin<Project> {
 
         final FrontendExtension extension = project.getExtensions()
             .create(EXTENSION_NAME, FrontendExtension.class, project);
-        extension.getNodeInstallDirectory().convention(new File(project.getProjectDir(), DEFAULT_NODE_INSTALL_DIRNAME));
+        extension.getNodeInstallDirectory()
+            .convention(project.getLayout().getProjectDirectory().dir(DEFAULT_NODE_INSTALL_DIRNAME));
         extension.getYarnEnabled().convention(false);
-        extension.getYarnInstallDirectory().convention(new File(project.getProjectDir(), DEFAULT_YARN_INSTALL_DIRNAME));
+        extension.getYarnInstallDirectory()
+            .convention(project.getLayout().getProjectDirectory().dir(DEFAULT_YARN_INSTALL_DIRNAME));
         extension.getInstallScript().convention(DEFAULT_INSTALL_SCRIPT);
 
         final TaskContainer projectTasks = project.getTasks();

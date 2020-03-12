@@ -2,8 +2,6 @@ package org.siouan.frontendgradleplugin;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.io.File;
-
 import org.gradle.api.Project;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,10 +39,10 @@ class FrontendGradlePluginTest {
 
         assertThat(extension).isNotNull();
         assertThat(extension.getYarnEnabled().get()).isFalse();
-        assertThat(extension.getNodeInstallDirectory().get())
-            .isEqualTo(new File(project.getProjectDir(), FrontendGradlePlugin.DEFAULT_NODE_INSTALL_DIRNAME));
-        assertThat(extension.getYarnInstallDirectory().get())
-            .isEqualTo(new File(project.getProjectDir(), FrontendGradlePlugin.DEFAULT_YARN_INSTALL_DIRNAME));
+        assertThat(extension.getNodeInstallDirectory().getAsFile().get())
+            .isEqualTo(project.file(FrontendGradlePlugin.DEFAULT_NODE_INSTALL_DIRNAME));
+        assertThat(extension.getYarnInstallDirectory().getAsFile().get())
+            .isEqualTo(project.file(FrontendGradlePlugin.DEFAULT_YARN_INSTALL_DIRNAME));
 
         final NodeInstallTask nodeInstallTask = project.getTasks()
             .named(FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, NodeInstallTask.class).get();
@@ -117,11 +115,11 @@ class FrontendGradlePluginTest {
         final FrontendExtension extension = project.getExtensions().findByType(FrontendExtension.class);
         extension.getNodeVersion().set("3.65.4");
         extension.getNodeDistributionUrl().set("https://node");
-        extension.getNodeInstallDirectory().set(new File(project.getProjectDir(), "node-dist"));
+        extension.getNodeInstallDirectory().set(project.file("node-dist"));
         extension.getYarnEnabled().set(true);
         extension.getYarnVersion().set("6.5.4");
         extension.getYarnDistributionUrl().set("http://yarn");
-        extension.getYarnInstallDirectory().set(new File(project.getProjectDir(), "yarn-dist"));
+        extension.getYarnInstallDirectory().set(project.file("yarn-dist"));
         extension.getCleanScript().set("clean");
         extension.getAssembleScript().set("assemble");
         extension.getCheckScript().set("test");

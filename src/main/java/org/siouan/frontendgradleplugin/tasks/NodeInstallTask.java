@@ -4,6 +4,7 @@ import java.io.File;
 import java.security.NoSuchAlgorithmException;
 
 import org.gradle.api.DefaultTask;
+import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
@@ -33,7 +34,7 @@ public class NodeInstallTask extends DefaultTask {
     /**
      * Directory where the Node distribution shall be installed.
      */
-    private final Property<File> nodeInstallDirectory;
+    private final DirectoryProperty nodeInstallDirectory;
 
     /**
      * URL to download the Node distribution.
@@ -42,7 +43,7 @@ public class NodeInstallTask extends DefaultTask {
 
     public NodeInstallTask() {
         nodeVersion = getProject().getObjects().property(String.class);
-        nodeInstallDirectory = getProject().getObjects().property(File.class);
+        nodeInstallDirectory = getProject().getObjects().directoryProperty();
         nodeDistributionUrl = getProject().getObjects().property(String.class);
     }
 
@@ -59,7 +60,7 @@ public class NodeInstallTask extends DefaultTask {
 
     @OutputDirectory
     @Optional
-    public Property<File> getNodeInstallDirectory() {
+    public DirectoryProperty getNodeInstallDirectory() {
         return nodeInstallDirectory;
     }
 
@@ -74,7 +75,7 @@ public class NodeInstallTask extends DefaultTask {
     public void execute() throws DistributionInstallerException, NoSuchAlgorithmException {
         final String version = nodeVersion.get();
         final String distributionUrl = nodeDistributionUrl.getOrNull();
-        final File installDirectory = nodeInstallDirectory.get();
+        final File installDirectory = nodeInstallDirectory.getAsFile().get();
         final DistributionInstallerSettings settings = new DistributionInstallerSettings(this, Utils.getSystemOsName(),
             getTemporaryDir().toPath(), new NodeDistributionUrlResolver(version, distributionUrl), new DownloaderImpl(getTemporaryDir().toPath()),
             new NodeDistributionValidator(this, new DownloaderImpl(getTemporaryDir().toPath()),
