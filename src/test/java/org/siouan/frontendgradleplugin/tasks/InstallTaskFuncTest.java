@@ -1,7 +1,8 @@
 package org.siouan.frontendgradleplugin.tasks;
 
-import static org.siouan.frontendgradleplugin.util.Helper.assertTaskIgnored;
-import static org.siouan.frontendgradleplugin.util.Helper.assertTaskOutcome;
+import static org.siouan.frontendgradleplugin.util.Helper.assertTaskSkipped;
+import static org.siouan.frontendgradleplugin.util.Helper.assertTaskSuccess;
+import static org.siouan.frontendgradleplugin.util.Helper.assertTaskUpToDate;
 import static org.siouan.frontendgradleplugin.util.Helper.runGradle;
 
 import java.io.File;
@@ -14,7 +15,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.gradle.testkit.runner.BuildResult;
-import org.gradle.testkit.runner.TaskOutcome;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -49,15 +49,15 @@ class InstallTaskFuncTest {
 
         final BuildResult result1 = runGradle(projectDirectory, FrontendGradlePlugin.INSTALL_TASK_NAME);
 
-        assertTaskOutcome(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, TaskOutcome.SUCCESS);
-        assertTaskIgnored(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
-        assertTaskOutcome(result1, FrontendGradlePlugin.INSTALL_TASK_NAME, TaskOutcome.SUCCESS);
+        assertTaskSuccess(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        assertTaskSkipped(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
+        assertTaskSuccess(result1, FrontendGradlePlugin.INSTALL_TASK_NAME);
 
         final BuildResult result2 = runGradle(projectDirectory, FrontendGradlePlugin.INSTALL_TASK_NAME);
 
-        assertTaskOutcome(result2, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, TaskOutcome.UP_TO_DATE);
-        assertTaskIgnored(result2, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
-        assertTaskOutcome(result2, FrontendGradlePlugin.INSTALL_TASK_NAME, TaskOutcome.SUCCESS);
+        assertTaskUpToDate(result2, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        assertTaskSkipped(result2, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
+        assertTaskSuccess(result2, FrontendGradlePlugin.INSTALL_TASK_NAME);
 
         Files.deleteIfExists(projectDirectory.resolve("package-lock.json"));
         Files.copy(new File(getClass().getClassLoader().getResource("package-yarn.json").toURI()).toPath(),
@@ -70,15 +70,15 @@ class InstallTaskFuncTest {
 
         final BuildResult result3 = runGradle(projectDirectory, FrontendGradlePlugin.INSTALL_TASK_NAME);
 
-        assertTaskOutcome(result3, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, TaskOutcome.UP_TO_DATE);
-        assertTaskOutcome(result3, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME, TaskOutcome.SUCCESS);
-        assertTaskOutcome(result3, FrontendGradlePlugin.INSTALL_TASK_NAME, TaskOutcome.SUCCESS);
+        assertTaskUpToDate(result3, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        assertTaskSuccess(result3, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
+        assertTaskSuccess(result3, FrontendGradlePlugin.INSTALL_TASK_NAME);
 
         final BuildResult result4 = runGradle(projectDirectory, FrontendGradlePlugin.INSTALL_TASK_NAME);
 
-        assertTaskOutcome(result4, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, TaskOutcome.UP_TO_DATE);
-        assertTaskOutcome(result4, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME, TaskOutcome.UP_TO_DATE);
-        assertTaskOutcome(result4, FrontendGradlePlugin.INSTALL_TASK_NAME, TaskOutcome.SUCCESS);
+        assertTaskUpToDate(result4, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        assertTaskUpToDate(result4, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
+        assertTaskSuccess(result4, FrontendGradlePlugin.INSTALL_TASK_NAME);
     }
 
     @Test
@@ -93,15 +93,15 @@ class InstallTaskFuncTest {
 
         final BuildResult result1 = runGradle(projectDirectory, FrontendGradlePlugin.INSTALL_TASK_NAME);
 
-        assertTaskOutcome(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, TaskOutcome.SUCCESS);
-        assertTaskIgnored(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
-        assertTaskOutcome(result1, FrontendGradlePlugin.INSTALL_TASK_NAME, TaskOutcome.SUCCESS);
+        assertTaskSuccess(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        assertTaskSkipped(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
+        assertTaskSuccess(result1, FrontendGradlePlugin.INSTALL_TASK_NAME);
 
         final BuildResult result2 = runGradle(projectDirectory, FrontendGradlePlugin.INSTALL_TASK_NAME);
 
-        assertTaskOutcome(result2, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, TaskOutcome.UP_TO_DATE);
-        assertTaskIgnored(result2, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
-        assertTaskOutcome(result2, FrontendGradlePlugin.INSTALL_TASK_NAME, TaskOutcome.SUCCESS);
+        assertTaskUpToDate(result2, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        assertTaskSkipped(result2, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
+        assertTaskSuccess(result2, FrontendGradlePlugin.INSTALL_TASK_NAME);
 
         Files.deleteIfExists(projectDirectory.resolve("package-lock.json"));
         Files.copy(new File(getClass().getClassLoader().getResource("package-yarn.json").toURI()).toPath(),
@@ -114,14 +114,14 @@ class InstallTaskFuncTest {
 
         final BuildResult result3 = runGradle(projectDirectory, FrontendGradlePlugin.INSTALL_TASK_NAME);
 
-        assertTaskOutcome(result3, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, TaskOutcome.UP_TO_DATE);
-        assertTaskOutcome(result3, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME, TaskOutcome.SUCCESS);
-        assertTaskOutcome(result3, FrontendGradlePlugin.INSTALL_TASK_NAME, TaskOutcome.SUCCESS);
+        assertTaskUpToDate(result3, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        assertTaskSuccess(result3, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
+        assertTaskSuccess(result3, FrontendGradlePlugin.INSTALL_TASK_NAME);
 
         final BuildResult result4 = runGradle(projectDirectory, FrontendGradlePlugin.INSTALL_TASK_NAME);
 
-        assertTaskOutcome(result4, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, TaskOutcome.UP_TO_DATE);
-        assertTaskOutcome(result4, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME, TaskOutcome.UP_TO_DATE);
-        assertTaskOutcome(result4, FrontendGradlePlugin.INSTALL_TASK_NAME, TaskOutcome.SUCCESS);
+        assertTaskUpToDate(result4, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        assertTaskUpToDate(result4, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
+        assertTaskSuccess(result4, FrontendGradlePlugin.INSTALL_TASK_NAME);
     }
 }

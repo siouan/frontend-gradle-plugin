@@ -38,7 +38,6 @@ matrix:
         - curl "${GRAVIS}.install-jdk-travis.sh" --output ~/.install-jdk-travis.sh
         - source ~/.install-jdk-travis.sh
 
-
     - os: windows
       # Java is not yet supported on Windows, so the build would block.
       # You do not need any setup from Travis, use a plain bash build
