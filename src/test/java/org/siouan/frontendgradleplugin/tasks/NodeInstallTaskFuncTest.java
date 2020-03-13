@@ -1,6 +1,8 @@
 package org.siouan.frontendgradleplugin.tasks;
 
-import static org.siouan.frontendgradleplugin.util.Helper.assertTaskOutcome;
+import static org.siouan.frontendgradleplugin.util.Helper.assertTaskFailed;
+import static org.siouan.frontendgradleplugin.util.Helper.assertTaskSuccess;
+import static org.siouan.frontendgradleplugin.util.Helper.assertTaskUpToDate;
 import static org.siouan.frontendgradleplugin.util.Helper.runGradle;
 import static org.siouan.frontendgradleplugin.util.Helper.runGradleAndExpectFailure;
 
@@ -12,7 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.gradle.testkit.runner.BuildResult;
-import org.gradle.testkit.runner.TaskOutcome;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -42,7 +43,7 @@ class NodeInstallTaskFuncTest {
         final BuildResult result = runGradleAndExpectFailure(projectDirectory,
             FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
 
-        assertTaskOutcome(result, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, TaskOutcome.FAILED);
+        assertTaskFailed(result, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
     }
 
     @Test
@@ -52,7 +53,7 @@ class NodeInstallTaskFuncTest {
         final BuildResult result = runGradleAndExpectFailure(projectDirectory,
             FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
 
-        assertTaskOutcome(result, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, TaskOutcome.FAILED);
+        assertTaskFailed(result, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
     }
 
     @Test
@@ -65,7 +66,7 @@ class NodeInstallTaskFuncTest {
         final BuildResult result = runGradleAndExpectFailure(projectDirectory,
             FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
 
-        assertTaskOutcome(result, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, TaskOutcome.FAILED);
+        assertTaskFailed(result, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
     }
 
     @Test
@@ -77,10 +78,10 @@ class NodeInstallTaskFuncTest {
 
         final BuildResult result1 = runGradle(projectDirectory, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
 
-        assertTaskOutcome(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, TaskOutcome.SUCCESS);
+        assertTaskSuccess(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
 
         final BuildResult result2 = runGradle(projectDirectory, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
 
-        assertTaskOutcome(result2, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, TaskOutcome.UP_TO_DATE);
+        assertTaskUpToDate(result2, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
     }
 }

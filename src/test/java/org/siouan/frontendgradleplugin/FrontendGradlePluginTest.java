@@ -2,8 +2,6 @@ package org.siouan.frontendgradleplugin;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.io.File;
-
 import org.gradle.api.Project;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,10 +39,10 @@ class FrontendGradlePluginTest {
 
         assertThat(extension).isNotNull();
         assertThat(extension.getYarnEnabled().get()).isFalse();
-        assertThat(extension.getNodeInstallDirectory().get())
-            .isEqualTo(new File(project.getProjectDir(), FrontendGradlePlugin.DEFAULT_NODE_INSTALL_DIRNAME));
-        assertThat(extension.getYarnInstallDirectory().get())
-            .isEqualTo(new File(project.getProjectDir(), FrontendGradlePlugin.DEFAULT_YARN_INSTALL_DIRNAME));
+        assertThat(extension.getNodeInstallDirectory().getAsFile().get())
+            .isEqualTo(project.file(FrontendGradlePlugin.DEFAULT_NODE_INSTALL_DIRNAME));
+        assertThat(extension.getYarnInstallDirectory().getAsFile().get())
+            .isEqualTo(project.file(FrontendGradlePlugin.DEFAULT_YARN_INSTALL_DIRNAME));
 
         final NodeInstallTask nodeInstallTask = project.getTasks()
             .named(FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, NodeInstallTask.class).get();
@@ -56,7 +54,7 @@ class FrontendGradlePluginTest {
 
         final YarnInstallTask yarnInstallTask = project.getTasks()
             .named(FrontendGradlePlugin.YARN_INSTALL_TASK_NAME, YarnInstallTask.class).get();
-        assertThat(yarnInstallTask.isEnabled()).isEqualTo(extension.getYarnEnabled().get());
+        assertThat(yarnInstallTask.getOnlyIf()).isNotNull();
         assertThat(yarnInstallTask.getYarnVersion().isPresent()).isFalse();
         assertThat(yarnInstallTask.getYarnDistributionUrl().isPresent()).isFalse();
         assertThat(yarnInstallTask.getYarnInstallDirectory().get())
@@ -70,7 +68,8 @@ class FrontendGradlePluginTest {
             .isEqualTo(extension.getNodeInstallDirectory().get());
         assertThat(frontendInstallTask.getYarnInstallDirectory().get())
             .isEqualTo(extension.getYarnInstallDirectory().get());
-        assertThat(frontendInstallTask.getDependsOn()).containsExactlyInAnyOrder(nodeInstallTask.getName());
+        assertThat(frontendInstallTask.getDependsOn())
+            .containsExactlyInAnyOrder(nodeInstallTask.getName(), yarnInstallTask.getName());
 
         final CleanTask frontendCleanTask = project.getTasks()
             .named(FrontendGradlePlugin.CLEAN_TASK_NAME, CleanTask.class).get();
@@ -116,11 +115,11 @@ class FrontendGradlePluginTest {
         final FrontendExtension extension = project.getExtensions().findByType(FrontendExtension.class);
         extension.getNodeVersion().set("3.65.4");
         extension.getNodeDistributionUrl().set("https://node");
-        extension.getNodeInstallDirectory().set(new File(project.getProjectDir(), "node-dist"));
+        extension.getNodeInstallDirectory().set(project.file("node-dist"));
         extension.getYarnEnabled().set(true);
         extension.getYarnVersion().set("6.5.4");
         extension.getYarnDistributionUrl().set("http://yarn");
-        extension.getYarnInstallDirectory().set(new File(project.getProjectDir(), "yarn-dist"));
+        extension.getYarnInstallDirectory().set(project.file("yarn-dist"));
         extension.getCleanScript().set("clean");
         extension.getAssembleScript().set("assemble");
         extension.getCheckScript().set("test");
@@ -135,7 +134,7 @@ class FrontendGradlePluginTest {
 
         final YarnInstallTask yarnInstallTask = project.getTasks()
             .named(FrontendGradlePlugin.YARN_INSTALL_TASK_NAME, YarnInstallTask.class).get();
-        assertThat(yarnInstallTask.isEnabled()).isEqualTo(extension.getYarnEnabled().get());
+        assertThat(yarnInstallTask.getOnlyIf()).isNotNull();
         assertThat(yarnInstallTask.getYarnVersion().get()).isEqualTo(extension.getYarnVersion().get());
         assertThat(yarnInstallTask.getYarnDistributionUrl().get()).isEqualTo(extension.getYarnDistributionUrl().get());
         assertThat(yarnInstallTask.getYarnInstallDirectory().get())

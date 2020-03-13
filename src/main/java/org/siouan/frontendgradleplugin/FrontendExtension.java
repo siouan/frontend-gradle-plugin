@@ -1,8 +1,7 @@
 package org.siouan.frontendgradleplugin;
 
-import java.io.File;
-
 import org.gradle.api.Project;
+import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.Property;
 
 /**
@@ -23,7 +22,7 @@ public class FrontendExtension {
     /**
      * Directory where the Node distribution shall be installed.
      */
-    private final Property<File> nodeInstallDirectory;
+    private final DirectoryProperty nodeInstallDirectory;
 
     /**
      * URL to download the Node distribution.
@@ -38,7 +37,7 @@ public class FrontendExtension {
     /**
      * Directory where the distribution shall be installed.
      */
-    private final Property<File> yarnInstallDirectory;
+    private final DirectoryProperty yarnInstallDirectory;
 
     /**
      * URL to download the distribution.
@@ -68,10 +67,10 @@ public class FrontendExtension {
     public FrontendExtension(final Project project) {
         yarnEnabled = project.getObjects().property(Boolean.class);
         nodeVersion = project.getObjects().property(String.class);
-        nodeInstallDirectory = project.getObjects().property(File.class);
+        nodeInstallDirectory = project.getObjects().directoryProperty();
         nodeDistributionUrl = project.getObjects().property(String.class);
         yarnVersion = project.getObjects().property(String.class);
-        yarnInstallDirectory = project.getObjects().property(File.class);
+        yarnInstallDirectory = project.getObjects().directoryProperty();
         yarnDistributionUrl = project.getObjects().property(String.class);
         installScript = project.getObjects().property(String.class);
         cleanScript = project.getObjects().property(String.class);
@@ -87,7 +86,7 @@ public class FrontendExtension {
         return nodeVersion;
     }
 
-    public Property<File> getNodeInstallDirectory() {
+    public DirectoryProperty getNodeInstallDirectory() {
         return nodeInstallDirectory;
     }
 
@@ -99,7 +98,7 @@ public class FrontendExtension {
         return yarnVersion;
     }
 
-    public Property<File> getYarnInstallDirectory() {
+    public DirectoryProperty getYarnInstallDirectory() {
         return yarnInstallDirectory;
     }
 

@@ -1,6 +1,6 @@
 # Frontend Gradle plugin
 
-[![Latest release 1.3.0](https://img.shields.io/badge/Latest%20release-1.3.0-blue.svg)](https://github.com/Siouan/frontend-gradle-plugin/releases/tag/v1.3.0)
+[![Latest release 1.3.1](https://img.shields.io/badge/Latest%20release-1.3.1-blue.svg)](https://github.com/Siouan/frontend-gradle-plugin/releases/tag/v1.3.1)
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
 
 [![Build status](https://travis-ci.com/Siouan/frontend-gradle-plugin.svg?branch=master)](https://travis-ci.com/Siouan/frontend-gradle-plugin)
@@ -39,9 +39,12 @@ install/configure the plugin, and build your frontend application.
 - [Usage guidelines](#usage-guidelines)
   - [How to assemble a frontend and a Java backend into a single artifact?](#how-to-assemble-a-frontend-and-a-java-backend-into-a-single-artifact)
   - [What kind of script should I attach to the `checkFrontend` task?](#what-kind-of-script-should-i-attach-to-the-checkfrontend-task)
+- [Special thanks](#special-thanks)
 - [Contributing][contributing]
 
 ## Quick start guide
+
+For convenience, configuration blocks in this guide are introduced with both Groovy and Kotlin syntaxes.
 
 ### Requirements
 
@@ -62,16 +65,29 @@ The plugin is built and tested on Linux, Mac OS, Windows. For a full list of bui
 
 This is the modern and recommended approach.
 
+- Groovy syntax:
+
 ```groovy
 // build.gradle
 plugins {
-    id 'org.siouan.frontend' version '1.3.0'
+    id 'org.siouan.frontend' version '1.3.1'
+}
+```
+
+- Kotlin syntax:
+
+```kotlin
+// build.gradle.kts
+plugins {
+    id("org.siouan.frontend") version "1.3.1"
 }
 ```
 
 #### Using [Gradle build script block][gradle-build-script-block]
 
 This approach is the legacy way to resolve and apply plugins.
+
+- Groovy syntax:
 
 ```groovy
 // build.gradle
@@ -80,11 +96,27 @@ buildscript {
         url 'https://plugins.gradle.org/m2/'
     }
     dependencies {
-        classpath 'org.siouan:frontend-gradle-plugin:1.3.0'
+        classpath 'org.siouan:frontend-gradle-plugin:1.3.1'
     }
 }
 
 apply plugin: 'org.siouan.frontend'
+```
+
+- Kotlin syntax:
+
+```kotlin
+// build.gradle.kts
+buildscript {
+    repositories {
+        url = uri("https://plugins.gradle.org/m2/")
+    }
+    dependencies {
+        classpath("org.siouan:frontend-gradle-plugin:1.3.1")
+    }
+}
+
+apply(plugin = "org.siouan.frontend")
 ```
 
 ### Configuration
@@ -93,65 +125,89 @@ apply plugin: 'org.siouan.frontend'
 
 All settings are introduced hereafter, with default value for each property.
 
+- Groovy syntax:
+
 ```groovy
 // build.gradle
 frontend {
     // NODE SETTINGS
-    // Node version, used to build the URL to download the corresponding distribution, if the 'nodeDistributionUrl'
-    // property is not set.
-    nodeVersion = '12.13.1'
+    // Node version, used to build the URL to download the corresponding distribution, if the
+    // 'nodeDistributionUrl' property is not set.
+    nodeVersion = '12.16.1'
 
-    // [OPTIONAL] Sets this property to force the download from a custom website. By default, this property is
-    // 'null', and the plugin attempts to download the distribution compatible with the current platform from
-    // Node's website. The version of the distribution is expected to be the same as the one set in the
-    // 'nodeVersion' property, or this may lead to unexpected results.
+    // [OPTIONAL] Sets this property to force the download from a custom website. By default, this
+    // property is 'null', and the plugin attempts to download the distribution compatible with the
+    // current platform from Node's website. The version of the distribution is expected to be the
+    // same as the one set in the 'nodeVersion' property, or this may lead to unexpected results.
     nodeDistributionUrl = 'https://nodejs.org/dist/vX.Y.Z/node-vX.Y.Z-win-x64.zip'
 
     // [OPTIONAL] Install directory where the distribution archive shall be exploded.
-    nodeInstallDirectory = "${projectDir}/node"
+    nodeInstallDirectory = file("${projectDir}/node")
 
     // YARN SETTINGS
-    // [OPTIONAL] Whether Yarn shall be used instead of NPM when executing frontend tasks. Consequently, a Yarn
-    // distribution will be downloaded and installed by the plugin. If <true>, the 'yarnVersion' version property
-    // must be set.
+    // [OPTIONAL] Whether Yarn shall be used instead of NPM when executing frontend tasks.
+    // Consequently, a Yarn distribution will be downloaded and installed by the plugin. If <true>,
+    // the 'yarnVersion' version property must be set.
     yarnEnabled = false
 
-    // [OPTIONAL] Yarn version, used to build the URL to download the corresponding distribution, if the
-    // 'yarnDistributionUrl' property is not set. This property is mandatory when the 'yarnEnabled' property is
-    // true.
-    yarnVersion = '1.19.2'
+    // [OPTIONAL] Yarn version, used to build the URL to download the corresponding distribution, if
+    // the 'yarnDistributionUrl' property is not set. This property is mandatory when the
+    // 'yarnEnabled' property is true.
+    yarnVersion = '1.22.4'
 
-    // [OPTIONAL] Sets this property to force the download from a custom website. By default, this property is
-    // 'null', and the plugin attempts to download the distribution compatible with the current platform from
-    // Yarn's website. The version of the distribution is expected to be the same as the one set in the
-    // 'yarnVersion' property, or this may lead to unexpected results.
+    // [OPTIONAL] Sets this property to force the download from a custom website. By default, this
+    // property is 'null', and the plugin attempts to download the distribution compatible with the
+    // current platform from Yarn's website. The version of the distribution is expected to be the
+    // same as the one set in the 'yarnVersion' property, or this may lead to unexpected results.
     yarnDistributionUrl = 'https://github.com/yarnpkg/yarn/releases/download/vX.Y.Z/yarn-vX.Y.Z.tar.gz'
 
     // [OPTIONAL] Install directory where the distribution archive shall be exploded.
-    yarnInstallDirectory = "${projectDir}/yarn"
+    yarnInstallDirectory = file("${projectDir}/yarn")
 
     // OTHER SETTINGS
-    // Name of the NPM/Yarn scripts (see 'package.json' file) that shall be executed depending on the Gradle
-    // lifecycle task. The values below are passed as argument of the 'npm' or 'yarn' executables.
+    // Name of the NPM/Yarn scripts (see 'package.json' file) that shall be executed depending on
+    // the Gradle lifecycle task. The values below are passed as argument of the 'npm' or 'yarn'
+    // executables.
 
-    // [OPTIONAL] Use this property to customize the command line used to install frontend dependencies. This
-    // property is used by the 'installFrontend' task.
+    // [OPTIONAL] Use this property to customize the command line used to install frontend
+    // dependencies. This property is used by the 'installFrontend' task.
     installScript = 'install'
 
     // [OPTIONAL] Use this property only if frontend's compiled resources are generated out of the
-    // '${project.buildDir}' directory. Default value is <null>. This property is used by the 'cleanFrontend' task.
-    // The task is also executed when the Gradle built-in 'clean' task is executed, if this property is set.
+    // '${project.buildDir}' directory. Default value is <null>. This property is used by the
+    // 'cleanFrontend' task. The task is also executed when the Gradle built-in 'clean' task is
+    // executed, if this property is set.
     cleanScript = 'run clean'
 
-    // [OPTIONAL] Script called to build frontend's artifacts. Default value is <null>. This property is used by
-    // the 'assembleFrontend' task.
-    // The task is also executed when the Gradle built-in 'assemble' task is executed, if this property is set.
+    // [OPTIONAL] Script called to build frontend's artifacts. Default value is <null>. This
+    // property is used by the 'assembleFrontend' task. The task is also executed when the Gradle
+    // built-in 'assemble' task is executed, if this property is set.
     assembleScript = 'run assemble'
 
-    // [OPTIONAL] Script called to check the frontend. Default value is <null>. This property is used by the
-    // 'checkFrontend' task. The task is run when the Gradle built-in 'check' task is run.
-    // The task is also executed when the Gradle built-in 'check' task is executed, if this property is set.
+    // [OPTIONAL] Script called to check the frontend. Default value is <null>. This property is
+    // used by the 'checkFrontend' task. The task is run when the Gradle built-in 'check' task is
+    // run. The task is also executed when the Gradle built-in 'check' task is executed, if this
+    // property is set.
     checkScript = 'run check'
+}
+```
+
+- Kotlin syntax:
+
+```kotlin
+// build.gradle.kts
+frontend {
+    nodeVersion.set("12.16.1")
+    nodeDistributionUrl.set("https://nodejs.org/dist/vX.Y.Z/node-vX.Y.Z-win-x64.zip")
+    nodeInstallDirectory.set(project.layout.projectDirectory.dir("node"))
+    yarnEnabled.set(false)
+    yarnVersion.set("1.22.4")
+    yarnDistributionUrl.set("https://github.com/yarnpkg/yarn/releases/download/vX.Y.Z/yarn-vX.Y.Z.tar.gz")
+    yarnInstallDirectory.set(project.layout.projectDirectory.dir("yarn"))
+    installScript.set("install")
+    cleanScript.set("run clean")
+    assembleScript.set("run assemble")
+    checkScript.set("run check")
 }
 ```
 
@@ -225,20 +281,37 @@ in the [Gradle base plugin][gradle-base-plugin].
 
 ### Install Node
 
-The `installNode` task downloads a Node distribution and verifies its integrity. If the `distributionUrl` property is
-ommitted, the URL is guessed using the `version` property. Use the property `nodeInstallDirectory` to set the directory
-where the distribution shall be installed, which, by default is the `${projectDir}/node` directory.
+The `installNode` task downloads a Node distribution and verifies its integrity. If the `nodeDistributionUrl` property
+is ommitted, the URL is guessed using the `nodeVersion` property. Use the property `nodeInstallDirectory` to set the
+directory where the distribution shall be installed, which by default is the `${projectDir}/node` directory. The task
+takes advantage of [Gradle incremental build][gradle-incremental-build], and is not executed again unless at least one
+of the events below occurs:
+
+- the plugins change in the project.
+- At least one of the properties `nodeVersion`, `nodeDistributionUrl`, `nodeInstallDirectory` is modified.
+- The content of the directory pointed by the `nodeInstallDirectory` is modified.
+
+In other cases, the task will be marked as _UP-TO-DATE_ during a Gradle build, and skipped.
 
 This task should not be executed directly. It will be called automatically by Gradle, if another task depends on it.
- 
+
 ### Install Yarn
 
-The `installYarn` task downloads a Yarn distribution, if `yarnEnabled` property is `true`. If the `distributionUrl`
-property is ommitted, the URL is guessed using the `version` property. Use the property `yarnInstallDirectory` to set
-the directory where the distribution shall be installed, which, by default is the `${projectDir}/yarn` directory.
+The `installYarn` task downloads a Yarn distribution, if `yarnEnabled` property is `true`. If the `yarnInstallDirectory`
+property is ommitted, the URL is guessed using the `yarnVersion` property. Use the property `yarnInstallDirectory` to
+set the directory where the distribution shall be installed, which, by default is the `${projectDir}/yarn` directory.
+The task takes advantage of [Gradle incremental build][gradle-incremental-build], and is not executed again unless at
+least one of the events below occurs:
+
+- the plugins change in the project.
+- At least one of the properties `yarnEnabled`, `yarnVersion`, `yarnDistributionUrl`, `yarnInstallDirectory` is
+modified.
+- The content of the directory pointed by the `yarnInstallDirectory` is modified.
+
+In other cases, the task will be marked as _UP-TO-DATE_ during a Gradle build, and skipped.
 
 This task should not be executed directly. It will be called automatically by Gradle, if another task depends on it.
- 
+
 ### Install frontend dependencies
 
 Depending on the value of the `yarnEnabled` property, the `installFrontend` task issues either a `npm install` command
@@ -276,29 +349,58 @@ execute tests, and perform additional analysis tasks. This task depends on the `
 ### Run custom Node script
 
 The plugin provides the task type `org.siouan.frontendgradleplugin.tasks.RunNodeTask` that allows creating a custom
-task to launch a frontend script. The `script` property must be set with the corresponding Node command. For
-instance, the code below added in the `build.gradle` file allows to run a JS `my-custom-script.js` with Node:
+task to launch a frontend script. The `script` property must be set with the corresponding Node command. Then, choose
+whether Node only is required, or if additional dependencies located in the `package.json` file should be installed:
+make the task either depends on `installNode` task or on `installFrontend` task.
+
+The code below shows the configuration required to run a JS `my-custom-script.js` with Node:
+
+- Groovy syntax:
 
 ```groovy
+// build.gradle
 tasks.register('myCustomScript', org.siouan.frontendgradleplugin.tasks.RunNodeTask) {
-    // Choose whether Node only is required, or if additional dependencies located in the package.json file should
-    // be installed: make the task either depends on 'installNode' task or on 'installFrontend' task.
     // dependsOn tasks.named('installNode')
     // dependsOn tasks.named('installFrontend')
     script = 'my-custom-script.js'
 }
 ```
 
+- Kotlin syntax:
+
+```kotlin
+// build.gradle.kts
+tasks.register<org.siouan.frontendgradleplugin.tasks.RunNodeTask>("myCustomScript") {
+    // dependsOn(tasks.named("installNode"))
+    // dependsOn(tasks.named("installFrontend"))
+    script.set("my-custom-script.js")
+}
+```
+
 ### Run custom NPM/Yarn script
 
 The plugin provides the task type `org.siouan.frontendgradleplugin.tasks.RunScriptTask` that allows creating a custom
-task to launch a frontend script. The `script` property must be set with the corresponding NPM/Yarn command. For
-instance, the code below added in the `build.gradle` file allows to run frontend's end-to-end tests in a custom task:
+task to launch a frontend script. The `script` property must be set with the corresponding NPM/Yarn command.
+
+The code below shows the configuration required to run frontend's end-to-end tests in a custom task:
+
+- Groovy syntax:
 
 ```groovy
+// build.gradle
 tasks.register('e2e', org.siouan.frontendgradleplugin.tasks.RunScriptTask) {
     dependsOn tasks.named('installFrontend')
     script = 'run e2e'
+}
+```
+
+- Kotlin syntax:
+
+```kotlin
+// build.gradle.kts
+tasks.register<org.siouan.frontendgradleplugin.tasks.RunScriptTask>("e2e") {
+    dependsOn(tasks.named("installFrontend"))
+    script.set("run e2e")
 }
 ```
 
@@ -335,14 +437,29 @@ gradlew taskTree --no-repeat assemble
 `${frontendBuildDir}` directory, these artifacts must be copied, generally in the
 `${project.buildDir}/resources/main/public` directory, so as they can be served by the backend.
 
-Let's create a custom task for this. Add the following lines in the `build.gradle` file:
+Let's create a custom task for this.
+
+- Groovy syntax:
 
 ```groovy
+// build.gradle
 tasks.register('processFrontendResources', Copy) {
     description 'Process frontend resources'
     from "${frontendBuildDir}"
     into "${project.buildDir}/resources/main/public"
     dependsOn tasks.named('assembleFrontend')
+}
+```
+
+- Kotlin syntax:
+
+```kotlin
+// build.gradle.kts
+tasks.register<Copy>("processFrontendResources") {
+    description = "Process frontend resources"
+    from(file("${frontendBuildDir}"))
+    into(file("${project.buildDir}/resources/main/public"))
+    dependsOn(tasks.named("assembleFrontend"))
 }
 ```
 
@@ -356,9 +473,21 @@ generated by your assembling script.
 
 Our recommendation is the `processResources` task depends on the `processFrontendResources` task.
 
+- Groovy syntax:
+
 ```groovy
+// build.gradle
 tasks.named('processResources').configure {
     dependsOn tasks.named('processFrontendResources')
+}
+```
+
+- Kotlin syntax:
+
+```kotlin
+// build.gradle.kts
+tasks.named("processResources").configure {
+    dependsOn(tasks.named("processFrontendResources"))
 }
 ```
 
@@ -388,15 +517,32 @@ tests, or functional tests, or a linter, or any other verification action, or ev
 combination is even possible, since you can define a script in your `package.json` file that executes sequentially the
 actions of your choice.
 
+## Special thanks
+
+The plugin is developed using [Intellij IDEA][intellij-idea], special thanks to [JetBrains][jetbrains] for this amazing
+IDE, and their support to this project.
+
+![Jetbrains logo][jetbrains-logo]
+![IntelliJ IDEA logo][intellij-idea-logo]
+
+With their feedback, plugin improvement is possible. Special thanks to:
+
+@andreaschiona, @byxor, @ChFlick, @ckosloski, @mike-howell, @rolaca11, @TapaiBalazs
+
 [contributing]: <CONTRIBUTING.md> (Contributing to this project)
 [frontend-maven-plugin]: <https://github.com/eirslett/frontend-maven-plugin> (Frontend Maven plugin)
 [gradle]: <https://gradle.org/> (Gradle)
 [gradle-base-plugin]: <https://docs.gradle.org/current/userguide/base_plugin.html> (Gradle Base plugin)
 [gradle-build-script-block]: <https://docs.gradle.org/current/userguide/plugins.html#sec:applying_plugins_buildscript> (Gradle build script block)
 [gradle-dsl]: <https://docs.gradle.org/current/userguide/plugins.html#sec:plugins_block> (Gradle DSL)
+[gradle-incremental-build]: <https://guides.gradle.org/performance/#incremental_build> (Gradle incremental build)
 [gradle-java-plugin]: <https://docs.gradle.org/current/userguide/java_plugin.html> (Gradle Java plugin)
 [gradle-spring-boot-plugin]: <https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/html/> (Gradle Spring Boot plugin)
+[intellij-idea]: <https://www.jetbrains.com/idea/> (IntelliJ IDEA)
+[intellij-idea-logo]: <intellij-idea-128x128.png> (IntelliJ IDEA)
 [jdk]: <https://docs.oracle.com/en/java/javase/> (Java Development Kit)
+[jetbrains]: <https://www.jetbrains.com/> (JetBrains)
+[jetbrains-logo]: <jetbrains-128x128.png> (JetBrains)
 [node]: <https://nodejs.org/> (Node.js)
 [release-notes]: <https://github.com/siouan/frontend-gradle-plugin/releases> (Release notes)
 [spring-boot]: <https://spring.io/projects/spring-boot> (Spring Boot)

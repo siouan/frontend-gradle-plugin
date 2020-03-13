@@ -1,7 +1,6 @@
 package org.siouan.frontendgradleplugin.tasks;
 
-import java.io.File;
-
+import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Internal;
@@ -23,13 +22,13 @@ public abstract class AbstractPredefinedRunScriptTask extends AbstractRunScriptT
 
     @Internal
     @Optional
-    public Property<File> getNodeInstallDirectory() {
+    public DirectoryProperty getNodeInstallDirectory() {
         return nodeInstallDirectory;
     }
 
     @Internal
     @Optional
-    public Property<File> getYarnInstallDirectory() {
+    public DirectoryProperty getYarnInstallDirectory() {
         return yarnInstallDirectory;
     }
 }

@@ -1,8 +1,7 @@
 package org.siouan.frontendgradleplugin.tasks;
 
-import java.io.File;
-
 import org.gradle.api.DefaultTask;
+import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.TaskAction;
 import org.siouan.frontendgradleplugin.core.ExecutableNotFoundException;
@@ -25,12 +24,12 @@ public abstract class AbstractRunScriptTask extends DefaultTask {
     /**
      * Directory where the Node distribution is installed.
      */
-    final Property<File> nodeInstallDirectory;
+    final DirectoryProperty nodeInstallDirectory;
 
     /**
      * Directory where the Yarn distribution is installed.
      */
-    final Property<File> yarnInstallDirectory;
+    final DirectoryProperty yarnInstallDirectory;
 
     /**
      * The script to run with NPM/Yarn.
@@ -45,8 +44,8 @@ public abstract class AbstractRunScriptTask extends DefaultTask {
 
     AbstractRunScriptTask(boolean failOnMissingScriptEnabled) {
         yarnEnabled = getProject().getObjects().property(Boolean.class);
-        nodeInstallDirectory = getProject().getObjects().property(File.class);
-        yarnInstallDirectory = getProject().getObjects().property(File.class);
+        nodeInstallDirectory = getProject().getObjects().directoryProperty();
+        yarnInstallDirectory = getProject().getObjects().directoryProperty();
         script = getProject().getObjects().property(String.class);
         this.failOnMissingScriptEnabled = failOnMissingScriptEnabled;
     }
@@ -65,8 +64,8 @@ public abstract class AbstractRunScriptTask extends DefaultTask {
     @TaskAction
     public void execute() throws MissingScriptException, ExecutableNotFoundException {
         if (script.isPresent()) {
-            new RunScriptJob(this, getExecutionType(), nodeInstallDirectory.get(), yarnInstallDirectory.get(),
-                script.get(), Utils.getSystemOsName()).run();
+            new RunScriptJob(this, getExecutionType(), nodeInstallDirectory.getAsFile().get(),
+                yarnInstallDirectory.getAsFile().get(), script.get(), Utils.getSystemOsName()).run();
         } else if (failOnMissingScriptEnabled) {
             throw new MissingScriptException();
         }
