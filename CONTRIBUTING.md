@@ -66,11 +66,11 @@ repository. The configuration actually allows to build and test the plugin on th
 - Windows Server 2016 version 1803 / AdoptOpenJDK OpenJ9 1.8.0-232 64 bits
 
 Ubuntu Xenial is the reference environment, used to analyze the source code with SonarCloud. By now, the plugin has been
-developed on Windows 10 Home with OracleJDK 1.8.0_202 64 bits and [JetBrains IntelliJ IDEA][intellij].
+developed on Windows 10 Home with OracleJDK 1.8.0_202 64 bits and [JetBrains IntelliJ IDEA][intellij-idea].
 
-*Note: continuous integration of Java projects on Windows is not supported by Travis yet.*
+*Note: continuous integration of Java projects on Windows is at an early stage for the moment.*
 
 [apache-commons-compress]: <https://commons.apache.org/proper/commons-compress/> (Apache Commons Compress)
-[intellij]: <https://www.jetbrains.com/idea/> (IntelliJ IDEA)
+[intellij-idea]: <https://www.jetbrains.com/idea/> (IntelliJ IDEA)
 [issues]: <https://github.com/Siouan/frontend-gradle-plugin/issues> (Issues)
 [travis]: <https://travis-ci.com/> (Travis CI)

@@ -39,6 +39,7 @@ install/configure the plugin, and build your frontend application.
 - [Usage guidelines](#usage-guidelines)
   - [How to assemble a frontend and a Java backend into a single artifact?](#how-to-assemble-a-frontend-and-a-java-backend-into-a-single-artifact)
   - [What kind of script should I attach to the `checkFrontend` task?](#what-kind-of-script-should-i-attach-to-the-checkfrontend-task)
+- [Special thanks](#special-thanks)
 - [Contributing][contributing]
 
 ## Quick start guide
@@ -287,7 +288,6 @@ takes advantage of [Gradle incremental build][gradle-incremental-build], and is 
 of the events below occurs:
 
 - the plugins change in the project.
-- the task is executed for the first time.
 - At least one of the properties `nodeVersion`, `nodeDistributionUrl`, `nodeInstallDirectory` is modified.
 - The content of the directory pointed by the `nodeInstallDirectory` is modified.
 
@@ -304,7 +304,6 @@ The task takes advantage of [Gradle incremental build][gradle-incremental-build]
 least one of the events below occurs:
 
 - the plugins change in the project.
-- the task is executed for the first time.
 - At least one of the properties `yarnEnabled`, `yarnVersion`, `yarnDistributionUrl`, `yarnInstallDirectory` is
 modified.
 - The content of the directory pointed by the `yarnInstallDirectory` is modified.
@@ -518,6 +517,18 @@ tests, or functional tests, or a linter, or any other verification action, or ev
 combination is even possible, since you can define a script in your `package.json` file that executes sequentially the
 actions of your choice.
 
+## Special thanks
+
+The plugin is developed using [Intellij IDEA][intellij-idea], special thanks to [JetBrains][jetbrains] for this amazing
+IDE, and their support to this project.
+
+![Jetbrains logo][jetbrains-logo]
+![IntelliJ IDEA logo][intellij-idea-logo]
+
+With their feedback, plugin improvement is possible. Special thanks to:
+
+@andreaschiona, @byxor, @ChFlick, @ckosloski, @mike-howell, @rolaca11, @TapaiBalazs
+
 [contributing]: <CONTRIBUTING.md> (Contributing to this project)
 [frontend-maven-plugin]: <https://github.com/eirslett/frontend-maven-plugin> (Frontend Maven plugin)
 [gradle]: <https://gradle.org/> (Gradle)
@@ -527,7 +538,11 @@ actions of your choice.
 [gradle-incremental-build]: <https://guides.gradle.org/performance/#incremental_build> (Gradle incremental build)
 [gradle-java-plugin]: <https://docs.gradle.org/current/userguide/java_plugin.html> (Gradle Java plugin)
 [gradle-spring-boot-plugin]: <https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/html/> (Gradle Spring Boot plugin)
+[intellij-idea]: <https://www.jetbrains.com/idea/> (IntelliJ IDEA)
+[intellij-idea-logo]: <intellij-idea-128x128.png> (IntelliJ IDEA)
 [jdk]: <https://docs.oracle.com/en/java/javase/> (Java Development Kit)
+[jetbrains]: <https://www.jetbrains.com/> (JetBrains)
+[jetbrains-logo]: <jetbrains-128x128.png> (JetBrains)
 [node]: <https://nodejs.org/> (Node.js)
 [release-notes]: <https://github.com/siouan/frontend-gradle-plugin/releases> (Release notes)
 [spring-boot]: <https://spring.io/projects/spring-boot> (Spring Boot)
