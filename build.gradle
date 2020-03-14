@@ -2,7 +2,6 @@ plugins {
     id 'java-gradle-plugin'
     id 'maven-publish'
     id 'jacoco'
-    id 'com.gradle.build-scan' version '3.1'
     id 'com.gradle.plugin-publish' version '0.10.1'
 }
 
@@ -33,13 +32,13 @@ jacocoTestReport {
 
 dependencies {
     implementation gradleApi()
-    implementation 'org.apache.commons:commons-compress:1.19'
+    implementation 'org.apache.commons:commons-compress:1.20'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.2'
-    testImplementation 'org.mockito:mockito-core:3.2.0'
-    testImplementation 'org.mockito:mockito-junit-jupiter:3.2.0'
-    testImplementation 'org.assertj:assertj-core:3.14.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+    testImplementation 'org.mockito:mockito-core:3.3.3'
+    testImplementation 'org.mockito:mockito-junit-jupiter:3.3.3'
+    testImplementation 'org.assertj:assertj-core:3.15.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.0'
 }
 
 group 'org.siouan'
@@ -64,9 +63,4 @@ pluginBundle {
     website = 'https://github.com/Siouan/frontend-gradle-plugin'
     vcsUrl = 'https://github.com/Siouan/frontend-gradle-plugin.git'
     tags = ['node', 'npm', 'yarn', 'frontend']
-}
-
-buildScan {
-    termsOfServiceUrl = 'https://gradle.com/terms-of-service'
-    termsOfServiceAgree = 'yes'
 }
