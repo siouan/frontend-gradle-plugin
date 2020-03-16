@@ -40,7 +40,7 @@ class AssembleTaskFuncTest {
     }
 
     @Test
-    void shouldDoNothingWhenScriptIsNotDefined() throws IOException, URISyntaxException {
+    void shouldBeSkippedWhenScriptIsNotDefined() throws IOException, URISyntaxException {
         Files.copy(new File(getClass().getClassLoader().getResource("package-npm.json").toURI()).toPath(),
             projectDirectory.resolve("package.json"));
         final Map<String, Object> properties = new HashMap<>();
@@ -53,11 +53,11 @@ class AssembleTaskFuncTest {
         assertTaskIgnored(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskIgnored(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskIgnored(result1, FrontendGradlePlugin.INSTALL_TASK_NAME);
-        assertTaskSuccess(result1, FrontendGradlePlugin.ASSEMBLE_TASK_NAME);
+        assertTaskSkipped(result1, FrontendGradlePlugin.ASSEMBLE_TASK_NAME);
     }
 
     @Test
-    void shouldAssembleWithoutFrontendTasks() throws IOException, URISyntaxException {
+    void shouldAssembleAndSkipFrontendAssemblingTask() throws IOException, URISyntaxException {
         Files.copy(new File(getClass().getClassLoader().getResource("package-npm.json").toURI()).toPath(),
             projectDirectory.resolve("package.json"));
         final Map<String, Object> properties = new HashMap<>();
@@ -70,7 +70,7 @@ class AssembleTaskFuncTest {
         assertTaskIgnored(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskIgnored(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskIgnored(result1, FrontendGradlePlugin.INSTALL_TASK_NAME);
-        assertTaskIgnored(result1, FrontendGradlePlugin.ASSEMBLE_TASK_NAME);
+        assertTaskSkipped(result1, FrontendGradlePlugin.ASSEMBLE_TASK_NAME);
         assertTaskUpToDate(result1, FrontendGradlePlugin.GRADLE_ASSEMBLE_TASK_NAME);
     }
 
@@ -89,6 +89,7 @@ class AssembleTaskFuncTest {
         assertTaskSuccess(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskSkipped(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskSuccess(result1, FrontendGradlePlugin.INSTALL_TASK_NAME);
+        assertTaskSuccess(result1, FrontendGradlePlugin.ASSEMBLE_TASK_NAME);
         assertTaskSuccess(result1, FrontendGradlePlugin.GRADLE_ASSEMBLE_TASK_NAME);
 
         final BuildResult result2 = runGradle(projectDirectory, FrontendGradlePlugin.GRADLE_ASSEMBLE_TASK_NAME);
@@ -96,6 +97,7 @@ class AssembleTaskFuncTest {
         assertTaskUpToDate(result2, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskSkipped(result2, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskSuccess(result2, FrontendGradlePlugin.INSTALL_TASK_NAME);
+        assertTaskSuccess(result1, FrontendGradlePlugin.ASSEMBLE_TASK_NAME);
         assertTaskSuccess(result2, FrontendGradlePlugin.GRADLE_ASSEMBLE_TASK_NAME);
 
         Files.deleteIfExists(projectDirectory.resolve("package-lock.json"));
@@ -112,6 +114,7 @@ class AssembleTaskFuncTest {
         assertTaskUpToDate(result3, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskSuccess(result3, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskSuccess(result3, FrontendGradlePlugin.INSTALL_TASK_NAME);
+        assertTaskSuccess(result1, FrontendGradlePlugin.ASSEMBLE_TASK_NAME);
         assertTaskSuccess(result3, FrontendGradlePlugin.GRADLE_ASSEMBLE_TASK_NAME);
 
         final BuildResult result4 = runGradle(projectDirectory, FrontendGradlePlugin.GRADLE_ASSEMBLE_TASK_NAME);
@@ -119,6 +122,7 @@ class AssembleTaskFuncTest {
         assertTaskUpToDate(result4, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskUpToDate(result4, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskSuccess(result4, FrontendGradlePlugin.INSTALL_TASK_NAME);
+        assertTaskSuccess(result1, FrontendGradlePlugin.ASSEMBLE_TASK_NAME);
         assertTaskSuccess(result4, FrontendGradlePlugin.GRADLE_ASSEMBLE_TASK_NAME);
     }
 }

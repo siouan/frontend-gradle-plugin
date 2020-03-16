@@ -1,8 +1,14 @@
 package org.siouan.frontendgradleplugin.tasks;
 
+import java.io.File;
+import java.nio.file.Path;
+
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.Property;
+import org.gradle.api.tasks.InputDirectory;
+import org.gradle.api.tasks.Internal;
+import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.TaskAction;
 import org.siouan.frontendgradleplugin.core.ExecutableNotFoundException;
 import org.siouan.frontendgradleplugin.core.Executor;
@@ -50,6 +56,19 @@ public abstract class AbstractRunScriptTask extends DefaultTask {
         this.failOnMissingScriptEnabled = failOnMissingScriptEnabled;
     }
 
+    @InputDirectory
+    @Optional
+    public DirectoryProperty getNodeInstallDirectory() {
+        return nodeInstallDirectory;
+    }
+
+    @InputDirectory
+    @Optional
+    public DirectoryProperty getYarnInstallDirectory() {
+        return yarnInstallDirectory;
+    }
+
+    @Internal
     protected Executor getExecutionType() {
         return yarnEnabled.get() ? Executor.YARN : Executor.NPM;
     }
@@ -63,9 +82,15 @@ public abstract class AbstractRunScriptTask extends DefaultTask {
      */
     @TaskAction
     public void execute() throws MissingScriptException, ExecutableNotFoundException {
+        execute(nodeInstallDirectory.getAsFile().map(File::toPath).get(),
+            yarnInstallDirectory.getAsFile().map(File::toPath).getOrNull());
+    }
+
+    protected void execute(final Path nodeInstallDirectoryPath, final Path yarnInstallDirectoryPath)
+        throws MissingScriptException, ExecutableNotFoundException {
         if (script.isPresent()) {
-            new RunScriptJob(this, getExecutionType(), nodeInstallDirectory.getAsFile().get(),
-                yarnInstallDirectory.getAsFile().get(), script.get(), Utils.getSystemOsName()).run();
+            new RunScriptJob(this, getExecutionType(), nodeInstallDirectoryPath,
+                yarnInstallDirectoryPath, script.get(), Utils.getSystemOsName()).run();
         } else if (failOnMissingScriptEnabled) {
             throw new MissingScriptException();
         }

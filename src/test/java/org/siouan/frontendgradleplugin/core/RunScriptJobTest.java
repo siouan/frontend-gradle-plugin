@@ -6,7 +6,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,7 +30,7 @@ class RunScriptJobTest {
     private static final String SCRIPT = "script";
 
     @TempDir
-    File temporaryDirectory;
+    Path temporaryDirectory;
 
     @Mock
     private Task task;
@@ -46,8 +45,8 @@ class RunScriptJobTest {
 
     @Test
     void shouldRunScript() throws ExecutableNotFoundException, IOException {
-        Files.createFile(temporaryDirectory.toPath().resolve("node.exe"));
-        final Path binDirectory = Files.createDirectory(temporaryDirectory.toPath().resolve("bin"));
+        Files.createFile(temporaryDirectory.resolve("node.exe"));
+        final Path binDirectory = Files.createDirectory(temporaryDirectory.resolve("bin"));
         Files.createFile(binDirectory.resolve("yarn.cmd"));
         final Executor executor = Executor.YARN;
         final String script = SCRIPT;
@@ -67,13 +66,13 @@ class RunScriptJobTest {
 
         private final Executor executor;
 
-        private final File nodeInstallDirectory;
+        private final Path nodeInstallDirectory;
 
-        private final File yarnInstallDirectory;
+        private final Path yarnInstallDirectory;
 
         private final String script;
 
-        ExecSpecActionMatcher(final Executor executor, final File nodeInstallDirectory, final File yarnInstallDirectory,
+        ExecSpecActionMatcher(final Executor executor, final Path nodeInstallDirectory, final Path yarnInstallDirectory,
             final String script) {
             this.executor = executor;
             this.nodeInstallDirectory = nodeInstallDirectory;

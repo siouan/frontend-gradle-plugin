@@ -23,7 +23,7 @@ class NodeDistributionChecksumReaderImplTest {
     private static final String DISTRIBUTION_FILENAME = "node-10.0.0.zip";
 
     @TempDir
-    File temporaryDirectory;
+    Path temporaryDirectory;
 
     @Test
     void shouldFailWhenChecksumFileNotReadable() {
@@ -34,7 +34,7 @@ class NodeDistributionChecksumReaderImplTest {
 
     @Test
     void shouldFailWhenChecksumNotFound() throws IOException {
-        final Path checksumFile = temporaryDirectory.toPath().resolve(CHECKSUM_FILENAME);
+        final Path checksumFile = temporaryDirectory.resolve(CHECKSUM_FILENAME);
         Files.createFile(checksumFile);
         assertThatThrownBy(() -> new NodeDistributionChecksumReaderImpl().readHash(checksumFile, DISTRIBUTION_FILENAME))
             .isInstanceOf(NodeDistributionChecksumNotFoundException.class);
@@ -44,7 +44,7 @@ class NodeDistributionChecksumReaderImplTest {
     void shouldReturnChecksumWhenAtEndOfFileWithoutNewLine()
         throws IOException, NodeDistributionChecksumNotFoundException {
         final String checksum = "523ab86h853e86";
-        final Path checksumFile = temporaryDirectory.toPath().resolve(CHECKSUM_FILENAME);
+        final Path checksumFile = temporaryDirectory.resolve(CHECKSUM_FILENAME);
         try (final BufferedWriter writer = Files.newBufferedWriter(checksumFile)) {
             writer.append(checksum);
             writer.append("  ");
@@ -60,7 +60,7 @@ class NodeDistributionChecksumReaderImplTest {
     void shouldReturnChecksumWhenAtEndOfFileWithNewLine()
         throws IOException, NodeDistributionChecksumNotFoundException {
         final String checksum = "523ab86h853e86";
-        final Path checksumFile = temporaryDirectory.toPath().resolve(CHECKSUM_FILENAME);
+        final Path checksumFile = temporaryDirectory.resolve(CHECKSUM_FILENAME);
         try (final BufferedWriter writer = Files.newBufferedWriter(checksumFile)) {
             writer.append(checksum);
             writer.append("  ");

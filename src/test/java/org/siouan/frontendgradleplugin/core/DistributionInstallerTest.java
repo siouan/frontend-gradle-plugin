@@ -12,7 +12,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -50,7 +49,7 @@ class DistributionInstallerTest {
     private static final String DISTRIBUTION_URL_WITH_EXTENSION = "https://domain.com/file.txt";
 
     @TempDir
-    protected File temporaryDirectory;
+    protected Path temporaryDirectory;
 
     @Mock
     private Logger logger;
@@ -80,8 +79,8 @@ class DistributionInstallerTest {
         final Exception expectedException = mock(DistributionUrlResolverException.class);
         when(urlResolver.resolve()).thenThrow(expectedException);
         final DistributionInstaller installer = new DistributionInstaller(
-            new DistributionInstallerSettings(task, Utils.getSystemOsName(), temporaryDirectory.toPath(), urlResolver, downloader, null,
-                archiverFactory, temporaryDirectory.toPath().resolve("install")));
+            new DistributionInstallerSettings(task, Utils.getSystemOsName(), temporaryDirectory, urlResolver, downloader, null,
+                archiverFactory, temporaryDirectory.resolve("install")));
 
         assertThatThrownBy(installer::install).isInstanceOf(DistributionInstallerException.class)
             .hasCause(expectedException);
@@ -98,8 +97,8 @@ class DistributionInstallerTest {
         final Exception expectedException = mock(DownloadException.class);
         doThrow(expectedException).when(downloader).download(eq(distributionUrl), any(Path.class));
         final DistributionInstaller installer = new DistributionInstaller(
-            new DistributionInstallerSettings(task, Utils.getSystemOsName(), temporaryDirectory.toPath(), urlResolver, downloader, null,
-                archiverFactory, temporaryDirectory.toPath().resolve("install")));
+            new DistributionInstallerSettings(task, Utils.getSystemOsName(), temporaryDirectory, urlResolver, downloader, null,
+                archiverFactory, temporaryDirectory.resolve("install")));
 
         assertThatThrownBy(installer::install).isInstanceOf(DistributionInstallerException.class)
             .hasCause(expectedException);
@@ -118,8 +117,8 @@ class DistributionInstallerTest {
         final Exception expectedException = mock(DistributionValidatorException.class);
         doThrow(expectedException).when(validator).validate(eq(distributionUrl), any(Path.class));
         final DistributionInstaller installer = new DistributionInstaller(
-            new DistributionInstallerSettings(task, Utils.getSystemOsName(), temporaryDirectory.toPath(), urlResolver, downloader, validator,
-                archiverFactory, temporaryDirectory.toPath().resolve("install")));
+            new DistributionInstallerSettings(task, Utils.getSystemOsName(), temporaryDirectory, urlResolver,
+                downloader, validator, archiverFactory, temporaryDirectory.resolve("install")));
 
         assertThatThrownBy(installer::install).isInstanceOf(DistributionInstallerException.class)
             .hasCause(expectedException);
@@ -136,8 +135,8 @@ class DistributionInstallerTest {
         final URL distributionUrl = URI.create(DISTRIBUTION_URL_WITHOUT_EXTENSION).toURL();
         when(urlResolver.resolve()).thenReturn(distributionUrl);
         final DistributionInstaller installer = new DistributionInstaller(
-            new DistributionInstallerSettings(task, Utils.getSystemOsName(), temporaryDirectory.toPath(), urlResolver, downloader, null,
-                archiverFactory, temporaryDirectory.toPath().resolve("install")));
+            new DistributionInstallerSettings(task, Utils.getSystemOsName(), temporaryDirectory, urlResolver,
+                downloader, null, archiverFactory, temporaryDirectory.resolve("install")));
 
         assertThatThrownBy(installer::install).isInstanceOf(DistributionInstallerException.class)
             .hasCauseInstanceOf(UnsupportedDistributionArchiveException.class);
@@ -154,8 +153,8 @@ class DistributionInstallerTest {
         when(urlResolver.resolve()).thenReturn(distributionUrl);
         when(archiverFactory.get(anyString())).thenReturn(Optional.empty());
         final DistributionInstaller installer = new DistributionInstaller(
-            new DistributionInstallerSettings(task, Utils.getSystemOsName(), temporaryDirectory.toPath(), urlResolver, downloader, null,
-                archiverFactory, temporaryDirectory.toPath().resolve("install")));
+            new DistributionInstallerSettings(task, Utils.getSystemOsName(), temporaryDirectory, urlResolver,
+                downloader, null, archiverFactory, temporaryDirectory.resolve("install")));
 
         assertThatThrownBy(installer::install).isInstanceOf(DistributionInstallerException.class)
             .hasCauseInstanceOf(UnsupportedDistributionArchiveException.class);
@@ -177,8 +176,8 @@ class DistributionInstallerTest {
         final Exception expectedException = mock(SlipAttackException.class);
         doThrow(expectedException).when(archiver).explode(any(ExplodeSettings.class));
         final DistributionInstaller installer = new DistributionInstaller(
-            new DistributionInstallerSettings(task, Utils.getSystemOsName(), temporaryDirectory.toPath(), urlResolver, downloader, null,
-                archiverFactory, temporaryDirectory.toPath().resolve("install")));
+            new DistributionInstallerSettings(task, Utils.getSystemOsName(), temporaryDirectory, urlResolver,
+                downloader, null, archiverFactory, temporaryDirectory.resolve("install")));
 
         assertThatThrownBy(installer::install).isInstanceOf(DistributionInstallerException.class)
             .hasCause(expectedException);
@@ -201,8 +200,8 @@ class DistributionInstallerTest {
         final Exception expectedException = mock(UnsupportedEntryException.class);
         doThrow(expectedException).when(archiver).explode(any(ExplodeSettings.class));
         final DistributionInstaller installer = new DistributionInstaller(
-            new DistributionInstallerSettings(task, Utils.getSystemOsName(), temporaryDirectory.toPath(), urlResolver, downloader, null,
-                archiverFactory, temporaryDirectory.toPath().resolve("install")));
+            new DistributionInstallerSettings(task, Utils.getSystemOsName(), temporaryDirectory, urlResolver,
+                downloader, null, archiverFactory, temporaryDirectory.resolve("install")));
 
         assertThatThrownBy(installer::install).isInstanceOf(DistributionInstallerException.class)
             .hasCause(expectedException);
@@ -225,8 +224,8 @@ class DistributionInstallerTest {
         final Exception expectedException = mock(ArchiverException.class);
         doThrow(expectedException).when(archiver).explode(any(ExplodeSettings.class));
         final DistributionInstaller installer = new DistributionInstaller(
-            new DistributionInstallerSettings(task, Utils.getSystemOsName(), temporaryDirectory.toPath(), urlResolver, downloader, null,
-                archiverFactory, temporaryDirectory.toPath().resolve("install")));
+            new DistributionInstallerSettings(task, Utils.getSystemOsName(), temporaryDirectory, urlResolver,
+                downloader, null, archiverFactory, temporaryDirectory.resolve("install")));
 
         assertThatThrownBy(installer::install).isInstanceOf(DistributionInstallerException.class)
             .hasCause(expectedException);
@@ -243,15 +242,15 @@ class DistributionInstallerTest {
         throws DistributionUrlResolverException, UnsupportedEntryException, SlipAttackException,
         DistributionInstallerException, ArchiverException, DownloadException, IOException {
         final URL distributionUrl = getClass().getClassLoader().getResource("dist-without-root-dir.zip");
-        final Path installDirectory = temporaryDirectory.toPath().resolve("install");
+        final Path installDirectory = temporaryDirectory.resolve("install");
         when(urlResolver.resolve()).thenReturn(distributionUrl);
         doAnswer(new DownloaderAnswer()).when(downloader).download(eq(distributionUrl), any(Path.class));
         final Archiver archiver = mock(Archiver.class);
         when(archiverFactory.get(anyString())).thenReturn(Optional.of(archiver));
         doAnswer(new ArchiverAnswer()).when(archiver).explode(any(ExplodeSettings.class));
         final DistributionInstaller installer = new DistributionInstaller(
-            new DistributionInstallerSettings(task, Utils.getSystemOsName(), temporaryDirectory.toPath(), urlResolver, downloader, null,
-                archiverFactory, installDirectory));
+            new DistributionInstallerSettings(task, Utils.getSystemOsName(), temporaryDirectory, urlResolver,
+                downloader, null, archiverFactory, installDirectory));
 
         installer.install();
 
@@ -270,15 +269,15 @@ class DistributionInstallerTest {
         throws DistributionUrlResolverException, UnsupportedEntryException, SlipAttackException,
         DistributionInstallerException, ArchiverException, DownloadException, IOException {
         final URL distributionUrl = getClass().getClassLoader().getResource("yarn-v1.16.0.tar.gz");
-        final Path installDirectory = temporaryDirectory.toPath().resolve("install");
+        final Path installDirectory = temporaryDirectory.resolve("install");
         when(urlResolver.resolve()).thenReturn(distributionUrl);
         doAnswer(new DownloaderAnswer()).when(downloader).download(eq(distributionUrl), any(Path.class));
         final Archiver archiver = mock(Archiver.class);
         when(archiverFactory.get(anyString())).thenReturn(Optional.of(archiver));
         doAnswer(new ArchiverAnswer()).when(archiver).explode(any(ExplodeSettings.class));
         final DistributionInstaller installer = new DistributionInstaller(
-            new DistributionInstallerSettings(task, Utils.getSystemOsName(), temporaryDirectory.toPath(), urlResolver, downloader, null,
-                archiverFactory, installDirectory));
+            new DistributionInstallerSettings(task, Utils.getSystemOsName(), temporaryDirectory, urlResolver,
+                downloader, null, archiverFactory, installDirectory));
 
         installer.install();
 

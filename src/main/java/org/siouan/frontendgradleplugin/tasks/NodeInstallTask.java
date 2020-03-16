@@ -1,6 +1,7 @@
 package org.siouan.frontendgradleplugin.tasks;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.security.NoSuchAlgorithmException;
 
 import org.gradle.api.DefaultTask;
@@ -75,12 +76,12 @@ public class NodeInstallTask extends DefaultTask {
     public void execute() throws DistributionInstallerException, NoSuchAlgorithmException {
         final String version = nodeVersion.get();
         final String distributionUrl = nodeDistributionUrl.getOrNull();
-        final File installDirectory = nodeInstallDirectory.getAsFile().get();
+        final Path installDirectory = nodeInstallDirectory.getAsFile().map(File::toPath).get();
         final DistributionInstallerSettings settings = new DistributionInstallerSettings(this, Utils.getSystemOsName(),
             getTemporaryDir().toPath(), new NodeDistributionUrlResolver(version, distributionUrl), new DownloaderImpl(getTemporaryDir().toPath()),
             new NodeDistributionValidator(this, new DownloaderImpl(getTemporaryDir().toPath()),
                 new NodeDistributionChecksumReaderImpl(), new FileHasherImpl(), getTemporaryDir().toPath()),
-            new ArchiverFactoryImpl(), installDirectory.toPath());
+            new ArchiverFactoryImpl(), installDirectory);
         new DistributionInstaller(settings).install();
     }
 }

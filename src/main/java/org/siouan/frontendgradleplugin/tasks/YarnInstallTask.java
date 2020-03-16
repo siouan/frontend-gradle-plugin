@@ -1,6 +1,7 @@
 package org.siouan.frontendgradleplugin.tasks;
 
 import java.io.File;
+import java.nio.file.Path;
 
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.DirectoryProperty;
@@ -67,10 +68,10 @@ public class YarnInstallTask extends DefaultTask {
      */
     @TaskAction
     public void execute() throws DistributionInstallerException {
+        final Path installDirectory = yarnInstallDirectory.getAsFile().map(File::toPath).get();
         final DistributionInstallerSettings settings = new DistributionInstallerSettings(this, Utils.getSystemOsName(),
             getTemporaryDir().toPath(), new YarnDistributionUrlResolver(yarnVersion.get(), yarnDistributionUrl.getOrNull()),
-            new DownloaderImpl(getTemporaryDir().toPath()), null, new ArchiverFactoryImpl(),
-            yarnInstallDirectory.getAsFile().map(File::toPath).getOrNull());
+            new DownloaderImpl(getTemporaryDir().toPath()), null, new ArchiverFactoryImpl(), installDirectory);
         new DistributionInstaller(settings).install();
     }
 }

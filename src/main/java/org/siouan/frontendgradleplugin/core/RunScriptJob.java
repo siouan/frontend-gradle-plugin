@@ -1,6 +1,7 @@
 package org.siouan.frontendgradleplugin.core;
 
-import java.io.File;
+import java.nio.file.Path;
+import javax.annotation.Nullable;
 
 import org.gradle.api.Task;
 
@@ -17,12 +18,12 @@ public class RunScriptJob extends AbstractTaskJob {
     /**
      * Directory where the Node distribution is installed.
      */
-    private final File nodeInstallDirectory;
+    private final Path nodeInstallDirectory;
 
     /**
      * Directory where the Yarn distribution is installed.
      */
-    private final File yarnInstallDirectory;
+    private final Path yarnInstallDirectory;
 
     /**
      * The script run by the job with NPM or Yarn.
@@ -44,8 +45,8 @@ public class RunScriptJob extends AbstractTaskJob {
      * @param script The script run by the job.
      * @param osName O/S name.
      */
-    public RunScriptJob(final Task task, final Executor executor, final File nodeInstallDirectory,
-        final File yarnInstallDirectory, final String script, final String osName) {
+    public RunScriptJob(final Task task, final Executor executor, final Path nodeInstallDirectory,
+        @Nullable final Path yarnInstallDirectory, final String script, final String osName) {
         super(task);
         this.executor = executor;
         this.nodeInstallDirectory = nodeInstallDirectory;

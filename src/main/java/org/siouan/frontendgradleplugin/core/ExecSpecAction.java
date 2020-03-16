@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.gradle.api.Action;
 import org.gradle.process.ExecSpec;
@@ -29,12 +30,12 @@ class ExecSpecAction implements Action<ExecSpec> {
     /**
      * Directory where the Node distribution is installed.
      */
-    private final File nodeInstallDirectory;
+    private final Path nodeInstallDirectory;
 
     /**
      * Directory where the Yarn distribution is installed.
      */
-    private final File yarnInstallDirectory;
+    private final Path yarnInstallDirectory;
 
     /**
      * Name of the O/S.
@@ -72,8 +73,9 @@ class ExecSpecAction implements Action<ExecSpec> {
      * @param osName Name of the O/S.
      * @throws ExecutableNotFoundException When an executable cannot be found (Node, NPM, Yarn).
      */
-    public ExecSpecAction(final Executor executor, final File nodeInstallDirectory, final File yarnInstallDirectory,
-        final String osName, final String script, final Consumer<ExecSpec> afterConfigured)
+    public ExecSpecAction(final Executor executor, final Path nodeInstallDirectory,
+        @Nullable final Path yarnInstallDirectory, final String osName, final String script,
+        final Consumer<ExecSpec> afterConfigured)
         throws ExecutableNotFoundException {
         this.executor = executor;
         this.nodeInstallDirectory = nodeInstallDirectory;
@@ -82,18 +84,18 @@ class ExecSpecAction implements Action<ExecSpec> {
         this.script = script;
         this.afterConfigured = afterConfigured;
 
-        nodeExecutablePath = Utils.getNodeExecutablePath(nodeInstallDirectory.toPath(), osName)
+        nodeExecutablePath = Utils.getNodeExecutablePath(nodeInstallDirectory, osName)
             .orElseThrow(ExecutableNotFoundException::newNodeExecutableNotFoundException);
         switch (executor) {
         case NODE:
             scriptExecutablePath = nodeExecutablePath;
             break;
         case NPM:
-            scriptExecutablePath = Utils.getNpmExecutablePath(nodeInstallDirectory.toPath(), osName)
+            scriptExecutablePath = Utils.getNpmExecutablePath(nodeInstallDirectory, osName)
                 .orElseThrow(ExecutableNotFoundException::newNpmExecutableNotFoundException);
             break;
         case YARN:
-            scriptExecutablePath = Utils.getYarnExecutablePath(yarnInstallDirectory.toPath(), osName)
+            scriptExecutablePath = Utils.getYarnExecutablePath(yarnInstallDirectory, osName)
                 .orElseThrow(ExecutableNotFoundException::newYarnExecutableNotFoundException);
             break;
         default:
@@ -153,7 +155,7 @@ class ExecSpecAction implements Action<ExecSpec> {
      *
      * @return Directory.
      */
-    public File getNodeInstallDirectory() {
+    public Path getNodeInstallDirectory() {
         return nodeInstallDirectory;
     }
 
@@ -162,7 +164,7 @@ class ExecSpecAction implements Action<ExecSpec> {
      *
      * @return Directory.
      */
-    public File getYarnInstallDirectory() {
+    public Path getYarnInstallDirectory() {
         return yarnInstallDirectory;
     }
 

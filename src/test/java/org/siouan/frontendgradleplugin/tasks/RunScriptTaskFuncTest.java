@@ -1,9 +1,11 @@
 package org.siouan.frontendgradleplugin.tasks;
 
+import static org.siouan.frontendgradleplugin.util.Helper.assertTaskFailed;
 import static org.siouan.frontendgradleplugin.util.Helper.assertTaskSkipped;
 import static org.siouan.frontendgradleplugin.util.Helper.assertTaskSuccess;
 import static org.siouan.frontendgradleplugin.util.Helper.assertTaskUpToDate;
 import static org.siouan.frontendgradleplugin.util.Helper.runGradle;
+import static org.siouan.frontendgradleplugin.util.Helper.runGradleAndExpectFailure;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,6 +37,23 @@ class RunScriptTaskFuncTest {
     @BeforeEach
     void setUp() {
         projectDirectory = tmpDirectory.toPath();
+    }
+
+    @Test
+    void shouldFailRunningFrontendScriptWhenScriptIsUndefined() throws IOException, URISyntaxException {
+        Files.copy(new File(getClass().getClassLoader().getResource("package-npm.json").toURI()).toPath(),
+            projectDirectory.resolve("package.json"));
+        final Map<String, Object> properties = new HashMap<>();
+        final String customTaskName = "e2e";
+        final StringBuilder customTaskDefinition = new StringBuilder("tasks.register('");
+        customTaskDefinition.append(customTaskName);
+        customTaskDefinition.append("', org.siouan.frontendgradleplugin.tasks.RunScriptTask) {\n");
+        customTaskDefinition.append("}\n");
+        Helper.createBuildFile(projectDirectory, properties, customTaskDefinition.toString());
+
+        final BuildResult result = runGradleAndExpectFailure(projectDirectory, customTaskName);
+
+        assertTaskFailed(result, customTaskName);
     }
 
     @Test
