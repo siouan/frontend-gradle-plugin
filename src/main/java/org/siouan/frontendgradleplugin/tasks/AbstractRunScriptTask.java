@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.logging.LogLevel;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputDirectory;
@@ -26,6 +27,11 @@ public abstract class AbstractRunScriptTask extends DefaultTask {
      * Directory where the 'package.json' file is located.
      */
     final Property<File> packageJsonDirectory;
+
+    /**
+     * Default logging level.
+     */
+    final Property<LogLevel> loggingLevel;
 
     /**
      * Directory where the Node distribution is installed.
@@ -55,6 +61,7 @@ public abstract class AbstractRunScriptTask extends DefaultTask {
 
     AbstractRunScriptTask(boolean failOnMissingScriptEnabled) {
         packageJsonDirectory = getProject().getObjects().property(File.class);
+        loggingLevel = getProject().getObjects().property(LogLevel.class);
         nodeInstallDirectory = getProject().getObjects().directoryProperty();
         yarnEnabled = getProject().getObjects().property(Boolean.class);
         yarnInstallDirectory = getProject().getObjects().directoryProperty();
@@ -66,6 +73,12 @@ public abstract class AbstractRunScriptTask extends DefaultTask {
     @Optional
     public Property<File> getPackageJsonDirectory() {
         return packageJsonDirectory;
+    }
+
+    @Input
+    @Optional
+    public Property<LogLevel> getLoggingLevel() {
+        return loggingLevel;
     }
 
     @InputDirectory
@@ -95,7 +108,7 @@ public abstract class AbstractRunScriptTask extends DefaultTask {
     @TaskAction
     public void execute() throws MissingScriptException, ExecutableNotFoundException {
         if (script.isPresent()) {
-            new RunScriptJob(this, packageJsonDirectory.map(File::toPath).get(), getExecutionType(),
+            new RunScriptJob(this, loggingLevel.get(), packageJsonDirectory.map(File::toPath).get(), getExecutionType(),
                 nodeInstallDirectory.getAsFile().map(File::toPath).get(),
                 yarnInstallDirectory.getAsFile().map(File::toPath).getOrNull(), script.get(),
                 Utils.getSystemOsName()).run();

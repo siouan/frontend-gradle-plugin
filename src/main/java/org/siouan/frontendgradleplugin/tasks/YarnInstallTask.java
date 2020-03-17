@@ -5,6 +5,7 @@ import java.nio.file.Path;
 
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.logging.LogLevel;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
@@ -23,6 +24,8 @@ import org.siouan.frontendgradleplugin.core.archivers.ArchiverFactoryImpl;
  */
 public class YarnInstallTask extends DefaultTask {
 
+    final Property<LogLevel> loggingLevel;
+
     /**
      * Version of the distribution to download.
      */
@@ -39,9 +42,16 @@ public class YarnInstallTask extends DefaultTask {
     private final Property<String> yarnDistributionUrl;
 
     public YarnInstallTask() {
+        loggingLevel = getProject().getObjects().property(LogLevel.class);
         yarnVersion = getProject().getObjects().property(String.class);
         yarnInstallDirectory = getProject().getObjects().directoryProperty();
         yarnDistributionUrl = getProject().getObjects().property(String.class);
+    }
+
+    @Input
+    @Optional
+    public Property<LogLevel> getLoggingLevel() {
+        return loggingLevel;
     }
 
     @Input
@@ -69,8 +79,9 @@ public class YarnInstallTask extends DefaultTask {
     @TaskAction
     public void execute() throws DistributionInstallerException {
         final Path installDirectory = yarnInstallDirectory.getAsFile().map(File::toPath).get();
-        final DistributionInstallerSettings settings = new DistributionInstallerSettings(this, Utils.getSystemOsName(),
-            getTemporaryDir().toPath(), new YarnDistributionUrlResolver(yarnVersion.get(), yarnDistributionUrl.getOrNull()),
+        final DistributionInstallerSettings settings = new DistributionInstallerSettings(this, loggingLevel.get(),
+            Utils.getSystemOsName(), getTemporaryDir().toPath(),
+            new YarnDistributionUrlResolver(yarnVersion.get(), yarnDistributionUrl.getOrNull()),
             new DownloaderImpl(getTemporaryDir().toPath()), null, new ArchiverFactoryImpl(), installDirectory);
         new DistributionInstaller(settings).install();
     }

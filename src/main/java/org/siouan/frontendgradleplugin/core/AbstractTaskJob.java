@@ -1,6 +1,7 @@
 package org.siouan.frontendgradleplugin.core;
 
 import org.gradle.api.Task;
+import org.gradle.api.logging.LogLevel;
 
 /**
  * Class that provides common utilities for this plugin's jobs.
@@ -9,13 +10,17 @@ abstract class AbstractTaskJob {
 
     final Task task;
 
+    final LogLevel loggingLevel;
+
     /**
      * Builds a job instance related to the given task.
      *
      * @param task Task.
+     * @param loggingLevel Default logging level.
      */
-    AbstractTaskJob(final Task task) {
+    AbstractTaskJob(final Task task, final LogLevel loggingLevel) {
         this.task = task;
+        this.loggingLevel = loggingLevel;
     }
 
     private String formatMessage(final String message) {
@@ -32,15 +37,6 @@ abstract class AbstractTaskJob {
     }
 
     /**
-     * Shortcut to log a LIFECYCLE message with the task's logger.
-     *
-     * @param message Message.
-     */
-    void logLifecycle(final String message) {
-        task.getLogger().lifecycle(formatMessage(message));
-    }
-
-    /**
      * Shortcut to log a WARN message with the task's logger.
      *
      * @param message Message.
@@ -48,5 +44,14 @@ abstract class AbstractTaskJob {
      */
     void logWarn(final String message, final Throwable throwable) {
         task.getLogger().warn(formatMessage(message), throwable);
+    }
+
+    /**
+     * Shortcut to log a message with the task default log level.
+     *
+     * @param message Message.
+     */
+    void logMessage(final String message) {
+        task.getLogger().log(loggingLevel, formatMessage(message));
     }
 }

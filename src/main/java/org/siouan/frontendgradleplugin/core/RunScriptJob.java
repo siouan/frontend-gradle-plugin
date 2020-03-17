@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import javax.annotation.Nullable;
 
 import org.gradle.api.Task;
+import org.gradle.api.logging.LogLevel;
 
 /**
  * This abstract class provides the reusable logic to run a NPM/Yarn script.
@@ -44,6 +45,7 @@ public class RunScriptJob extends AbstractTaskJob {
      * Builds a job to run a script.
      *
      * @param task Parent task.
+     * @param loggingLevel Default logging level.
      * @param packageJsonDirectory Directory where the 'package.json' file is located.
      * @param executor Executor to use to run the script.
      * @param nodeInstallDirectory Node install directory.
@@ -51,10 +53,10 @@ public class RunScriptJob extends AbstractTaskJob {
      * @param script The script run by the job.
      * @param osName O/S name.
      */
-    public RunScriptJob(final Task task, final Path packageJsonDirectory, final Executor executor,
-        final Path nodeInstallDirectory, @Nullable final Path yarnInstallDirectory, final String script,
-        final String osName) {
-        super(task);
+    public RunScriptJob(final Task task, final LogLevel loggingLevel, final Path packageJsonDirectory,
+        final Executor executor, final Path nodeInstallDirectory, @Nullable final Path yarnInstallDirectory,
+        final String script, final String osName) {
+        super(task, loggingLevel);
         this.packageJsonDirectory = packageJsonDirectory;
         this.executor = executor;
         this.nodeInstallDirectory = nodeInstallDirectory;
@@ -69,7 +71,7 @@ public class RunScriptJob extends AbstractTaskJob {
             .exec(new ExecSpecAction(packageJsonDirectory, executor, nodeInstallDirectory, yarnInstallDirectory, osName,
                 script, execSpec -> {
                 logDebug(execSpec.getEnvironment().toString());
-                logLifecycle(
+                logMessage(
                     "Running '" + execSpec.getExecutable() + ' ' + String.join(" ", execSpec.getArgs()) + '\'');
             }))
             .rethrowFailure()

@@ -5,6 +5,7 @@ import java.util.function.BiPredicate;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
+import org.gradle.api.logging.LogLevel;
 import org.gradle.api.plugins.BasePlugin;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.api.tasks.TaskProvider;
@@ -97,6 +98,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         final FrontendExtension extension = project.getExtensions()
             .create(EXTENSION_NAME, FrontendExtension.class, project);
         extension.getPackageJsonDirectory().convention(project.getLayout().getProjectDirectory().getAsFile());
+        extension.getLoggingLevel().convention(LogLevel.LIFECYCLE);
         extension.getNodeInstallDirectory()
             .convention(project.getLayout().getProjectDirectory().dir(DEFAULT_NODE_INSTALL_DIRNAME));
         extension.getYarnEnabled().convention(false);
@@ -138,6 +140,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
     private void configureNodeInstallTask(final NodeInstallTask task, final FrontendExtension extension) {
         task.setGroup(TASK_GROUP);
         task.setDescription("Downloads and installs a Node distribution.");
+        task.getLoggingLevel().set(extension.getLoggingLevel());
         task.getNodeVersion().set(extension.getNodeVersion());
         task.getNodeDistributionUrl().set(extension.getNodeDistributionUrl());
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
@@ -152,6 +155,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
     private void configureYarnInstallTask(final YarnInstallTask task, final FrontendExtension extension) {
         task.setGroup(TASK_GROUP);
         task.setDescription("Downloads and installs a Yarn distribution.");
+        task.getLoggingLevel().set(extension.getLoggingLevel());
         task.getYarnVersion().set(extension.getYarnVersion());
         task.getYarnDistributionUrl().set(extension.getYarnDistributionUrl());
         task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
@@ -168,6 +172,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.setGroup(TASK_GROUP);
         task.setDescription("Installs/updates frontend dependencies.");
         task.getPackageJsonDirectory().set(extension.getPackageJsonDirectory());
+        task.getLoggingLevel().set(extension.getLoggingLevel());
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
         task.getYarnEnabled().set(extension.getYarnEnabled());
         if (task.getYarnEnabled().get()) {
@@ -186,6 +191,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.setGroup(TASK_GROUP);
         task.setDescription("Cleans frontend resources outside the build directory by running a specific script.");
         task.getPackageJsonDirectory().set(extension.getPackageJsonDirectory());
+        task.getLoggingLevel().set(extension.getLoggingLevel());
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
         task.getYarnEnabled().set(extension.getYarnEnabled());
         if (task.getYarnEnabled().get()) {
@@ -205,6 +211,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.setGroup(TASK_GROUP);
         task.setDescription("Checks frontend by running a specific script.");
         task.getPackageJsonDirectory().set(extension.getPackageJsonDirectory());
+        task.getLoggingLevel().set(extension.getLoggingLevel());
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
         task.getYarnEnabled().set(extension.getYarnEnabled());
         if (task.getYarnEnabled().get()) {
@@ -224,6 +231,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.setGroup(TASK_GROUP);
         task.setDescription("Assembles the frontend by running a specific script.");
         task.getPackageJsonDirectory().set(extension.getPackageJsonDirectory());
+        task.getLoggingLevel().set(extension.getLoggingLevel());
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
         task.getYarnEnabled().set(extension.getYarnEnabled());
         if (task.getYarnEnabled().get()) {

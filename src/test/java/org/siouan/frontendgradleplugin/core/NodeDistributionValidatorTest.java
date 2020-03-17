@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.gradle.api.Task;
+import org.gradle.api.logging.LogLevel;
 import org.gradle.api.logging.Logger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,7 +60,8 @@ class NodeDistributionValidatorTest {
         when(task.getLogger()).thenReturn(logger);
         final Path installDirectory = temporaryDirectory.resolve("install");
         Files.createDirectory(installDirectory);
-        validator = new NodeDistributionValidator(task, downloader, checksumReader, fileHasher, installDirectory);
+        validator = new NodeDistributionValidator(task, LogLevel.LIFECYCLE, downloader, checksumReader, fileHasher,
+            installDirectory);
     }
 
     @Test
