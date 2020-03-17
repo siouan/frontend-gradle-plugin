@@ -96,6 +96,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
 
         final FrontendExtension extension = project.getExtensions()
             .create(EXTENSION_NAME, FrontendExtension.class, project);
+        extension.getPackageJsonDirectory().convention(project.getLayout().getProjectDirectory().getAsFile());
         extension.getNodeInstallDirectory()
             .convention(project.getLayout().getProjectDirectory().dir(DEFAULT_NODE_INSTALL_DIRNAME));
         extension.getYarnEnabled().convention(false);
@@ -166,8 +167,9 @@ public class FrontendGradlePlugin implements Plugin<Project> {
     private void configureInstallTask(final InstallTask task, final FrontendExtension extension) {
         task.setGroup(TASK_GROUP);
         task.setDescription("Installs/updates frontend dependencies.");
-        task.getYarnEnabled().set(extension.getYarnEnabled());
+        task.getPackageJsonDirectory().set(extension.getPackageJsonDirectory());
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
+        task.getYarnEnabled().set(extension.getYarnEnabled());
         if (task.getYarnEnabled().get()) {
             task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
         }
@@ -183,8 +185,9 @@ public class FrontendGradlePlugin implements Plugin<Project> {
     private void configureCleanTask(final CleanTask task, final FrontendExtension extension) {
         task.setGroup(TASK_GROUP);
         task.setDescription("Cleans frontend resources outside the build directory by running a specific script.");
-        task.getYarnEnabled().set(extension.getYarnEnabled());
+        task.getPackageJsonDirectory().set(extension.getPackageJsonDirectory());
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
+        task.getYarnEnabled().set(extension.getYarnEnabled());
         if (task.getYarnEnabled().get()) {
             task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
         }
@@ -201,8 +204,9 @@ public class FrontendGradlePlugin implements Plugin<Project> {
     private void configureCheckTask(final CheckTask task, final FrontendExtension extension) {
         task.setGroup(TASK_GROUP);
         task.setDescription("Checks frontend by running a specific script.");
-        task.getYarnEnabled().set(extension.getYarnEnabled());
+        task.getPackageJsonDirectory().set(extension.getPackageJsonDirectory());
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
+        task.getYarnEnabled().set(extension.getYarnEnabled());
         if (task.getYarnEnabled().get()) {
             task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
         }
@@ -219,8 +223,9 @@ public class FrontendGradlePlugin implements Plugin<Project> {
     private void configureAssembleTask(final AssembleTask task, final FrontendExtension extension) {
         task.setGroup(TASK_GROUP);
         task.setDescription("Assembles the frontend by running a specific script.");
-        task.getYarnEnabled().set(extension.getYarnEnabled());
+        task.getPackageJsonDirectory().set(extension.getPackageJsonDirectory());
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
+        task.getYarnEnabled().set(extension.getYarnEnabled());
         if (task.getYarnEnabled().get()) {
             task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
         }

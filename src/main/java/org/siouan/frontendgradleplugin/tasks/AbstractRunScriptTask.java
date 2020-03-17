@@ -1,11 +1,11 @@
 package org.siouan.frontendgradleplugin.tasks;
 
 import java.io.File;
-import java.nio.file.Path;
 
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.Property;
+import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.Optional;
@@ -23,14 +23,19 @@ import org.siouan.frontendgradleplugin.core.Utils;
 public abstract class AbstractRunScriptTask extends DefaultTask {
 
     /**
-     * Whether a Yarn distribution shall be downloaded and installed.
+     * Directory where the 'package.json' file is located.
      */
-    final Property<Boolean> yarnEnabled;
+    final Property<File> packageJsonDirectory;
 
     /**
      * Directory where the Node distribution is installed.
      */
     final DirectoryProperty nodeInstallDirectory;
+
+    /**
+     * Whether a Yarn distribution shall be downloaded and installed.
+     */
+    final Property<Boolean> yarnEnabled;
 
     /**
      * Directory where the Yarn distribution is installed.
@@ -49,11 +54,18 @@ public abstract class AbstractRunScriptTask extends DefaultTask {
     final boolean failOnMissingScriptEnabled;
 
     AbstractRunScriptTask(boolean failOnMissingScriptEnabled) {
-        yarnEnabled = getProject().getObjects().property(Boolean.class);
+        packageJsonDirectory = getProject().getObjects().property(File.class);
         nodeInstallDirectory = getProject().getObjects().directoryProperty();
+        yarnEnabled = getProject().getObjects().property(Boolean.class);
         yarnInstallDirectory = getProject().getObjects().directoryProperty();
         script = getProject().getObjects().property(String.class);
         this.failOnMissingScriptEnabled = failOnMissingScriptEnabled;
+    }
+
+    @Input
+    @Optional
+    public Property<File> getPackageJsonDirectory() {
+        return packageJsonDirectory;
     }
 
     @InputDirectory
@@ -82,15 +94,11 @@ public abstract class AbstractRunScriptTask extends DefaultTask {
      */
     @TaskAction
     public void execute() throws MissingScriptException, ExecutableNotFoundException {
-        execute(nodeInstallDirectory.getAsFile().map(File::toPath).get(),
-            yarnInstallDirectory.getAsFile().map(File::toPath).getOrNull());
-    }
-
-    protected void execute(final Path nodeInstallDirectoryPath, final Path yarnInstallDirectoryPath)
-        throws MissingScriptException, ExecutableNotFoundException {
         if (script.isPresent()) {
-            new RunScriptJob(this, getExecutionType(), nodeInstallDirectoryPath,
-                yarnInstallDirectoryPath, script.get(), Utils.getSystemOsName()).run();
+            new RunScriptJob(this, packageJsonDirectory.map(File::toPath).get(), getExecutionType(),
+                nodeInstallDirectory.getAsFile().map(File::toPath).get(),
+                yarnInstallDirectory.getAsFile().map(File::toPath).getOrNull(), script.get(),
+                Utils.getSystemOsName()).run();
         } else if (failOnMissingScriptEnabled) {
             throw new MissingScriptException();
         }

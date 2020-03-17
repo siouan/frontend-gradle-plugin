@@ -130,6 +130,14 @@ All settings are introduced hereafter, with default value for each property.
 ```groovy
 // build.gradle
 frontend {
+    // GENERAL SETTINGS
+    // [OPTIONAL] Location of the directory containing the 'package.json' file. By default, this
+    // file is considered to be located in the project's directory, at the same level than this
+    // 'build.gradle[.kts]' file. If the 'package.json' file is located in another directory, it is
+    // recommended either to set up a Gradle multi-project build, or to set this property with the
+    // appropriate directory.
+    packageJsonDirectory = file("$projectDir")
+
     // NODE SETTINGS
     // Node version, used to build the URL to download the corresponding distribution, if the
     // 'nodeDistributionUrl' property is not set.
@@ -197,6 +205,7 @@ frontend {
 ```kotlin
 // build.gradle.kts
 frontend {
+    packageJsonDirectory.set(project.layout.projectDirectory)
     nodeVersion.set("12.16.1")
     nodeDistributionUrl.set("https://nodejs.org/dist/vX.Y.Z/node-vX.Y.Z-win-x64.zip")
     nodeInstallDirectory.set(project.layout.projectDirectory.dir("node"))
@@ -527,7 +536,7 @@ IDE, and their support to this project.
 
 With their feedback, plugin improvement is possible. Special thanks to:
 
-@andreaschiona, @byxor, @ChFlick, @ckosloski, @mike-howell, @rolaca11, @TapaiBalazs
+@andreaschiona, @byxor, @ChFlick, @ckosloski, @davidkron, @mike-howell, @rolaca11, @TapaiBalazs
 
 [contributing]: <CONTRIBUTING.md> (Contributing to this project)
 [frontend-maven-plugin]: <https://github.com/eirslett/frontend-maven-plugin> (Frontend Maven plugin)
