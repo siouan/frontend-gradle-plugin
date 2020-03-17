@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.gradle.api.Task;
+import org.gradle.api.logging.LogLevel;
 
 /**
  * Validates a Node distribution by comparing its SHA-256 hash against the one officially published.
@@ -37,14 +38,15 @@ public class NodeDistributionValidator extends AbstractTaskJob implements Distri
      * Builds a validator of a Node distribution.
      *
      * @param task Refering task.
+     * @param loggingLevel Default logging level.
      * @param downloader Downloader.
      * @param checksumReader Reader of checksum's file.
      * @param fileHasher Hasher.
      * @param installDirectory Install directory.
      */
-    public NodeDistributionValidator(final Task task, final Downloader downloader,
+    public NodeDistributionValidator(final Task task, final LogLevel loggingLevel, final Downloader downloader,
         final NodeDistributionChecksumReader checksumReader, final FileHasher fileHasher, final Path installDirectory) {
-        super(task);
+        super(task, loggingLevel);
         this.downloader = downloader;
         this.checksumReader = checksumReader;
         this.fileHasher = fileHasher;
@@ -64,11 +66,11 @@ public class NodeDistributionValidator extends AbstractTaskJob implements Distri
             final URL checksumUrl = URI.create(checksumUrlAsString).toURL();
 
             // Download the checksum file
-            logLifecycle("Downloading checksums at '" + checksumUrlAsString + "'");
+            logMessage("Downloading checksums at '" + checksumUrlAsString + "'");
             downloader.download(checksumUrl, checksumFile);
 
             // Verify the distribution integrity
-            logLifecycle("Verifying distribution integrity");
+            logMessage("Verifying distribution integrity");
             final String expectedHash = checksumReader
                 .readHash(checksumFile, distributionFile.getFileName().toString());
             if (!fileHasher.hash(distributionFile).equals(expectedHash)) {

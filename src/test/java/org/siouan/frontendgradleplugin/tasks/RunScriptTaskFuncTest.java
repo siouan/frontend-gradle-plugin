@@ -16,6 +16,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.gradle.api.logging.LogLevel;
 import org.gradle.testkit.runner.BuildResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -62,6 +63,7 @@ class RunScriptTaskFuncTest {
             packageJsonDirectory.resolve("package.json"));
         final Map<String, Object> properties = new HashMap<>();
         properties.put("packageJsonDirectory", packageJsonDirectory);
+        properties.put("loggingLevel", LogLevel.LIFECYCLE);
         properties.put("nodeVersion", "12.16.1");
         properties.put("nodeInstallDirectory", projectDirectory.resolve("node-dist"));
         final String customTaskName = "e2e";

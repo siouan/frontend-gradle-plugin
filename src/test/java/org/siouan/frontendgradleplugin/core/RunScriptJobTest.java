@@ -12,6 +12,7 @@ import java.nio.file.Path;
 
 import org.gradle.api.Project;
 import org.gradle.api.Task;
+import org.gradle.api.logging.LogLevel;
 import org.gradle.process.ExecResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,7 +51,7 @@ class RunScriptJobTest {
         Files.createFile(binDirectory.resolve("yarn.cmd"));
         final Executor executor = Executor.YARN;
         final String script = SCRIPT;
-        final RunScriptJob job = new RunScriptJob(task, temporaryDirectory, executor, temporaryDirectory,
+        final RunScriptJob job = new RunScriptJob(task, LogLevel.LIFECYCLE, temporaryDirectory, executor, temporaryDirectory,
             temporaryDirectory, script, "Windows NT");
         final ExecResult execResult = mock(ExecResult.class);
         when(project.exec(any(ExecSpecAction.class))).thenReturn(execResult);

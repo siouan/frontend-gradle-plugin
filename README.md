@@ -138,6 +138,12 @@ frontend {
     // appropriate directory.
     packageJsonDirectory = file("$projectDir")
 
+    // [OPTIONAL] Default level used by the plugin to log messages in Gradle. This property allows
+    // to set a specific level for this plugin only. It does not take precedence over Gradle
+    // logging level at execution, i.e. it must be higher or equal than the logging level set on
+    // the command line so as messages are visible.
+    loggingLevel = LogLevel.LIFECYCLE
+
     // NODE SETTINGS
     // Node version, used to build the URL to download the corresponding distribution, if the
     // 'nodeDistributionUrl' property is not set.
@@ -206,6 +212,7 @@ frontend {
 // build.gradle.kts
 frontend {
     packageJsonDirectory.set(project.layout.projectDirectory)
+    loggingLevel.set(LogLevel.LIFECYCLE)
     nodeVersion.set("12.16.1")
     nodeDistributionUrl.set("https://nodejs.org/dist/vX.Y.Z/node-vX.Y.Z-win-x64.zip")
     nodeInstallDirectory.set(project.layout.projectDirectory.dir("node"))

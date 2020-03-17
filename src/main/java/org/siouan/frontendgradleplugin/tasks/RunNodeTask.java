@@ -27,6 +27,7 @@ public class RunNodeTask extends AbstractRunScriptTask {
         super(true);
         final FrontendExtension extension = getProject().getExtensions().findByType(FrontendExtension.class);
         packageJsonDirectory.set(extension.getPackageJsonDirectory());
+        loggingLevel.set(extension.getLoggingLevel());
         nodeInstallDirectory.set(extension.getNodeInstallDirectory());
     }
 

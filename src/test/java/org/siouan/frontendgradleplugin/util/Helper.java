@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
+import org.gradle.api.logging.LogLevel;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.BuildTask;
 import org.gradle.testkit.runner.GradleRunner;
@@ -202,7 +203,13 @@ public final class Helper {
             buildFileWriter.append(" = file('");
             buildFileWriter.append(value.toString().replace('\\', '/'));
             buildFileWriter.append("')");
-        } else {
+        } else if (value instanceof LogLevel) {
+            buildFileWriter
+                .append(" = ")
+                .append(LogLevel.class.getSimpleName())
+                .append('.')
+                .append(value.toString());
+        } else if (value != null) {
             buildFileWriter.append(" = '");
             buildFileWriter.append(value.toString());
             buildFileWriter.append('\'');

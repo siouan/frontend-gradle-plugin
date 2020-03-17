@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.util.Optional;
 
 import org.gradle.api.Task;
+import org.gradle.api.logging.LogLevel;
 import org.siouan.frontendgradleplugin.core.archivers.ArchiverFactory;
 
 /**
@@ -14,6 +15,11 @@ import org.siouan.frontendgradleplugin.core.archivers.ArchiverFactory;
 public class DistributionInstallerSettings {
 
     private final Task task;
+
+    /**
+     * Default logging level.
+     */
+    private final LogLevel loggingLevel;
 
     private final String osName;
 
@@ -48,6 +54,7 @@ public class DistributionInstallerSettings {
      * Builds an installer.
      *
      * @param task Related Gradle task.
+     * @param loggingLevel Default logging level.
      * @param osName O/S name.
      * @param temporaryDirectory Directory where the distribution being downloaded will be temporarily stored.
      * @param urlResolver Resolver of the download URL.
@@ -56,10 +63,11 @@ public class DistributionInstallerSettings {
      * @param archiverFactory Factory providing archivers.
      * @param installDirectory Install directory.
      */
-    public DistributionInstallerSettings(final Task task, final String osName, final Path temporaryDirectory,
-        final DistributionUrlResolver urlResolver, final Downloader downloader, final DistributionValidator validator,
-        final ArchiverFactory archiverFactory, final Path installDirectory) {
+    public DistributionInstallerSettings(final Task task, final LogLevel loggingLevel, final String osName,
+        final Path temporaryDirectory, final DistributionUrlResolver urlResolver, final Downloader downloader,
+        final DistributionValidator validator, final ArchiverFactory archiverFactory, final Path installDirectory) {
         this.task = task;
+        this.loggingLevel = loggingLevel;
         this.osName = osName;
         this.temporaryDirectory = temporaryDirectory;
         this.urlResolver = urlResolver;
@@ -76,6 +84,15 @@ public class DistributionInstallerSettings {
      */
     public Task getTask() {
         return task;
+    }
+
+    /**
+     * Gets the default logging level.
+     *
+     * @return Logging level.
+     */
+    public LogLevel getLoggingLevel() {
+        return loggingLevel;
     }
 
     /**

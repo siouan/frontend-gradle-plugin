@@ -14,6 +14,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.gradle.api.logging.LogLevel;
 import org.gradle.testkit.runner.BuildResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -60,6 +61,7 @@ class RunNodeTaskFuncTest {
         final Path tmpScriptPath = tmpDirectory.toPath().resolve("script.js");
         createScriptFile(tmpScriptPath);
         final Map<String, Object> properties = new HashMap<>();
+        properties.put("loggingLevel", LogLevel.INFO);
         properties.put("nodeVersion", "12.16.1");
         final String customTaskName = "helloMyFriend";
         final String customTaskDefinition = "tasks.register('"
