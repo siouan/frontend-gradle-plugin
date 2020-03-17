@@ -198,6 +198,10 @@ public final class Helper {
         } else if ((value instanceof Boolean) || (value instanceof Number)) {
             buildFileWriter.append(" = ");
             buildFileWriter.append(value.toString());
+        } else if (value instanceof Path) {
+            buildFileWriter.append(" = file('");
+            buildFileWriter.append(value.toString().replace('\\', '/'));
+            buildFileWriter.append("')");
         } else {
             buildFileWriter.append(" = '");
             buildFileWriter.append(value.toString());

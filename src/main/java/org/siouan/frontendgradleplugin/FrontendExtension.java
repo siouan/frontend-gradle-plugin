@@ -1,5 +1,7 @@
 package org.siouan.frontendgradleplugin;
 
+import java.io.File;
+
 import org.gradle.api.Project;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.Property;
@@ -8,6 +10,11 @@ import org.gradle.api.provider.Property;
  * Extension providing configuration properties for frontend tasks.
  */
 public class FrontendExtension {
+
+    /**
+     * Directory where the 'package.json' file is located.
+     */
+    private final Property<File> packageJsonDirectory;
 
     /**
      * Whether a Yarn distribution shall be downloaded and installed.
@@ -65,10 +72,11 @@ public class FrontendExtension {
     private final Property<String> checkScript;
 
     public FrontendExtension(final Project project) {
-        yarnEnabled = project.getObjects().property(Boolean.class);
+        packageJsonDirectory = project.getObjects().property(File.class);
         nodeVersion = project.getObjects().property(String.class);
         nodeInstallDirectory = project.getObjects().directoryProperty();
         nodeDistributionUrl = project.getObjects().property(String.class);
+        yarnEnabled = project.getObjects().property(Boolean.class);
         yarnVersion = project.getObjects().property(String.class);
         yarnInstallDirectory = project.getObjects().directoryProperty();
         yarnDistributionUrl = project.getObjects().property(String.class);
@@ -76,6 +84,10 @@ public class FrontendExtension {
         cleanScript = project.getObjects().property(String.class);
         assembleScript = project.getObjects().property(String.class);
         checkScript = project.getObjects().property(String.class);
+    }
+
+    public Property<File> getPackageJsonDirectory() {
+        return packageJsonDirectory;
     }
 
     public Property<Boolean> getYarnEnabled() {

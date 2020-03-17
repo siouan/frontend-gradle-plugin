@@ -26,11 +26,8 @@ public class RunNodeTask extends AbstractRunScriptTask {
     public RunNodeTask() {
         super(true);
         final FrontendExtension extension = getProject().getExtensions().findByType(FrontendExtension.class);
-        yarnEnabled.set(extension.getYarnEnabled());
+        packageJsonDirectory.set(extension.getPackageJsonDirectory());
         nodeInstallDirectory.set(extension.getNodeInstallDirectory());
-        if (extension.getYarnEnabled().get()) {
-            yarnInstallDirectory.set(extension.getYarnInstallDirectory());
-        }
     }
 
     @Input

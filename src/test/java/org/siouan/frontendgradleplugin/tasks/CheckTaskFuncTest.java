@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,7 +42,7 @@ class CheckTaskFuncTest {
 
     @Test
     void shouldDoNothingWhenScriptIsNotDefined() throws IOException, URISyntaxException {
-        Files.copy(new File(getClass().getClassLoader().getResource("package-npm.json").toURI()).toPath(),
+        Files.copy(Paths.get(getClass().getClassLoader().getResource("package-npm.json").toURI()),
             projectDirectory.resolve("package.json"));
         final Map<String, Object> properties = new HashMap<>();
         properties.put("nodeVersion", "10.16.0");
@@ -58,7 +59,7 @@ class CheckTaskFuncTest {
 
     @Test
     void shouldCheckWithoutFrontendTasks() throws IOException, URISyntaxException {
-        Files.copy(new File(getClass().getClassLoader().getResource("package-npm.json").toURI()).toPath(),
+        Files.copy(Paths.get(getClass().getClassLoader().getResource("package-npm.json").toURI()),
             projectDirectory.resolve("package.json"));
         final Map<String, Object> properties = new HashMap<>();
         properties.put("nodeVersion", "10.16.0");
@@ -76,7 +77,7 @@ class CheckTaskFuncTest {
 
     @Test
     void shouldCheckFrontendWithNpmOrYarn() throws IOException, URISyntaxException {
-        Files.copy(new File(getClass().getClassLoader().getResource("package-npm.json").toURI()).toPath(),
+        Files.copy(Paths.get(getClass().getClassLoader().getResource("package-npm.json").toURI()),
             projectDirectory.resolve("package.json"));
         final Map<String, Object> properties = new HashMap<>();
         properties.put("nodeVersion", "10.16.0");

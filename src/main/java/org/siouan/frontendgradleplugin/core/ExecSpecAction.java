@@ -23,6 +23,11 @@ class ExecSpecAction implements Action<ExecSpec> {
     public static final String CMD_RUN_EXIT_FLAG = "/c";
 
     /**
+     * Directory where the 'package.json' file is located.
+     */
+    private final Path packageJsonDirectory;
+
+    /**
      * Whether the script shall be run with Yarn instead of NPM.
      */
     private final Executor executor;
@@ -65,6 +70,7 @@ class ExecSpecAction implements Action<ExecSpec> {
     /**
      * Builds an action to run a frontend script on the local platform.
      *
+     * @param packageJsonDirectory Directory where the 'package.json' file is located.
      * @param executor Type of execution.
      * @param nodeInstallDirectory Directory where the Node distribution is installed.
      * @param yarnInstallDirectory Directory where the Yarn distribution is installed.
@@ -73,10 +79,11 @@ class ExecSpecAction implements Action<ExecSpec> {
      * @param osName Name of the O/S.
      * @throws ExecutableNotFoundException When an executable cannot be found (Node, NPM, Yarn).
      */
-    public ExecSpecAction(final Executor executor, final Path nodeInstallDirectory,
+    public ExecSpecAction(final Path packageJsonDirectory, final Executor executor, final Path nodeInstallDirectory,
         @Nullable final Path yarnInstallDirectory, final String osName, final String script,
         final Consumer<ExecSpec> afterConfigured)
         throws ExecutableNotFoundException {
+        this.packageJsonDirectory = packageJsonDirectory;
         this.executor = executor;
         this.nodeInstallDirectory = nodeInstallDirectory;
         this.yarnInstallDirectory = yarnInstallDirectory;
@@ -110,6 +117,8 @@ class ExecSpecAction implements Action<ExecSpec> {
      */
     @Override
     public void execute(@Nonnull final ExecSpec execSpec) {
+        execSpec.setWorkingDir(packageJsonDirectory);
+
         final String executable;
         final List<String> args = new ArrayList<>();
         if (Utils.isWindowsOs(osName)) {

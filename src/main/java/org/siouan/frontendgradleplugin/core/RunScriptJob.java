@@ -11,6 +11,11 @@ import org.gradle.api.Task;
 public class RunScriptJob extends AbstractTaskJob {
 
     /**
+     * Directory where the 'package.json' file is located.
+     */
+    private final Path packageJsonDirectory;
+
+    /**
      * Executor use to run the script.
      */
     private final Executor executor;
@@ -39,15 +44,18 @@ public class RunScriptJob extends AbstractTaskJob {
      * Builds a job to run a script.
      *
      * @param task Parent task.
+     * @param packageJsonDirectory Directory where the 'package.json' file is located.
      * @param executor Executor to use to run the script.
      * @param nodeInstallDirectory Node install directory.
      * @param yarnInstallDirectory Yarn install directory.
      * @param script The script run by the job.
      * @param osName O/S name.
      */
-    public RunScriptJob(final Task task, final Executor executor, final Path nodeInstallDirectory,
-        @Nullable final Path yarnInstallDirectory, final String script, final String osName) {
+    public RunScriptJob(final Task task, final Path packageJsonDirectory, final Executor executor,
+        final Path nodeInstallDirectory, @Nullable final Path yarnInstallDirectory, final String script,
+        final String osName) {
         super(task);
+        this.packageJsonDirectory = packageJsonDirectory;
         this.executor = executor;
         this.nodeInstallDirectory = nodeInstallDirectory;
         this.yarnInstallDirectory = yarnInstallDirectory;
@@ -56,11 +64,15 @@ public class RunScriptJob extends AbstractTaskJob {
     }
 
     public void run() throws ExecutableNotFoundException {
-        task.getProject()
-            .exec(new ExecSpecAction(executor, nodeInstallDirectory, yarnInstallDirectory, osName, script, execSpec -> {
+        task
+            .getProject()
+            .exec(new ExecSpecAction(packageJsonDirectory, executor, nodeInstallDirectory, yarnInstallDirectory, osName,
+                script, execSpec -> {
                 logDebug(execSpec.getEnvironment().toString());
                 logLifecycle(
                     "Running '" + execSpec.getExecutable() + ' ' + String.join(" ", execSpec.getArgs()) + '\'');
-            })).rethrowFailure().assertNormalExitValue();
+            }))
+            .rethrowFailure()
+            .assertNormalExitValue();
     }
 }

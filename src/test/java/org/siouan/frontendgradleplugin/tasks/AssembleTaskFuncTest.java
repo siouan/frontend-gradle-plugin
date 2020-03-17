@@ -6,11 +6,11 @@ import static org.siouan.frontendgradleplugin.util.Helper.assertTaskSuccess;
 import static org.siouan.frontendgradleplugin.util.Helper.assertTaskUpToDate;
 import static org.siouan.frontendgradleplugin.util.Helper.runGradle;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,19 +30,19 @@ import org.siouan.frontendgradleplugin.util.Helper;
 class AssembleTaskFuncTest {
 
     @TempDir
-    File tmpDirectory;
+    Path projectDirectory;
 
-    private Path projectDirectory;
+    private Path packageJsonDirectory;
 
     @BeforeEach
-    void setUp() {
-        projectDirectory = tmpDirectory.toPath();
+    void setUp() throws IOException {
+        packageJsonDirectory = Files.createDirectory(projectDirectory.resolve("frontend"));
     }
 
     @Test
     void shouldBeSkippedWhenScriptIsNotDefined() throws IOException, URISyntaxException {
-        Files.copy(new File(getClass().getClassLoader().getResource("package-npm.json").toURI()).toPath(),
-            projectDirectory.resolve("package.json"));
+        Files.copy(Paths.get(getClass().getClassLoader().getResource("package-npm.json").toURI()),
+            packageJsonDirectory.resolve("package.json"));
         final Map<String, Object> properties = new HashMap<>();
         properties.put("nodeVersion", "10.16.0");
         properties.put("nodeDistributionUrl", getClass().getClassLoader().getResource("node-v10.16.0.zip").toString());
@@ -58,8 +58,8 @@ class AssembleTaskFuncTest {
 
     @Test
     void shouldAssembleAndSkipFrontendAssemblingTask() throws IOException, URISyntaxException {
-        Files.copy(new File(getClass().getClassLoader().getResource("package-npm.json").toURI()).toPath(),
-            projectDirectory.resolve("package.json"));
+        Files.copy(Paths.get(getClass().getClassLoader().getResource("package-npm.json").toURI()),
+            packageJsonDirectory.resolve("package.json"));
         final Map<String, Object> properties = new HashMap<>();
         properties.put("nodeVersion", "10.16.0");
         properties.put("nodeDistributionUrl", getClass().getClassLoader().getResource("node-v10.16.0.zip").toString());
@@ -76,8 +76,8 @@ class AssembleTaskFuncTest {
 
     @Test
     void shouldAssembleFrontendWithNpmOrYarn() throws IOException, URISyntaxException {
-        Files.copy(new File(getClass().getClassLoader().getResource("package-npm.json").toURI()).toPath(),
-            projectDirectory.resolve("package.json"));
+        Files.copy(Paths.get(getClass().getClassLoader().getResource("package-npm.json").toURI()),
+            packageJsonDirectory.resolve("package.json"));
         final Map<String, Object> properties = new HashMap<>();
         properties.put("nodeVersion", "10.16.0");
         properties.put("nodeDistributionUrl", getClass().getClassLoader().getResource("node-v10.16.0.zip").toString());
@@ -101,8 +101,8 @@ class AssembleTaskFuncTest {
         assertTaskSuccess(result2, FrontendGradlePlugin.GRADLE_ASSEMBLE_TASK_NAME);
 
         Files.deleteIfExists(projectDirectory.resolve("package-lock.json"));
-        Files.copy(new File(getClass().getClassLoader().getResource("package-yarn.json").toURI()).toPath(),
-            projectDirectory.resolve("package.json"), StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(Paths.get(getClass().getClassLoader().getResource("package-yarn.json").toURI()),
+            packageJsonDirectory.resolve("package.json"), StandardCopyOption.REPLACE_EXISTING);
         properties.put("yarnEnabled", true);
         properties.put("yarnVersion", "1.16.0");
         properties
