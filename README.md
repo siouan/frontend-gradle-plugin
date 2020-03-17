@@ -543,7 +543,7 @@ IDE, and their support to this project.
 
 With their feedback, plugin improvement is possible. Special thanks to:
 
-@andreaschiona, @byxor, @ChFlick, @ckosloski, @davidkron, @mike-howell, @rolaca11, @TapaiBalazs
+@andreaschiona, @byxor, @ChFlick, @ckosloski, @davidkron, @mike-howell, @nuth, @rolaca11, @TapaiBalazs
 
 [contributing]: <CONTRIBUTING.md> (Contributing to this project)
 [frontend-maven-plugin]: <https://github.com/eirslett/frontend-maven-plugin> (Frontend Maven plugin)

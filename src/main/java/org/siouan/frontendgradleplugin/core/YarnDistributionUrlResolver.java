@@ -32,7 +32,7 @@ public final class YarnDistributionUrlResolver implements DistributionUrlResolve
     public URL resolve() throws DistributionUrlResolverException {
         final String urlAsString;
         if (distributionUrl == null) {
-            urlAsString = URL_PATTERN.replaceAll(VERSION_TOKEN, version);
+            urlAsString = URL_PATTERN.replace(VERSION_TOKEN, version);
         } else {
             urlAsString = distributionUrl;
         }
