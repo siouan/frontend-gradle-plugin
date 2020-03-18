@@ -124,14 +124,15 @@ apply(plugin = "org.siouan.frontend")
 
 #### DSL reference
 
-All settings are introduced hereafter, with default value for each property.
+All settings are introduced hereafter, with default value for each property. You may also take a look at
+[Tasks reference](#tasks-reference) section for additional information.
 
 - Groovy syntax:
 
 ```groovy
 // build.gradle
 frontend {
-    // NODE SETTINGS
+    ////// NODE SETTINGS //////
     // Node version, used to build the URL to download the corresponding distribution, if the
     // 'nodeDistributionUrl' property is not set.
     nodeVersion = '12.16.1'
@@ -145,7 +146,7 @@ frontend {
     // [OPTIONAL] Install directory where the distribution archive shall be exploded.
     nodeInstallDirectory = file("${projectDir}/node")
 
-    // YARN SETTINGS
+    ////// YARN SETTINGS //////
     // [OPTIONAL] Whether Yarn shall be used instead of NPM when executing frontend tasks.
     // Consequently, a Yarn distribution will be downloaded and installed by the plugin. If <true>,
     // the 'yarnVersion' version property must be set.
@@ -165,10 +166,12 @@ frontend {
     // [OPTIONAL] Install directory where the distribution archive shall be exploded.
     yarnInstallDirectory = file("${projectDir}/yarn")
 
-    // SCRIPT SETTINGS
-    // Name of the NPM/Yarn scripts (see 'package.json' file) that shall be executed depending on
-    // the Gradle lifecycle task. The values below are passed as argument of the 'npm' or 'yarn'
-    // executables.
+    ////// SCRIPT SETTINGS //////
+    // Name of NPM/Yarn scripts (see 'package.json' file) that shall be executed depending on this
+    // plugin task. The values below are passed as arguments of the 'npm' or 'yarn' executables.
+    // Under Linux-like O/S, white space characters ' ' in an argument value must be escaped with a
+    // backslash character '\'. Under Windows O/S, the whole argument must be enclosed between
+    // double-quotes. Example: assembleScript = 'run assemble single\ argument'
 
     // [OPTIONAL] Use this property to customize the command line used to install frontend
     // dependencies. This property is used by the 'installFrontend' task.
@@ -191,11 +194,11 @@ frontend {
     checkScript = 'run check'
 
     // [OPTIONAL] Script called to publish the frontend. Default value is <null>. This property is
-    // used by the 'publishFrontend' task. Apart from direct execution, the task is also executed
-    // when the 'publish' task in the 'maven-publish' plugin is executed.
+    // used by the 'publishFrontend' task. Apart from direct execution, if the 'maven-publish'
+    // plugin is applied, the task is also executed when the 'publish' task is executed.
     publishScript = 'run publish'
 
-    // GENERAL SETTINGS
+    ////// GENERAL SETTINGS //////
     // [OPTIONAL] Location of the directory containing the 'package.json' file. By default, this
     // file is considered to be located in the project's directory, at the same level than this
     // 'build.gradle[.kts]' file. If the 'package.json' file is located in another directory, it is
@@ -206,7 +209,8 @@ frontend {
     // [OPTIONAL] Default level used by the plugin to log messages in Gradle. This property allows
     // to set a specific level for this plugin only. It does not take precedence over Gradle
     // logging level at execution, i.e. it must be higher or equal than the logging level set on
-    // the command line so as messages are visible.
+    // the command line so as messages are visible. The plugin also logged some messages with a
+    // specific level, independently from this setting (e.g. debugging data).
     loggingLevel = LogLevel.LIFECYCLE
 }
 ```
@@ -293,7 +297,7 @@ Optionally, if Yarn is enabled and you don't want to enter Yarn's executable abs
 ## Tasks reference
 
 The plugin registers multiple tasks, that may have dependencies with each other, and also with:
-- Gradle lifecycle tasks defined in the [Gradle base plugin][gradle-base-plugin].
+- Gradle lifecycle tasks defined in the [Gradle Base plugin][gradle-base-plugin].
 - Tasks defined in the [Maven Publish plugin][maven-publish-plugin].
 
 ### Task tree
@@ -339,7 +343,7 @@ Depending on the value of the `yarnEnabled` property, the `installFrontend` task
 or a `yarn install` command, by default. If a `package.json` file is found in the directory pointed by the
 `packageJsonDirectory` property, the command shall install dependencies and tools for frontend development. Optionally,
 this command may be customized (e.g. to run a `npm ci` command instead of a `npm install` command). To do so, the
-`installScript` must be set to the corresponding NPM/Yarn command. This task depends on the `installNode` task, and
+`installScript` property must be set to the corresponding NPM/Yarn command. This task depends on the `installNode` task, and
 optionally on the `installYarn` task if the `yarnEnabled` property is `true`.
 
 This task may be executed directly, especially if the Node distribution and/or the Yarn distribution must be downloaded
@@ -362,18 +366,20 @@ not set.
 
 ### Check frontend
 
-The `checkFrontend` task shall be used to integrate a frontend's check script into Gradle builds. The check script must
-be defined in the project's `package.json` file, and the `checkscript` property must be set with the corresponding
+The `checkFrontend` task may be used to integrate a frontend check script into a Gradle build. The check script must be
+defined in the project's `package.json` file, and the `checkscript` property must be set with the corresponding
 NPM/Yarn command. A typical check script defined in the project's `package.json` file may lint frontend source files,
 execute tests, and perform additional analysis tasks. This task depends on the `installFrontend` task, and is skipped if
 the `checkScript` property is not set.
 
 ### Publish frontend
 
-The `publishFrontend` task shall be used to integrate a frontend's publish script into Gradle builds. The publish script
+The `publishFrontend` task may be used to integrate a frontend publish script into a Gradle build. The publish script
 must be defined in the project's `package.json` file, and the `publishScript` property must be set with the
-corresponding NPM/Yarn command. This task depends on the `assembleFrontend` task, and is skipped if either
-the `assembleScript` property or the `publishScript` property is not set.
+corresponding NPM/Yarn command. This task depends on the task `assembleFrontend`, and is skipped if either the
+`assembleScript` property or the `publishScript` property is not set. If present, the `publish` task in the
+[Maven Publish plugin][gradle-maven-publish-plugin] depends on the `publishFrontend` task. Therefore, executing command
+`gradlew publish` would publish any Maven artifacts as well as frontend artifacts.
 
 ### Run custom Node script
 
@@ -556,7 +562,7 @@ IDE, and their support to this project.
 
 With their feedback, plugin improvement is possible. Special thanks to:
 
-@andreaschiona, @byxor, @ChFlick, @ckosloski, @davidkron, @mike-howell, @nuth, @rolaca11, @TapaiBalazs
+@andreaschiona, @byxor, @ChFlick, @ckosloski, @davidkron, @mike-howell, @napstr, @nuth, @rolaca11, @TapaiBalazs
 
 [contributing]: <CONTRIBUTING.md> (Contributing to this project)
 [frontend-maven-plugin]: <https://github.com/eirslett/frontend-maven-plugin> (Frontend Maven plugin)
@@ -566,6 +572,7 @@ With their feedback, plugin improvement is possible. Special thanks to:
 [gradle-dsl]: <https://docs.gradle.org/current/userguide/plugins.html#sec:plugins_block> (Gradle DSL)
 [gradle-incremental-build]: <https://guides.gradle.org/performance/#incremental_build> (Gradle incremental build)
 [gradle-java-plugin]: <https://docs.gradle.org/current/userguide/java_plugin.html> (Gradle Java plugin)
+[gradle-maven-publish-plugin]: <https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:tasks> (Gradle Maven Publish plugin)
 [gradle-spring-boot-plugin]: <https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/html/> (Gradle Spring Boot plugin)
 [intellij-idea]: <https://www.jetbrains.com/idea/> (IntelliJ IDEA)
 [intellij-idea-logo]: <intellij-idea-128x128.png> (IntelliJ IDEA)

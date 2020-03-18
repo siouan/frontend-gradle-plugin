@@ -209,7 +209,7 @@
     <node id="n12">
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="99.30000000000001" width="209.5999999999998" x="330.0" y="-389.65"/>
+          <y:Geometry height="99.65000000000003" width="209.5999999999998" x="330.0" y="-389.65"/>
           <y:Fill hasColor="false" transparent="false"/>
           <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Verdana" fontSize="16" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="23.4453125" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="tr" textColor="#000000" verticalTextPosition="bottom" visible="true" width="195.4609375" x="10.139062499999795" y="4.0">Maven Publish plugin</y:NodeLabel>
@@ -325,7 +325,6 @@
       </data>
     </edge>
     <edge id="e9" source="n13" target="n11">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -336,7 +335,6 @@
       </data>
     </edge>
     <edge id="e10" source="n11" target="n4">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>

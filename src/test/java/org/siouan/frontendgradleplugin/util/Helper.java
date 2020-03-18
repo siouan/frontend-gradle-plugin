@@ -1,5 +1,6 @@
 package org.siouan.frontendgradleplugin.util;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -9,7 +10,9 @@ import java.io.Writer;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -138,8 +141,8 @@ public final class Helper {
      * child node in the build file.
      * @param additionalContent Additional content to append at the end of the build file.
      */
-    public static void createBuildFile(final Path projectDirectory,
-        final Map<String, ?> properties, final String additionalContent) throws IOException {
+    public static void createBuildFile(final Path projectDirectory, final Map<String, ?> properties,
+        final String additionalContent) throws IOException {
         createBuildFile(projectDirectory, emptySet(), properties, additionalContent);
     }
 
@@ -178,8 +181,9 @@ public final class Helper {
      * @param taskName Task name.
      * @return The build result.
      */
-    public static BuildResult runGradle(final Path projectDirectory, final String taskName) {
-        return createGradleRunner(projectDirectory, taskName).build();
+    public static BuildResult runGradle(final Path projectDirectory, final String taskName,
+        final String... additionalArguments) {
+        return createGradleRunner(projectDirectory, taskName, additionalArguments).build();
     }
 
     /**
@@ -189,8 +193,9 @@ public final class Helper {
      * @param taskName Task name.
      * @return The build result.
      */
-    public static BuildResult runGradleAndExpectFailure(final Path projectDirectory, final String taskName) {
-        return createGradleRunner(projectDirectory, taskName).buildAndFail();
+    public static BuildResult runGradleAndExpectFailure(final Path projectDirectory, final String taskName,
+        final String... additionalArguments) {
+        return createGradleRunner(projectDirectory, taskName, additionalArguments).buildAndFail();
     }
 
     /**
@@ -200,13 +205,18 @@ public final class Helper {
      * @param taskName Task name.
      * @return The Gradle runner.
      */
-    private static GradleRunner createGradleRunner(final Path projectDirectory, final String taskName) {
+    private static GradleRunner createGradleRunner(final Path projectDirectory, final String taskName,
+        final String... additionalArguments) {
+        final List<String> arguments = new ArrayList<>();
+        arguments.add(taskName);
+        arguments.add("-s");
+        arguments.addAll(asList(additionalArguments));
         return GradleRunner
             .create()
             .withGradleVersion(MINIMAL_GRADLE_VERSION)
             .withProjectDir(projectDirectory.toFile())
             .withPluginClasspath()
-            .withArguments(taskName, "-s")
+            .withArguments(arguments)
             .withDebug(true)
             .forwardOutput();
     }
