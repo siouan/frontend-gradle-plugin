@@ -49,12 +49,12 @@ class CleanTaskFuncTest {
         properties.put("nodeDistributionUrl", getClass().getClassLoader().getResource("node-v10.16.0.zip").toString());
         Helper.createBuildFile(projectDirectory, properties);
 
-        final BuildResult result1 = runGradle(projectDirectory, FrontendGradlePlugin.CLEAN_TASK_NAME);
+        final BuildResult result = runGradle(projectDirectory, FrontendGradlePlugin.CLEAN_TASK_NAME);
 
-        assertTaskIgnored(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
-        assertTaskIgnored(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
-        assertTaskIgnored(result1, FrontendGradlePlugin.INSTALL_TASK_NAME);
-        assertTaskSkipped(result1, FrontendGradlePlugin.CLEAN_TASK_NAME);
+        assertTaskIgnored(result, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        assertTaskIgnored(result, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
+        assertTaskIgnored(result, FrontendGradlePlugin.INSTALL_TASK_NAME);
+        assertTaskSkipped(result, FrontendGradlePlugin.CLEAN_TASK_NAME);
     }
 
     @Test
@@ -66,13 +66,13 @@ class CleanTaskFuncTest {
         properties.put("nodeDistributionUrl", getClass().getClassLoader().getResource("node-v10.16.0.zip").toString());
         Helper.createBuildFile(projectDirectory, properties);
 
-        final BuildResult result1 = runGradle(projectDirectory, FrontendGradlePlugin.GRADLE_CLEAN_TASK_NAME);
+        final BuildResult result = runGradle(projectDirectory, FrontendGradlePlugin.GRADLE_CLEAN_TASK_NAME);
 
-        assertTaskIgnored(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
-        assertTaskIgnored(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
-        assertTaskIgnored(result1, FrontendGradlePlugin.INSTALL_TASK_NAME);
-        assertTaskSkipped(result1, FrontendGradlePlugin.CLEAN_TASK_NAME);
-        assertTaskUpToDate(result1, FrontendGradlePlugin.GRADLE_CLEAN_TASK_NAME);
+        assertTaskIgnored(result, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        assertTaskIgnored(result, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
+        assertTaskIgnored(result, FrontendGradlePlugin.INSTALL_TASK_NAME);
+        assertTaskSkipped(result, FrontendGradlePlugin.CLEAN_TASK_NAME);
+        assertTaskUpToDate(result, FrontendGradlePlugin.GRADLE_CLEAN_TASK_NAME);
     }
 
     @Test
@@ -115,7 +115,7 @@ class CleanTaskFuncTest {
         assertTaskUpToDate(result3, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskSuccess(result3, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskSuccess(result3, FrontendGradlePlugin.INSTALL_TASK_NAME);
-        assertTaskSuccess(result1, FrontendGradlePlugin.CLEAN_TASK_NAME);
+        assertTaskSuccess(result3, FrontendGradlePlugin.CLEAN_TASK_NAME);
         assertTaskSuccess(result3, FrontendGradlePlugin.GRADLE_CLEAN_TASK_NAME);
 
         final BuildResult result4 = runGradle(projectDirectory, FrontendGradlePlugin.GRADLE_CLEAN_TASK_NAME);
@@ -123,7 +123,7 @@ class CleanTaskFuncTest {
         assertTaskUpToDate(result4, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskUpToDate(result4, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskSuccess(result4, FrontendGradlePlugin.INSTALL_TASK_NAME);
-        assertTaskSuccess(result1, FrontendGradlePlugin.CLEAN_TASK_NAME);
+        assertTaskSuccess(result4, FrontendGradlePlugin.CLEAN_TASK_NAME);
         assertTaskUpToDate(result4, FrontendGradlePlugin.GRADLE_CLEAN_TASK_NAME);
     }
 }

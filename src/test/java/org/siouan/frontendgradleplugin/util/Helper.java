@@ -1,5 +1,7 @@
 package org.siouan.frontendgradleplugin.util;
 
+import static java.util.Collections.emptySet;
+import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
@@ -7,9 +9,10 @@ import java.io.Writer;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.gradle.api.logging.LogLevel;
 import org.gradle.testkit.runner.BuildResult;
@@ -98,7 +101,8 @@ public final class Helper {
      */
     private static void assertTaskOutcome(final BuildResult result, final String taskName,
         final TaskOutcome expectedOutcome) {
-        assertThat(getBuildResultTask(result, taskName).map(BuildTask::getOutcome)
+        assertThat(getBuildResultTask(result, taskName)
+            .map(BuildTask::getOutcome)
             .orElseThrow(() -> new RuntimeException("Task not found: " + taskName))).isEqualTo(expectedOutcome);
     }
 
@@ -111,24 +115,19 @@ public final class Helper {
      */
     public static void createBuildFile(final Path projectDirectory, final Map<String, ?> properties)
         throws IOException {
-        createBuildFile(projectDirectory, properties, null);
+        createBuildFile(projectDirectory, emptySet(), properties, null);
     }
 
     /**
-     * Gets the size of a directory.
+     * Creates a build file to test this plugin, with the given properties.
      *
-     * @param directory Directory
-     * @return Number of files in the directory.
-     * @throws IOException If an I/O error occurs.
+     * @param projectDirectory Project directory.
+     * @param properties Map of properties. If a value is a {@link Map} itself, then its entries are written under a
+     * child node in the build file.
      */
-    public static int getDirectorySize(final Path directory) throws IOException {
-        int size = 0;
-        try (final DirectoryStream<Path> childFileStream = Files.newDirectoryStream(directory)) {
-            for (final Path childFile : childFileStream) {
-                size++;
-            }
-        }
-        return size;
+    public static void createBuildFile(final Path projectDirectory, final Set<String> plugins,
+        final Map<String, ?> properties) throws IOException {
+        createBuildFile(projectDirectory, plugins, properties, null);
     }
 
     /**
@@ -139,12 +138,31 @@ public final class Helper {
      * child node in the build file.
      * @param additionalContent Additional content to append at the end of the build file.
      */
-    public static void createBuildFile(final Path projectDirectory, final Map<String, ?> properties,
-        final String additionalContent) throws IOException {
+    public static void createBuildFile(final Path projectDirectory,
+        final Map<String, ?> properties, final String additionalContent) throws IOException {
+        createBuildFile(projectDirectory, emptySet(), properties, additionalContent);
+    }
+
+    /**
+     * Creates a build file to test this plugin, with the given properties.
+     *
+     * @param projectDirectory Project directory.
+     * @param plugins Set of plugin definitions.
+     * @param properties Map of properties. If a value is a {@link Map} itself, then its entries are written under a
+     * child node in the build file.
+     * @param additionalContent Additional content to append at the end of the build file.
+     */
+    public static void createBuildFile(final Path projectDirectory, final Set<String> plugins,
+        final Map<String, ?> properties, final String additionalContent) throws IOException {
         final Path buildFile = projectDirectory.resolve(BUILD_FILE_NAME);
         try (final Writer buildFileWriter = Files.newBufferedWriter(buildFile)) {
-            buildFileWriter.append("plugins {\nid 'org.siouan.frontend'\n}\n");
-            for (final Map.Entry<String, ?> property : Collections.singletonMap("frontend", properties).entrySet()) {
+            final Map<String, ?> pluginsBlock = new HashMap<>();
+            pluginsBlock.put("id 'org.siouan.frontend'", null);
+            plugins.forEach(p -> pluginsBlock.put(p, null));
+            for (final Map.Entry<String, ?> property : singletonMap("plugins", pluginsBlock).entrySet()) {
+                writeProperty(buildFileWriter, property.getKey(), property.getValue());
+            }
+            for (final Map.Entry<String, ?> property : singletonMap("frontend", properties).entrySet()) {
                 writeProperty(buildFileWriter, property.getKey(), property.getValue());
             }
             if (additionalContent != null) {
@@ -183,8 +201,14 @@ public final class Helper {
      * @return The Gradle runner.
      */
     private static GradleRunner createGradleRunner(final Path projectDirectory, final String taskName) {
-        return GradleRunner.create().withGradleVersion(MINIMAL_GRADLE_VERSION).withProjectDir(projectDirectory.toFile())
-            .withPluginClasspath().withArguments(taskName, "-s").withDebug(true).forwardOutput();
+        return GradleRunner
+            .create()
+            .withGradleVersion(MINIMAL_GRADLE_VERSION)
+            .withProjectDir(projectDirectory.toFile())
+            .withPluginClasspath()
+            .withArguments(taskName, "-s")
+            .withDebug(true)
+            .forwardOutput();
     }
 
     private static void writeProperty(final Writer buildFileWriter, final String property, final Object value)
@@ -204,17 +228,30 @@ public final class Helper {
             buildFileWriter.append(value.toString().replace('\\', '/'));
             buildFileWriter.append("')");
         } else if (value instanceof LogLevel) {
-            buildFileWriter
-                .append(" = ")
-                .append(LogLevel.class.getSimpleName())
-                .append('.')
-                .append(value.toString());
+            buildFileWriter.append(" = ").append(LogLevel.class.getSimpleName()).append('.').append(value.toString());
         } else if (value != null) {
             buildFileWriter.append(" = '");
             buildFileWriter.append(value.toString());
             buildFileWriter.append('\'');
         }
         buildFileWriter.append('\n');
+    }
+
+    /**
+     * Gets the size of a directory.
+     *
+     * @param directory Directory
+     * @return Number of files in the directory.
+     * @throws IOException If an I/O error occurs.
+     */
+    public static int getDirectorySize(final Path directory) throws IOException {
+        int size = 0;
+        try (final DirectoryStream<Path> childFileStream = Files.newDirectoryStream(directory)) {
+            for (final Path childFile : childFileStream) {
+                size++;
+            }
+        }
+        return size;
     }
 
     private static Optional<BuildTask> getBuildResultTask(final BuildResult result, final String taskName) {

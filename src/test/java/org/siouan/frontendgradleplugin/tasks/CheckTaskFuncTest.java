@@ -49,12 +49,12 @@ class CheckTaskFuncTest {
         properties.put("nodeDistributionUrl", getClass().getClassLoader().getResource("node-v10.16.0.zip").toString());
         Helper.createBuildFile(projectDirectory, properties);
 
-        final BuildResult result1 = runGradle(projectDirectory, FrontendGradlePlugin.CHECK_TASK_NAME);
+        final BuildResult result = runGradle(projectDirectory, FrontendGradlePlugin.CHECK_TASK_NAME);
 
-        assertTaskIgnored(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
-        assertTaskIgnored(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
-        assertTaskIgnored(result1, FrontendGradlePlugin.INSTALL_TASK_NAME);
-        assertTaskSkipped(result1, FrontendGradlePlugin.CHECK_TASK_NAME);
+        assertTaskIgnored(result, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        assertTaskIgnored(result, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
+        assertTaskIgnored(result, FrontendGradlePlugin.INSTALL_TASK_NAME);
+        assertTaskSkipped(result, FrontendGradlePlugin.CHECK_TASK_NAME);
     }
 
     @Test
@@ -66,13 +66,13 @@ class CheckTaskFuncTest {
         properties.put("nodeDistributionUrl", getClass().getClassLoader().getResource("node-v10.16.0.zip").toString());
         Helper.createBuildFile(projectDirectory, properties);
 
-        final BuildResult result1 = runGradle(projectDirectory, FrontendGradlePlugin.GRADLE_CHECK_TASK_NAME);
+        final BuildResult result = runGradle(projectDirectory, FrontendGradlePlugin.GRADLE_CHECK_TASK_NAME);
 
-        assertTaskIgnored(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
-        assertTaskIgnored(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
-        assertTaskIgnored(result1, FrontendGradlePlugin.INSTALL_TASK_NAME);
-        assertTaskSkipped(result1, FrontendGradlePlugin.CHECK_TASK_NAME);
-        assertTaskUpToDate(result1, FrontendGradlePlugin.GRADLE_CHECK_TASK_NAME);
+        assertTaskIgnored(result, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        assertTaskIgnored(result, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
+        assertTaskIgnored(result, FrontendGradlePlugin.INSTALL_TASK_NAME);
+        assertTaskSkipped(result, FrontendGradlePlugin.CHECK_TASK_NAME);
+        assertTaskUpToDate(result, FrontendGradlePlugin.GRADLE_CHECK_TASK_NAME);
     }
 
     @Test
@@ -98,7 +98,7 @@ class CheckTaskFuncTest {
         assertTaskUpToDate(result2, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskSkipped(result2, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskSuccess(result2, FrontendGradlePlugin.INSTALL_TASK_NAME);
-        assertTaskSuccess(result1, FrontendGradlePlugin.CHECK_TASK_NAME);
+        assertTaskSuccess(result2, FrontendGradlePlugin.CHECK_TASK_NAME);
         assertTaskSuccess(result2, FrontendGradlePlugin.GRADLE_CHECK_TASK_NAME);
 
         Files.deleteIfExists(projectDirectory.resolve("package-lock.json"));
@@ -115,7 +115,7 @@ class CheckTaskFuncTest {
         assertTaskUpToDate(result3, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskSuccess(result3, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskSuccess(result3, FrontendGradlePlugin.INSTALL_TASK_NAME);
-        assertTaskSuccess(result1, FrontendGradlePlugin.CHECK_TASK_NAME);
+        assertTaskSuccess(result3, FrontendGradlePlugin.CHECK_TASK_NAME);
         assertTaskSuccess(result3, FrontendGradlePlugin.GRADLE_CHECK_TASK_NAME);
 
         final BuildResult result4 = runGradle(projectDirectory, FrontendGradlePlugin.GRADLE_CHECK_TASK_NAME);
@@ -123,7 +123,7 @@ class CheckTaskFuncTest {
         assertTaskUpToDate(result4, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskUpToDate(result4, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskSuccess(result4, FrontendGradlePlugin.INSTALL_TASK_NAME);
-        assertTaskSuccess(result1, FrontendGradlePlugin.CHECK_TASK_NAME);
+        assertTaskSuccess(result4, FrontendGradlePlugin.CHECK_TASK_NAME);
         assertTaskSuccess(result4, FrontendGradlePlugin.GRADLE_CHECK_TASK_NAME);
     }
 }

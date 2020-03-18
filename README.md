@@ -34,6 +34,7 @@ install/configure the plugin, and build your frontend application.
   - [Clean frontend](#clean-frontend)
   - [Assemble frontend](#assemble-frontend)
   - [Check frontend](#check-frontend)
+  - [Publish frontend](#publish-frontend)
   - [Run custom Node script](#run-custom-node-script)
   - [Run custom NPM/Yarn script](#run-custom-npmyarn-script)
 - [Usage guidelines](#usage-guidelines)
@@ -130,20 +131,6 @@ All settings are introduced hereafter, with default value for each property.
 ```groovy
 // build.gradle
 frontend {
-    // GENERAL SETTINGS
-    // [OPTIONAL] Location of the directory containing the 'package.json' file. By default, this
-    // file is considered to be located in the project's directory, at the same level than this
-    // 'build.gradle[.kts]' file. If the 'package.json' file is located in another directory, it is
-    // recommended either to set up a Gradle multi-project build, or to set this property with the
-    // appropriate directory.
-    packageJsonDirectory = file("$projectDir")
-
-    // [OPTIONAL] Default level used by the plugin to log messages in Gradle. This property allows
-    // to set a specific level for this plugin only. It does not take precedence over Gradle
-    // logging level at execution, i.e. it must be higher or equal than the logging level set on
-    // the command line so as messages are visible.
-    loggingLevel = LogLevel.LIFECYCLE
-
     // NODE SETTINGS
     // Node version, used to build the URL to download the corresponding distribution, if the
     // 'nodeDistributionUrl' property is not set.
@@ -178,7 +165,7 @@ frontend {
     // [OPTIONAL] Install directory where the distribution archive shall be exploded.
     yarnInstallDirectory = file("${projectDir}/yarn")
 
-    // OTHER SETTINGS
+    // SCRIPT SETTINGS
     // Name of the NPM/Yarn scripts (see 'package.json' file) that shall be executed depending on
     // the Gradle lifecycle task. The values below are passed as argument of the 'npm' or 'yarn'
     // executables.
@@ -189,20 +176,38 @@ frontend {
 
     // [OPTIONAL] Use this property only if frontend's compiled resources are generated out of the
     // '${project.buildDir}' directory. Default value is <null>. This property is used by the
-    // 'cleanFrontend' task. The task is also executed when the Gradle built-in 'clean' task is
-    // executed, if this property is set.
+    // 'cleanFrontend' task. Apart from direct execution, the task is also executed when the Gradle
+    // built-in 'clean' task is executed.
     cleanScript = 'run clean'
 
     // [OPTIONAL] Script called to build frontend's artifacts. Default value is <null>. This
-    // property is used by the 'assembleFrontend' task. The task is also executed when the Gradle
-    // built-in 'assemble' task is executed, if this property is set.
+    // property is used by the 'assembleFrontend' task. Apart from direct execution, the task is
+    // also executed when the Gradle built-in 'assemble' task is executed.
     assembleScript = 'run assemble'
 
     // [OPTIONAL] Script called to check the frontend. Default value is <null>. This property is
-    // used by the 'checkFrontend' task. The task is run when the Gradle built-in 'check' task is
-    // run. The task is also executed when the Gradle built-in 'check' task is executed, if this
-    // property is set.
+    // used by the 'checkFrontend' task. Apart from direct execution, the task is also executed
+    // when the Gradle built-in 'check' task is executed.
     checkScript = 'run check'
+
+    // [OPTIONAL] Script called to publish the frontend. Default value is <null>. This property is
+    // used by the 'publishFrontend' task. Apart from direct execution, the task is also executed
+    // when the 'publish' task in the 'maven-publish' plugin is executed.
+    publishScript = 'run publish'
+
+    // GENERAL SETTINGS
+    // [OPTIONAL] Location of the directory containing the 'package.json' file. By default, this
+    // file is considered to be located in the project's directory, at the same level than this
+    // 'build.gradle[.kts]' file. If the 'package.json' file is located in another directory, it is
+    // recommended either to set up a Gradle multi-project build, or to set this property with the
+    // appropriate directory.
+    packageJsonDirectory = file("$projectDir")
+
+    // [OPTIONAL] Default level used by the plugin to log messages in Gradle. This property allows
+    // to set a specific level for this plugin only. It does not take precedence over Gradle
+    // logging level at execution, i.e. it must be higher or equal than the logging level set on
+    // the command line so as messages are visible.
+    loggingLevel = LogLevel.LIFECYCLE
 }
 ```
 
@@ -211,8 +216,6 @@ frontend {
 ```kotlin
 // build.gradle.kts
 frontend {
-    packageJsonDirectory.set(project.layout.projectDirectory)
-    loggingLevel.set(LogLevel.LIFECYCLE)
     nodeVersion.set("12.16.1")
     nodeDistributionUrl.set("https://nodejs.org/dist/vX.Y.Z/node-vX.Y.Z-win-x64.zip")
     nodeInstallDirectory.set(project.layout.projectDirectory.dir("node"))
@@ -224,6 +227,9 @@ frontend {
     cleanScript.set("run clean")
     assembleScript.set("run assemble")
     checkScript.set("run check")
+    publishScript.set("run publish")
+    packageJsonDirectory.set(project.layout.projectDirectory)
+    loggingLevel.set(LogLevel.LIFECYCLE)
 }
 ```
 
@@ -233,7 +239,6 @@ frontend {
 // build.gradle
 frontend {
     nodeVersion = '<X.Y.Z>'
-    cleanScript = 'run clean'
     assembleScript = 'run assemble'
     checkScript = 'run check'
 }
@@ -247,7 +252,6 @@ frontend {
     nodeVersion = '<X.Y.Z>'
     yarnEnabled = true
     yarnVersion = '<X.Y.Z>'
-    cleanScript = 'run clean'
     assembleScript = 'run assemble'
     checkScript = 'run check'
 }
@@ -288,8 +292,9 @@ Optionally, if Yarn is enabled and you don't want to enter Yarn's executable abs
 
 ## Tasks reference
 
-The plugin registers multiple tasks, some having dependencies with other, and also with Gradle lifecycle tasks defined
-in the [Gradle base plugin][gradle-base-plugin].
+The plugin registers multiple tasks, that may have dependencies with each other, and also with:
+- Gradle lifecycle tasks defined in the [Gradle base plugin][gradle-base-plugin].
+- Tasks defined in the [Maven Publish plugin][maven-publish-plugin].
 
 ### Task tree
 
@@ -331,11 +336,11 @@ This task should not be executed directly. It will be called automatically by Gr
 ### Install frontend dependencies
 
 Depending on the value of the `yarnEnabled` property, the `installFrontend` task issues either a `npm install` command
-or a `yarn install` command, by default. If a `package.json` file is found in the project's directory, the command shall
-install dependencies and tools for frontend development. Optionally, this command may be customized (e.g. to run a
-`npm ci` command instead of a `npm install` command). To do so, the `installScript` must be set to the corresponding
-NPM/Yarn command. This task depends on the `installNode` task, and optionally on the `installYarn` task if the
-`yarnEnabled` property is `true`.
+or a `yarn install` command, by default. If a `package.json` file is found in the directory pointed by the
+`packageJsonDirectory` property, the command shall install dependencies and tools for frontend development. Optionally,
+this command may be customized (e.g. to run a `npm ci` command instead of a `npm install` command). To do so, the
+`installScript` must be set to the corresponding NPM/Yarn command. This task depends on the `installNode` task, and
+optionally on the `installYarn` task if the `yarnEnabled` property is `true`.
 
 This task may be executed directly, especially if the Node distribution and/or the Yarn distribution must be downloaded
 again.
@@ -344,23 +349,31 @@ again.
 
 The `cleanFrontend` task does nothing by default, considering frontend generated resources (pre-processed Typescript
 files, SCSS stylesheets...) are written in the `${project.buildDir}` directory. If it is not the case, this task may be
-useful to clean the relevant directory. To do so, a clean script must be defined in the project's `package.json` file,
+useful to clean the relevant directory. To do so, a clean script must be defined in the `package.json` file,
 and the `cleanScript` property must be set to the corresponding NPM/Yarn command. This task depends on the
-`installFrontend` task if the `cleanScript` property is set.
+`installFrontend` task, and is skipped if the `cleanScript` property is not set.
 
 ### Assemble frontend
 
 The `assembleFrontend` task shall be used to integrate a frontend's build script into Gradle builds. The build script
-must be defined in the project's `package.json` file, and the `assembleScript` property must be set to the corresponding
-NPM/Yarn command. This task depends on the `installFrontend` task if the `assembleScript` property is set.
+must be defined in the `package.json` file, and the `assembleScript` property must be set to the corresponding
+NPM/Yarn command. This task depends on the `installFrontend` task, and is skipped if the `assembleScript` property is
+not set.
 
 ### Check frontend
 
 The `checkFrontend` task shall be used to integrate a frontend's check script into Gradle builds. The check script must
 be defined in the project's `package.json` file, and the `checkscript` property must be set with the corresponding
 NPM/Yarn command. A typical check script defined in the project's `package.json` file may lint frontend source files,
-execute tests, and perform additional analysis tasks. This task depends on the `installFrontend` task if the
-`checkScript` property is set.
+execute tests, and perform additional analysis tasks. This task depends on the `installFrontend` task, and is skipped if
+the `checkScript` property is not set.
+
+### Publish frontend
+
+The `publishFrontend` task shall be used to integrate a frontend's publish script into Gradle builds. The publish script
+must be defined in the project's `package.json` file, and the `publishScript` property must be set with the
+corresponding NPM/Yarn command. This task depends on the `assembleFrontend` task, and is skipped if either
+the `assembleScript` property or the `publishScript` property is not set.
 
 ### Run custom Node script
 
@@ -559,6 +572,7 @@ With their feedback, plugin improvement is possible. Special thanks to:
 [jdk]: <https://docs.oracle.com/en/java/javase/> (Java Development Kit)
 [jetbrains]: <https://www.jetbrains.com/> (JetBrains)
 [jetbrains-logo]: <jetbrains-128x128.png> (JetBrains)
+[maven-publish-plugin]: <https://docs.gradle.org/current/userguide/publishing_maven.html> (Maven Publish plugin)
 [node]: <https://nodejs.org/> (Node.js)
 [release-notes]: <https://github.com/siouan/frontend-gradle-plugin/releases> (Release notes)
 [spring-boot]: <https://spring.io/projects/spring-boot> (Spring Boot)
