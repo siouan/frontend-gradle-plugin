@@ -13,16 +13,6 @@ import org.gradle.api.provider.Property;
 public class FrontendExtension {
 
     /**
-     * Directory where the 'package.json' file is located.
-     */
-    private final Property<File> packageJsonDirectory;
-
-    /**
-     * Default logging level.
-     */
-    private final Property<LogLevel> loggingLevel;
-
-    /**
      * Version of the Node distribution to download.
      */
     private final Property<String> nodeVersion;
@@ -58,17 +48,17 @@ public class FrontendExtension {
     private final Property<String> yarnDistributionUrl;
 
     /**
-     * The NPM/Yarn script to execute to install frontend dependencies.
+     * The NPM/Yarn script installing frontend dependencies.
      */
     private final Property<String> installScript;
 
     /**
-     * The NPM/Yarn script to execute to clean frontend resources.
+     * The NPM/Yarn script cleaning frontend resources.
      */
     private final Property<String> cleanScript;
 
     /**
-     * The NPM/Yarn script to execute to assemble frontend artifacts.
+     * The NPM/Yarn script assembling frontend artifacts.
      */
     private final Property<String> assembleScript;
 
@@ -77,9 +67,22 @@ public class FrontendExtension {
      */
     private final Property<String> checkScript;
 
+    /**
+     * The NPM/Yarn script publishing frontend artifacts.
+     */
+    private final Property<String> publishScript;
+
+    /**
+     * Directory where the 'package.json' file is located.
+     */
+    private final Property<File> packageJsonDirectory;
+
+    /**
+     * Default logging level.
+     */
+    private final Property<LogLevel> loggingLevel;
+
     public FrontendExtension(final Project project) {
-        packageJsonDirectory = project.getObjects().property(File.class);
-        loggingLevel = project.getObjects().property(LogLevel.class);
         nodeVersion = project.getObjects().property(String.class);
         nodeInstallDirectory = project.getObjects().directoryProperty();
         nodeDistributionUrl = project.getObjects().property(String.class);
@@ -91,14 +94,9 @@ public class FrontendExtension {
         cleanScript = project.getObjects().property(String.class);
         assembleScript = project.getObjects().property(String.class);
         checkScript = project.getObjects().property(String.class);
-    }
-
-    public Property<File> getPackageJsonDirectory() {
-        return packageJsonDirectory;
-    }
-
-    public Property<LogLevel> getLoggingLevel() {
-        return loggingLevel;
+        publishScript = project.getObjects().property(String.class);
+        packageJsonDirectory = project.getObjects().property(File.class);
+        loggingLevel = project.getObjects().property(LogLevel.class);
     }
 
     public Property<String> getNodeVersion() {
@@ -143,5 +141,17 @@ public class FrontendExtension {
 
     public Property<String> getCheckScript() {
         return checkScript;
+    }
+
+    public Property<String> getPublishScript() {
+        return publishScript;
+    }
+
+    public Property<File> getPackageJsonDirectory() {
+        return packageJsonDirectory;
+    }
+
+    public Property<LogLevel> getLoggingLevel() {
+        return loggingLevel;
     }
 }

@@ -5,17 +5,19 @@ import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
 
 /**
- * This task assembles frontend artifacts.
+ * This task publishes frontend artifacts.
+ *
+ * @since 1.4.0
  */
-public class AssembleTask extends AbstractPredefinedRunScriptTask {
+public class PublishTask extends AbstractPredefinedRunScriptTask {
 
-    public AssembleTask() {
+    public PublishTask() {
         super(false);
     }
 
     @Input
     @Optional
-    public Property<String> getAssembleScript() {
+    public Property<String> getPublishScript() {
         return script;
     }
 }
