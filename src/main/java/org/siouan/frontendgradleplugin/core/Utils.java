@@ -15,7 +15,6 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import javax.annotation.Nonnull;
 
 /**
  * This class provides utilities for the whole plugin.
@@ -287,60 +286,6 @@ public final class Utils {
             hexadecimalString.append(hexadecimalDigit);
         }
         return hexadecimalString.toString();
-    }
-
-    /**
-     * Splits the given argument using the separator character. The escape character is used to ignore unrelevant
-     * separators. In this case, the separator character is kept, and the preceding escape character is removed from the
-     * token.
-     *
-     * @param arg The argument to split.
-     * @param separatorChar Separator character.
-     * @param escapeChar Escape character to 'cancel' a separator character.
-     * @return A list of tokens.
-     * @since 1.4.0
-     */
-    @Nonnull
-    public static List<String> split(@Nonnull final String arg, final char separatorChar, final char escapeChar) {
-        final List<String> tokens = new ArrayList<>();
-        char previousChar;
-        char currentChar = 0;
-        int tokenStartIndex = 0;
-        int i = 0;
-        String token = "";
-        boolean tokenFound = false;
-        while (i < arg.length()) {
-            if (i == 0) {
-                previousChar = arg.charAt(i);
-                currentChar = previousChar;
-            } else {
-                previousChar = currentChar;
-                currentChar = arg.charAt(i);
-            }
-
-            if (i == (arg.length() - 1)) {
-                tokenFound = true;
-                if ((currentChar != separatorChar) || (previousChar == escapeChar)) {
-                    token = arg.substring(tokenStartIndex);
-                } else {
-                    token = arg.substring(tokenStartIndex, i);
-                }
-            } else if ((currentChar == separatorChar) && (previousChar != escapeChar)) {
-                tokenFound = true;
-                token = arg.substring(tokenStartIndex, i);
-                tokenStartIndex = i + 1;
-            }
-
-            if (tokenFound) {
-                if (!token.isEmpty()) {
-                    tokens.add(
-                        token.replace(String.valueOf(escapeChar) + separatorChar, String.valueOf(separatorChar)));
-                }
-                tokenFound = false;
-            }
-            i++;
-        }
-        return tokens;
     }
 
     /**

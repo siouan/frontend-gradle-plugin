@@ -38,14 +38,4 @@ class UtilsTest {
     void shouldTellExtensionIsNotGzipWhenExtensionEndsNeitherWithGzOrGzip() {
         assertThat(Utils.isGzipExtension(".Z")).isFalse();
     }
-
-    @Test
-    void shouldSplitString() {
-        assertThat(Utils.split(" str1 str2 ", ' ', '\\')).containsExactly("str1", "str2");
-    }
-
-    @Test
-    void shouldSplitStringAndIgnoreEscapedSeparators() {
-        assertThat(Utils.split("\\ str1\\  str2\\ ", ' ', '\\')).containsExactly(" str1 ", "str2 ");
-    }
 }

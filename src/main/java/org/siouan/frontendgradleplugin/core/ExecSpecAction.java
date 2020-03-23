@@ -134,7 +134,8 @@ class ExecSpecAction implements Action<ExecSpec> {
             args.add('"' + scriptExecutablePath.toString() + "\" " + script.trim());
         } else {
             executable = scriptExecutablePath.toString();
-            args.addAll(Utils.split(script.trim(), LINUX_SCRIPT_ARG_SEPARATOR_CHAR, LINUX_SCRIPT_ARG_ESCAPE_CHAR));
+            args.addAll(new StringSplitter().execute(script.trim(), LINUX_SCRIPT_ARG_SEPARATOR_CHAR,
+                LINUX_SCRIPT_ARG_ESCAPE_CHAR));
         }
 
         // Prepend directories containing the Node and Yarn executables to the 'PATH' environment variable.
