@@ -15,6 +15,7 @@
     "check": "yarn run lint && yarn run test",
     "clean": "echo 'Frontend cleaned'",
     "lint": "echo 'Frontend linted'",
+    "publish": "echo 'Frontend published'",
     "start": "echo 'Frontend started and stopped'",
     "test": "echo 'Frontend tested'"
   }

@@ -66,8 +66,7 @@ class FrontendGradlePluginTest {
         assertThat(frontendInstallTask.getYarnEnabled().get()).isEqualTo(extension.getYarnEnabled().get());
         assertThat(frontendInstallTask.getNodeInstallDirectory().get())
             .isEqualTo(extension.getNodeInstallDirectory().get());
-        assertThat(frontendInstallTask.getYarnInstallDirectory().get())
-            .isEqualTo(extension.getYarnInstallDirectory().get());
+        assertThat(frontendInstallTask.getYarnInstallDirectory().isPresent()).isFalse();
         assertThat(frontendInstallTask.getDependsOn())
             .containsExactlyInAnyOrder(nodeInstallTask.getName(), yarnInstallTask.getName());
 
@@ -76,36 +75,33 @@ class FrontendGradlePluginTest {
         assertThat(frontendCleanTask.getYarnEnabled().get()).isEqualTo(extension.getYarnEnabled().get());
         assertThat(frontendCleanTask.getNodeInstallDirectory().get())
             .isEqualTo(extension.getNodeInstallDirectory().get());
-        assertThat(frontendCleanTask.getYarnInstallDirectory().get())
-            .isEqualTo(extension.getYarnInstallDirectory().get());
+        assertThat(frontendCleanTask.getYarnInstallDirectory().isPresent()).isFalse();
         assertThat(frontendCleanTask.getCleanScript().isPresent()).isFalse();
         assertThat(frontendCleanTask.getDependsOn()).isEmpty();
         assertThat(project.getTasks().named(FrontendGradlePlugin.GRADLE_CLEAN_TASK_NAME).get().getDependsOn())
-            .doesNotContain(frontendCleanTask.getName());
+            .contains(frontendCleanTask.getName());
 
         final AssembleTask frontendAssembleTask = project.getTasks()
             .named(FrontendGradlePlugin.ASSEMBLE_TASK_NAME, AssembleTask.class).get();
         assertThat(frontendAssembleTask.getYarnEnabled().get()).isEqualTo(extension.getYarnEnabled().get());
         assertThat(frontendAssembleTask.getNodeInstallDirectory().get())
             .isEqualTo(extension.getNodeInstallDirectory().get());
-        assertThat(frontendAssembleTask.getYarnInstallDirectory().get())
-            .isEqualTo(extension.getYarnInstallDirectory().get());
+        assertThat(frontendAssembleTask.getYarnInstallDirectory().isPresent()).isFalse();
         assertThat(frontendAssembleTask.getAssembleScript().isPresent()).isFalse();
         assertThat(frontendAssembleTask.getDependsOn()).isEmpty();
         assertThat(project.getTasks().named(FrontendGradlePlugin.GRADLE_ASSEMBLE_TASK_NAME).get().getDependsOn())
-            .doesNotContain(frontendAssembleTask.getName());
+            .contains(frontendAssembleTask.getName());
 
         final CheckTask frontendCheckTask = project.getTasks()
             .named(FrontendGradlePlugin.CHECK_TASK_NAME, CheckTask.class).get();
         assertThat(frontendCheckTask.getYarnEnabled().get()).isEqualTo(extension.getYarnEnabled().get());
         assertThat(frontendCheckTask.getNodeInstallDirectory().get())
             .isEqualTo(extension.getNodeInstallDirectory().get());
-        assertThat(frontendCheckTask.getYarnInstallDirectory().get())
-            .isEqualTo(extension.getYarnInstallDirectory().get());
+        assertThat(frontendCheckTask.getYarnInstallDirectory().isPresent()).isFalse();
         assertThat(frontendCheckTask.getCheckScript().isPresent()).isFalse();
         assertThat(frontendCheckTask.getDependsOn()).isEmpty();
         assertThat(project.getTasks().named(FrontendGradlePlugin.GRADLE_CHECK_TASK_NAME).get().getDependsOn())
-            .doesNotContain(frontendCheckTask.getName());
+            .contains(frontendCheckTask.getName());
     }
 
     @Test

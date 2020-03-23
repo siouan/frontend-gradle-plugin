@@ -338,13 +338,15 @@ public final class Utils {
         @Override
         public FileVisitResult preVisitDirectory(final Path file, BasicFileAttributes basicFileAttributes)
             throws IOException {
-            Files.copy(file, targetPath.resolve(rootPath.relativize(file)).normalize(), COPY_ATTRIBUTES, NOFOLLOW_LINKS);
+            Files.copy(file, targetPath.resolve(rootPath.relativize(file)).normalize(), COPY_ATTRIBUTES,
+                NOFOLLOW_LINKS);
             return FileVisitResult.CONTINUE;
         }
 
         @Override
         public FileVisitResult visitFile(final Path file, final BasicFileAttributes attributes) throws IOException {
-            Files.copy(file, targetPath.resolve(rootPath.relativize(file)).normalize(), COPY_ATTRIBUTES, NOFOLLOW_LINKS);
+            Files.copy(file, targetPath.resolve(rootPath.relativize(file)).normalize(), COPY_ATTRIBUTES,
+                NOFOLLOW_LINKS);
             return FileVisitResult.CONTINUE;
         }
     }

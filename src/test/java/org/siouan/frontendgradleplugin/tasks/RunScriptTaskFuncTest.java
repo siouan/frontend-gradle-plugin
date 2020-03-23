@@ -1,19 +1,22 @@
 package org.siouan.frontendgradleplugin.tasks;
 
+import static org.siouan.frontendgradleplugin.util.Helper.assertTaskFailed;
 import static org.siouan.frontendgradleplugin.util.Helper.assertTaskSkipped;
 import static org.siouan.frontendgradleplugin.util.Helper.assertTaskSuccess;
 import static org.siouan.frontendgradleplugin.util.Helper.assertTaskUpToDate;
 import static org.siouan.frontendgradleplugin.util.Helper.runGradle;
+import static org.siouan.frontendgradleplugin.util.Helper.runGradleAndExpectFailure;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.gradle.api.logging.LogLevel;
 import org.gradle.testkit.runner.BuildResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,21 +31,39 @@ import org.siouan.frontendgradleplugin.util.Helper;
 class RunScriptTaskFuncTest {
 
     @TempDir
-    File tmpDirectory;
+    Path projectDirectory;
 
-    private Path projectDirectory;
+    private Path packageJsonDirectory;
 
     @BeforeEach
-    void setUp() {
-        projectDirectory = tmpDirectory.toPath();
+    void setUp() throws IOException {
+        packageJsonDirectory = Files.createDirectory(projectDirectory.resolve("frontend"));
+    }
+
+    @Test
+    void shouldFailRunningFrontendScriptWhenScriptIsUndefined() throws IOException, URISyntaxException {
+        Files.copy(Paths.get(getClass().getClassLoader().getResource("package-npm.json").toURI()),
+            packageJsonDirectory.resolve("package.json"));
+        final Map<String, Object> properties = new HashMap<>();
+        final String customTaskName = "e2e";
+        final String customTaskDefinition =
+            "tasks.register('" + customTaskName + "', org.siouan.frontendgradleplugin.tasks.RunScriptTask) {}\n";
+        Helper.createBuildFile(projectDirectory, properties, customTaskDefinition);
+
+        final BuildResult result = runGradleAndExpectFailure(projectDirectory, customTaskName);
+
+        assertTaskFailed(result, customTaskName);
     }
 
     @Test
     void shouldRunScriptFrontendWithNpmOrYarn() throws IOException, URISyntaxException {
-        Files.copy(new File(getClass().getClassLoader().getResource("package-npm.json").toURI()).toPath(),
-            projectDirectory.resolve("package.json"));
+        Files.copy(Paths.get(getClass().getClassLoader().getResource("package-npm.json").toURI()),
+            packageJsonDirectory.resolve("package.json"));
         final Map<String, Object> properties = new HashMap<>();
+        properties.put("packageJsonDirectory", packageJsonDirectory);
+        properties.put("loggingLevel", LogLevel.LIFECYCLE);
         properties.put("nodeVersion", "12.16.1");
+        properties.put("nodeInstallDirectory", projectDirectory.resolve("node-dist"));
         final String customTaskName = "e2e";
         final StringBuilder customTaskDefinition = new StringBuilder("tasks.register('");
         customTaskDefinition.append(customTaskName);
@@ -67,10 +88,11 @@ class RunScriptTaskFuncTest {
         assertTaskSuccess(result2, customTaskName);
 
         Files.deleteIfExists(projectDirectory.resolve("package-lock.json"));
-        Files.copy(new File(getClass().getClassLoader().getResource("package-yarn.json").toURI()).toPath(),
-            projectDirectory.resolve("package.json"), StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(Paths.get(getClass().getClassLoader().getResource("package-yarn.json").toURI()),
+            packageJsonDirectory.resolve("package.json"), StandardCopyOption.REPLACE_EXISTING);
         properties.put("yarnEnabled", true);
         properties.put("yarnVersion", "1.22.4");
+        properties.put("yarnInstallDirectory", projectDirectory.resolve("yarn-dist"));
         Helper.createBuildFile(projectDirectory, properties, customTaskDefinition.toString());
 
         final BuildResult result3 = runGradle(projectDirectory, customTaskName);

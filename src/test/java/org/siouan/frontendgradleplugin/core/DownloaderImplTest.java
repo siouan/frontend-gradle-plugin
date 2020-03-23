@@ -3,7 +3,6 @@ package org.siouan.frontendgradleplugin.core;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,12 +19,12 @@ class DownloaderImplTest {
     private static final String RESOURCE_NAME = "resource.zip";
 
     @TempDir
-    File temporaryDirectory;
+    Path temporaryDirectory;
 
     @Test
     void shouldFailWhenResourceNotFound() throws IOException {
-        final Path resourceFile = temporaryDirectory.toPath().resolve(RESOURCE_NAME);
-        final Path downloadDirectory = temporaryDirectory.toPath().resolve("download");
+        final Path resourceFile = temporaryDirectory.resolve(RESOURCE_NAME);
+        final Path downloadDirectory = temporaryDirectory.resolve("download");
         Files.createDirectory(downloadDirectory);
         final DownloaderImpl downloader = new DownloaderImpl(downloadDirectory);
 
@@ -35,8 +34,8 @@ class DownloaderImplTest {
 
     @Test
     void shouldFailWhenDestinationFileCannotBeCreated() throws Exception {
-        final Path resourceFile = temporaryDirectory.toPath().resolve(RESOURCE_NAME);
-        final Path downloadDirectory = temporaryDirectory.toPath().resolve("download");
+        final Path resourceFile = temporaryDirectory.resolve(RESOURCE_NAME);
+        final Path downloadDirectory = temporaryDirectory.resolve("download");
         final Path destinationFile = Paths.get("/volezp", "gixkkle");
         Files.createDirectory(downloadDirectory);
         Files.createFile(resourceFile);
@@ -48,9 +47,9 @@ class DownloaderImplTest {
 
     @Test
     void shouldDownloadLocalResource() throws Exception {
-        final Path resourceFile = temporaryDirectory.toPath().resolve(RESOURCE_NAME);
-        final Path downloadDirectory = temporaryDirectory.toPath().resolve("download");
-        final Path destinationDirectory = temporaryDirectory.toPath().resolve("install");
+        final Path resourceFile = temporaryDirectory.resolve(RESOURCE_NAME);
+        final Path downloadDirectory = temporaryDirectory.resolve("download");
+        final Path destinationDirectory = temporaryDirectory.resolve("install");
         final Path destinationFile = destinationDirectory.resolve(RESOURCE_NAME);
         Files.createDirectory(downloadDirectory);
         Files.createDirectory(destinationDirectory);

@@ -1,10 +1,12 @@
 package org.siouan.frontendgradleplugin.tasks;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.security.NoSuchAlgorithmException;
 
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.logging.LogLevel;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
@@ -26,6 +28,8 @@ import org.siouan.frontendgradleplugin.core.archivers.ArchiverFactoryImpl;
  */
 public class NodeInstallTask extends DefaultTask {
 
+    final Property<LogLevel> loggingLevel;
+
     /**
      * Version of the Node distribution to download.
      */
@@ -42,9 +46,16 @@ public class NodeInstallTask extends DefaultTask {
     private final Property<String> nodeDistributionUrl;
 
     public NodeInstallTask() {
+        loggingLevel = getProject().getObjects().property(LogLevel.class);
         nodeVersion = getProject().getObjects().property(String.class);
         nodeInstallDirectory = getProject().getObjects().directoryProperty();
         nodeDistributionUrl = getProject().getObjects().property(String.class);
+    }
+
+    @Input
+    @Optional
+    public Property<LogLevel> getLoggingLevel() {
+        return loggingLevel;
     }
 
     @Input
@@ -75,12 +86,13 @@ public class NodeInstallTask extends DefaultTask {
     public void execute() throws DistributionInstallerException, NoSuchAlgorithmException {
         final String version = nodeVersion.get();
         final String distributionUrl = nodeDistributionUrl.getOrNull();
-        final File installDirectory = nodeInstallDirectory.getAsFile().get();
-        final DistributionInstallerSettings settings = new DistributionInstallerSettings(this, Utils.getSystemOsName(),
-            getTemporaryDir().toPath(), new NodeDistributionUrlResolver(version, distributionUrl), new DownloaderImpl(getTemporaryDir().toPath()),
-            new NodeDistributionValidator(this, new DownloaderImpl(getTemporaryDir().toPath()),
+        final Path installDirectory = nodeInstallDirectory.getAsFile().map(File::toPath).get();
+        final DistributionInstallerSettings settings = new DistributionInstallerSettings(this, loggingLevel.get(),
+            Utils.getSystemOsName(), getTemporaryDir().toPath(),
+            new NodeDistributionUrlResolver(version, distributionUrl), new DownloaderImpl(getTemporaryDir().toPath()),
+            new NodeDistributionValidator(this, loggingLevel.get(), new DownloaderImpl(getTemporaryDir().toPath()),
                 new NodeDistributionChecksumReaderImpl(), new FileHasherImpl(), getTemporaryDir().toPath()),
-            new ArchiverFactoryImpl(), installDirectory.toPath());
+            new ArchiverFactoryImpl(), installDirectory);
         new DistributionInstaller(settings).install();
     }
 }

@@ -1,13 +1,20 @@
 package org.siouan.frontendgradleplugin.core;
 
-import java.io.File;
+import java.nio.file.Path;
+import javax.annotation.Nullable;
 
 import org.gradle.api.Task;
+import org.gradle.api.logging.LogLevel;
 
 /**
  * This abstract class provides the reusable logic to run a NPM/Yarn script.
  */
 public class RunScriptJob extends AbstractTaskJob {
+
+    /**
+     * Directory where the 'package.json' file is located.
+     */
+    private final Path packageJsonDirectory;
 
     /**
      * Executor use to run the script.
@@ -17,12 +24,12 @@ public class RunScriptJob extends AbstractTaskJob {
     /**
      * Directory where the Node distribution is installed.
      */
-    private final File nodeInstallDirectory;
+    private final Path nodeInstallDirectory;
 
     /**
      * Directory where the Yarn distribution is installed.
      */
-    private final File yarnInstallDirectory;
+    private final Path yarnInstallDirectory;
 
     /**
      * The script run by the job with NPM or Yarn.
@@ -38,15 +45,19 @@ public class RunScriptJob extends AbstractTaskJob {
      * Builds a job to run a script.
      *
      * @param task Parent task.
+     * @param loggingLevel Default logging level.
+     * @param packageJsonDirectory Directory where the 'package.json' file is located.
      * @param executor Executor to use to run the script.
      * @param nodeInstallDirectory Node install directory.
      * @param yarnInstallDirectory Yarn install directory.
      * @param script The script run by the job.
      * @param osName O/S name.
      */
-    public RunScriptJob(final Task task, final Executor executor, final File nodeInstallDirectory,
-        final File yarnInstallDirectory, final String script, final String osName) {
-        super(task);
+    public RunScriptJob(final Task task, final LogLevel loggingLevel, final Path packageJsonDirectory,
+        final Executor executor, final Path nodeInstallDirectory, @Nullable final Path yarnInstallDirectory,
+        final String script, final String osName) {
+        super(task, loggingLevel);
+        this.packageJsonDirectory = packageJsonDirectory;
         this.executor = executor;
         this.nodeInstallDirectory = nodeInstallDirectory;
         this.yarnInstallDirectory = yarnInstallDirectory;
@@ -55,11 +66,16 @@ public class RunScriptJob extends AbstractTaskJob {
     }
 
     public void run() throws ExecutableNotFoundException {
-        task.getProject()
-            .exec(new ExecSpecAction(executor, nodeInstallDirectory, yarnInstallDirectory, osName, script, execSpec -> {
+        task
+            .getProject()
+            .exec(new ExecSpecAction(packageJsonDirectory, executor, nodeInstallDirectory, yarnInstallDirectory, osName,
+                script, execSpec -> {
                 logDebug(execSpec.getEnvironment().toString());
-                logLifecycle(
-                    "Running '" + execSpec.getExecutable() + ' ' + String.join(" ", execSpec.getArgs()) + '\'');
-            })).rethrowFailure().assertNormalExitValue();
+                logMessage(
+                    "Running '" + execSpec.getExecutable() + " with args: [" + String.join("], [", execSpec.getArgs())
+                        + ']');
+            }))
+            .rethrowFailure()
+            .assertNormalExitValue();
     }
 }

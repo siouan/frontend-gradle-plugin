@@ -3,9 +3,7 @@ package org.siouan.frontendgradleplugin.tasks;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.siouan.frontendgradleplugin.FrontendExtension;
-import org.siouan.frontendgradleplugin.core.ExecutableNotFoundException;
 import org.siouan.frontendgradleplugin.core.Executor;
-import org.siouan.frontendgradleplugin.core.MissingScriptException;
 
 /**
  * Task provided as a type to let developers implement custom task based on it. The task does not expose Node related
@@ -27,6 +25,10 @@ public class RunNodeTask extends AbstractRunScriptTask {
 
     public RunNodeTask() {
         super(true);
+        final FrontendExtension extension = getProject().getExtensions().findByType(FrontendExtension.class);
+        packageJsonDirectory.set(extension.getPackageJsonDirectory());
+        loggingLevel.set(extension.getLoggingLevel());
+        nodeInstallDirectory.set(extension.getNodeInstallDirectory());
     }
 
     @Input
@@ -37,14 +39,5 @@ public class RunNodeTask extends AbstractRunScriptTask {
     @Override
     protected Executor getExecutionType() {
         return Executor.NODE;
-    }
-
-    @Override
-    public void execute() throws MissingScriptException, ExecutableNotFoundException {
-        final FrontendExtension extension = getProject().getExtensions().findByType(FrontendExtension.class);
-        yarnEnabled.set(extension.getYarnEnabled());
-        nodeInstallDirectory.set(extension.getNodeInstallDirectory());
-        yarnInstallDirectory.set(extension.getYarnInstallDirectory());
-        super.execute();
     }
 }

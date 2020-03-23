@@ -34,6 +34,7 @@ matrix:
         # https://github.com/shyiko/jabba#usage
         - JDK="openjdk@1.11"
       before_install:
+        - chmod u+x gradlew
         # Download the script, and download, install, configue the JDK, and export the configuration to the current shell
         - curl "${GRAVIS}.install-jdk-travis.sh" --output ~/.install-jdk-travis.sh
         - source ~/.install-jdk-travis.sh
@@ -54,6 +55,7 @@ matrix:
         # https://github.com/shyiko/jabba#usage
         - JDK="adopt-openj9@1.8"
       before_install:
+        - chmod u+x gradlew
         # Download the script, and download, install, configue the JDK, and export the configuration to the current shell
         - curl "${GRAVIS}.install-jdk-travis.sh" --output ~/.install-jdk-travis.sh
         - source ~/.install-jdk-travis.sh
@@ -74,6 +76,9 @@ cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
+
+before_install:
+  - chmod u+x gradlew
 
 script:
   - ./gradlew check --scan
