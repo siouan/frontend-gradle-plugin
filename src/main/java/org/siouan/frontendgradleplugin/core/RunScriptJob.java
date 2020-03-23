@@ -72,7 +72,8 @@ public class RunScriptJob extends AbstractTaskJob {
                 script, execSpec -> {
                 logDebug(execSpec.getEnvironment().toString());
                 logMessage(
-                    "Running '" + execSpec.getExecutable() + ' ' + String.join(" ", execSpec.getArgs()) + '\'');
+                    "Running '" + execSpec.getExecutable() + " with args: [" + String.join("], [", execSpec.getArgs())
+                        + ']');
             }))
             .rethrowFailure()
             .assertNormalExitValue();

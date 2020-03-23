@@ -46,11 +46,9 @@ class RunScriptTaskFuncTest {
             packageJsonDirectory.resolve("package.json"));
         final Map<String, Object> properties = new HashMap<>();
         final String customTaskName = "e2e";
-        final StringBuilder customTaskDefinition = new StringBuilder("tasks.register('");
-        customTaskDefinition.append(customTaskName);
-        customTaskDefinition.append("', org.siouan.frontendgradleplugin.tasks.RunScriptTask) {\n");
-        customTaskDefinition.append("}\n");
-        Helper.createBuildFile(projectDirectory, properties, customTaskDefinition.toString());
+        final String customTaskDefinition =
+            "tasks.register('" + customTaskName + "', org.siouan.frontendgradleplugin.tasks.RunScriptTask) {}\n";
+        Helper.createBuildFile(projectDirectory, properties, customTaskDefinition);
 
         final BuildResult result = runGradleAndExpectFailure(projectDirectory, customTaskName);
 
