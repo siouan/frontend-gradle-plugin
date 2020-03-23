@@ -2,6 +2,7 @@ package org.siouan.frontendgradleplugin.core;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -11,13 +12,20 @@ import org.junit.jupiter.api.Test;
  */
 class StringSplitterTest {
 
+    private StringSplitter splitter;
+
+    @BeforeEach
+    void setUp() {
+        splitter = new StringSplitter(' ', '\\');
+    }
+
     @Test
     void shouldSplitString() {
-        assertThat(new StringSplitter().execute(" str1 str2 ", ' ', '\\')).containsExactly("str1", "str2");
+        assertThat(splitter.execute(" str1 str2 ")).containsExactly("str1", "str2");
     }
 
     @Test
     void shouldSplitStringAndIgnoreEscapedSeparators() {
-        assertThat(new StringSplitter().execute("\\ str1\\  str2\\ ", ' ', '\\')).containsExactly(" str1 ", "str2 ");
+        assertThat(splitter.execute("\\ str1\\  str2\\ ")).containsExactly(" str1 ", "str2 ");
     }
 }
