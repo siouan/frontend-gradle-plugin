@@ -194,8 +194,8 @@ frontend {
     checkScript = 'run check'
 
     // [OPTIONAL] Script called to publish the frontend. Default value is <null>. This property is
-    // used by the 'publishFrontend' task. Apart from direct execution, if the 'maven-publish'
-    // plugin is applied, the task is also executed when the 'publish' task is executed.
+    // used by the 'publishFrontend' task. Apart from direct execution, the task is also executed
+    // when the Gradle built-in 'publish' task is executed.
     publishScript = 'run publish'
 
     ////// GENERAL SETTINGS //////
@@ -297,8 +297,8 @@ Optionally, if Yarn is enabled and you don't want to enter Yarn's executable abs
 ## Tasks reference
 
 The plugin registers multiple tasks, that may have dependencies with each other, and also with:
-- Gradle lifecycle tasks defined in the [Gradle Base plugin][gradle-base-plugin].
-- Tasks defined in the [Maven Publish plugin][maven-publish-plugin].
+- Gradle lifecycle tasks defined in the [Gradle Base plugin][gradle-base-plugin]: `clean`, `assemble`, `check`.
+- Tasks defined in the Gradle Publishing plugin: `publish`.
 
 ### Task tree
 
@@ -380,9 +380,7 @@ the `checkScript` property is not set.
 The `publishFrontend` task may be used to integrate a frontend publish script into a Gradle build. The publish script
 must be defined in the project's `package.json` file, and the `publishScript` property must be set with the
 corresponding NPM/Yarn command. This task depends on the task `assembleFrontend`, and is skipped if either the
-`assembleScript` property or the `publishScript` property is not set. If present, the `publish` task in the
-[Maven Publish plugin][gradle-maven-publish-plugin] depends on the `publishFrontend` task. Therefore, executing command
-`gradlew publish` would publish any Maven artifacts as well as frontend artifacts.
+`assembleScript` property or the `publishScript` property is not set.
 
 ### Run custom Node script
 
