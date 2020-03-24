@@ -28,10 +28,10 @@
     <node id="n1">
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="231.0" width="750.2249999999998" x="-210.625" y="-276.0"/>
+          <y:Geometry height="231.0" width="710.8633999999998" x="-210.625" y="-276.0"/>
           <y:Fill hasColor="false" transparent="false"/>
           <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Verdana" fontSize="16" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="23.4453125" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="br" textColor="#000000" verticalTextPosition="bottom" visible="true" width="211.1875" x="535.0374999999998" y="203.5546875">Frontend Gradle plugin</y:NodeLabel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Verdana" fontSize="16" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="23.4453125" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="br" textColor="#000000" verticalTextPosition="bottom" visible="true" width="211.1875" x="495.67589999999984" y="203.5546875">Frontend Gradle plugin</y:NodeLabel>
           <y:Shape type="rectangle"/>
         </y:ShapeNode>
       </data>
@@ -209,10 +209,10 @@
     <node id="n12">
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="99.65000000000003" width="209.5999999999998" x="330.0" y="-389.65"/>
+          <y:Geometry height="99.65000000000003" width="170.23839999999984" x="330.0" y="-389.65"/>
           <y:Fill hasColor="false" transparent="false"/>
           <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Verdana" fontSize="16" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="23.4453125" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="tr" textColor="#000000" verticalTextPosition="bottom" visible="true" width="195.4609375" x="10.139062499999795" y="4.0">Maven Publish plugin</y:NodeLabel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Verdana" fontSize="16" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="23.4453125" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="tr" textColor="#000000" verticalTextPosition="bottom" visible="true" width="159.7734375" x="6.464962499999842" y="4.0">Publishing plugin</y:NodeLabel>
           <y:Shape type="rectangle"/>
         </y:ShapeNode>
       </data>
