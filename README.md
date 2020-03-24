@@ -209,7 +209,7 @@ frontend {
     // [OPTIONAL] Default level used by the plugin to log messages in Gradle. This property allows
     // to set a specific level for this plugin only. It does not take precedence over Gradle
     // logging level at execution, i.e. it must be higher or equal than the logging level set on
-    // the command line so as messages are visible. The plugin also logged some messages with a
+    // the command line so as messages are visible. The plugin also logs some messages with a
     // specific level, independently from this setting (e.g. debugging data).
     loggingLevel = LogLevel.LIFECYCLE
 }
@@ -312,13 +312,14 @@ directory where the distribution shall be installed, which by default is the `${
 takes advantage of [Gradle incremental build][gradle-incremental-build], and is not executed again unless at least one
 of the events below occurs:
 
-- the plugins change in the project.
+- The plugins change in the project.
 - At least one of the properties `nodeVersion`, `nodeDistributionUrl`, `nodeInstallDirectory` is modified.
 - The content of the directory pointed by the `nodeInstallDirectory` is modified.
 
 In other cases, the task will be marked as _UP-TO-DATE_ during a Gradle build, and skipped.
 
-This task should not be executed directly. It will be called automatically by Gradle, if another task depends on it.
+This task should not be executed directly. It is called automatically by Gradle, if the `installFrontend` task is
+executed.
 
 ### Install Yarn
 
@@ -328,14 +329,15 @@ set the directory where the distribution shall be installed, which, by default i
 The task takes advantage of [Gradle incremental build][gradle-incremental-build], and is not executed again unless at
 least one of the events below occurs:
 
-- the plugins change in the project.
+- The plugins change in the project.
 - At least one of the properties `yarnEnabled`, `yarnVersion`, `yarnDistributionUrl`, `yarnInstallDirectory` is
 modified.
 - The content of the directory pointed by the `yarnInstallDirectory` is modified.
 
 In other cases, the task will be marked as _UP-TO-DATE_ during a Gradle build, and skipped.
 
-This task should not be executed directly. It will be called automatically by Gradle, if another task depends on it.
+This task should not be executed directly. It is called automatically by Gradle, if the `installFrontend` task is
+executed.
 
 ### Install frontend dependencies
 
@@ -346,8 +348,9 @@ this command may be customized (e.g. to run a `npm ci` command instead of a `npm
 `installScript` property must be set to the corresponding NPM/Yarn command. This task depends on the `installNode` task, and
 optionally on the `installYarn` task if the `yarnEnabled` property is `true`.
 
-This task may be executed directly, especially if the Node distribution and/or the Yarn distribution must be downloaded
-again.
+This task may be executed directly, e.g. if one of the Node/Yarn version is modified, and a distribution must be
+downloaded again. Otherwise, this task is called automatically by Gradle, if one of these tasks is executed:
+`cleanFrontend`, `assembleFrontend`, `checkFrontend`, `publishFrontend`.
 
 ### Clean frontend
 
