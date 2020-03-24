@@ -1,6 +1,6 @@
 # Frontend Gradle plugin
 
-[![Latest release 1.4.0](https://img.shields.io/badge/Latest%20release-1.4.0-blue.svg)](https://github.com/Siouan/frontend-gradle-plugin/releases/tag/v1.4.0)
+[![Latest release 1.4.1](https://img.shields.io/badge/Latest%20release-1.4.1-blue.svg)](https://github.com/Siouan/frontend-gradle-plugin/releases/tag/v1.4.1)
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
 
 [![Build status](https://travis-ci.com/Siouan/frontend-gradle-plugin.svg?branch=master)](https://travis-ci.com/Siouan/frontend-gradle-plugin)
@@ -71,7 +71,7 @@ This is the modern and recommended approach.
 ```groovy
 // build.gradle
 plugins {
-    id 'org.siouan.frontend' version '1.4.0'
+    id 'org.siouan.frontend' version '1.4.1'
 }
 ```
 
@@ -80,7 +80,7 @@ plugins {
 ```kotlin
 // build.gradle.kts
 plugins {
-    id("org.siouan.frontend") version "1.4.0"
+    id("org.siouan.frontend") version "1.4.1"
 }
 ```
 
@@ -97,7 +97,7 @@ buildscript {
         url 'https://plugins.gradle.org/m2/'
     }
     dependencies {
-        classpath 'org.siouan:frontend-gradle-plugin:1.4.0'
+        classpath 'org.siouan:frontend-gradle-plugin:1.4.1'
     }
 }
 
@@ -113,7 +113,7 @@ buildscript {
         url = uri("https://plugins.gradle.org/m2/")
     }
     dependencies {
-        classpath("org.siouan:frontend-gradle-plugin:1.4.0")
+        classpath("org.siouan:frontend-gradle-plugin:1.4.1")
     }
 }
 
@@ -194,8 +194,8 @@ frontend {
     checkScript = 'run check'
 
     // [OPTIONAL] Script called to publish the frontend. Default value is <null>. This property is
-    // used by the 'publishFrontend' task. Apart from direct execution, if the 'maven-publish'
-    // plugin is applied, the task is also executed when the 'publish' task is executed.
+    // used by the 'publishFrontend' task. Apart from direct execution, the task is also executed
+    // when the Gradle built-in 'publish' task is executed.
     publishScript = 'run publish'
 
     ////// GENERAL SETTINGS //////
@@ -209,7 +209,7 @@ frontend {
     // [OPTIONAL] Default level used by the plugin to log messages in Gradle. This property allows
     // to set a specific level for this plugin only. It does not take precedence over Gradle
     // logging level at execution, i.e. it must be higher or equal than the logging level set on
-    // the command line so as messages are visible. The plugin also logged some messages with a
+    // the command line so as messages are visible. The plugin also logs some messages with a
     // specific level, independently from this setting (e.g. debugging data).
     loggingLevel = LogLevel.LIFECYCLE
 }
@@ -297,8 +297,8 @@ Optionally, if Yarn is enabled and you don't want to enter Yarn's executable abs
 ## Tasks reference
 
 The plugin registers multiple tasks, that may have dependencies with each other, and also with:
-- Gradle lifecycle tasks defined in the [Gradle Base plugin][gradle-base-plugin].
-- Tasks defined in the [Maven Publish plugin][maven-publish-plugin].
+- Gradle lifecycle tasks defined in the [Gradle Base plugin][gradle-base-plugin]: `clean`, `assemble`, `check`.
+- Tasks defined in the Gradle Publishing plugin: `publish`.
 
 ### Task tree
 
@@ -312,13 +312,14 @@ directory where the distribution shall be installed, which by default is the `${
 takes advantage of [Gradle incremental build][gradle-incremental-build], and is not executed again unless at least one
 of the events below occurs:
 
-- the plugins change in the project.
+- The plugins change in the project.
 - At least one of the properties `nodeVersion`, `nodeDistributionUrl`, `nodeInstallDirectory` is modified.
 - The content of the directory pointed by the `nodeInstallDirectory` is modified.
 
 In other cases, the task will be marked as _UP-TO-DATE_ during a Gradle build, and skipped.
 
-This task should not be executed directly. It will be called automatically by Gradle, if another task depends on it.
+This task should not be executed directly. It is called automatically by Gradle, if the `installFrontend` task is
+executed.
 
 ### Install Yarn
 
@@ -328,14 +329,15 @@ set the directory where the distribution shall be installed, which, by default i
 The task takes advantage of [Gradle incremental build][gradle-incremental-build], and is not executed again unless at
 least one of the events below occurs:
 
-- the plugins change in the project.
+- The plugins change in the project.
 - At least one of the properties `yarnEnabled`, `yarnVersion`, `yarnDistributionUrl`, `yarnInstallDirectory` is
 modified.
 - The content of the directory pointed by the `yarnInstallDirectory` is modified.
 
 In other cases, the task will be marked as _UP-TO-DATE_ during a Gradle build, and skipped.
 
-This task should not be executed directly. It will be called automatically by Gradle, if another task depends on it.
+This task should not be executed directly. It is called automatically by Gradle, if the `installFrontend` task is
+executed.
 
 ### Install frontend dependencies
 
@@ -346,8 +348,9 @@ this command may be customized (e.g. to run a `npm ci` command instead of a `npm
 `installScript` property must be set to the corresponding NPM/Yarn command. This task depends on the `installNode` task, and
 optionally on the `installYarn` task if the `yarnEnabled` property is `true`.
 
-This task may be executed directly, especially if the Node distribution and/or the Yarn distribution must be downloaded
-again.
+This task may be executed directly, e.g. if one of the Node/Yarn version is modified, and a distribution must be
+downloaded again. Otherwise, this task is called automatically by Gradle, if one of these tasks is executed:
+`cleanFrontend`, `assembleFrontend`, `checkFrontend`, `publishFrontend`.
 
 ### Clean frontend
 
@@ -377,9 +380,7 @@ the `checkScript` property is not set.
 The `publishFrontend` task may be used to integrate a frontend publish script into a Gradle build. The publish script
 must be defined in the project's `package.json` file, and the `publishScript` property must be set with the
 corresponding NPM/Yarn command. This task depends on the task `assembleFrontend`, and is skipped if either the
-`assembleScript` property or the `publishScript` property is not set. If present, the `publish` task in the
-[Maven Publish plugin][gradle-maven-publish-plugin] depends on the `publishFrontend` task. Therefore, executing command
-`gradlew publish` would publish any Maven artifacts as well as frontend artifacts.
+`assembleScript` property or the `publishScript` property is not set.
 
 ### Run custom Node script
 

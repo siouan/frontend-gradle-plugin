@@ -7,28 +7,33 @@ assignees: ''
 
 ---
 
+> Before creating an issue, please:
+> - Check you are using the latest plugin release.
+> - Check the issue was not reported yet.
+
+---
+
 Hi,
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+**Description**
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+What I am trying to do: ...
+Expected results: ...
+Actual results: ...
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Put these settings in `build.gradle`: '...'
-2. Execute the Gradle task '...'
-3. See error/issue
+**Environment**
+ 
+- OS: [e.g. Ubuntu 18.04.1, Windows 10 Pro, Mac OS X]
+- JDK: [e.g. Oracle JDK 11 64 bits]
+- Gradle: [e.g. Gradle 6.2.2]
+- Frontend Gradle plugin: [e.g. 1.4.1]
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+Settings in `build.gradle[.kts]` file:
+```groovy
+frontend {
+    // Provide the plugin settings applied.
+}
+```
 
-**Environment (please complete the following information):**
- - OS: [e.g. Ubuntu 18.04.1, Windows 10 Home, Mac OS X]
- - JDK: [e.g. Oracle JDK 8 update 202 64 bits]
- - Gradle: [e.g. Gradle 5.2.1]
- - Frontend Gradle plugin: [e.g. 1.0.0]
-
-**Additional context**
-Add any other context about the problem here.
+**Attachments**
+Additionally, you may attach Gradle log file, screenshots, sample archive, JUnit test case to help reproducing the issue.

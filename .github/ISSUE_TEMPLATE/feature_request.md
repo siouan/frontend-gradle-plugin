@@ -7,14 +7,30 @@ assignees: ''
 
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+> Before creating an issue, please:
+> - Check you are using the latest plugin release.
+> - Check the issue was not reported yet.
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+---
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
+Hi,
 
-**Additional context**
-Add any other context or screenshots about the feature request here.
+**Description**
+
+Explain what you would like the plugin do: ...
+
+**Target environment**
+ 
+- OS: [e.g. Ubuntu 18.04.1, Windows 10 Pro, Mac OS X]
+- JDK: [e.g. Oracle JDK 11 64 bits]
+- Gradle: [e.g. Gradle 6.2.2]
+
+Settings in `build.gradle[.kts]` file:
+```groovy
+frontend {
+    // Provide the expected plugin settings.
+}
+```
+
+**Attachments**
+Additionally, you may attach files to help understanding the need.

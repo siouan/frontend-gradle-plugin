@@ -15,7 +15,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.gradle.api.logging.LogLevel;
+import org.gradle.api.plugins.BasePlugin;
 import org.gradle.testkit.runner.BuildResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -66,13 +66,13 @@ class AssembleTaskFuncTest {
         properties.put("nodeDistributionUrl", getClass().getClassLoader().getResource("node-v10.16.0.zip").toString());
         Helper.createBuildFile(projectDirectory, properties);
 
-        final BuildResult result = runGradle(projectDirectory, FrontendGradlePlugin.GRADLE_ASSEMBLE_TASK_NAME);
+        final BuildResult result = runGradle(projectDirectory, BasePlugin.ASSEMBLE_TASK_NAME);
 
         assertTaskIgnored(result, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskIgnored(result, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskIgnored(result, FrontendGradlePlugin.INSTALL_TASK_NAME);
         assertTaskSkipped(result, FrontendGradlePlugin.ASSEMBLE_TASK_NAME);
-        assertTaskUpToDate(result, FrontendGradlePlugin.GRADLE_ASSEMBLE_TASK_NAME);
+        assertTaskUpToDate(result, BasePlugin.ASSEMBLE_TASK_NAME);
     }
 
     @Test
@@ -85,45 +85,45 @@ class AssembleTaskFuncTest {
         properties.put("assembleScript", "run assemble");
         Helper.createBuildFile(projectDirectory, properties);
 
-        final BuildResult result1 = runGradle(projectDirectory, FrontendGradlePlugin.GRADLE_ASSEMBLE_TASK_NAME);
+        final BuildResult result1 = runGradle(projectDirectory, BasePlugin.ASSEMBLE_TASK_NAME);
 
         assertTaskSuccess(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskSkipped(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskSuccess(result1, FrontendGradlePlugin.INSTALL_TASK_NAME);
         assertTaskSuccess(result1, FrontendGradlePlugin.ASSEMBLE_TASK_NAME);
-        assertTaskSuccess(result1, FrontendGradlePlugin.GRADLE_ASSEMBLE_TASK_NAME);
+        assertTaskSuccess(result1, BasePlugin.ASSEMBLE_TASK_NAME);
 
-        final BuildResult result2 = runGradle(projectDirectory, FrontendGradlePlugin.GRADLE_ASSEMBLE_TASK_NAME);
+        final BuildResult result2 = runGradle(projectDirectory, BasePlugin.ASSEMBLE_TASK_NAME);
 
         assertTaskUpToDate(result2, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskSkipped(result2, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskSuccess(result2, FrontendGradlePlugin.INSTALL_TASK_NAME);
         assertTaskSuccess(result2, FrontendGradlePlugin.ASSEMBLE_TASK_NAME);
-        assertTaskSuccess(result2, FrontendGradlePlugin.GRADLE_ASSEMBLE_TASK_NAME);
+        assertTaskSuccess(result2, BasePlugin.ASSEMBLE_TASK_NAME);
 
         Files.deleteIfExists(projectDirectory.resolve("package-lock.json"));
         Files.copy(Paths.get(getClass().getClassLoader().getResource("package-yarn.json").toURI()),
             packageJsonDirectory.resolve("package.json"), StandardCopyOption.REPLACE_EXISTING);
         properties.put("yarnEnabled", true);
         properties.put("yarnVersion", "1.16.0");
-        properties
-            .put("yarnDistributionUrl", getClass().getClassLoader().getResource("yarn-v1.16.0.tar.gz").toString());
+        properties.put("yarnDistributionUrl",
+            getClass().getClassLoader().getResource("yarn-v1.16.0.tar.gz").toString());
         Helper.createBuildFile(projectDirectory, properties);
 
-        final BuildResult result3 = runGradle(projectDirectory, FrontendGradlePlugin.GRADLE_ASSEMBLE_TASK_NAME);
+        final BuildResult result3 = runGradle(projectDirectory, BasePlugin.ASSEMBLE_TASK_NAME);
 
         assertTaskUpToDate(result3, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskSuccess(result3, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskSuccess(result3, FrontendGradlePlugin.INSTALL_TASK_NAME);
         assertTaskSuccess(result3, FrontendGradlePlugin.ASSEMBLE_TASK_NAME);
-        assertTaskSuccess(result3, FrontendGradlePlugin.GRADLE_ASSEMBLE_TASK_NAME);
+        assertTaskSuccess(result3, BasePlugin.ASSEMBLE_TASK_NAME);
 
-        final BuildResult result4 = runGradle(projectDirectory, FrontendGradlePlugin.GRADLE_ASSEMBLE_TASK_NAME);
+        final BuildResult result4 = runGradle(projectDirectory, BasePlugin.ASSEMBLE_TASK_NAME);
 
         assertTaskUpToDate(result4, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskUpToDate(result4, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskSuccess(result4, FrontendGradlePlugin.INSTALL_TASK_NAME);
         assertTaskSuccess(result4, FrontendGradlePlugin.ASSEMBLE_TASK_NAME);
-        assertTaskSuccess(result4, FrontendGradlePlugin.GRADLE_ASSEMBLE_TASK_NAME);
+        assertTaskSuccess(result4, BasePlugin.ASSEMBLE_TASK_NAME);
     }
 }
