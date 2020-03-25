@@ -1,0 +1,70 @@
+package org.siouan.frontendgradleplugin.infrastructure.archiver;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
+import java.io.IOException;
+import java.util.Enumeration;
+
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipFile;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.siouan.frontendgradleplugin.domain.exception.ArchiverException;
+import org.siouan.frontendgradleplugin.domain.model.ExplodeSettings;
+
+/**
+ * Unit tests for the {@link ZipArchiverContext} class.
+ *
+ * @since 1.1.3
+ */
+@ExtendWith(MockitoExtension.class)
+class ZipArchiverContextTest {
+
+    @Mock
+    ZipFile zipFile;
+
+    @Mock
+    private ExplodeSettings settings;
+
+    @Mock
+    private Enumeration<ZipArchiveEntry> entries;
+
+    @Test
+    void shouldFailWhenClosingContextWithIOException() throws IOException {
+        when(zipFile.getEntries()).thenReturn(entries);
+        final Exception expectedException = mock(IOException.class);
+        doThrow(expectedException).when(zipFile).close();
+
+        final ZipArchiverContext context = new ZipArchiverContext(settings, zipFile);
+        assertThatThrownBy(context::close).isInstanceOf(ArchiverException.class).hasCause(expectedException);
+
+        assertThat(context.getSettings()).isEqualTo(settings);
+        assertThat(context.getEntries()).isEqualTo(entries);
+        assertThat(context.getZipFile()).isEqualTo(zipFile);
+        verify(zipFile).getEntries();
+        verify(zipFile).close();
+        verifyNoMoreInteractions(zipFile);
+    }
+
+    @Test
+    void shouldCloseContext() throws IOException, ArchiverException {
+        when(zipFile.getEntries()).thenReturn(entries);
+        final ZipArchiverContext context = new ZipArchiverContext(settings, zipFile);
+        context.close();
+
+        assertThat(context.getSettings()).isEqualTo(settings);
+        assertThat(context.getEntries()).isEqualTo(entries);
+        assertThat(context.getZipFile()).isEqualTo(zipFile);
+        verify(zipFile).getEntries();
+        verify(zipFile).close();
+        verifyNoMoreInteractions(zipFile);
+    }
+}

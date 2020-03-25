@@ -11,21 +11,22 @@ import org.gradle.api.publish.plugins.PublishingPlugin;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.language.base.plugins.LifecycleBasePlugin;
-import org.siouan.frontendgradleplugin.tasks.AssembleTask;
-import org.siouan.frontendgradleplugin.tasks.CheckTask;
-import org.siouan.frontendgradleplugin.tasks.CleanTask;
-import org.siouan.frontendgradleplugin.tasks.InstallTask;
-import org.siouan.frontendgradleplugin.tasks.NodeInstallTask;
-import org.siouan.frontendgradleplugin.tasks.PublishTask;
-import org.siouan.frontendgradleplugin.tasks.YarnInstallTask;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.AssembleTask;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.CheckTask;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.CleanTask;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.FrontendExtension;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.InstallTask;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.NodeInstallTask;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.PublishTask;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.YarnInstallTask;
 
 /**
  * Main plugin class that bootstraps the plugin by declaring its DSL and its tasks.
  * <ul>
  * <li>The plugin applies the Gradle Base plugin, to attach its tasks to the Gradle lifecyle task.</li>
  * <li>Tasks are registered lazily thanks to the use of the configuration avoidance API.</li>
- * <li>Task properties are mapped the plugin extension (DSL) using the lazy configuration API, allowing there
- * calculation is delayed until it is required.</li>
+ * <li>Task properties are mapped to the plugin extension (DSL) using the lazy configuration API, allowing their
+ * calculation to be delayed until it is required.</li>
  * </ul>
  *
  * @see <a href="https://docs.gradle.org/current/userguide/task_configuration_avoidance.html">Task configuration
@@ -55,6 +56,11 @@ public class FrontendGradlePlugin implements Plugin<Project> {
     public static final String PUBLISH_TASK_NAME = "publishFrontend";
 
     /**
+     * Name of the NPM/Yarn command that shall be executed to install frontend dependencies.
+     */
+    private static final String DEFAULT_INSTALL_SCRIPT = "install";
+
+    /**
      * Name of the task that installs a Node distribution.
      */
     public static final String DEFAULT_NODE_INSTALL_DIRNAME = "node";
@@ -80,11 +86,6 @@ public class FrontendGradlePlugin implements Plugin<Project> {
     public static final String YARN_INSTALL_TASK_NAME = "installYarn";
 
     public static final String GRADLE_CHECK_TASK_NAME = LifecycleBasePlugin.CHECK_TASK_NAME;
-
-    /**
-     * Name of the NPM/Yarn command that shall be executed to install frontend dependencies.
-     */
-    private static final String DEFAULT_INSTALL_SCRIPT = "install";
 
     /**
      * Root name of the plugin extension.

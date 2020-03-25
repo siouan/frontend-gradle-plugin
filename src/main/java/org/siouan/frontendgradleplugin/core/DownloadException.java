@@ -1,5 +1,7 @@
 package org.siouan.frontendgradleplugin.core;
 
+import org.siouan.frontendgradleplugin.domain.exception.FrontendException;
+
 /**
  * Exception thrown when the download of a resource failed.
  */

@@ -384,7 +384,7 @@ corresponding NPM/Yarn command. This task depends on the task `assembleFrontend`
 
 ### Run custom Node script
 
-The plugin provides the task type `org.siouan.frontendgradleplugin.tasks.RunNodeTask` that allows creating a custom
+The plugin provides the task type `org.siouan.frontendgradleplugin.infrastructure.gradle.RunNodeTask` that allows creating a custom
 task to launch a frontend script. The `script` property must be set with the corresponding Node command. Then, choose
 whether Node only is required, or if additional dependencies located in the `package.json` file should be installed:
 make the task either depends on `installNode` task or on `installFrontend` task.
@@ -395,7 +395,7 @@ The code below shows the configuration required to run a JS `my-custom-script.js
 
 ```groovy
 // build.gradle
-tasks.register('myCustomScript', org.siouan.frontendgradleplugin.tasks.RunNodeTask) {
+tasks.register('myCustomScript', org.siouan.frontendgradleplugin.infrastructure.gradle.RunNodeTask) {
     // dependsOn tasks.named('installNode')
     // dependsOn tasks.named('installFrontend')
     script = 'my-custom-script.js'
@@ -406,7 +406,7 @@ tasks.register('myCustomScript', org.siouan.frontendgradleplugin.tasks.RunNodeTa
 
 ```kotlin
 // build.gradle.kts
-tasks.register<org.siouan.frontendgradleplugin.tasks.RunNodeTask>("myCustomScript") {
+tasks.register<org.siouan.frontendgradleplugin.infrastructure.gradle.RunNodeTask>("myCustomScript") {
     // dependsOn(tasks.named("installNode"))
     // dependsOn(tasks.named("installFrontend"))
     script.set("my-custom-script.js")
@@ -415,7 +415,7 @@ tasks.register<org.siouan.frontendgradleplugin.tasks.RunNodeTask>("myCustomScrip
 
 ### Run custom NPM/Yarn script
 
-The plugin provides the task type `org.siouan.frontendgradleplugin.tasks.RunScriptTask` that allows creating a custom
+The plugin provides the task type `org.siouan.frontendgradleplugin.infrastructure.gradle.RunScriptTask` that allows creating a custom
 task to launch a frontend script. The `script` property must be set with the corresponding NPM/Yarn command.
 
 The code below shows the configuration required to run frontend's end-to-end tests in a custom task:
@@ -424,7 +424,7 @@ The code below shows the configuration required to run frontend's end-to-end tes
 
 ```groovy
 // build.gradle
-tasks.register('e2e', org.siouan.frontendgradleplugin.tasks.RunScriptTask) {
+tasks.register('e2e', org.siouan.frontendgradleplugin.infrastructure.gradle.RunScriptTask) {
     dependsOn tasks.named('installFrontend')
     script = 'run e2e'
 }
@@ -434,7 +434,7 @@ tasks.register('e2e', org.siouan.frontendgradleplugin.tasks.RunScriptTask) {
 
 ```kotlin
 // build.gradle.kts
-tasks.register<org.siouan.frontendgradleplugin.tasks.RunScriptTask>("e2e") {
+tasks.register<org.siouan.frontendgradleplugin.infrastructure.gradle.RunScriptTask>("e2e") {
     dependsOn(tasks.named("installFrontend"))
     script.set("run e2e")
 }
