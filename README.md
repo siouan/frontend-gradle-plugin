@@ -1,6 +1,6 @@
 # Frontend Gradle plugin
 
-[![Latest release 1.4.1](https://img.shields.io/badge/Latest%20release-1.4.1-blue.svg)](https://github.com/Siouan/frontend-gradle-plugin/releases/tag/v1.4.1)
+[![Latest release 1.4.2](https://img.shields.io/badge/Latest%20release-1.4.2-blue.svg)](https://github.com/Siouan/frontend-gradle-plugin/releases/tag/v1.4.2)
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
 
 [![Build status](https://travis-ci.com/Siouan/frontend-gradle-plugin.svg?branch=1.4)](https://travis-ci.com/Siouan/frontend-gradle-plugin)
@@ -71,7 +71,7 @@ This is the modern and recommended approach.
 ```groovy
 // build.gradle
 plugins {
-    id 'org.siouan.frontend' version '1.4.1'
+    id 'org.siouan.frontend' version '1.4.2'
 }
 ```
 
@@ -80,7 +80,7 @@ plugins {
 ```kotlin
 // build.gradle.kts
 plugins {
-    id("org.siouan.frontend") version "1.4.1"
+    id("org.siouan.frontend") version "1.4.2"
 }
 ```
 
@@ -97,7 +97,7 @@ buildscript {
         url 'https://plugins.gradle.org/m2/'
     }
     dependencies {
-        classpath 'org.siouan:frontend-gradle-plugin:1.4.1'
+        classpath 'org.siouan:frontend-gradle-plugin:1.4.2'
     }
 }
 
@@ -113,7 +113,7 @@ buildscript {
         url = uri("https://plugins.gradle.org/m2/")
     }
     dependencies {
-        classpath("org.siouan:frontend-gradle-plugin:1.4.1")
+        classpath("org.siouan:frontend-gradle-plugin:1.4.2")
     }
 }
 
