@@ -8,9 +8,18 @@
 [![Code coverage](https://sonarcloud.io/api/project_badges/measure?project=Siouan_frontend-gradle-plugin&metric=coverage)](https://sonarcloud.io/dashboard?id=Siouan_frontend-gradle-plugin)
 [![Reliability](https://sonarcloud.io/api/project_badges/measure?project=Siouan_frontend-gradle-plugin&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=Siouan_frontend-gradle-plugin)
 
-This plugin allows to integrate a frontend Node/NPM/Yarn build into Gradle. It is inspired by the
+This plugin allows to integrate a frontend Node/NPM/Yarn build into Gradle. Its philosophy is inspired by the
 [frontend-maven-plugin][frontend-maven-plugin]. See the [quick start guide](#quick-start-guide) below to
 install/configure the plugin, and build your frontend application.
+
+**Features**
+
+- Download and install a Node distribution.
+- Download and install a Yarn distribution.
+- Install frontend dependencies with a configurable `npm/yarn install` command.
+- 4 predefined tasks to trigger automatically frontend build, test, clean, publish scripts in a `package.json` file,
+from Gradle lifecycle tasks.
+- Additional task types to create custom tasks and run a JS script with Node/NPM/Yarn.
 
 ## Summary
 
@@ -38,6 +47,7 @@ install/configure the plugin, and build your frontend application.
   - [Run custom Node script](#run-custom-node-script)
   - [Run custom NPM/Yarn script](#run-custom-npmyarn-script)
 - [Usage guidelines](#usage-guidelines)
+  - [How to configure the plugin in a multi-projects build?](#how-to-configure-the-plugin-in-a-multi-projects-build)
   - [How to assemble a frontend and a Java backend into a single artifact?](#how-to-assemble-a-frontend-and-a-java-backend-into-a-single-artifact)
   - [What kind of script should I attach to the `checkFrontend` task?](#what-kind-of-script-should-i-attach-to-the-checkfrontend-task)
 - [Special thanks](#special-thanks)
@@ -124,8 +134,9 @@ apply(plugin = "org.siouan.frontend")
 
 #### DSL reference
 
-All settings are introduced hereafter, with default value for each property. You may also take a look at
-[Tasks reference](#tasks-reference) section for additional information.
+All settings are introduced hereafter. Values of optional properties are the default ones applied by the plugin. Other
+values are provided for information. You may also take a look at [Tasks reference](#tasks-reference) section for
+additional information.
 
 - Groovy syntax:
 
@@ -307,10 +318,14 @@ The plugin registers multiple tasks, that may have dependencies with each other,
 ### Install Node
 
 The `installNode` task downloads a Node distribution and verifies its integrity. If the `nodeDistributionUrl` property
-is ommitted, the URL is guessed using the `nodeVersion` property. Use the property `nodeInstallDirectory` to set the
-directory where the distribution shall be installed, which by default is the `${projectDir}/node` directory. The task
-takes advantage of [Gradle incremental build][gradle-incremental-build], and is not executed again unless at least one
-of the events below occurs:
+is ommitted, the URL is guessed using the `nodeVersion` property. Distribution integrity is checked by downloading a
+file providing the distribution checksum. This file is expected to be in the same remote web directory than the
+distribution. For example, if the distribution is located at URL
+`https://nodejs.org/dist/vX.Y.Z/node-vX.Y.Z-win-x64.zip`, the plugin attempts to download the checksum file located at
+URL `https://nodejs.org/dist/vX.Y.Z/SHASUMS256.txt`. Use the property `nodeInstallDirectory` to set the directory where
+the distribution shall be installed, which by default is the `${projectDir}/node` directory. The task takes advantage of
+[Gradle incremental build][gradle-incremental-build], and is not executed again unless at least one of the events below
+occurs:
 
 - The plugins change in the project.
 - At least one of the properties `nodeVersion`, `nodeDistributionUrl`, `nodeInstallDirectory` is modified.

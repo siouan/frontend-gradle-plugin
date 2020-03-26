@@ -1,15 +1,15 @@
 package org.siouan.frontendgradleplugin.domain.exception;
 
+import javax.annotation.Nonnull;
+
 /**
- * Exception thrown when a downloaded distribution is invalid.
+ * Base class for distribution validator exceptions.
+ *
+ * @since 2.0.0
  */
-public class DistributionValidatorException extends FrontendException {
+public abstract class DistributionValidatorException extends FrontendException {
 
-    public DistributionValidatorException(final String message) {
+    public DistributionValidatorException(@Nonnull final String message) {
         super(message);
-    }
-
-    public DistributionValidatorException(final Throwable cause) {
-        super(cause);
     }
 }

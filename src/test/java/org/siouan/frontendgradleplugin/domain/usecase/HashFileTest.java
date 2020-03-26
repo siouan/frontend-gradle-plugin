@@ -2,40 +2,73 @@ package org.siouan.frontendgradleplugin.domain.usecase;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.nio.file.Files;
+import java.nio.ByteBuffer;
+import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.io.TempDir;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.siouan.frontendgradleplugin.domain.provider.ChannelProvider;
+import org.siouan.frontendgradleplugin.test.fixture.PathFixture;
 
 @ExtendWith(MockitoExtension.class)
 class HashFileTest {
 
+    private static final Path FILE_PATH = PathFixture.ANY_PATH;
+
     private static final String DATA = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
 
-    private static final String DATA_SHA256_HASH = "a58dd8680234c1f8cc2ef2b325a43733605a7f16f288e072de8eae81fd8d6433";
+    private static final byte[] SHA256_HASH_BIN = new byte[] {(byte) 0xa5, (byte) 0x8d, (byte) 0xd8, 0x68, 0x02, 0x34,
+        (byte) 0xc1, (byte) 0xf8, (byte) 0xcc, 0x2e, (byte) 0xf2, (byte) 0xb3, 0x25, (byte) 0xa4, 0x37, 0x33, 0x60,
+        0x5a, 0x7f, 0x16, (byte) 0xf2, (byte) 0x88, (byte) 0xe0, 0x72, (byte) 0xde, (byte) 0x8e, (byte) 0xae,
+        (byte) 0x81, (byte) 0xfd, (byte) 0x8d, 0x64, 0x33};
 
-    @TempDir
-    Path temporaryDirectory;
+    private static final String SHA256_HASH_HEX = "a58dd8680234c1f8cc2ef2b325a43733605a7f16f288e072de8eae81fd8d6433";
+
+    @Mock
+    private ChannelProvider channelProvider;
+
+    @Mock
+    private ConvertToHexadecimalString convertToHexadecimalString;
 
     @InjectMocks
-    private HashFile hashFile;
+    private HashFile usecase;
 
     @Test
-    void shouldFailWhenFileCannotBeRead() {
-        assertThatThrownBy(() -> hashFile.execute(Paths.get("/dummy"))).isInstanceOf(IOException.class);
+    void shouldFailWhenFileCannotBeRead() throws IOException {
+        final Exception expectedException = new IOException();
+        when(channelProvider.getSeekableByteChannel(FILE_PATH)).thenThrow(expectedException);
+
+        assertThatThrownBy(() -> usecase.execute(FILE_PATH)).isEqualTo(expectedException);
+
+        verifyNoMoreInteractions(channelProvider, convertToHexadecimalString);
     }
 
     @Test
     void shouldReturnValidSha256HashWithDefaultBufferingCapacity() throws IOException {
-        final Path temporaryFile = Files.write(temporaryDirectory.resolve("file-for-hashing.txt"), DATA.getBytes());
-        final String hash = hashFile.execute(temporaryFile);
-        assertThat(hash).isEqualTo(DATA_SHA256_HASH);
+        final SeekableByteChannel inputChannel = mock(SeekableByteChannel.class);
+        when(channelProvider.getSeekableByteChannel(FILE_PATH)).thenReturn(inputChannel);
+        when(inputChannel.read(any(ByteBuffer.class))).then(invocation -> {
+            final ByteBuffer buffer = invocation.getArgument(0);
+            final byte[] data = DATA.getBytes();
+            buffer.put(data);
+            return data.length;
+        }).thenReturn(-1);
+        when(convertToHexadecimalString.execute(SHA256_HASH_BIN)).thenReturn(SHA256_HASH_HEX);
+
+        assertThat(usecase.execute(FILE_PATH)).isEqualTo(SHA256_HASH_HEX);
+
+        verify(inputChannel).close();
+        verifyNoMoreInteractions(inputChannel, channelProvider, convertToHexadecimalString);
     }
 }

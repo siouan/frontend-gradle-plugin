@@ -2,9 +2,10 @@ package org.siouan.frontendgradleplugin.infrastructure.archiver;
 
 import java.io.IOException;
 
+import javax.annotation.Nonnull;
+
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.siouan.frontendgradleplugin.domain.model.ArchiverContext;
-import org.siouan.frontendgradleplugin.domain.exception.ArchiverException;
 import org.siouan.frontendgradleplugin.domain.model.ExplodeSettings;
 
 /**
@@ -35,6 +36,7 @@ class TarArchiverContext implements ArchiverContext {
         this.inputStream = inputStream;
     }
 
+    @Nonnull
     @Override
     public ExplodeSettings getSettings() {
         return settings;
@@ -50,11 +52,7 @@ class TarArchiverContext implements ArchiverContext {
     }
 
     @Override
-    public void close() throws ArchiverException {
-        try {
-            inputStream.close();
-        } catch (final IOException e) {
-            throw new ArchiverException(e);
-        }
+    public void close() throws IOException {
+        inputStream.close();
     }
 }

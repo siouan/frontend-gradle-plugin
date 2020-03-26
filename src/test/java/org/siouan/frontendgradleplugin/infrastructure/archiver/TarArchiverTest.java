@@ -4,7 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
-import static org.siouan.frontendgradleplugin.test.util.PlatformFixture.getLocalPlatform;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,137 +18,147 @@ import java.util.Optional;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
-import org.siouan.frontendgradleplugin.domain.exception.ArchiverException;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.siouan.frontendgradleplugin.domain.model.ExplodeSettings;
+import org.siouan.frontendgradleplugin.domain.provider.FileManager;
+import org.siouan.frontendgradleplugin.infrastructure.exception.UnexpectedEofException;
+import org.siouan.frontendgradleplugin.infrastructure.provider.FileManagerImpl;
+import org.siouan.frontendgradleplugin.test.fixture.PlatformFixture;
 
 /**
- * Unit tests for the {@link TarArchiver} class.
- *
- * @since 1.1.3
+ * Due to the fact it is not possible to control the Apache Commons Compress library (ACC), and its internal
+ * implementation and usage of input streams and output streams, this test suite stubs the {@link FileManagerImpl}
+ * implementation class instead of the {@link FileManager} interface, and uses concrete archives and file system calls.
  */
+@ExtendWith(MockitoExtension.class)
 class TarArchiverTest {
 
     @TempDir
-    Path targetDirectory;
+    Path targetDirectoryPath;
+
+    @Mock
+    private FileManagerImpl fileManager;
+
+    @InjectMocks
+    private TarArchiver archiver;
 
     @Test
-    void shouldFailInitializingContextWhenTarArchiveDoesNotExist() {
-        final Path archiveFile = targetDirectory.resolve("archive");
-        final ExplodeSettings settings = new ExplodeSettings(archiveFile, targetDirectory, getLocalPlatform());
+    void shouldFailInitializingContextWhenTarArchiveDoesNotExist() throws IOException {
+        final Path archiveFilePath = targetDirectoryPath.resolve("archive");
+        final Exception expectedException = new IOException();
+        when(fileManager.newInputStream(archiveFilePath)).thenThrow(expectedException);
+        final ExplodeSettings settings = new ExplodeSettings(PlatformFixture.LOCAL_PLATFORM, archiveFilePath,
+            targetDirectoryPath);
 
-        assertThatThrownBy(() -> new TarArchiver().initializeContext(settings))
-            .isInstanceOf(ArchiverException.class)
-            .hasCauseInstanceOf(IOException.class);
+        assertThatThrownBy(() -> archiver.initializeContext(settings)).isInstanceOf(IOException.class);
+
+        verifyNoMoreInteractions(fileManager);
     }
 
     @Test
-    void shouldFailInitializingContextWhenUncompressingErrorOccurs() throws URISyntaxException {
-        final Path archiveFile = Paths.get(getClass().getClassLoader().getResource("archive.tar").toURI());
-        final ExplodeSettings settings = new ExplodeSettings(archiveFile, targetDirectory, getLocalPlatform());
-        final IOException expectedException = mock(IOException.class);
+    void shouldFailInitializingContextWhenUncompressingErrorOccurs() throws URISyntaxException, IOException {
+        final Path archiveFilePath = Paths.get(getClass().getClassLoader().getResource("archive.tar").toURI());
+        final InputStream inputStream = mock(InputStream.class);
+        when(fileManager.newInputStream(archiveFilePath)).thenReturn(inputStream);
+        final ExplodeSettings settings = new ExplodeSettings(PlatformFixture.LOCAL_PLATFORM, archiveFilePath,
+            targetDirectoryPath);
+        final IOException expectedException = new IOException();
 
-        assertThatThrownBy(() -> new TarArchiverWithFailure(expectedException).initializeContext(settings))
-            .isInstanceOf(ArchiverException.class)
-            .hasCause(expectedException);
+        assertThatThrownBy(() -> new TarArchiverWithFailure(fileManager, expectedException).initializeContext(settings))
+            .isEqualTo(expectedException);
+
+        verify(inputStream).close();
+        verifyNoMoreInteractions(inputStream, fileManager);
     }
 
     @Test
-    void shouldFailGettingEntryWhenTarArchiveIsInvalid() throws URISyntaxException, ArchiverException {
-        final Path archiveFile = Paths.get(getClass().getClassLoader().getResource("invalid-archive.unknown").toURI());
-        final ExplodeSettings settings = new ExplodeSettings(archiveFile, targetDirectory, getLocalPlatform());
+    void shouldFailGettingEntryWhenTarArchiveIsInvalid() throws URISyntaxException, IOException {
+        final Path archiveFilePath = Paths.get(
+            getClass().getClassLoader().getResource("invalid-archive.unknown").toURI());
+        when(fileManager.newInputStream(archiveFilePath)).thenCallRealMethod();
+        final ExplodeSettings settings = new ExplodeSettings(PlatformFixture.LOCAL_PLATFORM, archiveFilePath,
+            targetDirectoryPath);
 
-        final TarArchiver archiver = new TarArchiver();
-        TarArchiverContext context = null;
-        try {
-            context = archiver.initializeContext(settings);
-            final TarArchiverContext finalContext = context;
-            assertThatThrownBy(() -> archiver.getNextEntry(finalContext))
-                .isInstanceOf(ArchiverException.class)
-                .hasCauseInstanceOf(IOException.class);
-        } finally {
-            if (context != null) {
-                context.close();
-            }
+        try (final TarArchiverContext context = archiver.initializeContext(settings)) {
+            assertThatThrownBy(() -> archiver.getNextEntry(context)).isInstanceOf(IOException.class);
         }
+
+        verifyNoMoreInteractions(fileManager);
     }
 
     @Test
-    void shouldFailWritingFileEntryWhenUnexpectedEOFReached() throws URISyntaxException {
-        final ExplodeSettings settings = new ExplodeSettings(
-            Paths.get(getClass().getClassLoader().getResource("archive.tar").toURI()), targetDirectory,
-            getLocalPlatform());
+    void shouldFailWritingFileEntryWhenUnexpectedEofAppears() throws URISyntaxException, IOException {
+        final Path archiveFilePath = Paths.get(getClass().getClassLoader().getResource("archive.tar").toURI());
+        when(fileManager.newInputStream(archiveFilePath)).thenCallRealMethod();
+        final Path entryFilePath = targetDirectoryPath.resolve("aFile");
+        when(fileManager.newOutputStream(entryFilePath)).thenCallRealMethod();
+        final ExplodeSettings settings = new ExplodeSettings(PlatformFixture.LOCAL_PLATFORM, archiveFilePath,
+            targetDirectoryPath);
 
         assertThatThrownBy(() -> {
-            TarArchiverContext context = null;
-            try {
-                final TarArchiver archiver = new TarArchiverWithFailure();
-                context = archiver.initializeContext(settings);
-
+            final TarArchiver archiver = new TarArchiverWithFailure(fileManager);
+            try (TarArchiverContext context = archiver.initializeContext(settings)) {
                 Optional<TarEntry> option = archiver.getNextEntry(context);
                 TarEntry entry;
                 while (option.isPresent()) {
                     entry = option.get();
                     if (entry.isFile()) {
-                        archiver.writeRegularFile(context, entry, targetDirectory.resolve("aFile"));
+                        archiver.writeRegularFile(context, entry, entryFilePath);
                     }
                     option = archiver.getNextEntry(context);
                 }
-            } finally {
-                if (context != null) {
-                    context.close();
-                }
             }
-        }).isInstanceOf(ArchiverException.class);
+        }).isInstanceOf(UnexpectedEofException.class);
+
+        verifyNoMoreInteractions(fileManager);
     }
 
     @Test
-    void shouldCheckTarGzArchive() throws ArchiverException, URISyntaxException, IOException {
-        final Path targetFile = targetDirectory.resolve("aFile");
-        final Path archiveFile = Paths.get(getClass().getClassLoader().getResource("archive.tar.gz").toURI());
-        final ExplodeSettings settings = new ExplodeSettings(archiveFile, targetDirectory, getLocalPlatform());
+    void shouldCheckTarGzArchive() throws URISyntaxException, IOException {
+        final Path archiveFilePath = Paths.get(getClass().getClassLoader().getResource("archive.tar.gz").toURI());
+        when(fileManager.newInputStream(archiveFilePath)).thenCallRealMethod();
+        final Path entryFilePath = targetDirectoryPath.resolve("aFile");
+        when(fileManager.newOutputStream(entryFilePath)).thenCallRealMethod();
+        final ExplodeSettings settings = new ExplodeSettings(PlatformFixture.LOCAL_PLATFORM, archiveFilePath,
+            targetDirectoryPath);
 
-        TarArchiverContext context = null;
         int count = 0;
-        try {
-            final TarArchiver archiver = new TarArchiver();
-            context = archiver.initializeContext(settings);
-
+        try (final TarArchiverContext context = archiver.initializeContext(settings)) {
             Optional<TarEntry> option = archiver.getNextEntry(context);
             TarEntry entry;
             while (option.isPresent()) {
                 entry = option.get();
                 if (entry.isFile()) {
-                    archiver.writeRegularFile(context, entry, targetFile);
+                    archiver.writeRegularFile(context, entry, entryFilePath);
                 } else {
                     fail("Unexpected archive content.");
                 }
                 count++;
                 option = archiver.getNextEntry(context);
             }
-        } finally {
-            if (context != null) {
-                context.close();
-            }
         }
 
-        assertThat(targetFile).exists().hasContent("content");
+        verifyNoMoreInteractions(fileManager);
+        assertThat(entryFilePath).exists().hasContent("content");
         assertThat(count).isEqualTo(1);
     }
 
     @Test
-    void shouldCheckTarArchive() throws ArchiverException, URISyntaxException, IOException {
-        final Path targetFile = targetDirectory.resolve("aFile");
-        final Path archiveFile = Paths.get(getClass().getClassLoader().getResource("archive.tar").toURI());
+    void shouldCheckTarArchive() throws URISyntaxException, IOException {
+        final Path archiveFilePath = Paths.get(getClass().getClassLoader().getResource("archive.tar").toURI());
+        when(fileManager.newInputStream(archiveFilePath)).thenCallRealMethod();
+        final Path entryFilePath = targetDirectoryPath.resolve("aFile");
+        when(fileManager.newOutputStream(entryFilePath)).thenCallRealMethod();
         String symbolicLinkTarget = null;
-        final ExplodeSettings settings = new ExplodeSettings(archiveFile, targetDirectory, getLocalPlatform());
+        final ExplodeSettings settings = new ExplodeSettings(PlatformFixture.LOCAL_PLATFORM, archiveFilePath,
+            targetDirectoryPath);
 
-        TarArchiverContext context = null;
         int count = 0;
-        try {
-            final TarArchiver archiver = new TarArchiver();
-            context = archiver.initializeContext(settings);
-
+        try (final TarArchiverContext context = archiver.initializeContext(settings)) {
             Optional<TarEntry> option = archiver.getNextEntry(context);
             TarEntry entry;
             while (option.isPresent()) {
@@ -154,20 +166,17 @@ class TarArchiverTest {
                 if (entry.isSymbolicLink()) {
                     symbolicLinkTarget = archiver.getSymbolicLinkTarget(context, entry);
                 } else if (entry.isFile()) {
-                    archiver.writeRegularFile(context, entry, targetFile);
+                    archiver.writeRegularFile(context, entry, entryFilePath);
                 } else {
                     fail("Unexpected archive content.");
                 }
                 count++;
                 option = archiver.getNextEntry(context);
             }
-        } finally {
-            if (context != null) {
-                context.close();
-            }
         }
 
-        assertThat(targetFile).exists().usingCharset(StandardCharsets.UTF_8).hasContent("content");
+        verifyNoMoreInteractions(fileManager);
+        assertThat(entryFilePath).exists().usingCharset(StandardCharsets.UTF_8).hasContent("content");
         assertThat(symbolicLinkTarget).isEqualTo("./aFile");
         assertThat(count).isEqualTo(2);
     }
@@ -179,11 +188,12 @@ class TarArchiverTest {
 
         private final IOException uncompressException;
 
-        TarArchiverWithFailure() {
-            this(null);
+        TarArchiverWithFailure(final FileManager fileManager) {
+            this(fileManager, null);
         }
 
-        TarArchiverWithFailure(final IOException uncompressException) {
+        TarArchiverWithFailure(final FileManager fileManager, final IOException uncompressException) {
+            super(fileManager);
             this.uncompressException = uncompressException;
         }
 

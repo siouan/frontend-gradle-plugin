@@ -4,12 +4,12 @@ import java.io.IOException;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.SeekableByteChannel;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import javax.annotation.Nonnull;
 
-import org.siouan.frontendgradleplugin.domain.util.ByteUtils;
+import org.siouan.frontendgradleplugin.domain.provider.ChannelProvider;
 
 /**
  * This class resolves the hash of a file, using the SHA-256 algorithm, and an internal buffer of 8 KB.
@@ -21,46 +21,61 @@ public class HashFile {
      */
     private static final int BUFFER_CAPACITY = 8192;
 
-    private final MessageDigest digest;
+    private final ChannelProvider channelProvider;
+
+    private final ConvertToHexadecimalString convertToHexadecimalString;
+
+    private final MessageDigest messageDigest;
 
     /**
      * Builds a hasher using the SHA-256 algorithm.
      *
+     * @param channelProvider Channel provider.
+     * @param convertToHexadecimalString Converter of byte buffer to hexadecimal string.
      * @throws NoSuchAlgorithmException If the algorithm is not supported.
      */
-    public HashFile() throws NoSuchAlgorithmException {
-        this.digest = MessageDigest.getInstance("SHA-256");
+    public HashFile(final ChannelProvider channelProvider, final ConvertToHexadecimalString convertToHexadecimalString)
+        throws NoSuchAlgorithmException {
+        this.channelProvider = channelProvider;
+        this.convertToHexadecimalString = convertToHexadecimalString;
+        this.messageDigest = MessageDigest.getInstance("SHA-256");
     }
 
     /**
-     * Computes the hash of the file if not already done.
+     * Computes the hash of the file at the given path.
      *
-     * @param inputFile The file to be hashed.
+     * @param filePath The file to be hashed.
      * @return The hash as an hexadecimal string.
      * @throws IOException If the input file is not readable.
      */
-    public String execute(final Path inputFile) throws IOException {
+    @Nonnull
+    public String execute(@Nonnull final Path filePath) throws IOException {
         final ByteBuffer buffer = ByteBuffer.allocate(BUFFER_CAPACITY);
-        try (final SeekableByteChannel inputChannel = Files.newByteChannel(inputFile)) {
+        try (final SeekableByteChannel inputChannel = channelProvider.getSeekableByteChannel(filePath)) {
             int numberOfBytesRead = inputChannel.read(buffer);
             while (numberOfBytesRead != -1) {
                 // Since JDK 9, ByteBuffer class overrides some methods and their return type in the Buffer class. To
                 // ensure compatibility with JDK 8, calling the 'flipBuffer' and 'clearBuffer' methods forces using the
                 // JDK 8 Buffer's methods signature, and avoids explicit casts.
                 flipBuffer(buffer);
-                digest.update(buffer);
+                messageDigest.update(buffer);
                 clearBuffer(buffer);
                 numberOfBytesRead = inputChannel.read(buffer);
             }
         }
-        return ByteUtils.toHexadecimalString(digest.digest());
+        return convertToHexadecimalString.execute(messageDigest.digest());
     }
 
-    private void flipBuffer(Buffer buffer) {
+    ////////////////////
+    // The 2 methods below force the use of the flip method and clear method in the Buffer class instead of the
+    // ByteBuffer class. This is mandatory because the signature of each method is not the same in the ByteBuffer class
+    // vs. the Buffer class, and it leads to NoSuchMethodError exceptions from JDK 9+ (see issue #55).
+    ////////////////////
+    private void flipBuffer(@Nonnull final Buffer buffer) {
         buffer.flip();
     }
 
-    private void clearBuffer(Buffer buffer) {
+    private void clearBuffer(@Nonnull final Buffer buffer) {
         buffer.clear();
     }
 }

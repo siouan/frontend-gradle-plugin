@@ -4,12 +4,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.net.MalformedURLException;
+import java.net.URL;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.siouan.frontendgradleplugin.domain.exception.DistributionUrlResolverException;
+import org.siouan.frontendgradleplugin.domain.exception.UnsupportedPlatformException;
+import org.siouan.frontendgradleplugin.domain.model.DistributionDefinition;
+import org.siouan.frontendgradleplugin.domain.model.Platform;
+import org.siouan.frontendgradleplugin.test.fixture.PlatformFixture;
 
 @ExtendWith(MockitoExtension.class)
 class ResolveNodeDistributionUrlTest {
@@ -20,69 +24,60 @@ class ResolveNodeDistributionUrlTest {
     private ResolveNodeDistributionUrl usecase;
 
     @Test
-    void shouldFailWhenBuildingInstanceWithNullVersionAndNullDistributionUrl() {
-        assertThatThrownBy(() -> usecase.execute(null)).isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void shouldFailWhenResolvingWithInvalidDistributionUrl() {
-        assertThatThrownBy(
-            () -> new ResolveNodeDistributionUrl().execute(null)/*.execute(null, "fot://greg:://grrg:")*/)
-            .isInstanceOf(DistributionUrlResolverException.class)
-            .hasCauseInstanceOf(MalformedURLException.class);
-    }
-
-    @Test
-    void shouldReturnDefaultUrlWhenResolvingWithVersionAndNoDistributionUrl() throws DistributionUrlResolverException {
-        assertThat(new ResolveNodeDistributionUrl().execute(null)/*.execute(VERSION, null)*/).isNotNull();
+    void shouldReturnDefaultUrlWhenResolvingWithVersionAndNoDistributionUrl()
+        throws UnsupportedPlatformException, MalformedURLException {
+        assertThat(
+            usecase.execute(new DistributionDefinition(PlatformFixture.LOCAL_PLATFORM, VERSION, null))).isNotNull();
     }
 
     @Test
     void shouldReturnDistributionUrlWhenResolvingWithNoVersionAndDistributionUrl()
-        throws DistributionUrlResolverException {
-        final String distributionUrl = "http://url";
+        throws UnsupportedPlatformException, MalformedURLException {
+        final URL distributionUrl = new URL("http://url");
         assertThat(
-            new ResolveNodeDistributionUrl().execute(null)/*.execute(null, distributionUrl)*/.toString()).isEqualTo(
-            distributionUrl);
+            usecase.execute(new DistributionDefinition(PlatformFixture.LOCAL_PLATFORM, VERSION, distributionUrl))).
+            isEqualTo(distributionUrl);
     }
 
     @Test
-    void shouldResolveUrlWhenOsIsWindowsNTAndJreArchIsX86() throws DistributionUrlResolverException {
-        assertThat(new ResolveNodeDistributionUrl().execute(
-            null)/*.execute(VERSION, null, "Windows NT", "x86")*/.toString()).endsWith("-win-x86.zip");
+    void shouldResolveUrlWhenOsIsWindowsNTAndJreArchIsX86() throws UnsupportedPlatformException, MalformedURLException {
+        assertThat(usecase
+            .execute(new DistributionDefinition(new Platform("x86", "Windows NT"), VERSION, null))
+            .toString()).endsWith("-win-x86.zip");
     }
 
     @Test
-    void shouldResolveUrlWhenOsIsWindowsNTAndJreArchIsX64() throws DistributionUrlResolverException {
-        assertThat(new ResolveNodeDistributionUrl().execute(
-            null)/*.execute(VERSION, null, "Windows NT", "x64")*/.toString()).endsWith("-win-x64.zip");
+    void shouldResolveUrlWhenOsIsWindowsNTAndJreArchIsX64() throws UnsupportedPlatformException, MalformedURLException {
+        assertThat(
+            usecase.execute(new DistributionDefinition(new Platform("x64", "Windows NT"), VERSION, null)).toString()).
+            endsWith("-win-x64.zip");
     }
 
     @Test
-    void shouldResolveUrlWhenOsIsLinuxAndJreArchIsAmd64() throws DistributionUrlResolverException {
-        assertThat(new ResolveNodeDistributionUrl().execute(
-            null)/*.execute(VERSION, null, "Linux", "amd64")*/.toString()).endsWith("-linux-x64.tar.gz");
+    void shouldResolveUrlWhenOsIsLinuxAndJreArchIsAmd64() throws UnsupportedPlatformException, MalformedURLException {
+        assertThat(
+            usecase.execute(new DistributionDefinition(new Platform("amd64", "Linux"), VERSION, null)).toString()).
+            endsWith("-linux-x64.tar.gz");
     }
 
     @Test
     void shouldFailWhenOsIsLinuxAndJreArchIsI386() {
         assertThatThrownBy(
-            () -> new ResolveNodeDistributionUrl().execute(null)/*.execute(VERSION, null, "Linux", "i386")*/)
-            .isInstanceOf(DistributionUrlResolverException.class)
-            .hasNoCause();
+            () -> usecase.execute(new DistributionDefinition(new Platform("i386", "Linux"), VERSION, null)))
+            .isInstanceOf(UnsupportedPlatformException.class);
     }
 
     @Test
-    void shouldResolveUrlWhenOsIsMacAndJreArchIsPPC() throws DistributionUrlResolverException {
-        assertThat(new ResolveNodeDistributionUrl().execute(
-            null)/*.execute(VERSION, null, "Mac OS X", "ppc")*/.toString()).endsWith("-darwin-x64.tar.gz");
+    void shouldResolveUrlWhenOsIsMacAndJreArchIsPPC() throws UnsupportedPlatformException, MalformedURLException {
+        assertThat(
+            usecase.execute(new DistributionDefinition(new Platform("ppc", "Mac OS X"), VERSION, null)).toString()).
+            endsWith("-darwin-x64.tar.gz");
     }
 
     @Test
     void shouldFailWhenOsIsSolarisAndJreArchIsSparc() {
-        assertThatThrownBy(
-            () -> new ResolveNodeDistributionUrl().execute(null)/*.execute(VERSION, null, "Solaris", "sparc")*/)
-            .isInstanceOf(DistributionUrlResolverException.class)
-            .hasNoCause();
+        assertThatThrownBy(() -> usecase.execute(
+            new DistributionDefinition(new Platform("sparc", "Solaris"), VERSION, null))).isInstanceOf(
+            UnsupportedPlatformException.class);
     }
 }

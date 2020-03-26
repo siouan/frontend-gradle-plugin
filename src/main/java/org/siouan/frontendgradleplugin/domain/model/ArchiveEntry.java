@@ -1,5 +1,7 @@
 package org.siouan.frontendgradleplugin.domain.model;
 
+import javax.annotation.Nonnull;
+
 /**
  * Interface of an entry in an archive, to be processed by an archiver.
  *
@@ -12,6 +14,7 @@ public interface ArchiveEntry {
      *
      * @return Entry name.
      */
+    @Nonnull
     String getName();
 
     /**

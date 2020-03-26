@@ -1,15 +1,22 @@
 package org.siouan.frontendgradleplugin.domain.util;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableSet;
+
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import javax.annotation.Nonnull;
 
 /**
  * This class provides utilities for path management.
  *
- * @since 1.4.2
+ * @since 2.0.0
  */
 public final class PathUtils {
+
+    private static final Set<String> GZIP_EXTENSIONS = unmodifiableSet(new HashSet<>(asList(".gz", ".gzip")));
 
     private PathUtils() {
     }
@@ -22,7 +29,7 @@ public final class PathUtils {
      */
     @Nonnull
     public static Optional<String> getExtension(@Nonnull final Path filePath) {
-        return getExtension(filePath.getFileName().toString());
+        return Optional.ofNullable(filePath.getFileName()).map(Path::toString).flatMap(PathUtils::getExtension);
     }
 
     /**
@@ -34,13 +41,11 @@ public final class PathUtils {
     @Nonnull
     public static Optional<String> getExtension(@Nonnull final String fileName) {
         final int index = fileName.lastIndexOf('.');
-        final String extension;
         if (index == -1) {
-            extension = null;
-        } else {
-            extension = fileName.substring(fileName.lastIndexOf('.'));
+            return Optional.empty();
         }
-        return Optional.ofNullable(extension);
+
+        return Optional.of(fileName.substring(fileName.lastIndexOf('.')));
     }
 
     /**
@@ -52,17 +57,26 @@ public final class PathUtils {
      */
     @Nonnull
     public static String removeExtension(@Nonnull final Path filePath) {
-        final String fileName = filePath.getFileName().toString();
-        return fileName.substring(0, fileName.lastIndexOf('.'));
+        final Path leafFilePath = filePath.getFileName();
+        if (leafFilePath == null) {
+            return filePath.toString();
+        }
+        final String leafFilePathAsString = leafFilePath.toString();
+        final int index = leafFilePathAsString.lastIndexOf('.');
+        if (index == -1) {
+            return leafFilePathAsString;
+        }
+        return leafFilePathAsString.substring(0, index);
     }
 
     /**
-     * Tells whether a file name extension is related to a GZIP file.
+     * Tells whether a file name extension is related to a GZIP file. The extension is expected to start with a dot '.'
+     * character.
      *
      * @param extension Extension
      * @return {@code true} if the extension is related to a GZIP file.
      */
     public static boolean isGzipExtension(@Nonnull final String extension) {
-        return extension.equals(".gz") || extension.equals(".gzip");
+        return GZIP_EXTENSIONS.contains(extension);
     }
 }

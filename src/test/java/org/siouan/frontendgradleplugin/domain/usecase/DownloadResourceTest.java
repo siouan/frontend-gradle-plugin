@@ -1,29 +1,18 @@
 package org.siouan.frontendgradleplugin.domain.usecase;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.nio.ByteBuffer;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
-import java.nio.channels.FileLock;
 import java.nio.channels.ReadableByteChannel;
-import java.nio.channels.WritableByteChannel;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import javax.annotation.Nonnull;
 
 import org.junit.jupiter.api.Test;
@@ -31,12 +20,18 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.exceptions.verification.NoInteractionsWanted;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.siouan.frontendgradleplugin.domain.exception.FrontendIOException;
-import org.siouan.frontendgradleplugin.domain.exception.IOErrorCode;
-import org.siouan.frontendgradleplugin.domain.model.DownloadParameters;
+import org.siouan.frontendgradleplugin.domain.model.DownloadSettings;
 import org.siouan.frontendgradleplugin.domain.provider.ChannelProvider;
+import org.siouan.frontendgradleplugin.domain.provider.FileManager;
 
+/**
+ * <b>Note on verifications</b>: exhaustive verification of interactions on the resource output channel is not possible
+ * with this version of Mockito: it throws a {@link NoInteractionsWanted} exception because the {@link
+ * FileChannel#close()} method call has not been verified. However, this method being declared final, it can not be
+ * verified by definition.
+ */
 @ExtendWith(MockitoExtension.class)
 class DownloadResourceTest {
 
@@ -48,6 +43,9 @@ class DownloadResourceTest {
     Path temporaryDirectoryPath;
 
     @Mock
+    private FileManager fileManager;
+
+    @Mock
     private ChannelProvider channelProvider;
 
     @InjectMocks
@@ -55,148 +53,101 @@ class DownloadResourceTest {
 
     @Test
     void shouldFailWhenResourceCannotBeDownloaded() throws IOException {
-        final DownloadParameters downloadParameters = buildDownloadParameters(Paths.get("/y45y97@p"));
-        when(channelProvider.getReadableByteChannel(downloadParameters.getResourceUrl())).thenThrow(IOException.class);
+        final DownloadSettings downloadSettings = buildDownloadParameters(Paths.get("/y45y97@p"));
+        final IOException expectedException = new IOException();
+        when(channelProvider.getReadableByteChannel(downloadSettings.getResourceUrl())).thenThrow(expectedException);
 
-        assertThatThrownBy(() -> usecase.execute(downloadParameters))
-            .isInstanceOfSatisfying(FrontendIOException.class,
-                e -> assertThat(e.getIoErrorCode()).isEqualTo(IOErrorCode.NON_DOWNLOADABLE_RESOURCE_ERROR))
-            .hasCauseInstanceOf(IOException.class);
+        assertThatThrownBy(() -> usecase.execute(downloadSettings)).isEqualTo(expectedException);
 
-        verify(channelProvider).getReadableByteChannel(downloadParameters.getResourceUrl());
-        verifyNoMoreInteractions(channelProvider);
+        verifyNoMoreInteractions(fileManager, channelProvider);
     }
 
     @Test
-    void shouldFailWhenTemporaryFileCannotBeCreated() throws IOException, URISyntaxException {
-        final DownloadParameters downloadParameters = buildDownloadParameters(Paths.get("/volezp", "gixkkle"));
-        Files.createFile(Paths.get(downloadParameters.getResourceUrl().toURI()));
-        when(channelProvider.getReadableByteChannel(downloadParameters.getResourceUrl())).then(
-            invocation -> Channels.newChannel(downloadParameters.getResourceUrl().openStream()));
-        final Path temporaryFilePath = downloadParameters.getTemporaryDirectoryPath().resolve(RESOURCE_NAME);
-        final IOException exception = new IOException();
-        when(channelProvider.getWritableFileChannelForNewFile(temporaryFilePath)).thenThrow(exception);
-
-        assertThatThrownBy(() -> usecase.execute(downloadParameters))
-            .isInstanceOfSatisfying(FrontendIOException.class,
-                e -> assertThat(e.getIoErrorCode()).isEqualTo(IOErrorCode.NON_WRITABLE_FILE_ERROR))
-            .hasCause(exception);
-
-        verify(channelProvider).getReadableByteChannel(downloadParameters.getResourceUrl());
-        verify(channelProvider).getWritableFileChannelForNewFile(temporaryFilePath);
-        verifyNoMoreInteractions(channelProvider);
-    }
-
-    @Test
-    void shouldFailWhenDataTransferFails() throws IOException, URISyntaxException {
-        final DownloadParameters downloadParameters = buildDownloadParameters(Paths.get("/volezp", "gixkkle"));
-        Files.createFile(Paths.get(downloadParameters.getResourceUrl().toURI()));
-        when(channelProvider.getReadableByteChannel(downloadParameters.getResourceUrl())).then(
-            invocation -> Channels.newChannel(downloadParameters.getResourceUrl().openStream()));
-        final Path temporaryFilePath = downloadParameters.getTemporaryDirectoryPath().resolve(RESOURCE_NAME);
-        final FileChannel temporaryFileChannel = mock(FileChannel.class);
-        when(channelProvider.getWritableFileChannelForNewFile(temporaryFilePath)).thenReturn(temporaryFileChannel);
-        when(temporaryFileChannel.transferFrom(any(ReadableByteChannel.class), eq(0L), eq(Long.MAX_VALUE))).thenThrow(
-            IOException.class);
-
-        assertThatThrownBy(() -> usecase.execute(downloadParameters))
-            .isInstanceOfSatisfying(FrontendIOException.class,
-                e -> assertThat(e.getIoErrorCode()).isEqualTo(IOErrorCode.DATA_TRANSFER_ERROR))
-            .hasCauseInstanceOf(IOException.class);
-
-        verify(channelProvider).getReadableByteChannel(downloadParameters.getResourceUrl());
-        verify(channelProvider).getWritableFileChannelForNewFile(temporaryFilePath);
-        verify(temporaryFileChannel).transferFrom(any(ReadableByteChannel.class), eq(0L), eq(Long.MAX_VALUE));
-        verifyNoMoreInteractions(channelProvider, temporaryFileChannel);
-    }
-
-    @Test
-    void shouldFailWhenResourceInputChannelCannotBeClosed() throws IOException, URISyntaxException {
-        final DownloadParameters downloadParameters = buildDownloadParameters(Paths.get("/volezp", "gixkkle"));
-        Files.createFile(Paths.get(downloadParameters.getResourceUrl().toURI()));
-        Files.createDirectory(getDownloadDirectoryPath());
+    void shouldFailWhenTemporaryFileCannotBeCreated() throws IOException {
+        final DownloadSettings downloadSettings = buildDownloadParameters(Paths.get("/volezp", "gixkkle"));
         final ReadableByteChannel resourceInputChannel = mock(ReadableByteChannel.class);
-        when(channelProvider.getReadableByteChannel(downloadParameters.getResourceUrl())).thenReturn(
+        when(channelProvider.getReadableByteChannel(downloadSettings.getResourceUrl())).thenReturn(
             resourceInputChannel);
-        final Path temporaryFilePath = downloadParameters.getTemporaryDirectoryPath().resolve(RESOURCE_NAME);
-        when(channelProvider.getWritableFileChannelForNewFile(temporaryFilePath)).thenReturn(
-            new MockFileChannel(false));
-        doThrow(IOException.class).when(resourceInputChannel).close();
+        final Path temporaryFilePath = downloadSettings
+            .getTemporaryDirectoryPath()
+            .resolve(downloadSettings.getDestinationFilePath().getFileName().toString());
+        final IOException expectedException = new IOException();
+        when(channelProvider.getWritableFileChannelForNewFile(temporaryFilePath)).thenThrow(expectedException);
 
-        assertThatThrownBy(() -> usecase.execute(downloadParameters))
-            .isInstanceOfSatisfying(FrontendIOException.class,
-                e -> assertThat(e.getIoErrorCode()).isEqualTo(IOErrorCode.CHANNEL_CLOSE_ERROR))
-            .hasCauseInstanceOf(IOException.class);
+        assertThatThrownBy(() -> usecase.execute(downloadSettings)).isEqualTo(expectedException);
 
-        verify(channelProvider).getReadableByteChannel(downloadParameters.getResourceUrl());
-        verify(channelProvider).getWritableFileChannelForNewFile(temporaryFilePath);
         verify(resourceInputChannel).close();
-        verifyNoMoreInteractions(channelProvider, resourceInputChannel);
+        verifyNoMoreInteractions(fileManager, channelProvider, resourceInputChannel);
     }
 
     @Test
-    void shouldFailWhenResourceOutputChannelCannotBeClosed() throws IOException, URISyntaxException {
-        final DownloadParameters downloadParameters = buildDownloadParameters(Paths.get("/volezp", "gixkkle"));
-        Files.createFile(Paths.get(downloadParameters.getResourceUrl().toURI()));
-        Files.createDirectory(getDownloadDirectoryPath());
-        when(channelProvider.getReadableByteChannel(downloadParameters.getResourceUrl())).then(
-            invocation -> Channels.newChannel(downloadParameters.getResourceUrl().openStream()));
-        final Path temporaryFilePath = downloadParameters.getTemporaryDirectoryPath().resolve(RESOURCE_NAME);
-        when(channelProvider.getWritableFileChannelForNewFile(temporaryFilePath)).thenReturn(new MockFileChannel(true));
+    void shouldFailWhenDataTransferFails() throws IOException {
+        final DownloadSettings downloadSettings = buildDownloadParameters(Paths.get("/volezp", "gixkkle"));
+        final ReadableByteChannel resourceInputChannel = mock(ReadableByteChannel.class);
+        when(channelProvider.getReadableByteChannel(downloadSettings.getResourceUrl())).thenReturn(
+            resourceInputChannel);
+        final Path temporaryFilePath = downloadSettings
+            .getTemporaryDirectoryPath()
+            .resolve(downloadSettings.getDestinationFilePath().getFileName().toString());
+        final FileChannel resourceOutputChannel = spy(FileChannel.class);
+        when(channelProvider.getWritableFileChannelForNewFile(temporaryFilePath)).thenReturn(resourceOutputChannel);
+        final IOException expectedException = new IOException();
+        when(resourceOutputChannel.transferFrom(resourceInputChannel, 0, Long.MAX_VALUE)).thenThrow(expectedException);
 
-        assertThatThrownBy(() -> usecase.execute(downloadParameters))
-            .isInstanceOfSatisfying(FrontendIOException.class,
-                e -> assertThat(e.getIoErrorCode()).isEqualTo(IOErrorCode.CHANNEL_CLOSE_ERROR))
-            .hasCauseInstanceOf(IOException.class);
+        assertThatThrownBy(() -> usecase.execute(downloadSettings)).isEqualTo(expectedException);
 
-        verify(channelProvider).getReadableByteChannel(downloadParameters.getResourceUrl());
-        verify(channelProvider).getWritableFileChannelForNewFile(temporaryFilePath);
-        verifyNoMoreInteractions(channelProvider);
+        verify(resourceInputChannel).close();
+        verifyNoMoreInteractions(fileManager, channelProvider, resourceInputChannel);
     }
 
     @Test
-    void shouldFailWhenTemporaryFileCannotBeMovedToDestinationFile() throws IOException, URISyntaxException {
-        final DownloadParameters downloadParameters = buildDownloadParameters(Paths.get("/volezp", "gixkkle"));
-        Files.createFile(Paths.get(downloadParameters.getResourceUrl().toURI()));
-        Files.createDirectory(getDownloadDirectoryPath());
-        when(channelProvider.getReadableByteChannel(downloadParameters.getResourceUrl())).then(
-            invocation -> Channels.newChannel(downloadParameters.getResourceUrl().openStream()));
-        final Path temporaryFilePath = downloadParameters.getTemporaryDirectoryPath().resolve(RESOURCE_NAME);
-        when(channelProvider.getWritableFileChannelForNewFile(temporaryFilePath)).then(
-            invocation -> FileChannel.open(invocation.getArgument(0), StandardOpenOption.WRITE,
-                StandardOpenOption.CREATE_NEW));
+    void shouldFailWhenTemporaryFileCannotBeMovedToDestinationFile() throws IOException {
+        final DownloadSettings downloadSettings = buildDownloadParameters(Paths.get("/volezp", "gixkkle"));
+        final ReadableByteChannel resourceInputChannel = mock(ReadableByteChannel.class);
+        when(channelProvider.getReadableByteChannel(downloadSettings.getResourceUrl())).thenReturn(
+            resourceInputChannel);
+        final Path temporaryFilePath = downloadSettings
+            .getTemporaryDirectoryPath()
+            .resolve(downloadSettings.getDestinationFilePath().getFileName().toString());
+        final FileChannel resourceOutputChannel = spy(FileChannel.class);
+        when(channelProvider.getWritableFileChannelForNewFile(temporaryFilePath)).thenReturn(resourceOutputChannel);
+        final Exception expectedException = new IOException();
+        when(fileManager.move(downloadSettings
+                .getTemporaryDirectoryPath()
+                .resolve(downloadSettings.getDestinationFilePath().getFileName()),
+            downloadSettings.getDestinationFilePath())).thenThrow(expectedException);
 
-        assertThatThrownBy(() -> usecase.execute(downloadParameters))
-            .isInstanceOfSatisfying(FrontendIOException.class,
-                e -> assertThat(e.getIoErrorCode()).isEqualTo(IOErrorCode.FILE_MOVE_ERROR))
-            .hasCauseInstanceOf(IOException.class);
+        assertThatThrownBy(() -> usecase.execute(downloadSettings)).isEqualTo(expectedException);
 
-        verify(channelProvider).getReadableByteChannel(downloadParameters.getResourceUrl());
-        verify(channelProvider).getWritableFileChannelForNewFile(temporaryFilePath);
-        verifyNoMoreInteractions(channelProvider);
+        verify(resourceOutputChannel).transferFrom(resourceInputChannel, 0, Long.MAX_VALUE);
+        verify(resourceInputChannel).close();
+        verifyNoMoreInteractions(fileManager, channelProvider, resourceInputChannel);
     }
 
     @Test
     void shouldDownloadLocalResource() throws Exception {
         final Path destinationDirectoryPath = temporaryDirectoryPath.resolve("install");
         final Path destinationFilePath = destinationDirectoryPath.resolve(RESOURCE_NAME);
-        final DownloadParameters downloadParameters = buildDownloadParameters(destinationFilePath);
-        Files.createFile(Paths.get(downloadParameters.getResourceUrl().toURI()));
-        Files.createDirectory(getDownloadDirectoryPath());
-        Files.createDirectory(destinationDirectoryPath);
-        when(channelProvider.getReadableByteChannel(downloadParameters.getResourceUrl())).then(
-            invocation -> Channels.newChannel(downloadParameters.getResourceUrl().openStream()));
-        final Path temporaryFilePath = downloadParameters.getTemporaryDirectoryPath().resolve(RESOURCE_NAME);
-        when(channelProvider.getWritableFileChannelForNewFile(temporaryFilePath)).then(
-            invocation -> FileChannel.open(invocation.getArgument(0), StandardOpenOption.WRITE,
-                StandardOpenOption.CREATE_NEW));
+        final DownloadSettings downloadSettings = buildDownloadParameters(destinationFilePath);
+        final ReadableByteChannel resourceInputChannel = mock(ReadableByteChannel.class);
+        when(channelProvider.getReadableByteChannel(downloadSettings.getResourceUrl())).thenReturn(
+            resourceInputChannel);
+        final Path temporaryFilePath = downloadSettings
+            .getTemporaryDirectoryPath()
+            .resolve(downloadSettings.getDestinationFilePath().getFileName().toString());
+        final FileChannel resourceOutputChannel = spy(FileChannel.class);
+        when(channelProvider.getWritableFileChannelForNewFile(temporaryFilePath)).thenReturn(resourceOutputChannel);
 
-        usecase.execute(downloadParameters);
+        usecase.execute(downloadSettings);
 
-        verify(channelProvider).getReadableByteChannel(downloadParameters.getResourceUrl());
-        verify(channelProvider).getWritableFileChannelForNewFile(temporaryFilePath);
-        verifyNoMoreInteractions(channelProvider);
-        assertThat(Files.readAllBytes(destinationFilePath)).isEqualTo(Files.readAllBytes(getResourceFilePath()));
+        verify(resourceOutputChannel).transferFrom(resourceInputChannel, 0, Long.MAX_VALUE);
+        verify(resourceInputChannel).close();
+        verify(fileManager).move(downloadSettings
+                .getTemporaryDirectoryPath()
+                .resolve(downloadSettings.getDestinationFilePath().getFileName()),
+            downloadSettings.getDestinationFilePath());
+        // Refer to class doc comments.
+        verifyNoMoreInteractions(fileManager, channelProvider, resourceInputChannel);
     }
 
     private Path getDownloadDirectoryPath() {
@@ -207,106 +158,10 @@ class DownloadResourceTest {
         return temporaryDirectoryPath.resolve(RESOURCE_NAME);
     }
 
-    private DownloadParameters buildDownloadParameters(@Nonnull final Path destinationFilePath)
+    private DownloadSettings buildDownloadParameters(@Nonnull final Path destinationFilePath)
         throws MalformedURLException {
-        return new DownloadParameters(getResourceFilePath().toUri().toURL(), getDownloadDirectoryPath(),
+        return new DownloadSettings(getResourceFilePath().toUri().toURL(), getDownloadDirectoryPath(),
             destinationFilePath);
-    }
-
-    private static class MockFileChannel extends FileChannel {
-
-        private final boolean failOnCloseEnabled;
-
-        public MockFileChannel(final boolean failOnCloseEnabled) {
-            this.failOnCloseEnabled = failOnCloseEnabled;
-        }
-
-        @Override
-        public int read(ByteBuffer dst) {
-            return 0;
-        }
-
-        @Override
-        public long read(ByteBuffer[] dsts, int offset, int length) {
-            return 0;
-        }
-
-        @Override
-        public int write(ByteBuffer src) {
-            return 0;
-        }
-
-        @Override
-        public long write(ByteBuffer[] srcs, int offset, int length) {
-            return 0;
-        }
-
-        @Override
-        public long position() {
-            return 0;
-        }
-
-        @Override
-        public FileChannel position(long newPosition) {
-            return null;
-        }
-
-        @Override
-        public long size() {
-            return 0;
-        }
-
-        @Override
-        public FileChannel truncate(long size) {
-            return null;
-        }
-
-        @Override
-        public void force(boolean metaData) {
-
-        }
-
-        @Override
-        public long transferTo(long position, long count, WritableByteChannel target) {
-            return 0;
-        }
-
-        @Override
-        public long transferFrom(ReadableByteChannel src, long position, long count) {
-            return 0;
-        }
-
-        @Override
-        public int read(ByteBuffer dst, long position) {
-            return 0;
-        }
-
-        @Override
-        public int write(ByteBuffer src, long position) {
-            return 0;
-        }
-
-        @Override
-        public MappedByteBuffer map(MapMode mode, long position, long size) {
-            return null;
-        }
-
-        @Override
-        public FileLock lock(long position, long size, boolean shared) {
-            return null;
-        }
-
-        @Override
-        public FileLock tryLock(long position, long size, boolean shared) {
-            return null;
-        }
-
-        @Override
-        protected void implCloseChannel() throws IOException {
-            if (failOnCloseEnabled) {
-                throw new IOException();
-            }
-        }
     }
 }
 

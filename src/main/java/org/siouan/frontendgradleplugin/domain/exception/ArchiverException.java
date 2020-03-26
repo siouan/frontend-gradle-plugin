@@ -1,27 +1,20 @@
 package org.siouan.frontendgradleplugin.domain.exception;
 
+import javax.annotation.Nonnull;
+
 /**
- * Exception thrown when an archiver fails.
+ * Base class for exceptions thrown by an archiver when it detects an error.
  *
  * @since 1.1.3
  */
-public class ArchiverException extends FrontendException {
+public abstract class ArchiverException extends FrontendException {
 
     /**
      * Builds an exception with the given message.
      *
      * @param message Message.
      */
-    public ArchiverException(final String message) {
+    protected ArchiverException(@Nonnull final String message) {
         super(message);
-    }
-
-    /**
-     * Builds an exception with the given cause.
-     *
-     * @param cause Cause.
-     */
-    public ArchiverException(final Throwable cause) {
-        super(cause);
     }
 }

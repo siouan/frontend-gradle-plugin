@@ -1,6 +1,6 @@
 /**
- * Provides types of exception likely to be thrown by use cases.
+ * Provides types of exceptions thrown by use cases.
  *
- * @since 1.4.2
+ * @since 2.0.0
  */
 package org.siouan.frontendgradleplugin.domain.exception;

@@ -9,10 +9,6 @@ import org.gradle.api.tasks.Optional;
  */
 public class CleanTask extends AbstractPredefinedRunScriptTask {
 
-    public CleanTask() {
-        super(false);
-    }
-
     @Input
     @Optional
     public Property<String> getCleanScript() {

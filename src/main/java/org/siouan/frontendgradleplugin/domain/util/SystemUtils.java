@@ -6,7 +6,7 @@ import javax.annotation.Nonnull;
 /**
  * This class provides utilities to get system information.
  *
- * @since 1.4.2
+ * @since 2.0.0
  */
 public final class SystemUtils {
 

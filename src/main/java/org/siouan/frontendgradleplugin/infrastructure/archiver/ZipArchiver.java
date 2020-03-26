@@ -4,14 +4,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
+import javax.annotation.Nonnull;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
-import org.siouan.frontendgradleplugin.domain.exception.ArchiverException;
 import org.siouan.frontendgradleplugin.domain.model.ExplodeSettings;
+import org.siouan.frontendgradleplugin.domain.provider.FileManager;
+import org.siouan.frontendgradleplugin.domain.usecase.AbstractArchiver;
 
 /**
  * An archiver that deals with ZIP archives. When exploding archives, the archiver tries to restore symbolic links and
@@ -26,39 +27,36 @@ import org.siouan.frontendgradleplugin.domain.model.ExplodeSettings;
  */
 public class ZipArchiver extends AbstractArchiver<ZipArchiverContext, ZipEntry> {
 
-    @Override
-    protected ZipArchiverContext initializeContext(final ExplodeSettings settings) throws ArchiverException {
-        try {
-            return new ZipArchiverContext(settings, new ZipFile(settings.getArchiveFile().toFile()));
-        } catch (final IOException e) {
-            throw new ArchiverException(e);
-        }
+    public ZipArchiver(final FileManager fileManager) {
+        super(fileManager);
     }
 
+    @Nonnull
     @Override
-    protected Optional<ZipEntry> getNextEntry(final ZipArchiverContext context) {
+    protected ZipArchiverContext initializeContext(@Nonnull final ExplodeSettings settings) throws IOException {
+        return new ZipArchiverContext(settings, new ZipFile(settings.getArchiveFilePath().toFile()));
+    }
+
+    @Nonnull
+    @Override
+    protected Optional<ZipEntry> getNextEntry(@Nonnull final ZipArchiverContext context) {
         return Optional
             .ofNullable(context.getEntries().hasMoreElements() ? context.getEntries().nextElement() : null)
             .map(ZipEntry::new);
     }
 
+    @Nonnull
     @Override
-    protected String getSymbolicLinkTarget(final ZipArchiverContext context, final ZipEntry entry)
-        throws ArchiverException {
-        final String target;
-        try {
-            target = readSymbolicLinkTarget(context.getZipFile(), entry.getLowLevelEntry());
-        } catch (final IOException e) {
-            throw new ArchiverException(e);
-        }
-        return target;
+    protected String getSymbolicLinkTarget(@Nonnull final ZipArchiverContext context, @Nonnull final ZipEntry entry)
+        throws IOException {
+        return readSymbolicLinkTarget(context.getZipFile(), entry.getLowLevelEntry());
     }
 
     @Override
-    protected void writeRegularFile(final ZipArchiverContext context, final ZipEntry entry, final Path targetFile)
-        throws IOException {
+    protected void writeRegularFile(@Nonnull final ZipArchiverContext context, @Nonnull final ZipEntry entry,
+        @Nonnull final Path filePath) throws IOException {
         try (final InputStream entryInputStream = context.getZipFile().getInputStream(entry.getLowLevelEntry())) {
-            Files.copy(entryInputStream, targetFile);
+            fileManager.copy(entryInputStream, filePath);
         }
     }
 

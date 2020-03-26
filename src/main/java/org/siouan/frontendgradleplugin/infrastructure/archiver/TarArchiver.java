@@ -3,16 +3,17 @@ package org.siouan.frontendgradleplugin.infrastructure.archiver;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
+import javax.annotation.Nonnull;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
-import org.apache.commons.compress.utils.IOUtils;
-import org.siouan.frontendgradleplugin.domain.exception.ArchiverException;
 import org.siouan.frontendgradleplugin.domain.model.ExplodeSettings;
+import org.siouan.frontendgradleplugin.domain.provider.FileManager;
+import org.siouan.frontendgradleplugin.domain.usecase.AbstractArchiver;
 import org.siouan.frontendgradleplugin.domain.util.PathUtils;
+import org.siouan.frontendgradleplugin.infrastructure.exception.UnexpectedEofException;
 
 /**
  * A non thread-safe archiver that deals with TAR archives. When exploding archives, the exploder tries to restore
@@ -30,30 +31,28 @@ public class TarArchiver extends AbstractArchiver<TarArchiverContext, TarEntry> 
     private final byte[] buffer;
 
     /**
-     * Builds an exploder with an internal buffer of 1 KB.
+     * Builds an archiver with an internal buffer of 1 KB to extract entries.
      */
-    public TarArchiver() {
+    public TarArchiver(final FileManager fileManager) {
+        super(fileManager);
         this.buffer = new byte[1024];
     }
 
+    @Nonnull
     @Override
-    protected TarArchiverContext initializeContext(final ExplodeSettings settings) throws ArchiverException {
-        final InputStream archiveInputStream;
+    protected TarArchiverContext initializeContext(@Nonnull final ExplodeSettings settings) throws IOException {
+        InputStream archiveInputStream = null;
         try {
-            archiveInputStream = Files.newInputStream(settings.getArchiveFile());
+            archiveInputStream = fileManager.newInputStream(settings.getArchiveFilePath());
+            // In case of creating the uncompress input stream fails, the archive input stream must be closed.
+            return new TarArchiverContext(settings,
+                buildLowLevelInputStream(uncompressInputStream(settings, archiveInputStream)));
         } catch (final IOException e) {
-            throw new ArchiverException(e);
+            if (archiveInputStream != null) {
+                archiveInputStream.close();
+            }
+            throw e;
         }
-
-        final InputStream uncompressedInputStream;
-        try {
-            uncompressedInputStream = uncompressInputStream(settings, archiveInputStream);
-        } catch (final IOException e) {
-            IOUtils.closeQuietly(archiveInputStream);
-            throw new ArchiverException(e);
-        }
-
-        return new TarArchiverContext(settings, buildLowLevelInputStream(uncompressedInputStream));
     }
 
     /**
@@ -67,7 +66,7 @@ public class TarArchiver extends AbstractArchiver<TarArchiverContext, TarEntry> 
     InputStream uncompressInputStream(final ExplodeSettings settings, final InputStream compressedInputStream)
         throws IOException {
         final InputStream uncompressedInputStream;
-        if (PathUtils.getExtension(settings.getArchiveFile()).filter(PathUtils::isGzipExtension).isPresent()) {
+        if (PathUtils.getExtension(settings.getArchiveFilePath()).filter(PathUtils::isGzipExtension).isPresent()) {
             uncompressedInputStream = new GzipCompressorInputStream(compressedInputStream);
         } else {
             uncompressedInputStream = compressedInputStream;
@@ -85,32 +84,29 @@ public class TarArchiver extends AbstractArchiver<TarArchiverContext, TarEntry> 
         return new TarArchiveInputStream(inputStream);
     }
 
+    @Nonnull
     @Override
-    protected Optional<TarEntry> getNextEntry(final TarArchiverContext context) throws ArchiverException {
-        try {
-            return Optional.ofNullable(context.getInputStream().getNextTarEntry()).map(TarEntry::new);
-        } catch (final IOException e) {
-            throw new ArchiverException(e);
-        }
+    protected Optional<TarEntry> getNextEntry(@Nonnull final TarArchiverContext context) throws IOException {
+        return Optional.ofNullable(context.getInputStream().getNextTarEntry()).map(TarEntry::new);
     }
 
+    @Nonnull
     @Override
-    protected String getSymbolicLinkTarget(final TarArchiverContext context, final TarEntry entry) {
+    protected String getSymbolicLinkTarget(@Nonnull final TarArchiverContext context, @Nonnull final TarEntry entry) {
         return entry.getLowLevelEntry().getLinkName();
     }
 
     @Override
-    protected void writeRegularFile(final TarArchiverContext context, final TarEntry entry, final Path targetFile)
-        throws IOException, ArchiverException {
+    protected void writeRegularFile(@Nonnull final TarArchiverContext context, @Nonnull final TarEntry entry,
+        @Nonnull final Path filePath) throws IOException {
+        final long entrySize = entry.getLowLevelEntry().getSize();
         int bytesRead;
-        int bytesToRead = (int) entry.getLowLevelEntry().getSize();
-        try (final OutputStream outputStream = Files.newOutputStream(targetFile)) {
+        int bytesToRead = (int) entrySize;
+        try (final OutputStream outputStream = fileManager.newOutputStream(filePath)) {
             while (bytesToRead > 0) {
                 bytesRead = context.getInputStream().read(buffer, 0, Math.min(bytesToRead, buffer.length));
                 if (bytesRead == -1) {
-                    throw new ArchiverException(
-                        "Unexpected EOF when reading entry '" + entry.getName() + "': " + bytesRead + " bytes read / "
-                            + bytesToRead + " remaining");
+                    throw new UnexpectedEofException(entry.getName(), entrySize, bytesRead);
                 } else {
                     outputStream.write(buffer, 0, bytesRead);
                     bytesToRead -= bytesRead;

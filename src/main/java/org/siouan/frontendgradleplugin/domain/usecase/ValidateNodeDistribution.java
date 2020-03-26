@@ -1,52 +1,38 @@
 package org.siouan.frontendgradleplugin.domain.usecase;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import javax.annotation.Nonnull;
 
-import org.siouan.frontendgradleplugin.domain.exception.DistributionValidatorException;
-import org.siouan.frontendgradleplugin.domain.exception.FrontendIOException;
-import org.siouan.frontendgradleplugin.domain.exception.NodeDistributionChecksumNotFoundException;
-import org.siouan.frontendgradleplugin.domain.model.DistributionValidatorProperties;
-import org.siouan.frontendgradleplugin.domain.model.DownloadParameters;
+import org.siouan.frontendgradleplugin.domain.exception.InvalidNodeDistributionException;
+import org.siouan.frontendgradleplugin.domain.exception.NodeDistributionShasumNotFoundException;
+import org.siouan.frontendgradleplugin.domain.model.DistributionValidator;
+import org.siouan.frontendgradleplugin.domain.model.DistributionValidatorSettings;
+import org.siouan.frontendgradleplugin.domain.model.DownloadSettings;
 import org.siouan.frontendgradleplugin.domain.model.Logger;
+import org.siouan.frontendgradleplugin.domain.provider.FileManager;
 
 /**
  * Validates a Node distribution by comparing its SHA-256 hash against the one officially published.
  */
 public class ValidateNodeDistribution implements DistributionValidator {
 
-    /**
-     * Downloader used to get the file containing all checksums for a given distribution.
-     */
+    public static final String SHASUMS_FILENAME = "SHASUMS256.txt";
+
+    private final FileManager fileManager;
+
     private final DownloadResource downloadResource;
 
-    /**
-     * Reader that gives the checksum of the distribution from a file.
-     */
     private final ReadNodeDistributionChecksum readNodeDistributionChecksum;
 
-    /**
-     * Hasher used to check the distribution integrity.
-     */
     private final HashFile hashFile;
 
     private final Logger logger;
 
-    /**
-     * Builds a validator of a Node distribution.
-     *
-     * @param downloadResource Used to get the file containing all checksums for a given distribution.
-     * @param readNodeDistributionChecksum Reader of checksum's file.
-     * @param hashFile Hasher used to check the distribution integrity.
-     * @param logger Logger.
-     */
-    public ValidateNodeDistribution(final DownloadResource downloadResource,
+    public ValidateNodeDistribution(final FileManager fileManager, final DownloadResource downloadResource,
         final ReadNodeDistributionChecksum readNodeDistributionChecksum, final HashFile hashFile, final Logger logger) {
+        this.fileManager = fileManager;
         this.downloadResource = downloadResource;
         this.readNodeDistributionChecksum = readNodeDistributionChecksum;
         this.hashFile = hashFile;
@@ -54,45 +40,39 @@ public class ValidateNodeDistribution implements DistributionValidator {
     }
 
     /**
-     * Validates the distribution in the given file.
-     *
-     * @throws DistributionValidatorException If the distribution is invalid.
+     * {@inheritDoc} This implementation downloads the Node official file providing shasums - one for each supported
+     * platform, resolves the expected shasum matching the distribution file name, and verifies the actual shasum of the
+     * distribution file matches this expected shasum.
      */
     @Override
-    public void validate(@Nonnull final DistributionValidatorProperties distributionValidatorProperties)
-        throws DistributionValidatorException, URISyntaxException {
-        final String distributionUrlAsString = distributionValidatorProperties.getDistributionUrl().toString();
-
+    public void execute(@Nonnull final DistributionValidatorSettings distributionValidatorSettings)
+        throws InvalidNodeDistributionException, IOException, NodeDistributionShasumNotFoundException {
         // Resolve the URL to download the checksum file
-        final String checksumUrlAsString =
-            distributionUrlAsString.substring(0, distributionUrlAsString.lastIndexOf('/') + 1) + "SHASUMS256.txt";
-        final Path checksumFile = distributionValidatorProperties
-            .getInstallDirectory()
-            .resolve(checksumUrlAsString.substring(checksumUrlAsString.lastIndexOf('/') + 1));
+        final Path shasumsFilePath = distributionValidatorSettings
+            .getTemporaryDirectoryPath()
+            .resolve(SHASUMS_FILENAME);
+        final String expectedShasum;
         try {
-            final URL checksumUrl = URI.create(checksumUrlAsString).toURL();
+            final URL shasumsFileUrl = new URL(distributionValidatorSettings.getDistributionUrl(), SHASUMS_FILENAME);
 
             // Download the checksum file
-            logger.log("Downloading checksums at '" + checksumUrlAsString + "'");
+            logger.log("Downloading checksums at '{}'", shasumsFileUrl);
             downloadResource.execute(
-                new DownloadParameters(checksumUrl, distributionValidatorProperties.getTemporaryDirectory(),
-                    checksumFile));
+                new DownloadSettings(shasumsFileUrl, distributionValidatorSettings.getTemporaryDirectoryPath(),
+                    shasumsFilePath));
 
             // Verify the distribution integrity
             logger.log("Verifying distribution integrity");
-            final String expectedHash = readNodeDistributionChecksum.execute(checksumFile,
-                distributionValidatorProperties.getDistributionFile().getFileName().toString());
-            if (!hashFile.execute(distributionValidatorProperties.getDistributionFile()).equals(expectedHash)) {
-                throw new DistributionValidatorException("Distribution corrupted: invalid checksum");
-            }
-        } catch (final IOException | FrontendIOException | NodeDistributionChecksumNotFoundException e) {
-            throw new DistributionValidatorException(e);
+            expectedShasum = readNodeDistributionChecksum
+                .execute(shasumsFilePath,
+                    distributionValidatorSettings.getDistributionFilePath().getFileName().toString())
+                .orElseThrow(NodeDistributionShasumNotFoundException::new);
         } finally {
-            try {
-                Files.deleteIfExists(checksumFile);
-            } catch (final IOException e) {
-                logger.warn("Checksum file could not be deleted: '" + checksumFile + '\'', e);
-            }
+            fileManager.deleteIfExists(shasumsFilePath);
+        }
+
+        if (!hashFile.execute(distributionValidatorSettings.getDistributionFilePath()).equals(expectedShasum)) {
+            throw new InvalidNodeDistributionException();
         }
     }
 }

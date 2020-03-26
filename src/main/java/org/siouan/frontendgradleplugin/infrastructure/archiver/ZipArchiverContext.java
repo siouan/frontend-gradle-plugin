@@ -3,11 +3,12 @@ package org.siouan.frontendgradleplugin.infrastructure.archiver;
 import java.io.IOException;
 import java.util.Enumeration;
 
+import javax.annotation.Nonnull;
+
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
-import org.siouan.frontendgradleplugin.domain.model.ExplodeSettings;
 import org.siouan.frontendgradleplugin.domain.model.ArchiverContext;
-import org.siouan.frontendgradleplugin.domain.exception.ArchiverException;
+import org.siouan.frontendgradleplugin.domain.model.ExplodeSettings;
 
 /**
  * Context used to extract entries in a ZIP archive.
@@ -46,6 +47,7 @@ public class ZipArchiverContext implements ArchiverContext {
         return entries;
     }
 
+    @Nonnull
     @Override
     public ExplodeSettings getSettings() {
         return settings;
@@ -61,11 +63,7 @@ public class ZipArchiverContext implements ArchiverContext {
     }
 
     @Override
-    public void close() throws ArchiverException {
-        try {
-            zipFile.close();
-        } catch (final IOException e) {
-            throw new ArchiverException(e);
-        }
+    public void close() throws IOException {
+        zipFile.close();
     }
 }

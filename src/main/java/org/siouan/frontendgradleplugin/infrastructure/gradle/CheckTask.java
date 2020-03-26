@@ -9,10 +9,6 @@ import org.gradle.api.tasks.Optional;
  */
 public class CheckTask extends AbstractPredefinedRunScriptTask {
 
-    public CheckTask() {
-        super(false);
-    }
-
     @Input
     @Optional
     public Property<String> getCheckScript() {

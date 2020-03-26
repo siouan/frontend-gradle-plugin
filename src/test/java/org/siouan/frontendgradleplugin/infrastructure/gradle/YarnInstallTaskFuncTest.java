@@ -7,7 +7,6 @@ import static org.siouan.frontendgradleplugin.test.util.Helper.assertTaskUpToDat
 import static org.siouan.frontendgradleplugin.test.util.Helper.runGradle;
 import static org.siouan.frontendgradleplugin.test.util.Helper.runGradleAndExpectFailure;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
@@ -15,7 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.gradle.testkit.runner.BuildResult;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
@@ -28,29 +26,22 @@ import org.siouan.frontendgradleplugin.test.util.Helper;
 class YarnInstallTaskFuncTest {
 
     @TempDir
-    File tmpDirectory;
-
-    private Path projectDirectory;
-
-    @BeforeEach
-    void setUp() {
-        projectDirectory = tmpDirectory.toPath();
-    }
+    Path projectDirectoryPath;
 
     @Test
     void shouldSkipInstallWhenYarnIsNotEnabled() throws IOException {
-        Helper.createBuildFile(projectDirectory, Collections.emptyMap());
+        Helper.createBuildFile(projectDirectoryPath, Collections.emptyMap());
 
-        final BuildResult result = runGradle(projectDirectory, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
+        final BuildResult result = runGradle(projectDirectoryPath, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
 
         assertTaskSkipped(result, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
     }
 
     @Test
     void shouldFailInstallingYarnWhenVersionIsNotSet() throws IOException {
-        Helper.createBuildFile(projectDirectory, Collections.singletonMap("yarnEnabled", true));
+        Helper.createBuildFile(projectDirectoryPath, Collections.singletonMap("yarnEnabled", true));
 
-        final BuildResult result = runGradleAndExpectFailure(projectDirectory,
+        final BuildResult result = runGradleAndExpectFailure(projectDirectoryPath,
             FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
 
         assertTaskFailed(result, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
@@ -61,9 +52,9 @@ class YarnInstallTaskFuncTest {
         final Map<String, Object> properties = new HashMap<>();
         properties.put("yarnEnabled", true);
         properties.put("yarnVersion", "0.56.3");
-        Helper.createBuildFile(projectDirectory, properties);
+        Helper.createBuildFile(projectDirectoryPath, properties);
 
-        final BuildResult result = runGradleAndExpectFailure(projectDirectory,
+        final BuildResult result = runGradleAndExpectFailure(projectDirectoryPath,
             FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
 
         assertTaskFailed(result, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
@@ -75,9 +66,9 @@ class YarnInstallTaskFuncTest {
         properties.put("yarnEnabled", true);
         properties.put("yarnVersion", "1.16.0");
         properties.put("yarnDistributionUrl", "protocol://domain/unknown");
-        Helper.createBuildFile(projectDirectory, properties);
+        Helper.createBuildFile(projectDirectoryPath, properties);
 
-        final BuildResult result = runGradleAndExpectFailure(projectDirectory,
+        final BuildResult result = runGradleAndExpectFailure(projectDirectoryPath,
             FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
 
         assertTaskFailed(result, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
@@ -88,15 +79,14 @@ class YarnInstallTaskFuncTest {
         final Map<String, Object> properties = new HashMap<>();
         properties.put("yarnEnabled", true);
         properties.put("yarnVersion", "1.16.0");
-        properties
-            .put("yarnDistributionUrl", getClass().getClassLoader().getResource("yarn-v1.16.0.tar.gz").toString());
-        Helper.createBuildFile(projectDirectory, properties);
+        properties.put("yarnDistributionUrl", getClass().getClassLoader().getResource("yarn-v1.16.0.tar.gz"));
+        Helper.createBuildFile(projectDirectoryPath, properties);
 
-        final BuildResult result1 = runGradle(projectDirectory, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
+        final BuildResult result1 = runGradle(projectDirectoryPath, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
 
         assertTaskSuccess(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
 
-        final BuildResult result2 = runGradle(projectDirectory, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
+        final BuildResult result2 = runGradle(projectDirectoryPath, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
 
         assertTaskUpToDate(result2, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
     }

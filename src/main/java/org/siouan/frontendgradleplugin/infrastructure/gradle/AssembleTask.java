@@ -9,10 +9,6 @@ import org.gradle.api.tasks.Optional;
  */
 public class AssembleTask extends AbstractPredefinedRunScriptTask {
 
-    public AssembleTask() {
-        super(false);
-    }
-
     @Input
     @Optional
     public Property<String> getAssembleScript() {

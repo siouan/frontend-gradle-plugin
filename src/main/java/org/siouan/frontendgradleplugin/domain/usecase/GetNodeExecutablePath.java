@@ -1,42 +1,58 @@
 package org.siouan.frontendgradleplugin.domain.usecase;
 
-import java.nio.file.Files;
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.Nonnull;
 
 import org.siouan.frontendgradleplugin.domain.model.Platform;
+import org.siouan.frontendgradleplugin.domain.provider.FileManager;
 
 /**
  * Gets the path to a Node executable given an install directory and a platform.
  *
- * @since 1.4.2
+ * @since 2.0.0
  */
 public class GetNodeExecutablePath {
 
-    private static final String[] WINDOWS_EXECUTABLES = new String[] {"node.exe", "node.cmd"};
+    /**
+     * Supported executables on a Windows O/S.
+     */
+    public static final List<Path> WINDOWS_EXECUTABLE_PATHS = unmodifiableList(
+        asList(Paths.get("node.exe"), Paths.get("node.cmd")));
 
-    private static final Path LINUX_EXECUTABLE_PATH = Paths.get("bin", "node");
+    /**
+     * Supported executable on other O/S.
+     */
+    public static final Path NON_WINDOWS_EXECUTABLE_PATH = Paths.get("bin", "node");
+
+    private final FileManager fileManager;
+
+    public GetNodeExecutablePath(final FileManager fileManager) {
+        this.fileManager = fileManager;
+    }
 
     /**
      * Gets the path of the Node executable.
      *
      * @param nodeInstallDirectory Node install directory.
      * @param platform Execution platform.
-     * @return The path, may be {@code null} if it was not found.
+     * @return The path.
      */
+    @Nonnull
     public Optional<Path> execute(@Nonnull final Path nodeInstallDirectory, @Nonnull final Platform platform) {
         final List<Path> possiblePaths = new ArrayList<>();
         if (platform.isWindowsOs()) {
-            Arrays.stream(WINDOWS_EXECUTABLES).map(nodeInstallDirectory::resolve).forEach(possiblePaths::add);
+            possiblePaths.addAll(WINDOWS_EXECUTABLE_PATHS);
         } else {
-            possiblePaths.add(nodeInstallDirectory.resolve(LINUX_EXECUTABLE_PATH));
+            possiblePaths.add(nodeInstallDirectory.resolve(NON_WINDOWS_EXECUTABLE_PATH));
         }
 
-        return possiblePaths.stream().filter(Files::exists).findAny();
+        return possiblePaths.stream().map(nodeInstallDirectory::resolve).filter(fileManager::exists).findAny();
     }
 }

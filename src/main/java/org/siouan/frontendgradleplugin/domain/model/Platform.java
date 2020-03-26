@@ -3,12 +3,10 @@ package org.siouan.frontendgradleplugin.domain.model;
 import java.util.Arrays;
 import javax.annotation.Nonnull;
 
-import org.siouan.frontendgradleplugin.domain.util.SystemUtils;
-
 /**
  * This class represents an execution platform, identified by the architecture of the JVM, and the name of the OS.
  *
- * @since 1.4.2
+ * @since 2.0.0
  */
 public class Platform {
 
@@ -21,15 +19,21 @@ public class Platform {
 
     private static final String[] SUPPORTED_WINDOWS_OS_IDS = new String[] {"windows"};
 
+    /**
+     * Architecture on which JVM runs.
+     */
     private final String jvmArch;
 
+    /**
+     * Name of the underlying O/S.
+     */
     private final String osName;
 
     /**
      * Builds a platform with custom architecture.
      *
      * @param jvmArch JVM architecture.
-     * @param osName Underlying OS name.
+     * @param osName Underlying O/S name.
      */
     public Platform(@Nonnull final String jvmArch, @Nonnull final String osName) {
         this.jvmArch = jvmArch;
@@ -40,44 +44,52 @@ public class Platform {
      * Tells whether the JVM has a 64 bits architecture.
      *
      * @return {@code true} if the architecture is a 64 bits architecture.
-     * @see SystemUtils#getSystemJvmArch()
      */
     public boolean is64BitsArch() {
         return matchesAnyIdPart(jvmArch, SUPPORTED_JVM_64_BITS_ARCH_IDS);
     }
 
     /**
-     * Tells whether the platform OS is a Linux OS.
+     * Tells whether the platform O/S is a Linux O/S.
      *
-     * @return {@code true} if the platform OS is a Linux OS.
-     * @see SystemUtils#getSystemOsName()
+     * @return {@code true} if the platform O/S is a Linux O/S.
      */
     public boolean isLinuxOs() {
         return matchesAnyIdPart(osName, SUPPORTED_LINUX_OS_IDS);
     }
 
     /**
-     * Tells whether the platform OS is a Mac OS.
+     * Tells whether the platform O/S is a Mac O/S.
      *
-     * @return {@code true} if the platform OS is a Mac OS.
-     * @see SystemUtils#getSystemOsName()
+     * @return {@code true} if the platform O/S is a Mac O/S.
      */
     public boolean isMacOs() {
         return matchesAnyIdPart(osName, SUPPORTED_MAC_OS_IDS);
     }
 
     /**
-     * Tells whether the platform OS is a Windows OS.
+     * Tells whether the platform O/S is a Windows O/S.
      *
-     * @return {@code true} if the platform OS is a Windows OS.
-     * @see SystemUtils#getSystemOsName()
+     * @return {@code true} if the platform O/S is a Windows O/S.
      */
     public boolean isWindowsOs() {
         return matchesAnyIdPart(osName, SUPPORTED_WINDOWS_OS_IDS);
     }
 
-    private boolean matchesAnyIdPart(@Nonnull final String id, @Nonnull final String[] idParts) {
+    @Override
+    public String toString() {
+        return Platform.class.getSimpleName() + " {jvmArch=" + jvmArch + ", osName=" + osName + '}';
+    }
+
+    /**
+     * Whether the given ID matches any of the given parts.
+     *
+     * @param id ID.
+     * @param parts Array of ID parts.
+     * @return {@code true} if a part is a substring on the given ID.
+     */
+    private boolean matchesAnyIdPart(@Nonnull final String id, @Nonnull final String[] parts) {
         final String lowerCaseId = id.toLowerCase();
-        return Arrays.stream(idParts).anyMatch(lowerCaseId::contains);
+        return Arrays.stream(parts).anyMatch(lowerCaseId::contains);
     }
 }

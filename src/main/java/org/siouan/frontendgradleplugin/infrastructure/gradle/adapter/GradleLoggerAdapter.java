@@ -1,57 +1,50 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle.adapter;
 
-import org.gradle.api.Task;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.gradle.api.logging.LogLevel;
+import org.siouan.frontendgradleplugin.domain.model.Logger;
 
 /**
- * Class that provides common utilities for this plugin's jobs.
+ * Implementation that delegate logging to a Gradle logger.
+ *
+ * @since 2.0.0
  */
-abstract class GradleLoggerAdapter {
+public class GradleLoggerAdapter implements Logger {
 
-    final Task task;
+    private final org.gradle.api.logging.Logger gradleLogger;
 
-    final LogLevel loggingLevel;
+    private final LogLevel loggingLevel;
+
+    private final String prefix;
 
     /**
      * Builds a job instance related to the given task.
      *
-     * @param task Task.
-     * @param loggingLevel Default logging level.
+     * @param gradleLogger Gradle logger.
+     * @param loggingLevel Current logging level.
+     * @param prefix Prefix prepended before each message logged.
      */
-    GradleLoggerAdapter(final Task task, final LogLevel loggingLevel) {
-        this.task = task;
+    public GradleLoggerAdapter(@Nonnull org.gradle.api.logging.Logger gradleLogger, @Nonnull LogLevel loggingLevel,
+        @Nonnull final String prefix) {
+        this.gradleLogger = gradleLogger;
         this.loggingLevel = loggingLevel;
+        this.prefix = prefix;
     }
 
-    private String formatMessage(final String message) {
-        return '[' + task.getName() + "] " + message;
+    @Override
+    public void debug(@Nonnull final String message, @Nullable Object... parameters) {
+        gradleLogger.debug(formatMessage(message), parameters);
     }
 
-    /**
-     * Shortcut to log a DEBUG message with the task's logger.
-     *
-     * @param message Message.
-     */
-    void logDebug(final String message) {
-        task.getLogger().debug(formatMessage(message));
+    @Override
+    public void log(@Nonnull final String message, @Nullable final Object... parameters) {
+        gradleLogger.log(loggingLevel, formatMessage(message), parameters);
     }
 
-    /**
-     * Shortcut to log a WARN message with the task's logger.
-     *
-     * @param message Message.
-     * @param throwable Throwable.
-     */
-    void logWarn(final String message, final Throwable throwable) {
-        task.getLogger().warn(formatMessage(message), throwable);
-    }
-
-    /**
-     * Shortcut to log a message with the task default log level.
-     *
-     * @param message Message.
-     */
-    void logMessage(final String message) {
-        task.getLogger().log(loggingLevel, formatMessage(message));
+    @Nonnull
+    private String formatMessage(@Nonnull final String message) {
+        return prefix + message;
     }
 }

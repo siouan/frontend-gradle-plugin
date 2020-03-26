@@ -1,9 +1,12 @@
 package org.siouan.frontendgradleplugin.domain.model;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * Interface of a component capable to log messages.
  *
- * @since 1.4.2
+ * @since 2.0.0
  */
 public interface Logger {
 
@@ -11,28 +14,15 @@ public interface Logger {
      * Logs a message with a DEBUG level.
      *
      * @param message Message.
+     * @param parameters Message parameters.
      */
-    void debug(String message);
-
-    /**
-     * Logs a message with an INFO level.
-     *
-     * @param message Message.
-     */
-    void info(String message);
-
-    /**
-     * Logs a message with a WARN level.
-     *
-     * @param message Message.
-     * @param throwable Throwable.
-     */
-    void warn(String message, Throwable throwable);
+    void debug(@Nonnull String message, @Nullable Object... parameters);
 
     /**
      * Logs a message with the default level.
      *
      * @param message Message.
+     * @param parameters Message parameters.
      */
-    void log(String message);
+    void log(@Nonnull String message, @Nullable Object... parameters);
 }

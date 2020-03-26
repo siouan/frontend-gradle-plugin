@@ -9,7 +9,7 @@ import javax.annotation.Nonnull;
  *
  * @since 1.1.2
  */
-public class SlipAttackException extends FrontendException {
+public class SlipAttackException extends ArchiverException {
 
     /**
      * Builds an exception with the given entry name.

@@ -2,9 +2,14 @@ package org.siouan.frontendgradleplugin.infrastructure;
 
 import javax.annotation.Nonnull;
 
-public class BeanInstanciationException extends Exception {
+/**
+ * Exception thrown when a bean instanciation fails.
+ *
+ * @since 2.0.0
+ */
+public class BeanInstanciationException extends BeanRegistryException {
 
-    public BeanInstanciationException(@Nonnull final Throwable cause) {
-        super(cause);
+    BeanInstanciationException(@Nonnull final Class<?> beanClass, @Nonnull final Throwable cause) {
+        super(beanClass, "Cannot create instance of bean '" + beanClass.getName() + '\'', cause);
     }
 }

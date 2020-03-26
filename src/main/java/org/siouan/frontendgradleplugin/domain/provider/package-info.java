@@ -1,6 +1,6 @@
 /**
- * Provides archiving components.
+ * Provides interfaces to bind domain use cases to the underlying infrastructure.
  *
- * @since 1.1.3
+ * @since 2.0.0
  */
 package org.siouan.frontendgradleplugin.domain.provider;

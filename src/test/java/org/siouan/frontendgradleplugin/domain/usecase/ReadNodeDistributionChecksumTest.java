@@ -2,72 +2,74 @@ package org.siouan.frontendgradleplugin.domain.usecase;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
-import java.io.BufferedWriter;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.io.TempDir;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.siouan.frontendgradleplugin.domain.exception.NodeDistributionChecksumNotFoundException;
+import org.siouan.frontendgradleplugin.domain.provider.FileManager;
 
 @ExtendWith(MockitoExtension.class)
 class ReadNodeDistributionChecksumTest {
 
-    private static final String CHECKSUM_FILENAME = "checksums.txt";
+    private static final Path CHECKSUM_FILE_PATH = Paths.get("checksums.txt");
 
     private static final String DISTRIBUTION_FILENAME = "node-10.0.0.zip";
 
-    @TempDir
-    Path temporaryDirectoryPath;
+    @Mock
+    private FileManager fileManager;
+
+    @InjectMocks
+    private ReadNodeDistributionChecksum usecase;
 
     @Test
-    void shouldFailWhenChecksumFileNotReadable() {
-        assertThatThrownBy(() -> new ReadNodeDistributionChecksum().execute(Paths.get("dummy-filename"),
-            DISTRIBUTION_FILENAME)).isInstanceOf(IOException.class);
+    void shouldFailWhenChecksumFileCannotBeOpened() throws IOException {
+        final Exception expectedException = new IOException();
+        when(fileManager.newBufferedReader(CHECKSUM_FILE_PATH)).thenThrow(expectedException);
+
+        assertThatThrownBy(() -> usecase.execute(CHECKSUM_FILE_PATH, DISTRIBUTION_FILENAME)).isInstanceOf(
+            IOException.class);
+
+        verifyNoMoreInteractions(fileManager);
     }
 
     @Test
-    void shouldFailWhenChecksumNotFound() throws IOException {
-        final Path checksumFile = temporaryDirectoryPath.resolve(CHECKSUM_FILENAME);
-        Files.createFile(checksumFile);
-        assertThatThrownBy(
-            () -> new ReadNodeDistributionChecksum().execute(checksumFile, DISTRIBUTION_FILENAME)).isInstanceOf(
-            NodeDistributionChecksumNotFoundException.class);
+    void shouldReturnNoChecksumWhenNotFound() throws IOException {
+        final BufferedReader bufferedReader = mock(BufferedReader.class);
+        when(fileManager.newBufferedReader(CHECKSUM_FILE_PATH)).thenReturn(bufferedReader);
+        when(bufferedReader.lines()).thenReturn(Stream.empty());
+
+        assertThat(usecase.execute(CHECKSUM_FILE_PATH, DISTRIBUTION_FILENAME)).isEmpty();
+
+        verify(bufferedReader).close();
+        verifyNoMoreInteractions(fileManager, bufferedReader);
     }
 
     @Test
-    void shouldReturnChecksumWhenAtEndOfFileWithoutNewLine()
-        throws IOException, NodeDistributionChecksumNotFoundException {
-        final String checksum = "523ab86h853e86";
-        final Path checksumFile = temporaryDirectoryPath.resolve(CHECKSUM_FILENAME);
-        try (final BufferedWriter writer = Files.newBufferedWriter(checksumFile)) {
-            writer.append(checksum);
-            writer.append("  ");
-            writer.append(DISTRIBUTION_FILENAME);
-        }
+    void shouldReturnChecksumWhenFound() throws IOException {
+        final String checksum1 = "ht7kuyfff74vz9";
+        final String checksum2 = "523ab86h853e86";
+        final String checksum3 = "6htskfy72291ds";
+        final BufferedReader bufferedReader = mock(BufferedReader.class);
+        when(fileManager.newBufferedReader(CHECKSUM_FILE_PATH)).thenReturn(bufferedReader);
+        when(bufferedReader.lines()).thenReturn(
+            Stream.of(checksum1 + "  node-10.1.0.zip", checksum2 + "  " + DISTRIBUTION_FILENAME,
+                checksum3 + "  node-10.0.2.zip"));
 
-        final String checksumRead = new ReadNodeDistributionChecksum().execute(checksumFile, DISTRIBUTION_FILENAME);
-        assertThat(checksumRead).isEqualTo(checksum);
-    }
+        assertThat(usecase.execute(CHECKSUM_FILE_PATH, DISTRIBUTION_FILENAME)).contains(checksum2);
 
-    @Test
-    void shouldReturnChecksumWhenAtEndOfFileWithNewLine()
-        throws IOException, NodeDistributionChecksumNotFoundException {
-        final String checksum = "523ab86h853e86";
-        final Path checksumFile = temporaryDirectoryPath.resolve(CHECKSUM_FILENAME);
-        try (final BufferedWriter writer = Files.newBufferedWriter(checksumFile)) {
-            writer.append(checksum);
-            writer.append("  ");
-            writer.append(DISTRIBUTION_FILENAME);
-            writer.append(System.lineSeparator());
-        }
-
-        final String checksumRead = new ReadNodeDistributionChecksum().execute(checksumFile, DISTRIBUTION_FILENAME);
-        assertThat(checksumRead).isEqualTo(checksum);
+        verify(bufferedReader).close();
+        verifyNoMoreInteractions(fileManager, bufferedReader);
     }
 }

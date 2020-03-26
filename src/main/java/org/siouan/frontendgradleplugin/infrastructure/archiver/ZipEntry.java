@@ -1,5 +1,7 @@
 package org.siouan.frontendgradleplugin.infrastructure.archiver;
 
+import javax.annotation.Nonnull;
+
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.siouan.frontendgradleplugin.domain.model.ArchiveEntry;
 
@@ -32,6 +34,7 @@ public class ZipEntry implements ArchiveEntry {
         return lowLevelEntry;
     }
 
+    @Nonnull
     @Override
     public String getName() {
         return lowLevelEntry.getName();

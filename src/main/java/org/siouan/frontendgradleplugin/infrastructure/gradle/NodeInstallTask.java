@@ -1,35 +1,33 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
-import java.net.URISyntaxException;
+import java.io.IOException;
+import java.net.URL;
 
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.DirectoryProperty;
-import org.gradle.api.logging.LogLevel;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
 import org.siouan.frontendgradleplugin.domain.exception.ArchiverException;
-import org.siouan.frontendgradleplugin.domain.exception.DistributionInstallerException;
-import org.siouan.frontendgradleplugin.domain.exception.DistributionUrlResolverException;
 import org.siouan.frontendgradleplugin.domain.exception.DistributionValidatorException;
-import org.siouan.frontendgradleplugin.domain.exception.FrontendIOException;
-import org.siouan.frontendgradleplugin.domain.exception.SlipAttackException;
+import org.siouan.frontendgradleplugin.domain.exception.InvalidDistributionUrlException;
 import org.siouan.frontendgradleplugin.domain.exception.UnsupportedDistributionArchiveException;
-import org.siouan.frontendgradleplugin.domain.exception.UnsupportedEntryException;
-import org.siouan.frontendgradleplugin.domain.model.InstallDistributionSettings;
+import org.siouan.frontendgradleplugin.domain.exception.UnsupportedDistributionIdException;
+import org.siouan.frontendgradleplugin.domain.exception.UnsupportedPlatformException;
+import org.siouan.frontendgradleplugin.domain.model.InstallSettings;
 import org.siouan.frontendgradleplugin.domain.model.Platform;
-import org.siouan.frontendgradleplugin.domain.usecase.InstallDistribution;
+import org.siouan.frontendgradleplugin.domain.usecase.InstallNodeDistribution;
 import org.siouan.frontendgradleplugin.infrastructure.BeanInstanciationException;
 import org.siouan.frontendgradleplugin.infrastructure.Beans;
+import org.siouan.frontendgradleplugin.infrastructure.TooManyCandidateBeansException;
+import org.siouan.frontendgradleplugin.infrastructure.ZeroOrMultiplePublicConstructorsException;
 
 /**
  * Task that downloads and installs a Node distribution.
  */
 public class NodeInstallTask extends DefaultTask {
-
-    final Property<LogLevel> loggingLevel;
 
     /**
      * Version of the Node distribution to download.
@@ -47,16 +45,9 @@ public class NodeInstallTask extends DefaultTask {
     private final Property<String> nodeDistributionUrl;
 
     public NodeInstallTask() {
-        this.loggingLevel = getProject().getObjects().property(LogLevel.class);
         this.nodeVersion = getProject().getObjects().property(String.class);
         this.nodeInstallDirectory = getProject().getObjects().directoryProperty();
         this.nodeDistributionUrl = getProject().getObjects().property(String.class);
-    }
-
-    @Input
-    @Optional
-    public Property<LogLevel> getLoggingLevel() {
-        return loggingLevel;
     }
 
     @Input
@@ -78,17 +69,16 @@ public class NodeInstallTask extends DefaultTask {
 
     /**
      * Executes the task: downloads and installs the distribution.
-     *
-     * @throws DistributionInstallerException If the installer failed.
      */
     @TaskAction
-    public void execute() throws DistributionInstallerException, BeanInstanciationException, FrontendIOException,
-        DistributionValidatorException, ArchiverException, UnsupportedDistributionArchiveException,
-        DistributionUrlResolverException, UnsupportedEntryException, SlipAttackException, URISyntaxException {
+    public void execute() throws BeanInstanciationException, ArchiverException, UnsupportedDistributionArchiveException,
+        UnsupportedPlatformException, TooManyCandidateBeansException, ZeroOrMultiplePublicConstructorsException,
+        UnsupportedDistributionIdException, InvalidDistributionUrlException, DistributionValidatorException,
+        IOException {
+        final URL distributionUrl = nodeDistributionUrl.isPresent() ? new URL(nodeDistributionUrl.get()) : null;
         Beans
-            .getBean(InstallDistribution.class)
-            .execute(new InstallDistributionSettings(nodeVersion.get(), nodeDistributionUrl.getOrNull(),
-                Beans.getBean(Platform.class), loggingLevel.get(), getTemporaryDir().toPath(),
-                nodeInstallDirectory.getAsFile().get().toPath()));
+            .getBean(InstallNodeDistribution.class)
+            .execute(new InstallSettings(Beans.getBean(Platform.class), nodeVersion.get(), distributionUrl,
+                getTemporaryDir().toPath(), nodeInstallDirectory.getAsFile().get().toPath()));
     }
 }

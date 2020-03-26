@@ -6,7 +6,6 @@ import static org.siouan.frontendgradleplugin.test.util.Helper.assertTaskUpToDat
 import static org.siouan.frontendgradleplugin.test.util.Helper.runGradle;
 import static org.siouan.frontendgradleplugin.test.util.Helper.runGradleAndExpectFailure;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Files;
@@ -31,55 +30,47 @@ import org.siouan.frontendgradleplugin.test.util.Helper;
 class RunNodeTaskFuncTest {
 
     @TempDir
-    File tmpDirectory;
+    Path temporaryDirectoryPath;
 
-    private Path projectDirectory;
+    private Path projectDirectoryPath;
 
     @BeforeEach
     void setUp() {
-        projectDirectory = tmpDirectory.toPath();
+        projectDirectoryPath = temporaryDirectoryPath;
     }
 
     @Test
     void shouldFailRunningNodeScriptWhenScriptIsUndefined() throws IOException {
-        final Map<String, Object> properties = new HashMap<>();
-        properties.put("nodeVersion", "12.16.1");
         final String customTaskName = "helloMyFriend";
-        final String customTaskDefinition = "tasks.register('"
-            + customTaskName
-            + "', org.siouan.frontendgradleplugin.infrastructure.gradle.RunNodeTask) {\n"
-            + "}\n";
-        Helper.createBuildFile(projectDirectory, properties, customTaskDefinition);
+        final String customTaskDefinition =
+            "tasks.register('" + customTaskName + "', " + RunNodeTask.class.getName() + ") {\n" + "}\n";
+        Helper.createBuildFile(projectDirectoryPath, customTaskDefinition);
 
-        final BuildResult result = runGradleAndExpectFailure(projectDirectory, customTaskName);
+        final BuildResult result = runGradleAndExpectFailure(projectDirectoryPath, customTaskName);
 
         assertTaskFailed(result, customTaskName);
     }
 
     @Test
     void shouldRunScriptFrontendWithNode() throws IOException {
-        final Path tmpScriptPath = tmpDirectory.toPath().resolve("script.js");
+        final Path tmpScriptPath = temporaryDirectoryPath.resolve("script.js");
         createScriptFile(tmpScriptPath);
         final Map<String, Object> properties = new HashMap<>();
-        properties.put("loggingLevel", LogLevel.INFO);
         properties.put("nodeVersion", "12.16.1");
         final String customTaskName = "helloMyFriend";
-        final String customTaskDefinition = "tasks.register('"
-            + customTaskName
-            + "', org.siouan.frontendgradleplugin.infrastructure.gradle.RunNodeTask) {\n"
-            + "dependsOn tasks.named('installNode')\n"
-            + "script = '"
-            + tmpScriptPath.toString().replaceAll("\\\\", "\\\\\\\\")
-            + "'\n"
-            + "}\n";
-        Helper.createBuildFile(projectDirectory, properties, customTaskDefinition);
+        final String customTaskDefinition =
+            "tasks.register('" + customTaskName + "', " + RunNodeTask.class.getName() + ") {\n"
+                + "dependsOn tasks.named('installNode')\n" + "script = '" + tmpScriptPath
+                .toString()
+                .replaceAll("\\\\", "\\\\\\\\") + "'\n" + "}\n";
+        Helper.createBuildFile(projectDirectoryPath, properties, customTaskDefinition);
 
-        final BuildResult result1 = runGradle(projectDirectory, customTaskName);
+        final BuildResult result1 = runGradle(projectDirectoryPath, customTaskName, LogLevel.INFO);
 
         assertTaskSuccess(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskSuccess(result1, customTaskName);
 
-        final BuildResult result2 = runGradle(projectDirectory, customTaskName);
+        final BuildResult result2 = runGradle(projectDirectoryPath, customTaskName, LogLevel.INFO);
 
         assertTaskUpToDate(result2, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskSuccess(result2, customTaskName);

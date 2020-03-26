@@ -3,10 +3,13 @@ package org.siouan.frontendgradleplugin.infrastructure.archiver;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.fail;
-import static org.mockito.Mockito.mock;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -15,76 +18,89 @@ import java.util.Optional;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
-import org.siouan.frontendgradleplugin.domain.exception.ArchiverException;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.siouan.frontendgradleplugin.domain.model.ExplodeSettings;
 import org.siouan.frontendgradleplugin.domain.model.Platform;
-import org.siouan.frontendgradleplugin.domain.util.SystemUtils;
+import org.siouan.frontendgradleplugin.domain.provider.FileManager;
+import org.siouan.frontendgradleplugin.infrastructure.provider.FileManagerImpl;
+import org.siouan.frontendgradleplugin.test.fixture.PlatformFixture;
 
 /**
- * Unit tests for the {@link ZipArchiver} class.
- *
- * @since 1.1.3
+ * Due to the fact it is not possible to control the Apache Commons Compress library (ACC), and its internal
+ * implementation and usage of input streams and output streams, this test suite stubs the {@link FileManagerImpl}
+ * implementation class instead of the {@link FileManager} interface, and uses concrete archives and file system calls.
  */
+@ExtendWith(MockitoExtension.class)
 class ZipArchiverTest {
 
     @TempDir
-    File targetDirectory;
+    Path temporaryDirectoryPath;
+
+    @Mock
+    private FileManagerImpl fileManager;
+
+    @InjectMocks
+    private ZipArchiver archiver;
 
     @Test
     void shouldFailInitializingContextWhenZipArchiveDoesNotExist() {
-        final Path archiveFile = targetDirectory.toPath().resolve("archive");
-        final ExplodeSettings settings = new ExplodeSettings(archiveFile, targetDirectory.toPath(),
-            new Platform(SystemUtils.getSystemJvmArch(), SystemUtils.getSystemOsName()));
+        final Path archiveFile = temporaryDirectoryPath.resolve("archive");
+        final ExplodeSettings settings = new ExplodeSettings(PlatformFixture.LOCAL_PLATFORM, archiveFile,
+            temporaryDirectoryPath);
 
-        assertThatThrownBy(() -> new ZipArchiver().initializeContext(settings))
-            .isInstanceOf(ArchiverException.class)
-            .hasCauseInstanceOf(IOException.class);
+        assertThatThrownBy(() -> archiver.initializeContext(settings)).isInstanceOf(IOException.class);
+
+        verifyNoMoreInteractions(fileManager);
     }
 
     @Test
-    void shouldFailGettingNextEntryWhenZipArchiveIsInvalid() throws URISyntaxException {
+    void shouldFailInitializingContextWhenZipArchiveIsInvalid() throws URISyntaxException {
         final Path archiveFile = Paths.get(getClass().getClassLoader().getResource("invalid-archive.unknown").toURI());
-        final ExplodeSettings settings = new ExplodeSettings(archiveFile, targetDirectory.toPath(),
-            new Platform(SystemUtils.getSystemJvmArch(), SystemUtils.getSystemOsName()));
+        final ExplodeSettings settings = new ExplodeSettings(PlatformFixture.LOCAL_PLATFORM, archiveFile,
+            temporaryDirectoryPath);
 
-        assertThatThrownBy(() -> new ZipArchiver().initializeContext(settings))
-            .isInstanceOf(ArchiverException.class)
-            .hasCauseInstanceOf(IOException.class);
+        assertThatThrownBy(() -> archiver.initializeContext(settings)).isInstanceOf(IOException.class);
+
+        verifyNoMoreInteractions(fileManager);
     }
 
     @Test
-    void shouldFailReadingSymbolicLinkTarget() throws URISyntaxException, ArchiverException {
+    void shouldFailReadingSymbolicLinkTarget() throws URISyntaxException, IOException {
         final Path archiveFile = Paths.get(getClass().getClassLoader().getResource("archive-linux.zip").toURI());
-        final ExplodeSettings settings = new ExplodeSettings(archiveFile, targetDirectory.toPath(),
-            new Platform(SystemUtils.getSystemJvmArch(), SystemUtils.getSystemOsName()));
+        final ExplodeSettings settings = new ExplodeSettings(PlatformFixture.LOCAL_PLATFORM, archiveFile,
+            temporaryDirectoryPath);
 
-        final IOException expectedException = mock(IOException.class);
-        final ZipArchiver archiver = new ZipArchiverWithSymboliLinkFailure(expectedException);
-        final ZipArchiverContext context = archiver.initializeContext(settings);
-
-        Optional<ZipEntry> option = archiver.getNextEntry(context);
+        final IOException expectedException = new IOException();
+        final ZipArchiver archiver = new ZipArchiverWithSymbolicLinkFailure(fileManager, expectedException);
         boolean failure = false;
-        while (option.isPresent()) {
-            final ZipEntry entry = option.get();
-            if (entry.isSymbolicLink()) {
-                assertThatThrownBy(() -> archiver.getSymbolicLinkTarget(context, entry))
-                    .isInstanceOf(ArchiverException.class)
-                    .hasCause(expectedException);
-                failure = true;
+        try (final ZipArchiverContext context = archiver.initializeContext(settings)) {
+            Optional<ZipEntry> option = archiver.getNextEntry(context);
+            while (option.isPresent()) {
+                final ZipEntry entry = option.get();
+                if (entry.isSymbolicLink()) {
+                    assertThatThrownBy(() -> archiver.getSymbolicLinkTarget(context, entry)).isEqualTo(
+                        expectedException);
+                    failure = true;
+                }
+                option = archiver.getNextEntry(context);
             }
-            option = archiver.getNextEntry(context);
         }
+
+        verifyNoMoreInteractions(fileManager);
         assertThat(failure).isTrue();
     }
 
     @Test
-    void shouldCheckZipArchiveOnWindows() throws ArchiverException, URISyntaxException, IOException {
-        final Path targetFile = targetDirectory.toPath().resolve("aFile");
+    void shouldCheckZipArchiveOnWindows() throws URISyntaxException, IOException {
+        final Path targetFilePath = temporaryDirectoryPath.resolve("aFile");
         String symbolicLinkTarget = null;
         final String archiveFileName;
         final int expectedCount;
-        final Platform platform = new Platform(SystemUtils.getSystemJvmArch(), SystemUtils.getSystemOsName());
+        final Platform platform = PlatformFixture.LOCAL_PLATFORM;
         if (platform.isWindowsOs()) {
             archiveFileName = "archive-win.zip";
             expectedCount = 1;
@@ -92,49 +108,42 @@ class ZipArchiverTest {
             archiveFileName = "archive-linux.zip";
             expectedCount = 2;
         }
-        final Path archiveFile = Paths.get(getClass().getClassLoader().getResource(archiveFileName).toURI());
-        final ExplodeSettings settings = new ExplodeSettings(archiveFile, targetDirectory.toPath(), platform);
+        final Path archiveFilePath = Paths.get(getClass().getClassLoader().getResource(archiveFileName).toURI());
+        when(fileManager.copy(any(InputStream.class), eq(targetFilePath))).thenCallRealMethod();
+        final ExplodeSettings settings = new ExplodeSettings(platform, archiveFilePath, temporaryDirectoryPath);
 
-        ZipArchiverContext context = null;
         int count = 0;
-        try {
-            final ZipArchiver archiver = new ZipArchiver();
-            context = archiver.initializeContext(settings);
-
+        final ZipArchiver archiver = new ZipArchiver(fileManager);
+        try (final ZipArchiverContext context = archiver.initializeContext(settings)) {
             Optional<ZipEntry> option = archiver.getNextEntry(context);
             ZipEntry entry;
             while (option.isPresent()) {
                 entry = option.get();
                 if (entry.isFile()) {
-                    archiver.writeRegularFile(context, entry, targetFile);
+                    archiver.writeRegularFile(context, entry, targetFilePath);
+                } else if (entry.isSymbolicLink()) {
+                    symbolicLinkTarget = archiver.getSymbolicLinkTarget(context, entry);
                 } else {
-                    if (entry.isSymbolicLink()) {
-                        symbolicLinkTarget = archiver.getSymbolicLinkTarget(context, entry);
-                    } else {
-                        fail("Unexpected archive content.");
-                    }
+                    fail("Unexpected archive content.");
                 }
                 count++;
                 option = archiver.getNextEntry(context);
             }
-        } finally {
-            if (context != null) {
-                context.close();
-            }
         }
 
-        assertThat(targetFile).exists().hasContent("content");
+        verifyNoMoreInteractions(fileManager);
         if (!platform.isWindowsOs()) {
             assertThat(symbolicLinkTarget).isEqualTo("./aFile");
         }
         assertThat(count).isEqualTo(expectedCount);
     }
 
-    private static class ZipArchiverWithSymboliLinkFailure extends ZipArchiver {
+    private static class ZipArchiverWithSymbolicLinkFailure extends ZipArchiver {
 
         private final IOException exception;
 
-        ZipArchiverWithSymboliLinkFailure(final IOException exception) {
+        ZipArchiverWithSymbolicLinkFailure(final FileManager fileManager, final IOException exception) {
+            super(fileManager);
             this.exception = exception;
         }
 

@@ -1,5 +1,7 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
+import java.util.Objects;
+
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 
@@ -19,10 +21,10 @@ import org.gradle.api.tasks.Input;
 public class RunScriptTask extends AbstractRunScriptTask {
 
     public RunScriptTask() {
-        super(true);
-        final FrontendExtension extension = getProject().getExtensions().findByType(FrontendExtension.class);
+        super();
+        final FrontendExtension extension = Objects.requireNonNull(
+            getProject().getExtensions().findByType(FrontendExtension.class));
         packageJsonDirectory.set(extension.getPackageJsonDirectory());
-        loggingLevel.set(extension.getLoggingLevel());
         nodeInstallDirectory.set(extension.getNodeInstallDirectory());
         yarnEnabled.set(extension.getYarnEnabled());
         if (extension.getYarnEnabled().get()) {

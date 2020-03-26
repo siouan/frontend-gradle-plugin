@@ -3,10 +3,14 @@ package org.siouan.frontendgradleplugin.infrastructure.gradle.adapter;
 import java.nio.file.Path;
 
 import org.gradle.api.Project;
-import org.gradle.api.logging.LogLevel;
 import org.siouan.frontendgradleplugin.domain.model.ExecutableType;
 import org.siouan.frontendgradleplugin.domain.model.Platform;
 
+/**
+ * Properties to run a script.
+ *
+ * @since 2.0.0
+ */
 public class ScriptProperties {
 
     /**
@@ -14,9 +18,10 @@ public class ScriptProperties {
      */
     private final Project project;
 
-    private final LogLevel loggingLevel;
-
-    private final Path packageJsonDirectory;
+    /**
+     * Path to the directory containing the {@code package.json} file.
+     */
+    private final Path packageJsonDirectoryPath;
 
     /**
      * Executable use to run the script.
@@ -39,28 +44,26 @@ public class ScriptProperties {
     private final String script;
 
     /**
-     * O/S name.
+     * Underlying platform.
      */
     private final Platform platform;
 
     /**
      * Builds a job to run a script.
      *
-     * @param project
-     * @param loggingLevel
-     * @param packageJsonDirectory
+     * @param project Gradle project.
+     * @param packageJsonDirectoryPath Path to the directory containing the {@code package.json} file.
      * @param executableType Executor to use to run the script.
      * @param nodeInstallDirectory Node install directory.
      * @param yarnInstallDirectory Yarn install directory.
      * @param script The script run by the job.
-     * @param platform Execution platform.
+     * @param platform Underlying platform.
      */
-    public ScriptProperties(final Project project, final LogLevel loggingLevel, final Path packageJsonDirectory,
+    public ScriptProperties(final Project project, final Path packageJsonDirectoryPath,
         final ExecutableType executableType, final Path nodeInstallDirectory, final Path yarnInstallDirectory,
         final String script, final Platform platform) {
         this.project = project;
-        this.loggingLevel = loggingLevel;
-        this.packageJsonDirectory = packageJsonDirectory;
+        this.packageJsonDirectoryPath = packageJsonDirectoryPath;
         this.executableType = executableType;
         this.nodeInstallDirectory = nodeInstallDirectory;
         this.yarnInstallDirectory = yarnInstallDirectory;
@@ -72,12 +75,8 @@ public class ScriptProperties {
         return project;
     }
 
-    public LogLevel getLoggingLevel() {
-        return loggingLevel;
-    }
-
-    public Path getPackageJsonDirectory() {
-        return packageJsonDirectory;
+    public Path getPackageJsonDirectoryPath() {
+        return packageJsonDirectoryPath;
     }
 
     public ExecutableType getExecutableType() {

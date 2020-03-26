@@ -31,26 +31,23 @@ import org.siouan.frontendgradleplugin.test.util.Helper;
 class RunScriptTaskFuncTest {
 
     @TempDir
-    Path projectDirectory;
+    Path projectDirectoryPath;
 
-    private Path packageJsonDirectory;
+    private Path packageJsonDirectoryPath;
 
     @BeforeEach
     void setUp() throws IOException {
-        packageJsonDirectory = Files.createDirectory(projectDirectory.resolve("frontend"));
+        packageJsonDirectoryPath = Files.createDirectory(projectDirectoryPath.resolve("frontend"));
     }
 
     @Test
-    void shouldFailRunningFrontendScriptWhenScriptIsUndefined() throws IOException, URISyntaxException {
-        Files.copy(Paths.get(getClass().getClassLoader().getResource("package-npm.json").toURI()),
-            packageJsonDirectory.resolve("package.json"));
-        final Map<String, Object> properties = new HashMap<>();
+    void shouldFailRunningFrontendScriptWhenScriptIsUndefined() throws IOException {
         final String customTaskName = "e2e";
         final String customTaskDefinition =
-            "tasks.register('" + customTaskName + "', org.siouan.frontendgradleplugin.infrastructure.gradle.RunScriptTask) {}\n";
-        Helper.createBuildFile(projectDirectory, properties, customTaskDefinition);
+            "tasks.register('" + customTaskName + "', " + RunScriptTask.class.getName() + ") {}\n";
+        Helper.createBuildFile(projectDirectoryPath, customTaskDefinition);
 
-        final BuildResult result = runGradleAndExpectFailure(projectDirectory, customTaskName);
+        final BuildResult result = runGradleAndExpectFailure(projectDirectoryPath, customTaskName);
 
         assertTaskFailed(result, customTaskName);
     }
@@ -58,51 +55,48 @@ class RunScriptTaskFuncTest {
     @Test
     void shouldRunScriptFrontendWithNpmOrYarn() throws IOException, URISyntaxException {
         Files.copy(Paths.get(getClass().getClassLoader().getResource("package-npm.json").toURI()),
-            packageJsonDirectory.resolve("package.json"));
+            packageJsonDirectoryPath.resolve("package.json"));
         final Map<String, Object> properties = new HashMap<>();
-        properties.put("packageJsonDirectory", packageJsonDirectory);
-        properties.put("loggingLevel", LogLevel.LIFECYCLE);
+        properties.put("packageJsonDirectory", packageJsonDirectoryPath);
+        properties.put("loggingLevel", LogLevel.INFO);
         properties.put("nodeVersion", "12.16.1");
-        properties.put("nodeInstallDirectory", projectDirectory.resolve("node-dist"));
+        properties.put("nodeInstallDirectory", projectDirectoryPath.resolve("node-dist"));
         final String customTaskName = "e2e";
-        final StringBuilder customTaskDefinition = new StringBuilder("tasks.register('");
-        customTaskDefinition.append(customTaskName);
-        customTaskDefinition.append("', org.siouan.frontendgradleplugin.infrastructure.gradle.RunScriptTask) {\n");
-        customTaskDefinition.append("dependsOn tasks.named('installFrontend')\n");
-        customTaskDefinition.append("script = 'run another-script'\n");
-        customTaskDefinition.append("}\n");
-        Helper.createBuildFile(projectDirectory, properties, customTaskDefinition.toString());
+        final String customTaskDefinition =
+            "tasks.register('" + customTaskName + "', " + RunScriptTask.class.getName() + ") {\n"
+                + "dependsOn tasks.named('installFrontend')\n" + "script = 'run another-script'\n" + "}\n";
+        Helper.createBuildFile(projectDirectoryPath, properties, customTaskDefinition);
 
-        final BuildResult result1 = runGradle(projectDirectory, customTaskName);
+        final BuildResult result1 = runGradle(projectDirectoryPath, customTaskName);
 
         assertTaskSuccess(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskSkipped(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskSuccess(result1, FrontendGradlePlugin.INSTALL_TASK_NAME);
         assertTaskSuccess(result1, customTaskName);
 
-        final BuildResult result2 = runGradle(projectDirectory, customTaskName);
+        final BuildResult result2 = runGradle(projectDirectoryPath, customTaskName);
 
         assertTaskUpToDate(result2, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskSkipped(result2, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskSuccess(result2, FrontendGradlePlugin.INSTALL_TASK_NAME);
         assertTaskSuccess(result2, customTaskName);
 
-        Files.deleteIfExists(projectDirectory.resolve("package-lock.json"));
+        Files.deleteIfExists(projectDirectoryPath.resolve("package-lock.json"));
         Files.copy(Paths.get(getClass().getClassLoader().getResource("package-yarn.json").toURI()),
-            packageJsonDirectory.resolve("package.json"), StandardCopyOption.REPLACE_EXISTING);
+            packageJsonDirectoryPath.resolve("package.json"), StandardCopyOption.REPLACE_EXISTING);
         properties.put("yarnEnabled", true);
         properties.put("yarnVersion", "1.22.4");
-        properties.put("yarnInstallDirectory", projectDirectory.resolve("yarn-dist"));
-        Helper.createBuildFile(projectDirectory, properties, customTaskDefinition.toString());
+        properties.put("yarnInstallDirectory", projectDirectoryPath.resolve("yarn-dist"));
+        Helper.createBuildFile(projectDirectoryPath, properties, customTaskDefinition);
 
-        final BuildResult result3 = runGradle(projectDirectory, customTaskName);
+        final BuildResult result3 = runGradle(projectDirectoryPath, customTaskName);
 
         assertTaskUpToDate(result3, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskSuccess(result3, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskSuccess(result3, FrontendGradlePlugin.INSTALL_TASK_NAME);
         assertTaskSuccess(result3, customTaskName);
 
-        final BuildResult result4 = runGradle(projectDirectory, customTaskName);
+        final BuildResult result4 = runGradle(projectDirectoryPath, customTaskName);
 
         assertTaskUpToDate(result4, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskUpToDate(result4, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);

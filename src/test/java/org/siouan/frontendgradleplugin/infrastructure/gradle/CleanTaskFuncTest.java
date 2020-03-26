@@ -6,7 +6,6 @@ import static org.siouan.frontendgradleplugin.test.util.Helper.assertTaskSuccess
 import static org.siouan.frontendgradleplugin.test.util.Helper.assertTaskUpToDate;
 import static org.siouan.frontendgradleplugin.test.util.Helper.runGradle;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -18,7 +17,6 @@ import java.util.Map;
 
 import org.gradle.api.plugins.BasePlugin;
 import org.gradle.testkit.runner.BuildResult;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
@@ -32,14 +30,7 @@ import org.siouan.frontendgradleplugin.test.util.Helper;
 class CleanTaskFuncTest {
 
     @TempDir
-    File tmpDirectory;
-
-    private Path projectDirectory;
-
-    @BeforeEach
-    void setUp() {
-        projectDirectory = tmpDirectory.toPath();
-    }
+    Path projectDirectory;
 
     @Test
     void shouldDoNothingWhenScriptIsNotDefined() throws IOException, URISyntaxException {
@@ -47,7 +38,7 @@ class CleanTaskFuncTest {
             projectDirectory.resolve("package.json"));
         final Map<String, Object> properties = new HashMap<>();
         properties.put("nodeVersion", "10.16.0");
-        properties.put("nodeDistributionUrl", getClass().getClassLoader().getResource("node-v10.16.0.zip").toString());
+        properties.put("nodeDistributionUrl", getClass().getClassLoader().getResource("node-v10.16.0.zip"));
         Helper.createBuildFile(projectDirectory, properties);
 
         final BuildResult result = runGradle(projectDirectory, FrontendGradlePlugin.CLEAN_TASK_NAME);
@@ -64,7 +55,7 @@ class CleanTaskFuncTest {
             projectDirectory.resolve("package.json"));
         final Map<String, Object> properties = new HashMap<>();
         properties.put("nodeVersion", "10.16.0");
-        properties.put("nodeDistributionUrl", getClass().getClassLoader().getResource("node-v10.16.0.zip").toString());
+        properties.put("nodeDistributionUrl", getClass().getClassLoader().getResource("node-v10.16.0.zip"));
         Helper.createBuildFile(projectDirectory, properties);
 
         final BuildResult result = runGradle(projectDirectory, BasePlugin.CLEAN_TASK_NAME);
@@ -82,7 +73,7 @@ class CleanTaskFuncTest {
             projectDirectory.resolve("package.json"));
         final Map<String, Object> properties = new HashMap<>();
         properties.put("nodeVersion", "10.16.0");
-        properties.put("nodeDistributionUrl", getClass().getClassLoader().getResource("node-v10.16.0.zip").toString());
+        properties.put("nodeDistributionUrl", getClass().getClassLoader().getResource("node-v10.16.0.zip"));
         properties.put("cleanScript", "run clean");
         Helper.createBuildFile(projectDirectory, properties);
 
@@ -107,8 +98,7 @@ class CleanTaskFuncTest {
             projectDirectory.resolve("package.json"), StandardCopyOption.REPLACE_EXISTING);
         properties.put("yarnEnabled", true);
         properties.put("yarnVersion", "1.16.0");
-        properties
-            .put("yarnDistributionUrl", getClass().getClassLoader().getResource("yarn-v1.16.0.tar.gz").toString());
+        properties.put("yarnDistributionUrl", getClass().getClassLoader().getResource("yarn-v1.16.0.tar.gz"));
         Helper.createBuildFile(projectDirectory, properties);
 
         final BuildResult result3 = runGradle(projectDirectory, BasePlugin.CLEAN_TASK_NAME);

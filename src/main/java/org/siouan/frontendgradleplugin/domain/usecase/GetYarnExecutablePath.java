@@ -1,43 +1,52 @@
 package org.siouan.frontendgradleplugin.domain.usecase;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
+import java.nio.file.Paths;
 import java.util.Optional;
 import javax.annotation.Nonnull;
 
 import org.siouan.frontendgradleplugin.domain.model.Platform;
+import org.siouan.frontendgradleplugin.domain.provider.FileManager;
 
 /**
  * Gets the path to a Yarn executable given an install directory and a platform.
  *
- * @since 1.4.2
+ * @since 2.0.0
  */
 public class GetYarnExecutablePath {
 
-    private static final String BIN_DIRECTORY_NAME = "bin";
+    /**
+     * Supported executable on a Windows O/S.
+     */
+    public static final Path WINDOWS_EXECUTABLE_PATH = Paths.get("bin", "yarn.cmd");
 
-    private static final String WINDOWS_EXECUTABLE = "yarn.cmd";
+    /**
+     * Supported executable on other O/S.
+     */
+    public static final Path NON_WINDOWS_EXECUTABLE_PATH = Paths.get("bin", "yarn");
 
-    private static final String LINUX_EXECUTABLE = "yarn";
+    private final FileManager fileManager;
+
+    public GetYarnExecutablePath(final FileManager fileManager) {
+        this.fileManager = fileManager;
+    }
 
     /**
      * Gets the path of Yarn executable.
      *
      * @param yarnInstallDirectory Yarn install directory.
      * @param platform Execution platform.
-     * @return The path, may be {@code null} if it was not found.
+     * @return The path.
      */
+    @Nonnull
     public Optional<Path> execute(@Nonnull final Path yarnInstallDirectory, @Nonnull final Platform platform) {
-        final List<Path> possiblePaths = new ArrayList<>();
-        final Path binDirectory = yarnInstallDirectory.resolve(BIN_DIRECTORY_NAME);
+        final Path possiblePath;
         if (platform.isWindowsOs()) {
-            possiblePaths.add(binDirectory.resolve(WINDOWS_EXECUTABLE));
+            possiblePath = WINDOWS_EXECUTABLE_PATH;
         } else {
-            possiblePaths.add(binDirectory.resolve(LINUX_EXECUTABLE));
+            possiblePath = NON_WINDOWS_EXECUTABLE_PATH;
         }
 
-        return possiblePaths.stream().filter(Files::exists).findAny();
+        return Optional.of(possiblePath).map(yarnInstallDirectory::resolve).filter(fileManager::exists);
     }
 }
