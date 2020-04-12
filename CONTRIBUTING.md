@@ -15,6 +15,21 @@ directly.
 
 ### Modifying source code
 
+#### Design
+
+The plugin is designed so as maintenance is as simple as possible, and predictability is the highest possible. Effort to
+develop new features should not depend on the plugin architecture. To achieve these goals, the plugin relies on the
+following principles:
+- Clean architecture: business code is entirely isolated and independent from any framework/library except the JDK.
+The 2 major concepts in this architecture are use cases and providers: use cases are single-responsibility services,
+while providers are interfaces with the outer world.
+- Inversion of control: using dependency injection increases modularity, and eases unit testing.
+- Unit tests: achieve a 100% code coverage for each use case and provider, apart from the plugin's main class and Gradle
+task classes.
+- Functional tests: verify integration with Gradle (I/O validation, task dependencies, exit statuses, ...)
+
+### Recommendations
+
 - Apart from your preferred IDE, no other tools is required.
 - Use the integrated Gradle Wrapper executable `gradlew` to execute development tasks apart from an IDE.
 - It is a requirement to keep the plugin independent, small. That's why resorting to 3rd-party libraries is avoided
@@ -27,21 +42,21 @@ accessibility for developers.
 - Designing automated unit tests with a good coverage for classes tightly coupled with Gradle API is not a
 trivial task, due to the design of this API. That's why all business processes in the plugin shall remain the most
 independent possible, away from this API, with an appropriate level of abstraction.
-- This separation between classes tightly coupled with Gradle API (inheritance) and classes containing business
-processes is implemented with 2 packages: `org.siouan.frontendgradleplugin.tasks` and
-`org.siouan.frontendgradleplugin.core`. 
-- Unit tests shall be written for each class in the `org.siouan.frontendgradleplugin.core` package. Code coverage with
-unit tests shall be the highest possible, to avoid unknown behaviours at execution, and improve software
-maintainability, predictability, and reliability.
-- Functional tests shall be written for each class in the `org.siouan.frontendgradleplugin.tasks` package.
+- This separation between classes tightly coupled with Gradle API (inheritance) or other libraries, and classes
+containing business code is implemented with 2 packages: `org.siouan.frontendgradleplugin.domain` and
+`org.siouan.frontendgradleplugin.infrastructure`. 
+- Unit tests shall be written for each class, with the highest coverage possible, to avoid unknown behaviours at
+execution, and improve software maintainability, predictability, and reliability.
+- Functional tests shall be written for each Gradle task in the `org.siouan.frontendgradleplugin.infrastructure.gradle`
+package.
 
 ### Executing functional tests from an IDE
 
 When working with an IDE, it may be useful to run tests regularly. The IDE and Gradle may have different compilation
-output paths. When executing functional tests (located in the `org.siouan.frontendgradleplugin.tasks` package),
-concrete Gradle builds are executed, and are based on Gradle's compilation output path. This path contains classes
-compiled during a Gradle build, not an IDE build. Therefore, to avoid executing tests on obsolete code, it is mandatory
-to execute the Gradle task `pluginUnderTestMetata` before running functional tests.
+output paths. When executing functional tests (located in the `org.siouan.frontendgradleplugin.infrastructure.gradle`
+package), concrete Gradle builds are executed, and are based on Gradle's compilation output path. This path contains
+classes compiled during a Gradle build, not an IDE build. Therefore, to avoid executing tests on obsolete code, it is
+mandatory to execute the Gradle task `pluginUnderTestMetata` before running functional tests.
 
 ```sh
 gradlew pluginUnderTestMetadata

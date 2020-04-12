@@ -19,17 +19,17 @@ public class GetDistributionValidator {
 
     private final DownloadResource downloadResource;
 
-    private final ReadNodeDistributionChecksum readNodeDistributionChecksum;
+    private final ReadNodeDistributionShasum readNodeDistributionShasum;
 
     private final HashFile hashFile;
 
     private final Logger logger;
 
     public GetDistributionValidator(final FileManager fileManager, final DownloadResource downloadResource,
-        final ReadNodeDistributionChecksum readNodeDistributionChecksum, final HashFile hashFile, final Logger logger) {
+        final ReadNodeDistributionShasum readNodeDistributionShasum, final HashFile hashFile, final Logger logger) {
         this.fileManager = fileManager;
         this.downloadResource = downloadResource;
-        this.readNodeDistributionChecksum = readNodeDistributionChecksum;
+        this.readNodeDistributionShasum = readNodeDistributionShasum;
         this.hashFile = hashFile;
         this.logger = logger;
     }
@@ -45,7 +45,7 @@ public class GetDistributionValidator {
         switch (distributionId) {
         case NODE:
             return Optional.of(
-                new ValidateNodeDistribution(fileManager, downloadResource, readNodeDistributionChecksum, hashFile,
+                new ValidateNodeDistribution(fileManager, downloadResource, readNodeDistributionShasum, hashFile,
                     logger));
         case YARN:
         default:
