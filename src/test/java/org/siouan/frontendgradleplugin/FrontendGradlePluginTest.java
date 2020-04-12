@@ -9,12 +9,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.siouan.frontendgradleplugin.tasks.AssembleTask;
-import org.siouan.frontendgradleplugin.tasks.CheckTask;
-import org.siouan.frontendgradleplugin.tasks.CleanTask;
-import org.siouan.frontendgradleplugin.tasks.InstallTask;
-import org.siouan.frontendgradleplugin.tasks.NodeInstallTask;
-import org.siouan.frontendgradleplugin.tasks.YarnInstallTask;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.AssembleTask;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.CheckTask;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.CleanTask;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.FrontendExtension;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.InstallTask;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.NodeInstallTask;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.YarnInstallTask;
 
 /**
  * Unit tests for the {@link FrontendGradlePlugin} class.
