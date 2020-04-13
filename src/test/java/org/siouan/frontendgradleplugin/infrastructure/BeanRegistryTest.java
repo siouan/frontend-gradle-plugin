@@ -17,6 +17,28 @@ class BeanRegistryTest {
     private BeanRegistry beanRegistry;
 
     @Test
+    void shouldRegisterTheRegistryItself()
+        throws BeanInstanciationException, TooManyCandidateBeansException, ZeroOrMultiplePublicConstructorsException {
+        assertThat(beanRegistry.getBean(BeanRegistry.class)).isSameAs(beanRegistry);
+    }
+
+    @Test
+    void shouldNotReplaceRegistryWhenRegisteringOtherRegistryClass()
+        throws BeanInstanciationException, TooManyCandidateBeansException, ZeroOrMultiplePublicConstructorsException {
+        beanRegistry.registerBean(BeanRegistry.class);
+
+        assertThat(beanRegistry.getBean(BeanRegistry.class)).isSameAs(beanRegistry);
+    }
+
+    @Test
+    void shouldNotReplaceRegistryWhenRegisteringOtherRegistryInstance()
+        throws BeanInstanciationException, TooManyCandidateBeansException, ZeroOrMultiplePublicConstructorsException {
+        beanRegistry.registerBean(new BeanRegistry());
+
+        assertThat(beanRegistry.getBean(BeanRegistry.class)).isSameAs(beanRegistry);
+    }
+
+    @Test
     void shouldFailGettingBeanWithInterface() {
         assertThatThrownBy(() -> beanRegistry.getBean(BeanInterface.class)).isInstanceOf(
             IllegalArgumentException.class);
@@ -52,27 +74,28 @@ class BeanRegistryTest {
     }
 
     @Test
-    void shouldRegisterAndGetBeanAndConstructorParameter()
+    void shouldRegisterAndGetBeanWithConstructorParameterInstanciation()
         throws BeanInstanciationException, TooManyCandidateBeansException, ZeroOrMultiplePublicConstructorsException {
         final PublicConstructorWithValidParameterBean bean = beanRegistry.getBean(
             PublicConstructorWithValidParameterBean.class);
+        assertThat(bean).isNotNull();
+
         final DefaultPublicConstructorBean parameterFromBean = bean.getParameter();
         final DefaultPublicConstructorBean parameter = beanRegistry.getBean(DefaultPublicConstructorBean.class);
-
-        assertThat(bean).isNotNull();
         assertThat(parameterFromBean).isNotNull();
         assertThat(parameter).isSameAs(parameterFromBean);
     }
 
     @Test
-    void shouldRegisterAndGetBeanAndReuseConstructorParameter()
+    void shouldRegisterAndGetBeanWithConstructorParameterAlreadyInstanciated()
         throws BeanInstanciationException, TooManyCandidateBeansException, ZeroOrMultiplePublicConstructorsException {
         final DefaultPublicConstructorBean parameter = beanRegistry.getBean(DefaultPublicConstructorBean.class);
+        assertThat(parameter).isNotNull();
+
         final PublicConstructorWithValidParameterBean bean = beanRegistry.getBean(
             PublicConstructorWithValidParameterBean.class);
         final DefaultPublicConstructorBean parameterFromBean = bean.getParameter();
 
-        assertThat(parameter).isNotNull();
         assertThat(bean).isNotNull();
         assertThat(parameterFromBean).isSameAs(parameter);
     }
@@ -94,15 +117,35 @@ class BeanRegistryTest {
     }
 
     @Test
-    void shouldRegisterAndGetBeanWithDefaultPublicConstructor()
+    void shouldGetSameInstanceWhenRegisteringBeanClassMultipleTimes()
         throws BeanInstanciationException, TooManyCandidateBeansException, ZeroOrMultiplePublicConstructorsException {
         // First call triggers internally bean registration and instanciation.
-        final DefaultPublicConstructorBean bean1 = beanRegistry.getBean(DefaultPublicConstructorBean.class);
+        final DefaultPublicConstructorBean bean1 = new DefaultPublicConstructorBean();
+        beanRegistry.registerBean(bean1);
         // Second call shall return exactly the same bean.
         final DefaultPublicConstructorBean bean2 = beanRegistry.getBean(DefaultPublicConstructorBean.class);
+        // Third call shall return exactly the same bean, even if we tried to register another instance.
+        beanRegistry.registerBean(new DefaultPublicConstructorBean());
+        final DefaultPublicConstructorBean bean3 = beanRegistry.getBean(DefaultPublicConstructorBean.class);
 
         assertThat(bean1).isNotNull();
         assertThat(bean2).isSameAs(bean2);
+        assertThat(bean2).isSameAs(bean3);
+    }
+
+    @Test
+    void shouldGetSameInstanceWhenRegisteringBeanInstanceMultipleTimes()
+        throws BeanInstanciationException, TooManyCandidateBeansException, ZeroOrMultiplePublicConstructorsException {
+        // First call triggers internally bean registration and instanciation.
+        beanRegistry.registerBean(DefaultPublicConstructorBean.class);
+        // Second call shall return exactly the same bean.
+        final DefaultPublicConstructorBean bean1 = beanRegistry.getBean(DefaultPublicConstructorBean.class);
+        // Third call shall return exactly the same bean, even if we tried to register another instance.
+        beanRegistry.registerBean(DefaultPublicConstructorBean.class);
+        final DefaultPublicConstructorBean bean2 = beanRegistry.getBean(DefaultPublicConstructorBean.class);
+
+        assertThat(bean1).isNotNull();
+        assertThat(bean2).isSameAs(bean1);
     }
 
     @Test

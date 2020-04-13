@@ -33,6 +33,8 @@ public class BeanRegistry {
 
     public BeanRegistry() {
         this.singletons = new HashMap<>();
+        // The registry itself is available for injection.
+        registerBean(BeanRegistry.class, this);
     }
 
     /**
@@ -64,30 +66,39 @@ public class BeanRegistry {
 
         assertBeanClassIsInstanciable(beanClass);
         final T newBean = createInstance(beanClass);
-        registerBean(newBean);
+        registerBean(beanClass, newBean);
         return newBean;
     }
 
     /**
-     * Registers the given bean class. Contrary to the {@link #getBean(Class)} method, this method does not instanciate
-     * the bean.
+     * Registers the given bean class. If the class is already registered, this method has no effect. Contrary to the
+     * {@link #getBean(Class)} method, this method does not create an instance of the bean.  For security reasons,
+     * trying to register a {@link BeanRegistry} assignable class has no effect.
      *
      * @param beanClass Bean class.
      * @param <T> Type of bean.
      */
     public <T> void registerBean(@Nonnull final Class<T> beanClass) {
+        if (isBeanRegistered(beanClass)) {
+            return;
+        }
         assertBeanClassIsInstanciable(beanClass);
         registerBean(beanClass, null);
     }
 
     /**
-     * Registers the given bean instance.
+     * Registers the given bean instance. If an instance of the same class is already registered, this method has no
+     * effect. For security reasons, trying to register an instance of a {@link BeanRegistry} has no effect.
      *
      * @param bean Bean.
      * @param <T> Type of bean.
      */
     public <T> void registerBean(@Nonnull final T bean) {
-        registerBean((Class<T>) bean.getClass(), bean);
+        final Class<T> beanClass = (Class<T>) bean.getClass();
+        if (isBeanRegistered(beanClass)) {
+            return;
+        }
+        registerBean(beanClass, bean);
     }
 
     /**
@@ -99,6 +110,19 @@ public class BeanRegistry {
      */
     private <T> void registerBean(@Nonnull final Class<T> beanClass, @Nullable final T bean) {
         singletons.put(beanClass, bean);
+    }
+
+    /**
+     * Whether a bean class is already registered. For security reasons, it is not possible to replace the registry
+     * instance in the registry, i.e. this method returns always {@code true} when checking a {@link BeanRegistry}
+     * class.
+     *
+     * @param beanClass Bean class.
+     * @param <T> Type of bean.
+     * @return {@code true} if the bean class is already registered, or is an instance of a bean registry.
+     */
+    private <T> boolean isBeanRegistered(@Nonnull final Class<T> beanClass) {
+        return getClass().isAssignableFrom(beanClass) || singletons.containsKey(beanClass);
     }
 
     /**

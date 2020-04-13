@@ -13,6 +13,13 @@ import org.gradle.api.provider.Property;
 public class FrontendExtension {
 
     /**
+     * Whether a Node distribution is provided.
+     *
+     * @since 2.0.0
+     */
+    private final Property<Boolean> nodeDistributionProvided;
+
+    /**
      * Version of the Node distribution to download.
      */
     private final Property<String> nodeVersion;
@@ -31,6 +38,13 @@ public class FrontendExtension {
      * Whether a Yarn distribution shall be downloaded and installed.
      */
     private final Property<Boolean> yarnEnabled;
+
+    /**
+     * Whether a Yarn distribution is provided.
+     *
+     * @since 2.0.0
+     */
+    private final Property<Boolean> yarnDistributionProvided;
 
     /**
      * Version of the distribution to download.
@@ -83,9 +97,11 @@ public class FrontendExtension {
     private final Property<LogLevel> loggingLevel;
 
     public FrontendExtension(final Project project) {
+        nodeDistributionProvided = project.getObjects().property(Boolean.class);
         nodeVersion = project.getObjects().property(String.class);
         nodeInstallDirectory = project.getObjects().directoryProperty();
         nodeDistributionUrl = project.getObjects().property(String.class);
+        yarnDistributionProvided = project.getObjects().property(Boolean.class);
         yarnEnabled = project.getObjects().property(Boolean.class);
         yarnVersion = project.getObjects().property(String.class);
         yarnInstallDirectory = project.getObjects().directoryProperty();
@@ -97,6 +113,10 @@ public class FrontendExtension {
         publishScript = project.getObjects().property(String.class);
         packageJsonDirectory = project.getObjects().property(File.class);
         loggingLevel = project.getObjects().property(LogLevel.class);
+    }
+
+    public Property<Boolean> getNodeDistributionProvided() {
+        return nodeDistributionProvided;
     }
 
     public Property<String> getNodeVersion() {
@@ -113,6 +133,10 @@ public class FrontendExtension {
 
     public Property<Boolean> getYarnEnabled() {
         return yarnEnabled;
+    }
+
+    public Property<Boolean> getYarnDistributionProvided() {
+        return yarnDistributionProvided;
     }
 
     public Property<String> getYarnVersion() {

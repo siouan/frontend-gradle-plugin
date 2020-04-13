@@ -8,18 +8,19 @@
 [![Code coverage](https://sonarcloud.io/api/project_badges/measure?project=Siouan_frontend-gradle-plugin&metric=coverage)](https://sonarcloud.io/dashboard?id=Siouan_frontend-gradle-plugin)
 [![Reliability](https://sonarcloud.io/api/project_badges/measure?project=Siouan_frontend-gradle-plugin&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=Siouan_frontend-gradle-plugin)
 
-This plugin allows to integrate a frontend Node/NPM/Yarn build into Gradle. Its philosophy is inspired by the
-[frontend-maven-plugin][frontend-maven-plugin]. See the [quick start guide](#quick-start-guide) below to
-install/configure the plugin, and build your frontend application.
+This plugin allows to integrate a [Node.js][nodejs]/[NPM][npm]/[Yarn][yarn] build into Gradle. It is inspired by the
+philosophy of the [frontend-maven-plugin][frontend-maven-plugin]. See the [quick start guide](#quick-start-guide) below
+to install/configure the plugin, and build your frontend application.
 
-**Features**
+#### Features
 
 - Download and install a Node distribution.
 - Download and install a Yarn distribution.
 - Install frontend dependencies with a configurable `npm/yarn install` command.
-- 4 predefined tasks to trigger automatically frontend build, test, clean, publish scripts in a `package.json` file,
-from Gradle lifecycle tasks.
-- Additional task types to create custom tasks and run a JS script with Node/NPM/Yarn.
+- Trigger automatically frontend build, test, clean, publish scripts in a `package.json` file from Gradle lifecycle
+tasks.
+- Create custom tasks to run a JS script with Node/NPM/Yarn.
+- Use a provided distribution of Node or Yarn.
 
 ## Summary
 
@@ -37,7 +38,7 @@ from Gradle lifecycle tasks.
     - [Use Node/NPM/Yarn apart from Gradle](#use-nodenpmyarn-apart-from-gradle)
 - [Tasks reference](#tasks-reference)
   - [Task tree](#task-tree)
-  - [Install Node](#install-node)
+  - [Install Node.js](#install-nodejs)
   - [Install Yarn](#install-yarn)
   - [Install frontend dependencies](#install-frontend-dependencies)
   - [Clean frontend](#clean-frontend)
@@ -47,7 +48,6 @@ from Gradle lifecycle tasks.
   - [Run custom Node script](#run-custom-node-script)
   - [Run custom NPM/Yarn script](#run-custom-npmyarn-script)
 - [Usage guidelines](#usage-guidelines)
-  - [How to configure the plugin in a multi-projects build?](#how-to-configure-the-plugin-in-a-multi-projects-build)
   - [How to assemble a frontend and a Java backend into a single artifact?](#how-to-assemble-a-frontend-and-a-java-backend-into-a-single-artifact)
   - [What kind of script should I attach to the `checkFrontend` task?](#what-kind-of-script-should-i-attach-to-the-checkfrontend-task)
 - [Special thanks](#special-thanks)
@@ -62,7 +62,7 @@ For convenience, configuration blocks in this guide are introduced with both Gro
 The plugin supports:
 - [Gradle][gradle] 5.1+
 - [JDK][jdk] 8+ 64 bits
-- [Node][node] 6.2.1+
+- [Node.js][nodejs] 6.2.1+
 - [Yarn][yarn] 1.0.0+
 
 The plugin is built and tested on Linux, Mac OS, Windows. See the [contributing notes][contributing] to know the list of
@@ -144,8 +144,13 @@ additional information.
 // build.gradle
 frontend {
     ////// NODE SETTINGS //////
-    // Node version, used to build the URL to download the corresponding distribution, if the
-    // 'nodeDistributionUrl' property is not set.
+    // [OPTIONAL] Whether the Node distribution is already provided, and shall not be downloaded.
+    // The 'nodeInstallDirectory' shall be used to point the install directory of the distribution.
+    // If <false>, the 'nodeVersion' property - at least, must be set.
+    nodeDistributionProvided = false
+
+    // [OPTIONAL] Node version, used to build the URL to download the corresponding distribution, if the
+    // 'nodeDistributionUrl' property is not set. By default, this property is 'null'
     nodeVersion = '12.16.1'
 
     // [OPTIONAL] Sets this property to force the download from a custom website. By default, this
@@ -162,6 +167,11 @@ frontend {
     // Consequently, a Yarn distribution will be downloaded and installed by the plugin. If <true>,
     // the 'yarnVersion' version property must be set.
     yarnEnabled = false
+
+    // [OPTIONAL] Whether the Yarn distribution is already provided, and shall not be downloaded.
+    // The 'yarnInstallDirectory' shall be used to point the install directory of the distribution.
+    // If <false>, the 'yarnVersion' property - at least, must be set.
+    yarnDistributionProvided = false
 
     // [OPTIONAL] Yarn version, used to build the URL to download the corresponding distribution, if
     // the 'yarnDistributionUrl' property is not set. This property is mandatory when the
@@ -214,7 +224,9 @@ frontend {
     // file is considered to be located in the project's directory, at the same level than this
     // 'build.gradle[.kts]' file. If the 'package.json' file is located in another directory, it is
     // recommended either to set up a Gradle multi-project build, or to set this property with the
-    // appropriate directory.
+    // appropriate directory. This directory being used as the working directory when running JS
+    // scripts, consequently, the 'node_modules' directory would be created at this location after
+    // the 'installFrontend' task is executed.
     packageJsonDirectory = file("$projectDir")
 
     // [OPTIONAL] Default level used by the plugin to log messages in Gradle. This property allows
@@ -231,18 +243,23 @@ frontend {
 ```kotlin
 // build.gradle.kts
 frontend {
+    nodeDistributionProvided.set(false)
     nodeVersion.set("12.16.1")
     nodeDistributionUrl.set("https://nodejs.org/dist/vX.Y.Z/node-vX.Y.Z-win-x64.zip")
     nodeInstallDirectory.set(project.layout.projectDirectory.dir("node"))
+
     yarnEnabled.set(false)
+    yarnDistributionProvided.set(false)
     yarnVersion.set("1.22.4")
     yarnDistributionUrl.set("https://github.com/yarnpkg/yarn/releases/download/vX.Y.Z/yarn-vX.Y.Z.tar.gz")
     yarnInstallDirectory.set(project.layout.projectDirectory.dir("yarn"))
+
     installScript.set("install")
     cleanScript.set("run clean")
     assembleScript.set("run assemble")
     checkScript.set("run check")
     publishScript.set("run publish")
+
     packageJsonDirectory.set(project.layout.projectDirectory)
     loggingLevel.set(LogLevel.LIFECYCLE)
 }
@@ -287,11 +304,10 @@ If the frontend application is packaged with a Java backend into a single artifa
 [this guide](#how-to-assemble-a-frontend-and-a-java-backend-into-a-single-artifact) to assemble the frontend and the
 backend together.
 
-*Note: the `package.json` file is expected to be in the project's root directory.*
-
 #### Use Node/NPM/Yarn apart from Gradle
  
-If you plan to use the downloaded distributions of Node/NPM/Yarn apart from Gradle, apply the following steps:
+If you plan to use the downloaded distributions of [Node.js][nodejs]/[NPM][npm] or [Yarn][yarn] apart from Gradle, apply
+the following steps:
 
 - Create a `NODEJS_HOME` environment variable containing the real path set in the `nodeInstallDirectory` property.
 - Add the Node/NPM executables' directory to the `PATH` environment variable:
@@ -315,15 +331,22 @@ The plugin registers multiple tasks, that may have dependencies with each other,
 
 ![Task tree][task-tree]
 
-### Install Node
+### Install Node.js
 
-The `installNode` task downloads a Node distribution and verifies its integrity. If the `nodeDistributionUrl` property
-is ommitted, the URL is guessed using the `nodeVersion` property. Distribution integrity is checked by downloading a
-file providing the distribution shasum. This file is expected to be in the same remote web directory than the
-distribution. For example, if the distribution is located at URL
+The `installNode` task downloads a [Node.js][nodejs] distribution and verifies its integrity. If the
+`nodeDistributionUrl` property is ommitted, the URL is guessed using the `nodeVersion` property. Distribution integrity
+is checked by downloading a file providing the distribution shasum. This file is expected to be in the same remote web
+directory than the distribution. For example, if the distribution is located at URL
 `https://nodejs.org/dist/vX.Y.Z/node-vX.Y.Z-win-x64.zip`, the plugin attempts to download the shasum file located at
-URL `https://nodejs.org/dist/vX.Y.Z/SHASUMS256.txt`. Use the property `nodeInstallDirectory` to set the directory where
-the distribution shall be installed, which by default is the `${projectDir}/node` directory. The task takes advantage of
+URL `https://nodejs.org/dist/vX.Y.Z/SHASUMS256.txt`. Use the property `nodeInstallDirectory` to set the location where
+the distribution shall be installed, which by default is the `${projectDir}/node` directory.
+
+If a Node distribution is already installed in the system, and shall be used instead of a downloaded distribution, sets
+the `nodeDistributionProvided` property to `true` and the location of the distribution with the `nodeInstallDirectory`
+property. In this configuration, the `nodeVersion` property and the `nodeDistributionUrl` property are useless and shall
+not be set for clarity. Consequently, the `installNode` task is automatically _SKIPPED_ during a Gradle build.
+
+The task takes advantage of
 [Gradle incremental build][gradle-incremental-build], and is not executed again unless at least one of the events below
 occurs:
 
@@ -338,9 +361,17 @@ executed.
 
 ### Install Yarn
 
-The `installYarn` task downloads a Yarn distribution, if `yarnEnabled` property is `true`. If the `yarnInstallDirectory`
-property is ommitted, the URL is guessed using the `yarnVersion` property. Use the property `yarnInstallDirectory` to
-set the directory where the distribution shall be installed, which, by default is the `${projectDir}/yarn` directory.
+The `installYarn` task downloads a [Yarn][yarn] distribution, if `yarnEnabled` property is `true`. If the
+`yarnInstallDirectory` property is ommitted, the URL is guessed using the `yarnVersion` property. Use the property
+`yarnInstallDirectory` to set the location where the distribution shall be installed, which, by default is the
+`${projectDir}/yarn` directory.
+
+If a Yarn distribution is already installed in the system, and shall be used instead of a downloaded distribution, sets
+the `yarnDistributionProvided` property to `true` and the location of the distribution with the `yarnInstallDirectory`
+property. In this configuration, the `yarnEnabled` property still must be `true`, the `yarnVersion` property and the
+`yarnDistributionUrl` property are useless and shall not be set for clarity. Consequently, the `installYarn` task is
+automatically _SKIPPED_ during a Gradle build.
+
 The task takes advantage of [Gradle incremental build][gradle-incremental-build], and is not executed again unless at
 least one of the events below occurs:
 
@@ -360,8 +391,8 @@ Depending on the value of the `yarnEnabled` property, the `installFrontend` task
 or a `yarn install` command, by default. If a `package.json` file is found in the directory pointed by the
 `packageJsonDirectory` property, the command shall install dependencies and tools for frontend development. Optionally,
 this command may be customized (e.g. to run a `npm ci` command instead of a `npm install` command). To do so, the
-`installScript` property must be set to the corresponding NPM/Yarn command. This task depends on the `installNode` task, and
-optionally on the `installYarn` task if the `yarnEnabled` property is `true`.
+`installScript` property must be set to the corresponding [NPM][npm]/[Yarn][yarn] command. This task depends on the
+`installNode` task, and optionally on the `installYarn` task if the `yarnEnabled` property is `true`.
 
 This task may be executed directly, e.g. if one of the Node/Yarn version is modified, and a distribution must be
 downloaded again. Otherwise, this task is called automatically by Gradle, if one of these tasks is executed:
@@ -399,10 +430,11 @@ corresponding NPM/Yarn command. This task depends on the task `assembleFrontend`
 
 ### Run custom Node script
 
-The plugin provides the task type `org.siouan.frontendgradleplugin.infrastructure.gradle.RunNodeTask` that allows creating a custom
-task to launch a frontend script. The `script` property must be set with the corresponding Node command. Then, choose
-whether Node only is required, or if additional dependencies located in the `package.json` file should be installed:
-make the task either depends on `installNode` task or on `installFrontend` task.
+The plugin provides the task type `org.siouan.frontendgradleplugin.infrastructure.gradle.RunNodeTask` that allows
+creating a custom task to launch a frontend script. The `script` property must be set with the corresponding Node
+command. Then, choose whether [Node.js][nodejs] only is required, or if additional dependencies located in the
+`package.json` file should be installed: make the task either depends on `installNode` task or on `installFrontend`
+task.
 
 The code below shows the configuration required to run a JS `my-custom-script.js` with Node:
 
@@ -410,7 +442,8 @@ The code below shows the configuration required to run a JS `my-custom-script.js
 
 ```groovy
 // build.gradle
-tasks.register('myCustomScript', org.siouan.frontendgradleplugin.infrastructure.gradle.RunNodeTask) {
+import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNodeTask
+tasks.register('myCustomScript', RunNodeTask) {
     // dependsOn tasks.named('installNode')
     // dependsOn tasks.named('installFrontend')
     script = 'my-custom-script.js'
@@ -421,7 +454,8 @@ tasks.register('myCustomScript', org.siouan.frontendgradleplugin.infrastructure.
 
 ```kotlin
 // build.gradle.kts
-tasks.register<org.siouan.frontendgradleplugin.infrastructure.gradle.RunNodeTask>("myCustomScript") {
+import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNodeTask
+tasks.register<RunNodeTask>("myCustomScript") {
     // dependsOn(tasks.named("installNode"))
     // dependsOn(tasks.named("installFrontend"))
     script.set("my-custom-script.js")
@@ -430,8 +464,9 @@ tasks.register<org.siouan.frontendgradleplugin.infrastructure.gradle.RunNodeTask
 
 ### Run custom NPM/Yarn script
 
-The plugin provides the task type `org.siouan.frontendgradleplugin.infrastructure.gradle.RunScriptTask` that allows creating a custom
-task to launch a frontend script. The `script` property must be set with the corresponding NPM/Yarn command.
+The plugin provides the task type `org.siouan.frontendgradleplugin.infrastructure.gradle.RunScriptTask` that allows
+creating a custom task to launch a frontend script. The `script` property must be set with the corresponding
+[NPM][npm]/[Yarn][yarn] command.
 
 The code below shows the configuration required to run frontend's end-to-end tests in a custom task:
 
@@ -439,7 +474,8 @@ The code below shows the configuration required to run frontend's end-to-end tes
 
 ```groovy
 // build.gradle
-tasks.register('e2e', org.siouan.frontendgradleplugin.infrastructure.gradle.RunScriptTask) {
+import org.siouan.frontendgradleplugin.infrastructure.gradle.RunScriptTask
+tasks.register('e2e', RunScriptTask) {
     dependsOn tasks.named('installFrontend')
     script = 'run e2e'
 }
@@ -449,7 +485,8 @@ tasks.register('e2e', org.siouan.frontendgradleplugin.infrastructure.gradle.RunS
 
 ```kotlin
 // build.gradle.kts
-tasks.register<org.siouan.frontendgradleplugin.infrastructure.gradle.RunScriptTask>("e2e") {
+import org.siouan.frontendgradleplugin.infrastructure.gradle.RunScriptTask
+tasks.register<RunScriptTask>("e2e") {
     dependsOn(tasks.named("installFrontend"))
     script.set("run e2e")
 }
@@ -596,7 +633,8 @@ With their feedback, plugin improvement is possible. Special thanks to:
 [jetbrains]: <https://www.jetbrains.com/> (JetBrains)
 [jetbrains-logo]: <jetbrains-128x128.png> (JetBrains)
 [maven-publish-plugin]: <https://docs.gradle.org/current/userguide/publishing_maven.html> (Maven Publish plugin)
-[node]: <https://nodejs.org/> (Node.js)
+[nodejs]: <https://nodejs.org/> (Node.js)
+[npm]: <https://www.npmjs.com/> (NPM)
 [release-notes]: <https://github.com/siouan/frontend-gradle-plugin/releases> (Release notes)
 [spring-boot]: <https://spring.io/projects/spring-boot> (Spring Boot)
 [task-tree]: <task-tree.png>

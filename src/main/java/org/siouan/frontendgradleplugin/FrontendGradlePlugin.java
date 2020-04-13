@@ -2,6 +2,7 @@ package org.siouan.frontendgradleplugin;
 
 import java.util.function.BiPredicate;
 
+import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
@@ -13,6 +14,8 @@ import org.gradle.api.tasks.TaskProvider;
 import org.gradle.language.base.plugins.LifecycleBasePlugin;
 import org.siouan.frontendgradleplugin.domain.model.Platform;
 import org.siouan.frontendgradleplugin.domain.util.SystemUtils;
+import org.siouan.frontendgradleplugin.infrastructure.BeanRegistry;
+import org.siouan.frontendgradleplugin.infrastructure.BeanRegistryException;
 import org.siouan.frontendgradleplugin.infrastructure.Beans;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.AssembleTask;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.CheckTask;
@@ -21,8 +24,9 @@ import org.siouan.frontendgradleplugin.infrastructure.gradle.FrontendExtension;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.InstallTask;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.NodeInstallTask;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.PublishTask;
-import org.siouan.frontendgradleplugin.infrastructure.gradle.TaskLoggerInjector;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.TaskLoggerConfigurer;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.YarnInstallTask;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.adapter.GradleLoggerAdapter;
 import org.siouan.frontendgradleplugin.infrastructure.provider.ArchiverProviderImpl;
 import org.siouan.frontendgradleplugin.infrastructure.provider.ChannelProviderImpl;
 import org.siouan.frontendgradleplugin.infrastructure.provider.FileManagerImpl;
@@ -114,16 +118,18 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         final FrontendExtension extension = project
             .getExtensions()
             .create(EXTENSION_NAME, FrontendExtension.class, project);
-        extension.getPackageJsonDirectory().convention(project.getLayout().getProjectDirectory().getAsFile());
-        extension.getLoggingLevel().convention(LogLevel.LIFECYCLE);
+        extension.getNodeDistributionProvided().convention(false);
         extension
             .getNodeInstallDirectory()
             .convention(project.getLayout().getProjectDirectory().dir(DEFAULT_NODE_INSTALL_DIRNAME));
         extension.getYarnEnabled().convention(false);
+        extension.getYarnDistributionProvided().convention(false);
         extension
             .getYarnInstallDirectory()
             .convention(project.getLayout().getProjectDirectory().dir(DEFAULT_YARN_INSTALL_DIRNAME));
         extension.getInstallScript().convention(DEFAULT_INSTALL_SCRIPT);
+        extension.getPackageJsonDirectory().convention(project.getLayout().getProjectDirectory().getAsFile());
+        extension.getLoggingLevel().convention(LogLevel.LIFECYCLE);
 
         final TaskContainer taskContainer = project.getTasks();
         taskContainer.register(NODE_INSTALL_TASK_NAME, NodeInstallTask.class,
@@ -147,11 +153,16 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         configureDependency(taskContainer, PublishingPlugin.PUBLISH_LIFECYCLE_TASK_NAME, PUBLISH_TASK_NAME,
             PublishTask.class);
 
-        project.getGradle().addListener(new TaskLoggerInjector(extension));
         Beans.registerBean(new Platform(SystemUtils.getSystemJvmArch(), SystemUtils.getSystemOsName()));
+        Beans.registerBean(GradleLoggerAdapter.class);
         Beans.registerBean(FileManagerImpl.class);
         Beans.registerBean(ChannelProviderImpl.class);
         Beans.registerBean(ArchiverProviderImpl.class);
+        try {
+            project.getGradle().addListener(new TaskLoggerConfigurer(Beans.getBean(BeanRegistry.class), extension));
+        } catch (final BeanRegistryException e) {
+            throw new GradleException("Cannot get instance of bean registry", e);
+        }
     }
 
     /**
@@ -166,6 +177,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.getNodeVersion().set(extension.getNodeVersion());
         task.getNodeDistributionUrl().set(extension.getNodeDistributionUrl());
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
+        task.setOnlyIf(t -> !extension.getNodeDistributionProvided().get());
     }
 
     /**
@@ -180,7 +192,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.getYarnVersion().set(extension.getYarnVersion());
         task.getYarnDistributionUrl().set(extension.getYarnDistributionUrl());
         task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
-        task.setOnlyIf(t -> extension.getYarnEnabled().get());
+        task.setOnlyIf(t -> extension.getYarnEnabled().get() && !extension.getYarnDistributionProvided().get());
     }
 
     /**

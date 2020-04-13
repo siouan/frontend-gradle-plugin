@@ -13,21 +13,25 @@ import org.siouan.frontendgradleplugin.domain.model.Logger;
  */
 public class GradleLoggerAdapter implements Logger {
 
-    private final org.gradle.api.logging.Logger gradleLogger;
+    private org.gradle.api.logging.Logger gradleLogger;
 
-    private final LogLevel loggingLevel;
+    private LogLevel loggingLevel;
 
-    private final String prefix;
+    private String prefix;
+
+    public GradleLoggerAdapter() {
+        this.loggingLevel = LogLevel.LIFECYCLE;
+    }
 
     /**
-     * Builds a job instance related to the given task.
+     * Initializes the logger to delegate logging to the given Gradle logger.
      *
      * @param gradleLogger Gradle logger.
      * @param loggingLevel Current logging level.
      * @param prefix Prefix prepended before each message logged.
      */
-    public GradleLoggerAdapter(@Nonnull org.gradle.api.logging.Logger gradleLogger, @Nonnull LogLevel loggingLevel,
-        @Nonnull final String prefix) {
+    public void init(@Nullable org.gradle.api.logging.Logger gradleLogger, @Nonnull LogLevel loggingLevel,
+        @Nullable final String prefix) {
         this.gradleLogger = gradleLogger;
         this.loggingLevel = loggingLevel;
         this.prefix = prefix;
@@ -35,16 +39,20 @@ public class GradleLoggerAdapter implements Logger {
 
     @Override
     public void debug(@Nonnull final String message, @Nullable Object... parameters) {
-        gradleLogger.debug(formatMessage(message), parameters);
+        if (gradleLogger != null) {
+            gradleLogger.debug(formatMessage(message), parameters);
+        }
     }
 
     @Override
     public void log(@Nonnull final String message, @Nullable final Object... parameters) {
-        gradleLogger.log(loggingLevel, formatMessage(message), parameters);
+        if (gradleLogger != null) {
+            gradleLogger.log(loggingLevel, formatMessage(message), parameters);
+        }
     }
 
     @Nonnull
     private String formatMessage(@Nonnull final String message) {
-        return prefix + message;
+        return (prefix == null) ? message : prefix + message;
     }
 }
