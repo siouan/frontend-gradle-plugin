@@ -24,17 +24,17 @@ public class ValidateNodeDistribution implements DistributionValidator {
 
     private final DownloadResource downloadResource;
 
-    private final ReadNodeDistributionChecksum readNodeDistributionChecksum;
+    private final ReadNodeDistributionShasum readNodeDistributionShasum;
 
     private final HashFile hashFile;
 
     private final Logger logger;
 
     public ValidateNodeDistribution(final FileManager fileManager, final DownloadResource downloadResource,
-        final ReadNodeDistributionChecksum readNodeDistributionChecksum, final HashFile hashFile, final Logger logger) {
+        final ReadNodeDistributionShasum readNodeDistributionShasum, final HashFile hashFile, final Logger logger) {
         this.fileManager = fileManager;
         this.downloadResource = downloadResource;
-        this.readNodeDistributionChecksum = readNodeDistributionChecksum;
+        this.readNodeDistributionShasum = readNodeDistributionShasum;
         this.hashFile = hashFile;
         this.logger = logger;
     }
@@ -47,7 +47,7 @@ public class ValidateNodeDistribution implements DistributionValidator {
     @Override
     public void execute(@Nonnull final DistributionValidatorSettings distributionValidatorSettings)
         throws InvalidNodeDistributionException, IOException, NodeDistributionShasumNotFoundException {
-        // Resolve the URL to download the checksum file
+        // Resolve the URL to download the shasum file
         final Path shasumsFilePath = distributionValidatorSettings
             .getTemporaryDirectoryPath()
             .resolve(SHASUMS_FILENAME);
@@ -55,15 +55,15 @@ public class ValidateNodeDistribution implements DistributionValidator {
         try {
             final URL shasumsFileUrl = new URL(distributionValidatorSettings.getDistributionUrl(), SHASUMS_FILENAME);
 
-            // Download the checksum file
-            logger.log("Downloading checksums at '{}'", shasumsFileUrl);
+            // Download the shasum file
+            logger.log("Downloading shasums at '{}'", shasumsFileUrl);
             downloadResource.execute(
                 new DownloadSettings(shasumsFileUrl, distributionValidatorSettings.getTemporaryDirectoryPath(),
                     shasumsFilePath));
 
             // Verify the distribution integrity
             logger.log("Verifying distribution integrity");
-            expectedShasum = readNodeDistributionChecksum
+            expectedShasum = readNodeDistributionShasum
                 .execute(shasumsFilePath,
                     distributionValidatorSettings.getDistributionFilePath().getFileName().toString())
                 .orElseThrow(NodeDistributionShasumNotFoundException::new);

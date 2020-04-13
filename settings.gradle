@@ -1,12 +1,22 @@
+pluginManagement {
+    plugins {
+        id 'com.gradle.enterprise' version '3.2.1'
+        id 'com.gradle.plugin-publish' version '0.11.0'
+    }
+    repositories {
+        gradlePluginPortal()
+    }
+}
+
 plugins {
-	id "com.gradle.enterprise" version "3.1.1"
+    id 'com.gradle.enterprise'
 }
 
 rootProject.name = 'frontend-gradle-plugin'
 
 gradleEnterprise {
-	buildScan {
-		termsOfServiceUrl = 'https://gradle.com/terms-of-service'
-		termsOfServiceAgree = 'yes'
-	}
+    buildScan {
+        termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+        termsOfServiceAgree = 'yes'
+    }
 }

@@ -319,9 +319,9 @@ The plugin registers multiple tasks, that may have dependencies with each other,
 
 The `installNode` task downloads a Node distribution and verifies its integrity. If the `nodeDistributionUrl` property
 is ommitted, the URL is guessed using the `nodeVersion` property. Distribution integrity is checked by downloading a
-file providing the distribution checksum. This file is expected to be in the same remote web directory than the
+file providing the distribution shasum. This file is expected to be in the same remote web directory than the
 distribution. For example, if the distribution is located at URL
-`https://nodejs.org/dist/vX.Y.Z/node-vX.Y.Z-win-x64.zip`, the plugin attempts to download the checksum file located at
+`https://nodejs.org/dist/vX.Y.Z/node-vX.Y.Z-win-x64.zip`, the plugin attempts to download the shasum file located at
 URL `https://nodejs.org/dist/vX.Y.Z/SHASUMS256.txt`. Use the property `nodeInstallDirectory` to set the directory where
 the distribution shall be installed, which by default is the `${projectDir}/node` directory. The task takes advantage of
 [Gradle incremental build][gradle-incremental-build], and is not executed again unless at least one of the events below

@@ -7,6 +7,6 @@ package org.siouan.frontendgradleplugin.domain.exception;
 public class NodeDistributionShasumNotFoundException extends DistributionValidatorException {
 
     public NodeDistributionShasumNotFoundException() {
-        super("Checksum not found for Node distribution.");
+        super("Shasum not found for Node distribution.");
     }
 }
