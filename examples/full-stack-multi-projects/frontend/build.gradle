@@ -1,0 +1,14 @@
+plugins {
+    id 'org.siouan.frontend'
+}
+
+frontend {
+    nodeVersion = '12.16.2'
+    assembleScript = 'run build'
+    cleanScript = 'run clean'
+    checkScript = 'run check'
+}
+
+rootProject.tasks.named('processFrontendResources') {
+    dependsOn tasks.named('assembleFrontend')
+}

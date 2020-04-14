@@ -1,0 +1,12 @@
+pluginManagement {
+    plugins {
+        id 'java'
+        id 'war'
+        id 'org.siouan.frontend' version '2.0.0'
+    }
+    repositories {
+        gradlePluginPortal()
+    }
+}
+
+include 'backend', 'frontend'

@@ -14,13 +14,13 @@ to install/configure the plugin, and build your frontend application.
 
 #### Features
 
-- Download and install a Node distribution.
-- Download and install a Yarn distribution.
-- Install frontend dependencies with a configurable `npm/yarn install` command.
-- Trigger automatically frontend build, test, clean, publish scripts in a `package.json` file from Gradle lifecycle
+- Download and install a [Node.js][nodejs] distribution.
+- Download and install a [Yarn][yarn] distribution.
+- Install frontend dependencies with a configurable NPM/Yarn command (e.g. `npm ci`).
+- Trigger automatically frontend build, check, clean, publish scripts in a `package.json` file from Gradle lifecycle
 tasks.
-- Create custom tasks to run a JS script with Node/NPM/Yarn.
-- Use a provided distribution of Node or Yarn.
+- Create custom tasks to run a script with [Node.js][nodejs]/[NPM][npm]/[Yarn][yarn].
+- Use a provided distribution of [Node.js][nodejs] or [Yarn][yarn].
 
 ## Summary
 
@@ -31,8 +31,10 @@ tasks.
     - [Using Gradle build script block](#using-gradle-build-script-block)
   - [Configuration](#configuration)
     - [DSL reference](#dsl-reference)
-    - [Typical configuration with NPM](#typical-configuration-with-npm)
-    - [Typical configuration with Yarn](#typical-configuration-with-yarn)
+    - [Examples][examples]
+        - [Standalone frontend project build][example-standalone-frontend-project]
+        - [Full-stack multi-projects build][example-full-stack-multi-projects]
+        - [Standalone frontend project build with preinstalled Node.js/Yarn distributions][example-provided-distribution-project]
   - [Final steps](#final-steps)
     - [Build the frontend](#build-the-frontend)
     - [Use Node/NPM/Yarn apart from Gradle](#use-nodenpmyarn-apart-from-gradle)
@@ -47,9 +49,8 @@ tasks.
   - [Publish frontend](#publish-frontend)
   - [Run custom Node script](#run-custom-node-script)
   - [Run custom NPM/Yarn script](#run-custom-npmyarn-script)
-- [Usage guidelines](#usage-guidelines)
-  - [How to assemble a frontend and a Java backend into a single artifact?](#how-to-assemble-a-frontend-and-a-java-backend-into-a-single-artifact)
-  - [What kind of script should I attach to the `checkFrontend` task?](#what-kind-of-script-should-i-attach-to-the-checkfrontend-task)
+- [Usage guidelines][guidelines]
+  - [Packaging a frontend application in a Java artifact][single-java-artifact-packaging]
 - [Special thanks](#special-thanks)
 - [Contributing][contributing]
 
@@ -265,29 +266,9 @@ frontend {
 }
 ```
 
-#### Typical configuration with NPM
+#### Examples
 
-```groovy
-// build.gradle
-frontend {
-    nodeVersion = '<X.Y.Z>'
-    assembleScript = 'run assemble'
-    checkScript = 'run check'
-}
-```
-
-#### Typical configuration with Yarn
-
-```groovy
-// build.gradle
-frontend {
-    nodeVersion = '<X.Y.Z>'
-    yarnEnabled = true
-    yarnVersion = '<X.Y.Z>'
-    assembleScript = 'run assemble'
-    checkScript = 'run check'
-}
-```
+See examples introduced [here][examples].
 
 ### Final steps
 
@@ -300,9 +281,8 @@ project's directory:
 gradlew build
 ```
 
-If the frontend application is packaged with a Java backend into a single artifact, take a look at
-[this guide](#how-to-assemble-a-frontend-and-a-java-backend-into-a-single-artifact) to assemble the frontend and the
-backend together.
+If the frontend application shall be packaged in a Java artifact, take a look at [this guide](#how-to-assemble-a-frontend-and-a-java-backend-into-a-single-artifact)
+to configure frontend and backend applications assembling.
 
 #### Use Node/NPM/Yarn apart from Gradle
  
@@ -492,119 +472,6 @@ tasks.register<RunScriptTask>("e2e") {
 }
 ```
 
-## Usage guidelines
-
-### How to assemble a frontend and a Java backend into a single artifact?
-
-If you plan to serve your frontend with a Java backend (e.g. a [Spring Boot][spring-boot] application), you will
-probably use other Gradle plugins, such as the [Gradle Java plugin][gradle-java-plugin], the
-[Gradle Spring Boot plugin][gradle-spring-boot-plugin], or other ones of your choice.
-
-In this configuration, you may package your full-stack application as a JAR/WAR artifact. To do so, the frontend must be
-assembled before the backend, and generally provided in a special directory for the backend packaging task (e.g.
-`jar`/`war`/`bootJar`/`bootWar`... tasks). 
-
-Assembling the frontend before the backend shall not be difficult to setup in Gradle. Below is the task tree of the
-`assemble` task when this plugin is used with the [Gradle Java plugin][gradle-java-plugin] or a plugin depending on it:
-
-```sh
-gradlew taskTree --no-repeat assemble
-
-:assemble
-+--- :assembleFrontend
-|    \--- :installFrontend
-|         +--- :installNode
-|         \--- :installYarn
-+--- :jar
-     \--- :classes
-          +--- :compileJava
-          \--- :processResources
-```
-
-1. Considering the frontend assembling script generates the frontend artifacts (HTML, CSS, JS...) in the
-`${frontendBuildDir}` directory, these artifacts must be copied, generally in the
-`${project.buildDir}/resources/main/public` directory, so as they can be served by the backend.
-
-Let's create a custom task for this.
-
-- Groovy syntax:
-
-```groovy
-// build.gradle
-tasks.register('processFrontendResources', Copy) {
-    description 'Process frontend resources'
-    from "${frontendBuildDir}"
-    into "${project.buildDir}/resources/main/public"
-    dependsOn tasks.named('assembleFrontend')
-}
-```
-
-- Kotlin syntax:
-
-```kotlin
-// build.gradle.kts
-tasks.register<Copy>("processFrontendResources") {
-    description = "Process frontend resources"
-    from(file("${frontendBuildDir}"))
-    into(file("${project.buildDir}/resources/main/public"))
-    dependsOn(tasks.named("assembleFrontend"))
-}
-```
-
-Finally, you should:
-
-- Replace the `${frontendBuildDir}` variable by any relevant directory, depending on where the frontend artifacts are
-generated by your assembling script.
-- Adapt the target directory under `${project.buildDir}/resources/main`, depending on the Java artifact built.
-
-2. The frontend must be assembled and the generated resources must be copied before the backend packaging task.
-
-Our recommendation is the `processResources` task depends on the `processFrontendResources` task.
-
-- Groovy syntax:
-
-```groovy
-// build.gradle
-tasks.named('processResources').configure {
-    dependsOn tasks.named('processFrontendResources')
-}
-```
-
-- Kotlin syntax:
-
-```kotlin
-// build.gradle.kts
-tasks.named("processResources").configure {
-    dependsOn(tasks.named("processFrontendResources"))
-}
-```
-
-The resulting task tree shall be as below:
-
-```sh
-gradlew taskTree --no-repeat assemble
-
-:assemble
-+--- :jar
-     \--- :classes
-          +--- :compileJava
-          \--- :processResources
-               +--- :processFrontendResources
-                    +--- :assembleFrontend
-                         \--- :installFrontend
-                              +--- :installNode
-                              \--- :installYarn
-```
-
-### What kind of script should I attach to the `checkFrontend` task?
-
-The `checkFrontend` task is attached to the lifecycle `check` task. The Gradle official documentation states that the
-`check` task shall be used to `attach [...] verification tasks, such as ones that run tests [...]`. It's enough vague to
-let you consider any verification task. The script mapped to the `checkFrontend` task may run either automated unit
-tests, or functional tests, or a linter, or any other verification action, or even combine some or all of them. Every
-combination is even possible, since you can define a script in your `package.json` file that executes sequentially the
-actions of your choice.
-
 ## Special thanks
 
 The plugin is developed using [Intellij IDEA][intellij-idea], special thanks to [JetBrains][jetbrains] for this amazing
@@ -618,24 +485,25 @@ With their feedback, plugin improvement is possible. Special thanks to:
 @andreaschiona, @byxor, @ChFlick, @ckosloski, @davidkron, @mike-howell, @napstr, @nuth, @rolaca11, @TapaiBalazs
 
 [contributing]: <CONTRIBUTING.md> (Contributing to this project)
+[example-full-stack-multi-projects]: <examples/full-stack-multi-projects/README.md> (Configure a full-stack multi-projects build)
+[example-standalone-frontend-project]: <examples/standalone-frontend-project/README.md> (Configure a standalone frontend build)
+[example-provided-distribution-project]: <examples/provided-distribution-project/README.md> (Configure a build with a preinstalled Node.js/Yarn distribution)
+[examples]: <examples> (Examples)
 [frontend-maven-plugin]: <https://github.com/eirslett/frontend-maven-plugin> (Frontend Maven plugin)
 [gradle]: <https://gradle.org/> (Gradle)
 [gradle-base-plugin]: <https://docs.gradle.org/current/userguide/base_plugin.html> (Gradle Base plugin)
 [gradle-build-script-block]: <https://docs.gradle.org/current/userguide/plugins.html#sec:applying_plugins_buildscript> (Gradle build script block)
 [gradle-dsl]: <https://docs.gradle.org/current/userguide/plugins.html#sec:plugins_block> (Gradle DSL)
 [gradle-incremental-build]: <https://guides.gradle.org/performance/#incremental_build> (Gradle incremental build)
-[gradle-java-plugin]: <https://docs.gradle.org/current/userguide/java_plugin.html> (Gradle Java plugin)
-[gradle-maven-publish-plugin]: <https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:tasks> (Gradle Maven Publish plugin)
-[gradle-spring-boot-plugin]: <https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/html/> (Gradle Spring Boot plugin)
+[guidelines]: <resources/GUIDELINES.md> (Usage guidelines)
 [intellij-idea]: <https://www.jetbrains.com/idea/> (IntelliJ IDEA)
-[intellij-idea-logo]: <intellij-idea-128x128.png> (IntelliJ IDEA)
+[intellij-idea-logo]: <resources/intellij-idea-128x128.png> (IntelliJ IDEA)
 [jdk]: <https://docs.oracle.com/en/java/javase/> (Java Development Kit)
 [jetbrains]: <https://www.jetbrains.com/> (JetBrains)
-[jetbrains-logo]: <jetbrains-128x128.png> (JetBrains)
-[maven-publish-plugin]: <https://docs.gradle.org/current/userguide/publishing_maven.html> (Maven Publish plugin)
+[jetbrains-logo]: <resources/jetbrains-128x128.png> (JetBrains)
 [nodejs]: <https://nodejs.org/> (Node.js)
 [npm]: <https://www.npmjs.com/> (NPM)
 [release-notes]: <https://github.com/siouan/frontend-gradle-plugin/releases> (Release notes)
-[spring-boot]: <https://spring.io/projects/spring-boot> (Spring Boot)
-[task-tree]: <task-tree.png>
+[single-java-artifact-packaging]: <resources/GUIDELINES.md#packaging-a-frontend-application-in-a-java-artifact> (Packaging a frontend application in a Java artifact)
+[task-tree]: <resources/task-tree.png>
 [yarn]: <https://yarnpkg.com/> (Yarn)
