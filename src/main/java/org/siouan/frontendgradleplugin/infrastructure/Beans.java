@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 
 /**
  * This class consists exclusively of static methods, that will delegate to a singleton bean registry instance. It
- * allows to access a bean registry without knowing how to retrieve it.
+ * allows to access a bean registry where dependency injection is not possible.
  *
  * @since 2.0.0
  */

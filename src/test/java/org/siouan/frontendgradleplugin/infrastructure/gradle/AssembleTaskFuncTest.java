@@ -1,10 +1,11 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
-import static org.siouan.frontendgradleplugin.test.util.Helper.assertTaskIgnored;
-import static org.siouan.frontendgradleplugin.test.util.Helper.assertTaskSkipped;
-import static org.siouan.frontendgradleplugin.test.util.Helper.assertTaskSuccess;
-import static org.siouan.frontendgradleplugin.test.util.Helper.assertTaskUpToDate;
-import static org.siouan.frontendgradleplugin.test.util.Helper.runGradle;
+import static org.siouan.frontendgradleplugin.test.util.GradleHelper.assertTaskIgnored;
+import static org.siouan.frontendgradleplugin.test.util.GradleHelper.assertTaskSkipped;
+import static org.siouan.frontendgradleplugin.test.util.GradleHelper.assertTaskSuccess;
+import static org.siouan.frontendgradleplugin.test.util.GradleHelper.assertTaskUpToDate;
+import static org.siouan.frontendgradleplugin.test.util.GradleHelper.createBuildFile;
+import static org.siouan.frontendgradleplugin.test.util.GradleHelper.runGradle;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -21,7 +22,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
-import org.siouan.frontendgradleplugin.test.util.Helper;
 
 /**
  * Functional tests to verify the {@link AssembleTask} integration in a Gradle build. Test cases uses fake Node/Yarn
@@ -47,7 +47,7 @@ class AssembleTaskFuncTest {
         final Map<String, Object> properties = new HashMap<>();
         properties.put("nodeVersion", "10.16.0");
         properties.put("nodeDistributionUrl", getClass().getClassLoader().getResource("node-v10.16.0.zip"));
-        Helper.createBuildFile(projectDirectoryPath, properties);
+        createBuildFile(projectDirectoryPath, properties);
 
         final BuildResult result = runGradle(projectDirectoryPath, FrontendGradlePlugin.ASSEMBLE_TASK_NAME);
 
@@ -64,7 +64,7 @@ class AssembleTaskFuncTest {
         final Map<String, Object> properties = new HashMap<>();
         properties.put("nodeVersion", "10.16.0");
         properties.put("nodeDistributionUrl", getClass().getClassLoader().getResource("node-v10.16.0.zip"));
-        Helper.createBuildFile(projectDirectoryPath, properties);
+        createBuildFile(projectDirectoryPath, properties);
 
         final BuildResult result = runGradle(projectDirectoryPath, BasePlugin.ASSEMBLE_TASK_NAME);
 
@@ -83,7 +83,7 @@ class AssembleTaskFuncTest {
         properties.put("nodeVersion", "10.16.0");
         properties.put("nodeDistributionUrl", getClass().getClassLoader().getResource("node-v10.16.0.zip"));
         properties.put("assembleScript", "run assemble");
-        Helper.createBuildFile(projectDirectoryPath, properties);
+        createBuildFile(projectDirectoryPath, properties);
 
         final BuildResult result1 = runGradle(projectDirectoryPath, BasePlugin.ASSEMBLE_TASK_NAME);
 
@@ -107,7 +107,7 @@ class AssembleTaskFuncTest {
         properties.put("yarnEnabled", true);
         properties.put("yarnVersion", "1.16.0");
         properties.put("yarnDistributionUrl", getClass().getClassLoader().getResource("yarn-v1.16.0.tar.gz"));
-        Helper.createBuildFile(projectDirectoryPath, properties);
+        createBuildFile(projectDirectoryPath, properties);
 
         final BuildResult result3 = runGradle(projectDirectoryPath, BasePlugin.ASSEMBLE_TASK_NAME);
 

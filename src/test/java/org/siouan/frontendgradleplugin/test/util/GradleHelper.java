@@ -27,9 +27,9 @@ import org.gradle.testkit.runner.GradleRunner;
 import org.gradle.testkit.runner.TaskOutcome;
 
 /**
- * Helper to prepare tasks tests.
+ * Helper to prepare and run Gradle builds.
  */
-public final class Helper {
+public final class GradleHelper {
 
     private static final String BUILD_FILE_NAME = "build.gradle";
 
@@ -37,7 +37,7 @@ public final class Helper {
 
     private static final String MINIMAL_GRADLE_VERSION = "5.1";
 
-    private Helper() {
+    private GradleHelper() {
     }
 
     /**
@@ -316,66 +316,48 @@ public final class Helper {
      * Runs a Gradle task in the given project directory, and expects a success.
      *
      * @param projectDirectory Project directory.
-     * @param taskName Task name.
      * @return The build result.
      */
     @Nonnull
-    public static BuildResult runGradle(@Nonnull final Path projectDirectory, @Nonnull final String taskName,
+    public static BuildResult runGradle(@Nonnull final Path projectDirectory,
         @Nonnull final String... additionalArguments) {
-        return runGradle(projectDirectory, taskName, LogLevel.LIFECYCLE, additionalArguments);
+        return runGradle(projectDirectory, LogLevel.LIFECYCLE, additionalArguments);
     }
 
     /**
      * Runs a Gradle task in the given project directory, and expects a success.
      *
      * @param projectDirectory Project directory.
-     * @param taskName Task name.
      * @return The build result.
      */
     @Nonnull
-    public static BuildResult runGradle(@Nonnull final Path projectDirectory, @Nonnull final String taskName,
-        @Nonnull final LogLevel loggingLevel, @Nonnull final String... additionalArguments) {
-        return createGradleRunner(projectDirectory, taskName, loggingLevel, additionalArguments).build();
+    public static BuildResult runGradle(@Nonnull final Path projectDirectory, @Nonnull final LogLevel loggingLevel,
+        @Nonnull final String... additionalArguments) {
+        return createGradleRunner(projectDirectory, loggingLevel, additionalArguments).build();
     }
 
     /**
      * Runs a Gradle task in the given project directory, and expects a failure.
      *
      * @param projectDirectory Project directory.
-     * @param taskName Task name.
      * @return The build result.
      */
     @Nonnull
     public static BuildResult runGradleAndExpectFailure(@Nonnull final Path projectDirectory,
-        @Nonnull final String taskName, @Nonnull final String... additionalArguments) {
-        return createGradleRunner(projectDirectory, taskName, additionalArguments).buildAndFail();
-    }
-
-    /**
-     * Creates a Gradle build that will run a task in the given project directory.
-     *
-     * @param projectDirectory Project directory.
-     * @param taskName Task name.
-     * @return The Gradle runner.
-     */
-    @Nonnull
-    private static GradleRunner createGradleRunner(@Nonnull final Path projectDirectory, @Nonnull final String taskName,
         @Nonnull final String... additionalArguments) {
-        return createGradleRunner(projectDirectory, taskName, LogLevel.LIFECYCLE, additionalArguments);
+        return createGradleRunner(projectDirectory, LogLevel.LIFECYCLE, additionalArguments).buildAndFail();
     }
 
     /**
      * Creates a Gradle build that will run a task in the given project directory.
      *
      * @param projectDirectory Project directory.
-     * @param taskName Task name.
      * @return The Gradle runner.
      */
     @Nonnull
-    private static GradleRunner createGradleRunner(@Nonnull final Path projectDirectory, @Nonnull final String taskName,
+    private static GradleRunner createGradleRunner(@Nonnull final Path projectDirectory,
         @Nonnull final LogLevel loggingLevel, @Nonnull final String... additionalArguments) {
         final List<String> arguments = new ArrayList<>();
-        arguments.add(taskName);
         arguments.add("-s");
         toLoggingLevelProperty(loggingLevel).ifPresent(arguments::add);
         arguments.addAll(asList(additionalArguments));
