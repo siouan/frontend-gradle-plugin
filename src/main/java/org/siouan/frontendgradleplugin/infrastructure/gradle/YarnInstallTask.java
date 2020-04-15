@@ -1,6 +1,5 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
@@ -81,6 +80,6 @@ public class YarnInstallTask extends DefaultTask {
         Beans
             .getBean(InstallYarnDistribution.class)
             .execute(new InstallSettings(Beans.getBean(Platform.class), yarnVersion.get(), distributionUrl,
-                getTemporaryDir().toPath(), yarnInstallDirectory.getAsFile().map(File::toPath).get()));
+                getTemporaryDir().toPath(), yarnInstallDirectory.getAsFile().get().toPath()));
     }
 }

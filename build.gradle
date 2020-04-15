@@ -67,5 +67,5 @@ gradlePlugin {
 pluginBundle {
     website = 'https://github.com/Siouan/frontend-gradle-plugin'
     vcsUrl = 'https://github.com/Siouan/frontend-gradle-plugin.git'
-    tags = ['node', 'npm', 'yarn', 'frontend']
+    tags = ['node', 'nodejs', 'npm', 'yarn', 'frontend']
 }

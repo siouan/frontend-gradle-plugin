@@ -1,0 +1,11 @@
+plugins {
+    id 'org.siouan.frontend'
+}
+
+frontend {
+    nodeDistributionProvided = true
+    nodeInstallDirectory = file('<path-to-node-install-directory')
+    assembleScript = 'run build'
+    cleanScript = 'run clean'
+    checkScript = 'run check'
+}

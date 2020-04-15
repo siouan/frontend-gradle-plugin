@@ -304,10 +304,10 @@ public final class GradleHelper {
             settingsFileWriter.append("rootProject.name = '");
             settingsFileWriter.append(rootProjectName);
             settingsFileWriter.append("'\n");
-            for (final String subProjectName : subProjectNames) {
+            if (subProjectNames.length > 0) {
                 settingsFileWriter.append("include '");
-                settingsFileWriter.append(subProjectName);
-                settingsFileWriter.append("'\n");
+                settingsFileWriter.append(String.join("', '", subProjectNames));
+                settingsFileWriter.append('\'');
             }
         }
     }
