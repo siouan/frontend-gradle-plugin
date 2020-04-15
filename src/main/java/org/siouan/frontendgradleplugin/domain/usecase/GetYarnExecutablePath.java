@@ -1,11 +1,12 @@
 package org.siouan.frontendgradleplugin.domain.usecase;
 
+import static java.util.Collections.singletonList;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Optional;
+import java.util.List;
 import javax.annotation.Nonnull;
 
-import org.siouan.frontendgradleplugin.domain.model.Platform;
 import org.siouan.frontendgradleplugin.domain.provider.FileManager;
 
 /**
@@ -13,40 +14,31 @@ import org.siouan.frontendgradleplugin.domain.provider.FileManager;
  *
  * @since 2.0.0
  */
-public class GetYarnExecutablePath {
+public class GetYarnExecutablePath extends AbstractGetExecutablePath {
 
     /**
      * Supported executable on a Windows O/S.
      */
-    public static final Path WINDOWS_EXECUTABLE_PATH = Paths.get("bin", "yarn.cmd");
+    public static final List<Path> WINDOWS_EXECUTABLE_PATHS = singletonList(Paths.get("bin", "yarn.cmd"));
 
     /**
      * Supported executable on other O/S.
      */
-    public static final Path NON_WINDOWS_EXECUTABLE_PATH = Paths.get("bin", "yarn");
-
-    private final FileManager fileManager;
+    public static final List<Path> NON_WINDOWS_EXECUTABLE_PATHS = singletonList(Paths.get("bin", "yarn"));
 
     public GetYarnExecutablePath(final FileManager fileManager) {
-        this.fileManager = fileManager;
+        super(fileManager);
     }
 
-    /**
-     * Gets the path of Yarn executable.
-     *
-     * @param yarnInstallDirectory Yarn install directory.
-     * @param platform Execution platform.
-     * @return The path.
-     */
+    @Override
     @Nonnull
-    public Optional<Path> execute(@Nonnull final Path yarnInstallDirectory, @Nonnull final Platform platform) {
-        final Path possiblePath;
-        if (platform.isWindowsOs()) {
-            possiblePath = WINDOWS_EXECUTABLE_PATH;
-        } else {
-            possiblePath = NON_WINDOWS_EXECUTABLE_PATH;
-        }
+    protected List<Path> getWindowsRelativeExecutablePaths() {
+        return WINDOWS_EXECUTABLE_PATHS;
+    }
 
-        return Optional.of(possiblePath).map(yarnInstallDirectory::resolve).filter(fileManager::exists);
+    @Override
+    @Nonnull
+    protected List<Path> getNonWindowsRelativeExecutablePaths() {
+        return NON_WINDOWS_EXECUTABLE_PATHS;
     }
 }

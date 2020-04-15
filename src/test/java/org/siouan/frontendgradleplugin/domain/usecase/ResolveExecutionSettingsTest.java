@@ -39,6 +39,9 @@ class ResolveExecutionSettingsTest {
     private GetNpmExecutablePath getNpmExecutablePath;
 
     @Mock
+    private GetNpxExecutablePath getNpxExecutablePath;
+
+    @Mock
     private GetYarnExecutablePath getYarnExecutablePath;
 
     @InjectMocks
@@ -53,9 +56,10 @@ class ResolveExecutionSettingsTest {
             () -> usecase.execute(PACKAGE_JSON_DIRECTORY_PATH, ExecutableType.NODE, NODE_INSTALL_DIRECTORY_PATH, null,
                 platform, SCRIPT))
             .isInstanceOf(ExecutableNotFoundException.class)
-            .hasMessage(ExecutableNotFoundException.NODE);
+            .hasMessage(ExecutableType.NODE.name());
 
-        verifyNoMoreInteractions(getNodeExecutablePath, getNpmExecutablePath, getYarnExecutablePath);
+        verifyNoMoreInteractions(getNodeExecutablePath, getNpmExecutablePath, getNpxExecutablePath,
+            getYarnExecutablePath);
     }
 
     @Test
@@ -69,9 +73,27 @@ class ResolveExecutionSettingsTest {
             () -> usecase.execute(PACKAGE_JSON_DIRECTORY_PATH, ExecutableType.NPM, NODE_INSTALL_DIRECTORY_PATH, null,
                 platform, SCRIPT))
             .isInstanceOf(ExecutableNotFoundException.class)
-            .hasMessage(ExecutableNotFoundException.NPM);
+            .hasMessage(ExecutableType.NPM.name());
 
-        verifyNoMoreInteractions(getNodeExecutablePath, getNpmExecutablePath, getYarnExecutablePath);
+        verifyNoMoreInteractions(getNodeExecutablePath, getNpmExecutablePath, getNpxExecutablePath,
+            getYarnExecutablePath);
+    }
+
+    @Test
+    void shouldFailResolvingExecSettingsWhenNpxExecutableCannotBeFound() {
+        final Platform platform = PlatformFixture.LOCAL_PLATFORM;
+        when(getNodeExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenReturn(
+            Optional.of(NODE_INSTALL_DIRECTORY_PATH.resolve("node")));
+        when(getNpxExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(
+            () -> usecase.execute(PACKAGE_JSON_DIRECTORY_PATH, ExecutableType.NPX, NODE_INSTALL_DIRECTORY_PATH, null,
+                platform, SCRIPT))
+            .isInstanceOf(ExecutableNotFoundException.class)
+            .hasMessage(ExecutableType.NPX.name());
+
+        verifyNoMoreInteractions(getNodeExecutablePath, getNpmExecutablePath, getNpxExecutablePath,
+            getYarnExecutablePath);
     }
 
     @Test
@@ -85,9 +107,10 @@ class ResolveExecutionSettingsTest {
             () -> usecase.execute(PACKAGE_JSON_DIRECTORY_PATH, ExecutableType.YARN, NODE_INSTALL_DIRECTORY_PATH,
                 YARN_INSTALL_DIRECTORY_PATH, platform, SCRIPT))
             .isInstanceOf(ExecutableNotFoundException.class)
-            .hasMessage(ExecutableNotFoundException.YARN);
+            .hasMessage(ExecutableType.YARN.name());
 
-        verifyNoMoreInteractions(getNodeExecutablePath, getNpmExecutablePath, getYarnExecutablePath);
+        verifyNoMoreInteractions(getNodeExecutablePath, getNpmExecutablePath, getNpxExecutablePath,
+            getYarnExecutablePath);
     }
 
     @Test
@@ -107,7 +130,8 @@ class ResolveExecutionSettingsTest {
         assertThat(executionSettings.getArguments()).containsExactly(
             ResolveExecutionSettings.WINDOWS_EXECUTABLE_AUTOEXIT_FLAG,
             String.join(" ", '"' + nodeExecutablePath.toString() + '"', SCRIPT.trim()));
-        verifyNoMoreInteractions(getNodeExecutablePath, getNpmExecutablePath, getYarnExecutablePath);
+        verifyNoMoreInteractions(getNodeExecutablePath, getNpmExecutablePath, getNpxExecutablePath,
+            getYarnExecutablePath);
     }
 
     @Test
@@ -129,7 +153,8 @@ class ResolveExecutionSettingsTest {
         assertThat(executionSettings.getArguments()).containsExactly(
             ResolveExecutionSettings.WINDOWS_EXECUTABLE_AUTOEXIT_FLAG,
             String.join(" ", '"' + npmExecutablePath.toString() + '"', SCRIPT.trim()));
-        verifyNoMoreInteractions(getNodeExecutablePath, getNpmExecutablePath, getYarnExecutablePath);
+        verifyNoMoreInteractions(getNodeExecutablePath, getNpmExecutablePath, getNpxExecutablePath,
+            getYarnExecutablePath);
     }
 
     @Test
@@ -153,7 +178,8 @@ class ResolveExecutionSettingsTest {
         assertThat(executionSettings.getArguments()).containsExactly(
             ResolveExecutionSettings.WINDOWS_EXECUTABLE_AUTOEXIT_FLAG,
             String.join(" ", '"' + yarnExecutablePath.toString() + '"', SCRIPT.trim()));
-        verifyNoMoreInteractions(getNodeExecutablePath, getNpmExecutablePath, getYarnExecutablePath);
+        verifyNoMoreInteractions(getNodeExecutablePath, getNpmExecutablePath, getNpxExecutablePath,
+            getYarnExecutablePath);
     }
 
     @Test
@@ -171,7 +197,8 @@ class ResolveExecutionSettingsTest {
         assertThat(executionSettings.getAdditionalExecutablePaths()).containsOnly(nodeExecutablePath.getParent());
         assertThat(executionSettings.getExecutablePath()).isEqualTo(nodeExecutablePath);
         assertThat(executionSettings.getArguments()).containsExactly("run", "script");
-        verifyNoMoreInteractions(getNodeExecutablePath, getNpmExecutablePath, getYarnExecutablePath);
+        verifyNoMoreInteractions(getNodeExecutablePath, getNpmExecutablePath, getNpxExecutablePath,
+            getYarnExecutablePath);
     }
 
     @Test
@@ -192,7 +219,8 @@ class ResolveExecutionSettingsTest {
         assertThat(executionSettings.getAdditionalExecutablePaths()).containsOnly(npmExecutablePath.getParent());
         assertThat(executionSettings.getExecutablePath()).isEqualTo(npmExecutablePath);
         assertThat(executionSettings.getArguments()).containsExactly("run", "script");
-        verifyNoMoreInteractions(getNodeExecutablePath, getNpmExecutablePath, getYarnExecutablePath);
+        verifyNoMoreInteractions(getNodeExecutablePath, getNpmExecutablePath, getNpxExecutablePath,
+            getYarnExecutablePath);
     }
 
     @Test
@@ -214,6 +242,7 @@ class ResolveExecutionSettingsTest {
             yarnExecutablePath.getParent());
         assertThat(executionSettings.getExecutablePath()).isEqualTo(yarnExecutablePath);
         assertThat(executionSettings.getArguments()).containsExactly("run", "script");
-        verifyNoMoreInteractions(getNodeExecutablePath, getNpmExecutablePath, getYarnExecutablePath);
+        verifyNoMoreInteractions(getNodeExecutablePath, getNpmExecutablePath, getNpxExecutablePath,
+            getYarnExecutablePath);
     }
 }

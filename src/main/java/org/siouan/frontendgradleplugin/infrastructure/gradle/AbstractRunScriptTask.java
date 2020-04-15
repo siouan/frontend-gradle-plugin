@@ -21,8 +21,8 @@ import org.siouan.frontendgradleplugin.infrastructure.gradle.adapter.GradleScrip
 import org.siouan.frontendgradleplugin.infrastructure.gradle.adapter.ScriptProperties;
 
 /**
- * This abstract class provides the reusable logic to run a NPM/Yarn script. Sub-classes must expose inputs and
- * outputs.
+ * This abstract class provides the reusable logic to run a script with an executable. Sub-classes must expose inputs
+ * and outputs.
  */
 public abstract class AbstractRunScriptTask extends DefaultTask {
 
@@ -47,7 +47,7 @@ public abstract class AbstractRunScriptTask extends DefaultTask {
     final DirectoryProperty yarnInstallDirectory;
 
     /**
-     * The script to run with NPM/Yarn.
+     * The command to execute.
      */
     final Property<String> script;
 
@@ -78,14 +78,13 @@ public abstract class AbstractRunScriptTask extends DefaultTask {
     }
 
     @Internal
-    protected ExecutableType getExecutionType() {
-        return yarnEnabled.get() ? ExecutableType.YARN : ExecutableType.NPM;
-    }
+    protected abstract ExecutableType getExecutableType();
 
     /**
-     * Executes the task. If a script has been provided, it is run with NPM/Yarn. Otherwise, the task does nothing.
+     * Executes the task. If a command has been provided, it is run with the selected type of executable. Otherwise, the
+     * task does nothing.
      *
-     * @throws ExecutableNotFoundException When an executable cannot be found (Node, NPM, Yarn).
+     * @throws ExecutableNotFoundException When the executable cannot be found (Node, NPX, NPM, Yarn).
      */
     @TaskAction
     public void execute()
@@ -94,11 +93,10 @@ public abstract class AbstractRunScriptTask extends DefaultTask {
         if (script.isPresent()) {
             Beans
                 .getBean(GradleScriptRunnerAdapter.class)
-                .execute(
-                    new ScriptProperties(getProject(), packageJsonDirectory.map(File::toPath).get(), getExecutionType(),
-                        nodeInstallDirectory.getAsFile().map(File::toPath).get(),
-                        yarnInstallDirectory.getAsFile().map(File::toPath).getOrNull(), script.get(),
-                        Beans.getBean(Platform.class)));
+                .execute(new ScriptProperties(getProject(), packageJsonDirectory.map(File::toPath).get(),
+                    getExecutableType(), nodeInstallDirectory.getAsFile().map(File::toPath).get(),
+                    yarnInstallDirectory.getAsFile().map(File::toPath).getOrNull(), script.get(),
+                    Beans.getBean(Platform.class)));
         }
     }
 }

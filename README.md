@@ -19,7 +19,7 @@ to install/configure the plugin, and build your frontend application.
 - Install frontend dependencies with a configurable NPM/Yarn command (e.g. `npm ci`).
 - Trigger automatically frontend build, check, clean, publish scripts in a `package.json` file from Gradle lifecycle
 tasks.
-- Create custom tasks to run a script with [Node.js][nodejs]/[NPM][npm]/[Yarn][yarn].
+- Create custom tasks to run a command with [Node.js][nodejs]/[NPX][npx]/[NPM][npm]/[Yarn][yarn].
 - Use a provided distribution of [Node.js][nodejs] or [Yarn][yarn].
 
 ## Summary
@@ -37,7 +37,7 @@ tasks.
         - [Standalone frontend project build with preinstalled Node.js/Yarn distributions][example-provided-distribution-project]
   - [Final steps](#final-steps)
     - [Build the frontend](#build-the-frontend)
-    - [Use Node/NPM/Yarn apart from Gradle](#use-nodenpmyarn-apart-from-gradle)
+    - [Use Node/NPX/NPM/Yarn apart from Gradle](#use-nodenpxnpmyarn-apart-from-gradle)
 - [Tasks reference](#tasks-reference)
   - [Task tree](#task-tree)
   - [Install Node.js](#install-nodejs)
@@ -47,8 +47,9 @@ tasks.
   - [Assemble frontend](#assemble-frontend)
   - [Check frontend](#check-frontend)
   - [Publish frontend](#publish-frontend)
-  - [Run custom Node script](#run-custom-node-script)
-  - [Run custom NPM/Yarn script](#run-custom-npmyarn-script)
+  - [Run custom command with `node`](#run-a-custom-command-with-node)
+  - [Run custom command with `npx`](#run-a-custom-command-with-npx)
+  - [Run custom command with `npm` or `yarn`](#run-a-custom-command-with-npm-or-yarn)
 - [Usage guidelines][guidelines]
   - [Packaging a frontend application in a Java artifact][single-java-artifact-packaging]
 - [Special thanks](#special-thanks)
@@ -284,10 +285,10 @@ gradlew build
 If the frontend application shall be packaged in a Java artifact, take a look at [this guide](#how-to-assemble-a-frontend-and-a-java-backend-into-a-single-artifact)
 to configure frontend and backend applications assembling.
 
-#### Use Node/NPM/Yarn apart from Gradle
+#### Use Node/NPX/NPM/Yarn apart from Gradle
  
-If you plan to use the downloaded distributions of [Node.js][nodejs]/[NPM][npm] or [Yarn][yarn] apart from Gradle, apply
-the following steps:
+If you plan to use the downloaded distributions of [Node.js][nodejs]/[NPX][npx]/[NPM][npm] or [Yarn][yarn] apart from
+Gradle, apply the following steps:
 
 - Create a `NODEJS_HOME` environment variable containing the real path set in the `nodeInstallDirectory` property.
 - Add the Node/NPM executables' directory to the `PATH` environment variable:
@@ -408,13 +409,12 @@ must be defined in the project's `package.json` file, and the `publishScript` pr
 corresponding NPM/Yarn command. This task depends on the task `assembleFrontend`, and is skipped if either the
 `assembleScript` property or the `publishScript` property is not set.
 
-### Run custom Node script
+### Run a custom command with `node`
 
-The plugin provides the task type `org.siouan.frontendgradleplugin.infrastructure.gradle.RunNodeTask` that allows
-creating a custom task to launch a frontend script. The `script` property must be set with the corresponding Node
-command. Then, choose whether [Node.js][nodejs] only is required, or if additional dependencies located in the
-`package.json` file should be installed: make the task either depends on `installNode` task or on `installFrontend`
-task.
+The plugin provides the task type `org.siouan.frontendgradleplugin.infrastructure.gradle.RunNode` that allows creating a
+custom task to run a JS script. The `script` property must be set with the corresponding Node command. Then, choose
+whether [Node.js][nodejs] only is required, or if additional dependencies located in the `package.json` file should be
+installed: make the task either depends on `installNode` task or on `installFrontend` task.
 
 The code below shows the configuration required to run a JS `my-custom-script.js` with Node:
 
@@ -422,8 +422,8 @@ The code below shows the configuration required to run a JS `my-custom-script.js
 
 ```groovy
 // build.gradle
-import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNodeTask
-tasks.register('myCustomScript', RunNodeTask) {
+import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNode
+tasks.register('myCustomScript', RunNode) {
     // dependsOn tasks.named('installNode')
     // dependsOn tasks.named('installFrontend')
     script = 'my-custom-script.js'
@@ -434,18 +434,49 @@ tasks.register('myCustomScript', RunNodeTask) {
 
 ```kotlin
 // build.gradle.kts
-import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNodeTask
-tasks.register<RunNodeTask>("myCustomScript") {
+import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNode
+tasks.register<RunNode>("myCustomScript") {
     // dependsOn(tasks.named("installNode"))
     // dependsOn(tasks.named("installFrontend"))
     script.set("my-custom-script.js")
 }
 ```
 
-### Run custom NPM/Yarn script
+### Run a custom command with `npx`
 
-The plugin provides the task type `org.siouan.frontendgradleplugin.infrastructure.gradle.RunScriptTask` that allows
-creating a custom task to launch a frontend script. The `script` property must be set with the corresponding
+The plugin provides the task type `org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpx` that allows creating a
+custom task to run a NPX command. The `script` property must be set with the corresponding [NPX][npx] command. Custom
+tasks will fail if the `yarnEnabled` property is `true`, to prevent unpredictable behaviours with mixed installation of
+dependencies.
+
+The code below shows the configuration required to display NPX version:
+
+- Groovy syntax:
+
+```groovy
+// build.gradle
+import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpx
+tasks.register('npxVersion', RunNpx) {
+    dependsOn tasks.named('installNode')
+    script = '--version'
+}
+```
+
+- Kotlin syntax:
+
+```kotlin
+// build.gradle.kts
+import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpx
+tasks.register<RunNpx>("npxVersion") {
+    dependsOn(tasks.named("installNode"))
+    script.set("--version")
+}
+```
+
+### Run a custom command with `npm` or `yarn`
+
+The plugin provides the task type `org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpmYarn` that allows creating
+a custom task to run any frontend script. The `script` property must be set with the corresponding
 [NPM][npm]/[Yarn][yarn] command.
 
 The code below shows the configuration required to run frontend's end-to-end tests in a custom task:
@@ -454,8 +485,8 @@ The code below shows the configuration required to run frontend's end-to-end tes
 
 ```groovy
 // build.gradle
-import org.siouan.frontendgradleplugin.infrastructure.gradle.RunScriptTask
-tasks.register('e2e', RunScriptTask) {
+import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpmYarn
+tasks.register('e2e', RunNpmYarn) {
     dependsOn tasks.named('installFrontend')
     script = 'run e2e'
 }
@@ -465,8 +496,8 @@ tasks.register('e2e', RunScriptTask) {
 
 ```kotlin
 // build.gradle.kts
-import org.siouan.frontendgradleplugin.infrastructure.gradle.RunScriptTask
-tasks.register<RunScriptTask>("e2e") {
+import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpmYarn
+tasks.register<RunNpmYarn>("e2e") {
     dependsOn(tasks.named("installFrontend"))
     script.set("run e2e")
 }
@@ -503,6 +534,7 @@ With their feedback, plugin improvement is possible. Special thanks to:
 [jetbrains-logo]: <resources/jetbrains-128x128.png> (JetBrains)
 [nodejs]: <https://nodejs.org/> (Node.js)
 [npm]: <https://www.npmjs.com/> (NPM)
+[npx]: <https://github.com/npm/npx> (NPX)
 [release-notes]: <https://github.com/siouan/frontend-gradle-plugin/releases> (Release notes)
 [single-java-artifact-packaging]: <resources/GUIDELINES.md#packaging-a-frontend-application-in-a-java-artifact> (Packaging a frontend application in a Java artifact)
 [task-tree]: <resources/task-tree.png>

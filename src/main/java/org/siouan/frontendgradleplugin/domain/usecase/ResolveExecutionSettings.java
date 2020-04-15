@@ -47,12 +47,16 @@ public class ResolveExecutionSettings {
 
     private final GetNpmExecutablePath getNpmExecutablePath;
 
+    private final GetNpxExecutablePath getNpxExecutablePath;
+
     private final GetYarnExecutablePath getYarnExecutablePath;
 
     public ResolveExecutionSettings(final GetNodeExecutablePath getNodeExecutablePath,
-        final GetNpmExecutablePath getNpmExecutablePath, final GetYarnExecutablePath getYarnExecutablePath) {
+        final GetNpmExecutablePath getNpmExecutablePath, final GetNpxExecutablePath getNpxExecutablePath,
+        final GetYarnExecutablePath getYarnExecutablePath) {
         this.getNodeExecutablePath = getNodeExecutablePath;
         this.getNpmExecutablePath = getNpmExecutablePath;
+        this.getNpxExecutablePath = getNpxExecutablePath;
         this.getYarnExecutablePath = getYarnExecutablePath;
     }
 
@@ -85,6 +89,11 @@ public class ResolveExecutionSettings {
             scriptExecutablePath = getNpmExecutablePath
                 .execute(nodeInstallDirectoryPath, platform)
                 .orElseThrow(ExecutableNotFoundException::newNpmExecutableNotFoundException);
+            break;
+        case NPX:
+            scriptExecutablePath = getNpxExecutablePath
+                .execute(nodeInstallDirectoryPath, platform)
+                .orElseThrow(ExecutableNotFoundException::newNpxExecutableNotFoundException);
             break;
         case YARN:
             scriptExecutablePath = getYarnExecutablePath
