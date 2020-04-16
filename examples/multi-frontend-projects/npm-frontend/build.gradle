@@ -4,6 +4,7 @@ plugins {
 
 frontend {
     nodeVersion = '12.16.2'
+    nodeInstallDirectory = project.nodeInstallDirectory
     assembleScript = 'run build'
     cleanScript = 'run clean'
     checkScript = 'run check'

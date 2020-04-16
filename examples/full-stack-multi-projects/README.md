@@ -1,10 +1,8 @@
-# Full-stack multi-projects build
+# Full-stack multi projects build
 
-This example is introduced with Groovy syntax. Translating it to the Kotlin syntax should be easy thanks to the
-DSL reference introduced [here][dsl-reference].
-
-This project is a basic example to configure such build. It shall be customized to match exactly your needs and
-your contraints.
+_Notes_: this example is introduced with Groovy syntax. Translating it to the Kotlin syntax should be easy thanks to the
+DSL reference introduced [here][dsl-reference]. This is a basic example to configure such build. It shall be customized
+to match exactly the developer needs and contraints.
 
 If you plan to serve your frontend with a Java backend (e.g. a [Spring Boot][spring-boot] application), you will
 probably use other Gradle plugins, such as the [Gradle Java plugin][gradle-java-plugin], the
@@ -14,6 +12,11 @@ your choice.
 In this configuration, you may package your full-stack application as a JAR/WAR artifact. To do so, the frontend must be
 assembled before the backend, and generally provided in a special directory for the backend packaging task (e.g.
 `jar`/`war`/`bootJar`/`bootWar`... tasks). 
+
+Such example demonstrates the following features:
+
+- Definition of a frontend sub-project.
+- Packaging a Java artifact containing frontend artifacts built in another sub-project.
 
 ## Requirements
 

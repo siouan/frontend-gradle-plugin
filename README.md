@@ -33,8 +33,9 @@ tasks.
     - [DSL reference](#dsl-reference)
     - [Examples][examples]
         - [Standalone frontend project build][example-standalone-frontend-project]
-        - [Full-stack multi-projects build][example-full-stack-multi-projects]
         - [Standalone frontend project build with preinstalled Node.js/Yarn distributions][example-provided-distribution-project]
+        - [Multi frontend projects build][example-multi-frontend-projects]
+        - [Full-stack multi projects build][example-full-stack-multi-projects]
   - [Final steps](#final-steps)
     - [Build the frontend](#build-the-frontend)
     - [Use Node/NPX/NPM/Yarn apart from Gradle](#use-nodenpxnpmyarn-apart-from-gradle)
@@ -516,9 +517,10 @@ With their feedback, plugin improvement is possible. Special thanks to:
 @andreaschiona, @byxor, @ChFlick, @ckosloski, @davidkron, @mike-howell, @napstr, @nuth, @rolaca11, @TapaiBalazs
 
 [contributing]: <CONTRIBUTING.md> (Contributing to this project)
-[example-full-stack-multi-projects]: <examples/full-stack-multi-projects/README.md> (Configure a full-stack multi-projects build)
+[example-full-stack-multi-projects]: <examples/full-stack-multi-projects/README.md> (Configure a full-stack multi projects build)
+[example-multi-frontend-projects]: <examples/multi-frontend-projects/README.md> (Configure a multi frontend projects build)
+[example-provided-distribution-project]: <examples/provided-distribution-project/README.md> (Configure a standalone frontend build with preinstalled Node.js/Yarn distributions)
 [example-standalone-frontend-project]: <examples/standalone-frontend-project/README.md> (Configure a standalone frontend build)
-[example-provided-distribution-project]: <examples/provided-distribution-project/README.md> (Configure a build with a preinstalled Node.js/Yarn distribution)
 [examples]: <examples> (Examples)
 [frontend-maven-plugin]: <https://github.com/eirslett/frontend-maven-plugin> (Frontend Maven plugin)
 [gradle]: <https://gradle.org/> (Gradle)

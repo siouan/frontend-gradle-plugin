@@ -1,10 +1,12 @@
 # Standalone frontend project build
 
-This example is introduced with Groovy syntax. Translating it to the Kotlin syntax should be easy thanks to the
-DSL reference introduced [here][dsl-reference].
+_Notes_: this example is introduced with Groovy syntax. Translating it to the Kotlin syntax should be easy thanks to the
+DSL reference introduced [here][dsl-reference]. This is a basic example to configure such build. It shall be customized
+to match exactly the developer needs and contraints.
 
-This project is a basic example to configure such build. It shall be customized to match exactly your needs and
-your contraints.
+Such example demonstrates the following features:
+
+- Definition of a frontend project using [NPM][npm] or [Yarn][yarn].
 
 ## Requirements
 
@@ -16,11 +18,11 @@ A standalone frontend project based on [NPM][npm] or [Yarn][yarn].
 
 ## Description
 
-Source code shows configuration with NPM. To use Yarn instead of NPM, modify the following files:
+Source code shows configuration with [NPM][npm]. To use [Yarn][yarn], modify the following files:
 
 - [`build.gradle`](build.gradle)
 
-Add the following lines after the `nodeVersion` property:
+Add the following lines after the `nodeVersion` property initialization:
 
 ```groovy
 yarnEnabled = true
