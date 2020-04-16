@@ -7,7 +7,7 @@ import org.siouan.frontendgradleplugin.domain.model.ExecutableType;
 /**
  * This abstract class exposes the common I/O properties for ready-to-use tasks that run a frontend script.
  */
-public abstract class AbstractPredefinedRunScriptTask extends AbstractRunScriptTask {
+public abstract class AbstractRunPredefinedCommandTask extends AbstractRunCommandTask {
 
     @Input
     public Property<Boolean> getYarnEnabled() {

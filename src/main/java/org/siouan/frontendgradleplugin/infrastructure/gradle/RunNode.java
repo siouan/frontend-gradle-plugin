@@ -22,7 +22,7 @@ import org.siouan.frontendgradleplugin.domain.model.ExecutableType;
  *
  * @since 1.2.0
  */
-public class RunNode extends AbstractRunScriptTask {
+public class RunNode extends AbstractRunCommandTask {
 
     public RunNode() {
         super();

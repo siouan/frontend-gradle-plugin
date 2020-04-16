@@ -31,6 +31,7 @@ public class GradleLoggerAdapter implements Logger {
      *
      * @param gradleLogger Gradle logger.
      * @param loggingLevel Current logging level.
+     * @param verboseModeEnabled Whether verbose mode is enabled.
      * @param prefix Prefix prepended before each message logged.
      */
     public void init(@Nullable final org.gradle.api.logging.Logger gradleLogger, @Nonnull final LogLevel loggingLevel,

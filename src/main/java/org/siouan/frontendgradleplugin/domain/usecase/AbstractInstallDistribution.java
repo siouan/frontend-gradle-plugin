@@ -60,6 +60,13 @@ public abstract class AbstractInstallDistribution {
      * </ul>
      *
      * @param installSettings Settings to install the distribution.
+     * @throws UnsupportedDistributionIdException If the type of distribution to install is not supported.
+     * @throws UnsupportedDistributionArchiveException If the distribution file type is not supported.
+     * @throws UnsupportedPlatformException If the underlying platform is not supported.
+     * @throws InvalidDistributionUrlException If the URL to download the distribution is not valid.
+     * @throws DistributionValidatorException If the downloaded distribution file is not valid.
+     * @throws ArchiverException If an error occurs in the archiver exploding the distribution.
+     * @throws IOException If an I/O error occurs.
      */
     public void execute(@Nonnull final InstallSettings installSettings)
         throws UnsupportedDistributionArchiveException, ArchiverException, UnsupportedPlatformException,

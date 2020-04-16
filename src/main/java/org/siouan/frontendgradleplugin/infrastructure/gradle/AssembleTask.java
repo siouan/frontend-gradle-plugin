@@ -7,7 +7,7 @@ import org.gradle.api.tasks.Optional;
 /**
  * This task assembles frontend artifacts.
  */
-public class AssembleTask extends AbstractPredefinedRunScriptTask {
+public class AssembleTask extends AbstractRunPredefinedCommandTask {
 
     @Input
     @Optional

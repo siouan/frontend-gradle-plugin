@@ -6,9 +6,7 @@ import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.siouan.frontendgradleplugin.domain.exception.ExecutableNotFoundException;
 import org.siouan.frontendgradleplugin.domain.model.ExecutableType;
-import org.siouan.frontendgradleplugin.infrastructure.BeanInstanciationException;
-import org.siouan.frontendgradleplugin.infrastructure.TooManyCandidateBeansException;
-import org.siouan.frontendgradleplugin.infrastructure.ZeroOrMultiplePublicConstructorsException;
+import org.siouan.frontendgradleplugin.infrastructure.BeanRegistryException;
 
 /**
  * Task type allowing developers to implement custom task and run a {@code npx} command. To do so, the {@code script}
@@ -26,7 +24,7 @@ import org.siouan.frontendgradleplugin.infrastructure.ZeroOrMultiplePublicConstr
  *
  * @since 1.2.0
  */
-public class RunNpx extends AbstractRunScriptTask {
+public class RunNpx extends AbstractRunCommandTask {
 
     public RunNpx() {
         super();
@@ -48,9 +46,7 @@ public class RunNpx extends AbstractRunScriptTask {
     }
 
     @Override
-    public void execute()
-        throws TooManyCandidateBeansException, BeanInstanciationException, ExecutableNotFoundException,
-        ZeroOrMultiplePublicConstructorsException {
+    public void execute() throws BeanRegistryException, ExecutableNotFoundException {
         if (yarnEnabled.get()) {
             throw new UnsupportedOperationException("Running a NPX command is not supported when Yarn is enabled"
                 + " to avoid mixing dependencies from both package managers. An equivalent command with Yarn may be"

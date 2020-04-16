@@ -9,7 +9,7 @@ import org.gradle.api.tasks.Optional;
  *
  * @since 1.4.0
  */
-public class PublishTask extends AbstractPredefinedRunScriptTask {
+public class PublishTask extends AbstractRunPredefinedCommandTask {
 
     @Input
     @Optional

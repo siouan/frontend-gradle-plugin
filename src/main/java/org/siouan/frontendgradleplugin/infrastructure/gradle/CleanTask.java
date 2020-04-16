@@ -7,7 +7,7 @@ import org.gradle.api.tasks.Optional;
 /**
  * This task cleans frontend resources, using a custom script.
  */
-public class CleanTask extends AbstractPredefinedRunScriptTask {
+public class CleanTask extends AbstractRunPredefinedCommandTask {
 
     @Input
     @Optional

@@ -16,8 +16,9 @@ import org.siouan.frontendgradleplugin.domain.util.PathUtils;
 import org.siouan.frontendgradleplugin.infrastructure.exception.UnexpectedEofException;
 
 /**
- * A non thread-safe archiver that deals with TAR archives. When exploding archives, the exploder tries to restore
- * symbolic links and Unix permissions of each entry in the archive. However, on Windows O/S:
+ * A non thread-safe archiver that deals with TAR archives and uses a 1 KB buffer to extract entries. When exploding
+ * archives, the exploder tries to restore symbolic links and Unix permissions of each entry in the archive. However, on
+ * Windows O/S:
  * <ul>
  * <li>Unix permissions are ignored.</li>
  * <li>Exploding will probably fail if the archive contains symbolic links, and the JVM does not run with administrator
@@ -30,9 +31,6 @@ public class TarArchiver extends AbstractArchiver<TarArchiverContext, TarEntry> 
 
     private final byte[] buffer;
 
-    /**
-     * Builds an archiver with an internal buffer of 1 KB to extract entries.
-     */
     public TarArchiver(final FileManager fileManager) {
         super(fileManager);
         this.buffer = new byte[1024];

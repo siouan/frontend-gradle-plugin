@@ -40,6 +40,9 @@ public class DeployDistribution {
      * Deploys a distribution by exploding the archive and cleaning all unnecessary files.
      *
      * @param deploymentSettings Settings to deploy the archive content in a target directory.
+     * @throws UnsupportedDistributionArchiveException If the distribution file type is not supported.
+     * @throws ArchiverException If an error occurs in the archiver exploding the distribution.
+     * @throws IOException If an I/O error occurs.
      */
     public void execute(@Nonnull final DeploymentSettings deploymentSettings)
         throws UnsupportedDistributionArchiveException, ArchiverException, IOException {

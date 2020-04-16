@@ -19,7 +19,7 @@ import org.siouan.frontendgradleplugin.domain.model.ExecutableType;
  * }
  * </pre>
  */
-public class RunNpmYarn extends AbstractRunScriptTask {
+public class RunNpmYarn extends AbstractRunCommandTask {
 
     public RunNpmYarn() {
         super();

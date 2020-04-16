@@ -19,10 +19,8 @@ import org.siouan.frontendgradleplugin.domain.exception.UnsupportedPlatformExcep
 import org.siouan.frontendgradleplugin.domain.model.InstallSettings;
 import org.siouan.frontendgradleplugin.domain.model.Platform;
 import org.siouan.frontendgradleplugin.domain.usecase.InstallNodeDistribution;
-import org.siouan.frontendgradleplugin.infrastructure.BeanInstanciationException;
+import org.siouan.frontendgradleplugin.infrastructure.BeanRegistryException;
 import org.siouan.frontendgradleplugin.infrastructure.Beans;
-import org.siouan.frontendgradleplugin.infrastructure.TooManyCandidateBeansException;
-import org.siouan.frontendgradleplugin.infrastructure.ZeroOrMultiplePublicConstructorsException;
 
 /**
  * Task that downloads and installs a Node distribution.
@@ -68,13 +66,21 @@ public class NodeInstallTask extends DefaultTask {
     }
 
     /**
-     * Executes the task: downloads and installs the distribution.
+     * Installs a Node.js distribution.
+     *
+     * @throws BeanRegistryException If a component cannot be instanciated.
+     * @throws UnsupportedDistributionIdException If the type of distribution to install is not supported.
+     * @throws UnsupportedDistributionArchiveException If the distribution file type is not supported.
+     * @throws UnsupportedPlatformException If the underlying platform is not supported.
+     * @throws InvalidDistributionUrlException If the URL to download the distribution is not valid.
+     * @throws DistributionValidatorException If the downloaded distribution file is not valid.
+     * @throws ArchiverException If an error occurs in the archiver exploding the distribution.
+     * @throws IOException If an I/O error occurs.
      */
     @TaskAction
-    public void execute() throws BeanInstanciationException, ArchiverException, UnsupportedDistributionArchiveException,
-        UnsupportedPlatformException, TooManyCandidateBeansException, ZeroOrMultiplePublicConstructorsException,
-        UnsupportedDistributionIdException, InvalidDistributionUrlException, DistributionValidatorException,
-        IOException {
+    public void execute() throws BeanRegistryException, ArchiverException, UnsupportedDistributionArchiveException,
+        UnsupportedPlatformException, UnsupportedDistributionIdException, InvalidDistributionUrlException,
+        DistributionValidatorException, IOException {
         final URL distributionUrl = nodeDistributionUrl.isPresent() ? new URL(nodeDistributionUrl.get()) : null;
         Beans
             .getBean(InstallNodeDistribution.class)

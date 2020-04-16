@@ -15,24 +15,15 @@ public final class Beans {
     private Beans() {
     }
 
-    /**
-     * @see BeanRegistry#getBean(Class)
-     */
     public static <T> T getBean(@Nonnull final Class<T> beanClass)
         throws BeanInstanciationException, TooManyCandidateBeansException, ZeroOrMultiplePublicConstructorsException {
         return REGISTRY.getBean(beanClass);
     }
 
-    /**
-     * @see BeanRegistry#registerBean(Class)
-     */
     public static <T> void registerBean(@Nonnull final Class<T> beanClass) {
         REGISTRY.registerBean(beanClass);
     }
 
-    /**
-     * @see BeanRegistry#registerBean(Object)
-     */
     public static <T> void registerBean(@Nonnull final T bean) {
         REGISTRY.registerBean(bean);
     }

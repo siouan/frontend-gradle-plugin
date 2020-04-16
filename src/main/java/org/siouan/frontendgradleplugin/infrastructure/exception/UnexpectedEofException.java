@@ -15,6 +15,8 @@ public class UnexpectedEofException extends IOException {
      * Builds an exception with the given entry name.
      *
      * @param entryName Entry name.
+     * @param entrySize Entry size.
+     * @param bytesRead Number of bytes read when the EOF was encountered.
      */
     public UnexpectedEofException(@Nonnull final String entryName, final long entrySize, final int bytesRead) {
         super("Unexpected EOF when reading entry '" + entryName + "': " + bytesRead + " bytes read / " + entrySize

@@ -13,18 +13,16 @@ import org.gradle.api.tasks.TaskAction;
 import org.siouan.frontendgradleplugin.domain.exception.ExecutableNotFoundException;
 import org.siouan.frontendgradleplugin.domain.model.ExecutableType;
 import org.siouan.frontendgradleplugin.domain.model.Platform;
-import org.siouan.frontendgradleplugin.infrastructure.BeanInstanciationException;
+import org.siouan.frontendgradleplugin.infrastructure.BeanRegistryException;
 import org.siouan.frontendgradleplugin.infrastructure.Beans;
-import org.siouan.frontendgradleplugin.infrastructure.TooManyCandidateBeansException;
-import org.siouan.frontendgradleplugin.infrastructure.ZeroOrMultiplePublicConstructorsException;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.adapter.GradleScriptRunnerAdapter;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.adapter.ScriptProperties;
 
 /**
- * This abstract class provides the reusable logic to run a script with an executable. Sub-classes must expose inputs
+ * This abstract class provides the reusable logic to run a command with an executable. Sub-classes must expose inputs
  * and outputs.
  */
-public abstract class AbstractRunScriptTask extends DefaultTask {
+public abstract class AbstractRunCommandTask extends DefaultTask {
 
     /**
      * Directory where the 'package.json' file is located.
@@ -51,7 +49,7 @@ public abstract class AbstractRunScriptTask extends DefaultTask {
      */
     final Property<String> script;
 
-    AbstractRunScriptTask() {
+    AbstractRunCommandTask() {
         packageJsonDirectory = getProject().getObjects().property(File.class);
         nodeInstallDirectory = getProject().getObjects().directoryProperty();
         yarnEnabled = getProject().getObjects().property(Boolean.class);
@@ -85,11 +83,10 @@ public abstract class AbstractRunScriptTask extends DefaultTask {
      * task does nothing.
      *
      * @throws ExecutableNotFoundException When the executable cannot be found (Node, NPX, NPM, Yarn).
+     * @throws BeanRegistryException If a component cannot be instanciated.
      */
     @TaskAction
-    public void execute()
-        throws ExecutableNotFoundException, BeanInstanciationException, TooManyCandidateBeansException,
-        ZeroOrMultiplePublicConstructorsException {
+    public void execute() throws ExecutableNotFoundException, BeanRegistryException {
         if (script.isPresent()) {
             Beans
                 .getBean(GradleScriptRunnerAdapter.class)

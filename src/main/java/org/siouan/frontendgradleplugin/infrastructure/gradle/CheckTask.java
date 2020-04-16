@@ -7,7 +7,7 @@ import org.gradle.api.tasks.Optional;
 /**
  * This task executes frontend tests.
  */
-public class CheckTask extends AbstractPredefinedRunScriptTask {
+public class CheckTask extends AbstractRunPredefinedCommandTask {
 
     @Input
     @Optional

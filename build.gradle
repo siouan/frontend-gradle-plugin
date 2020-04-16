@@ -57,8 +57,6 @@ gradlePlugin {
     plugins {
         frontend {
             id = 'org.siouan.frontend'
-            displayName = 'Frontend Gradle plugin'
-            description = 'Build Node.js, NPM, Yarn applications with Gradle.'
             implementationClass = 'org.siouan.frontendgradleplugin.FrontendGradlePlugin'
         }
     }
@@ -67,5 +65,12 @@ gradlePlugin {
 pluginBundle {
     website = 'https://github.com/Siouan/frontend-gradle-plugin'
     vcsUrl = 'https://github.com/Siouan/frontend-gradle-plugin.git'
-    tags = ['node', 'nodejs', 'npm', 'yarn', 'frontend']
+
+    plugins {
+        frontend {
+            displayName = 'Frontend Gradle plugin'
+            description = 'Build Node.js, NPM, Yarn applications with Gradle.'
+            tags = ['node', 'nodejs', 'npm', 'npx', 'yarn', 'frontend']
+        }
+    }
 }

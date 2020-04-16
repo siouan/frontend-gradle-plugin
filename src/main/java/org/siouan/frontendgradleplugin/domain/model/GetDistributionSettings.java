@@ -40,8 +40,11 @@ public class GetDistributionSettings {
     /**
      * Builds settings to get a distribution.
      *
-     * @param distributionUrl URL of a resource.
-     * @param temporaryDirectoryPath Temporary directory.
+     * @param distributionId Distribution ID.
+     * @param platform Underlying platform.
+     * @param version Version.
+     * @param distributionUrl URL to download the distribution.
+     * @param temporaryDirectoryPath Path to a temporary directory.
      */
     public GetDistributionSettings(@Nonnull DistributionId distributionId, @Nonnull final Platform platform,
         @Nonnull final String version, @Nullable final URL distributionUrl,

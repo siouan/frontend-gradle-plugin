@@ -66,6 +66,7 @@ public abstract class AbstractArchiver<C extends ArchiverContext, E extends Arch
      * @param settings Explode settings.
      * @return Context.
      * @throws ArchiverException If the context cannot be initialized.
+     * @throws IOException If an I/O error occurs.
      */
     @Nonnull
     protected abstract C initializeContext(@Nonnull ExplodeSettings settings) throws ArchiverException, IOException;
