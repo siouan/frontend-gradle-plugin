@@ -515,10 +515,10 @@ With their feedback, plugin improvement is possible. Special thanks to:
 @andreaschiona, @byxor, @ChFlick, @ckosloski, @davidkron, @mike-howell, @napstr, @nuth, @rolaca11, @TapaiBalazs
 
 [contributing]: <CONTRIBUTING.md> (Contributing to this project)
-[example-full-stack-multi-projects]: <examples/full-stack-multi-projects/README.md> (Configure a full-stack multi projects build)
-[example-multi-frontend-projects]: <examples/multi-frontend-projects/README.md> (Configure a multi frontend projects build)
-[example-provided-distribution-project]: <examples/provided-distribution-project/README.md> (Configure a standalone frontend build with preinstalled Node.js/Yarn distributions)
-[example-standalone-frontend-project]: <examples/standalone-frontend-project/README.md> (Configure a standalone frontend build)
+[example-full-stack-multi-projects]: <examples/full-stack-multi-projects> (Configure a full-stack multi projects build)
+[example-multi-frontend-projects]: <examples/multi-frontend-projects> (Configure a multi frontend projects build)
+[example-provided-distribution-project]: <examples/provided-distribution-project> (Configure a standalone frontend build with preinstalled Node.js/Yarn distributions)
+[example-standalone-frontend-project]: <examples/standalone-frontend-project> (Configure a standalone frontend build)
 [examples]: <examples> (Examples)
 [frontend-maven-plugin]: <https://github.com/eirslett/frontend-maven-plugin> (Frontend Maven plugin)
 [gradle]: <https://gradle.org/> (Gradle)
@@ -526,7 +526,6 @@ With their feedback, plugin improvement is possible. Special thanks to:
 [gradle-build-script-block]: <https://docs.gradle.org/current/userguide/plugins.html#sec:applying_plugins_buildscript> (Gradle build script block)
 [gradle-dsl]: <https://docs.gradle.org/current/userguide/plugins.html#sec:plugins_block> (Gradle DSL)
 [gradle-incremental-build]: <https://guides.gradle.org/performance/#incremental_build> (Gradle incremental build)
-[guidelines]: <resources/GUIDELINES.md> (Usage guidelines)
 [intellij-idea]: <https://www.jetbrains.com/idea/> (IntelliJ IDEA)
 [intellij-idea-logo]: <resources/intellij-idea-128x128.png> (IntelliJ IDEA)
 [jdk]: <https://docs.oracle.com/en/java/javase/> (Java Development Kit)
@@ -536,6 +535,5 @@ With their feedback, plugin improvement is possible. Special thanks to:
 [npm]: <https://www.npmjs.com/> (NPM)
 [npx]: <https://github.com/npm/npx> (NPX)
 [release-notes]: <https://github.com/siouan/frontend-gradle-plugin/releases> (Release notes)
-[single-java-artifact-packaging]: <resources/GUIDELINES.md#packaging-a-frontend-application-in-a-java-artifact> (Packaging a frontend application in a Java artifact)
 [task-tree]: <resources/task-tree.png>
 [yarn]: <https://yarnpkg.com/> (Yarn)
