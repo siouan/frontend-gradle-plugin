@@ -34,15 +34,15 @@ class GradleLoggerAdapterTest {
     }
 
     @Test
-    void shouldDoNotLogDebugMessageWhenNotInitialized() {
+    void shouldNotLogDebugMessageWhenNotInitialized() {
         adapter.debug(MESSAGE, PARAMETER_1, PARAMETER_2);
 
         verifyNoMoreInteractions(logger);
     }
 
     @Test
-    void shouldDelegateDebugToGradleLogger() {
-        adapter.init(logger, LOGGING_LEVEL, PREFIX);
+    void shouldDelegateDebugLoggingToGradleLogger() {
+        adapter.init(logger, LOGGING_LEVEL, false, PREFIX);
 
         adapter.debug(MESSAGE, PARAMETER_1, PARAMETER_2);
 
@@ -51,30 +51,39 @@ class GradleLoggerAdapterTest {
     }
 
     @Test
+    void shouldNotLogInfoMessageWhenNotInitialized() {
+        adapter.info(MESSAGE, PARAMETER_1, PARAMETER_2);
+
+        verifyNoMoreInteractions(logger);
+    }
+
+    @Test
+    void shouldDelegateInfoLoggingToGradleLoggerWithSameLevelWhenVerboseModeIsNotEnabled() {
+        adapter.init(logger, LOGGING_LEVEL, false, PREFIX);
+
+        adapter.info(MESSAGE, PARAMETER_1, PARAMETER_2);
+
+        verify(logger).info(PREFIX + MESSAGE, new Object[] {PARAMETER_1, PARAMETER_2});
+        verifyNoMoreInteractions(logger);
+    }
+
+    @Test
+    void shouldDelegateInfoLoggingToGradleLoggerWithCurrentLevelWhenVerboseModeIsEnabled() {
+        adapter.init(logger, LOGGING_LEVEL, true, PREFIX);
+
+        adapter.info(MESSAGE, PARAMETER_1, PARAMETER_2);
+
+        verify(logger).log(LOGGING_LEVEL, PREFIX + MESSAGE, PARAMETER_1, PARAMETER_2);
+        verifyNoMoreInteractions(logger);
+    }
+
+    @Test
     void shouldLogMessageWithoutPrefix() {
-        adapter.init(logger, LOGGING_LEVEL, null);
+        adapter.init(logger, LOGGING_LEVEL, false, null);
 
         adapter.debug(MESSAGE, PARAMETER_1, PARAMETER_2);
 
         verify(logger).debug(MESSAGE, new Object[] {PARAMETER_1, PARAMETER_2});
-        verifyNoMoreInteractions(logger);
-    }
-
-    @Test
-    void shouldDoNotLogMessageWhenGradleLoggerNotDefined() {
-        adapter.debug(MESSAGE, PARAMETER_1, PARAMETER_2);
-        adapter.log(MESSAGE, PARAMETER_1, PARAMETER_2);
-
-        verifyNoMoreInteractions(logger);
-    }
-
-    @Test
-    void shouldDelegateDefaultLogToGradleLogger() {
-        adapter.init(logger, LOGGING_LEVEL, PREFIX);
-
-        adapter.log(MESSAGE, PARAMETER_1, PARAMETER_2);
-
-        verify(logger).log(LOGGING_LEVEL, PREFIX + MESSAGE, PARAMETER_1, PARAMETER_2);
         verifyNoMoreInteractions(logger);
     }
 }

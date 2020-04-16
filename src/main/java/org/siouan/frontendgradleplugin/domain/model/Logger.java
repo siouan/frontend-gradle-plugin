@@ -19,10 +19,10 @@ public interface Logger {
     void debug(@Nonnull String message, @Nullable Object... parameters);
 
     /**
-     * Logs a message with the default level.
+     * Logs a message with a INFO level.
      *
      * @param message Message.
      * @param parameters Message parameters.
      */
-    void log(@Nonnull String message, @Nullable Object... parameters);
+    void info(@Nonnull String message, @Nullable Object... parameters);
 }

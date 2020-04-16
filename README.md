@@ -232,12 +232,12 @@ frontend {
     // the 'installFrontend' task is executed.
     packageJsonDirectory = file("$projectDir")
 
-    // [OPTIONAL] Default level used by the plugin to log messages in Gradle. This property allows
-    // to set a specific level for this plugin only. It does not take precedence over Gradle
-    // logging level at execution, i.e. it must be higher or equal than the logging level set on
-    // the command line so as messages are visible. The plugin also logs some messages with a
-    // specific level, independently from this setting (e.g. debugging data).
-    loggingLevel = LogLevel.LIFECYCLE
+    // [OPTIONAL] Whether messages logged by the plugin in Gradle with INFO level shall be visible
+    // whatever the active Gradle logging level is. This property allows to track the plugin
+    // execution without activating Gradle INFO or DEBUG levels that may be too much verbose on a
+    // global point of view. The plugin also logs some messages at lower levels, (e.g. debugging
+    // data). The visibility of these messages does not depend on this property.
+    verboseModeEnabled = false
 }
 ```
 
@@ -264,7 +264,7 @@ frontend {
     publishScript.set("run publish")
 
     packageJsonDirectory.set(project.layout.projectDirectory)
-    loggingLevel.set(LogLevel.LIFECYCLE)
+    verboseModeEnabled.set(false)
 }
 ```
 

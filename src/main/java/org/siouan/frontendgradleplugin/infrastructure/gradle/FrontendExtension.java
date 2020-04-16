@@ -4,7 +4,6 @@ import java.io.File;
 
 import org.gradle.api.Project;
 import org.gradle.api.file.DirectoryProperty;
-import org.gradle.api.logging.LogLevel;
 import org.gradle.api.provider.Property;
 
 /**
@@ -92,9 +91,11 @@ public class FrontendExtension {
     private final Property<File> packageJsonDirectory;
 
     /**
-     * Default logging level.
+     * Whether verbose mode is enabled.
+     *
+     * @since 1.4.1
      */
-    private final Property<LogLevel> loggingLevel;
+    private final Property<Boolean> verboseModeEnabled;
 
     public FrontendExtension(final Project project) {
         nodeDistributionProvided = project.getObjects().property(Boolean.class);
@@ -112,7 +113,7 @@ public class FrontendExtension {
         checkScript = project.getObjects().property(String.class);
         publishScript = project.getObjects().property(String.class);
         packageJsonDirectory = project.getObjects().property(File.class);
-        loggingLevel = project.getObjects().property(LogLevel.class);
+        verboseModeEnabled = project.getObjects().property(Boolean.class);
     }
 
     public Property<Boolean> getNodeDistributionProvided() {
@@ -175,7 +176,7 @@ public class FrontendExtension {
         return packageJsonDirectory;
     }
 
-    public Property<LogLevel> getLoggingLevel() {
-        return loggingLevel;
+    public Property<Boolean> getVerboseModeEnabled() {
+        return verboseModeEnabled;
     }
 }

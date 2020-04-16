@@ -6,7 +6,6 @@ import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
-import org.gradle.api.logging.LogLevel;
 import org.gradle.api.plugins.BasePlugin;
 import org.gradle.api.publish.plugins.PublishingPlugin;
 import org.gradle.api.tasks.TaskContainer;
@@ -129,7 +128,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
             .convention(project.getLayout().getProjectDirectory().dir(DEFAULT_YARN_INSTALL_DIRNAME));
         extension.getInstallScript().convention(DEFAULT_INSTALL_SCRIPT);
         extension.getPackageJsonDirectory().convention(project.getLayout().getProjectDirectory().getAsFile());
-        extension.getLoggingLevel().convention(LogLevel.LIFECYCLE);
+        extension.getVerboseModeEnabled().convention(false);
 
         final TaskContainer taskContainer = project.getTasks();
         taskContainer.register(NODE_INSTALL_TASK_NAME, NodeInstallTask.class,

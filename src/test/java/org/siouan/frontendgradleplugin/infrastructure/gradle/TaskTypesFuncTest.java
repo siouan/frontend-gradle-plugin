@@ -108,7 +108,6 @@ class TaskTypesFuncTest {
         properties.put("nodeVersion", "12.16.1");
         properties.put("nodeInstallDirectory", projectDirectoryPath.resolve("node-dist"));
         properties.put("packageJsonDirectory", packageJsonDirectoryPath);
-        properties.put("loggingLevel", LogLevel.INFO);
         final String runNodeTaskName = "myNodeTask";
         final String runNodeTaskDefinition =
             "tasks.register('" + runNodeTaskName + "', " + RunNode.class.getName() + ") {\n"
