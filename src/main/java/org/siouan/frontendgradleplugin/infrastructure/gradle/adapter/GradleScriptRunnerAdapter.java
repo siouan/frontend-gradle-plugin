@@ -40,7 +40,7 @@ public class GradleScriptRunnerAdapter {
 
         scriptProperties.getProject().exec(new ExecSpecAction(executionSettings, execSpec -> {
             logger.debug("Execution environment: {}", execSpec.getEnvironment());
-            logger.log("Running '{}' with arguments: [{}]", execSpec.getExecutable(),
+            logger.info("Running '{}' with arguments: [{}]", execSpec.getExecutable(),
                 String.join("], [", execSpec.getArgs()));
         })).rethrowFailure().assertNormalExitValue();
     }

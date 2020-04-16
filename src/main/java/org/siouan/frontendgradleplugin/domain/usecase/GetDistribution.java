@@ -79,7 +79,7 @@ public class GetDistribution {
         final URL distributionUrl = distributionUrlResolver.execute(distributionDefinition);
 
         // Download the distribution
-        logger.log("Downloading distribution at '{}'", distributionUrl);
+        logger.info("Downloading distribution at '{}'", distributionUrl);
         final Path distributionFilePath = getDistributionSettings
             .getTemporaryDirectoryPath()
             .resolve(resolveDistributionFileName(distributionUrl));

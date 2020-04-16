@@ -48,7 +48,7 @@ public class DeployDistribution {
         // Explodes the archive
         final Path extractDirectoryPath = fileManager.createDirectory(deploymentSettings.getExtractDirectoryPath());
 
-        logger.log("Exploding distribution into '{}'", extractDirectoryPath);
+        logger.info("Exploding distribution into '{}'", extractDirectoryPath);
         final ExplodeSettings explodeSettings = new ExplodeSettings(deploymentSettings.getPlatform(),
             distributionFilePath, extractDirectoryPath);
         archiverProvider
@@ -56,7 +56,7 @@ public class DeployDistribution {
             .orElseThrow(() -> new UnsupportedDistributionArchiveException(distributionFilePath))
             .explode(explodeSettings);
 
-        logger.log("Moving distribution into '{}'", deploymentSettings.getInstallDirectoryPath());
+        logger.info("Moving distribution into '{}'", deploymentSettings.getInstallDirectoryPath());
         // Removes the root directory of exploded content, if any.
         final Set<Path> distributionFilePaths;
         try (final Stream<Path> childFilePaths = fileManager.list(extractDirectoryPath)) {
@@ -72,7 +72,7 @@ public class DeployDistribution {
         }
         fileManager.moveFileTree(distributionRootDirectoryPath, deploymentSettings.getInstallDirectoryPath());
 
-        logger.log("Removing explode directory '{}'", extractDirectoryPath);
+        logger.info("Removing explode directory '{}'", extractDirectoryPath);
         fileManager.deleteIfExists(extractDirectoryPath);
     }
 }

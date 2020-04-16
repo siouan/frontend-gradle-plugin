@@ -8,9 +8,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import org.gradle.StartParameter;
+import org.gradle.api.Project;
 import org.gradle.api.Task;
+import org.gradle.api.invocation.Gradle;
 import org.gradle.api.logging.LogLevel;
 import org.gradle.api.logging.Logger;
+import org.gradle.api.logging.LoggingManager;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.TaskState;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,19 +34,31 @@ class TaskLoggerConfigurerTest {
 
     private static final String TASK_NAME = "task";
 
-    private static final LogLevel LOGGING_LEVEL = LogLevel.LIFECYCLE;
+    private static final LogLevel LOGGING_LEVEL = LogLevel.WARN;
 
     @Mock
-    private Property<LogLevel> loggingLevelProperty;
-
-    @Mock
-    private Task task;
+    private Property<Boolean> verboseModeEnabled;
 
     @Mock
     private BeanRegistry beanRegistry;
 
     @Mock
     private Logger gradleLogger;
+
+    @Mock
+    private Task task;
+
+    @Mock
+    private LoggingManager taskLoggingManager;
+
+    @Mock
+    private LoggingManager projectLoggingManager;
+
+    @Mock
+    private Project project;
+
+    @Mock
+    private Gradle gradle;
 
     @Mock
     private GradleLoggerAdapter adapter;
@@ -62,8 +78,8 @@ class TaskLoggerConfigurerTest {
         throws BeanInstanciationException, TooManyCandidateBeansException, ZeroOrMultiplePublicConstructorsException {
         when(task.getName()).thenReturn(TASK_NAME);
         when(task.getLogger()).thenReturn(gradleLogger);
-        when(extension.getLoggingLevel()).thenReturn(loggingLevelProperty);
-        when(loggingLevelProperty.get()).thenReturn(LOGGING_LEVEL);
+        when(extension.getVerboseModeEnabled()).thenReturn(verboseModeEnabled);
+        when(verboseModeEnabled.get()).thenReturn(false);
         final ZeroOrMultiplePublicConstructorsException expectedException = mock(
             ZeroOrMultiplePublicConstructorsException.class);
         when(beanRegistry.getBean(GradleLoggerAdapter.class)).thenThrow(expectedException);
@@ -72,28 +88,79 @@ class TaskLoggerConfigurerTest {
             .isInstanceOf(RuntimeException.class)
             .hasCause(expectedException);
 
-        verifyNoMoreInteractions(adapter, beanRegistry);
+        verifyNoMoreInteractions(beanRegistry, task, taskLoggingManager, project, projectLoggingManager, gradle,
+            adapter);
     }
 
     @Test
-    void shouldInitLoggerBeforeTaskExecution()
+    void shouldInitLoggerBeforeTaskExecutionWithTaskLevel()
         throws BeanInstanciationException, TooManyCandidateBeansException, ZeroOrMultiplePublicConstructorsException {
         when(task.getName()).thenReturn(TASK_NAME);
         when(task.getLogger()).thenReturn(gradleLogger);
-        when(extension.getLoggingLevel()).thenReturn(loggingLevelProperty);
-        when(loggingLevelProperty.get()).thenReturn(LOGGING_LEVEL);
+        when(task.getLogging()).thenReturn(taskLoggingManager);
+        when(taskLoggingManager.getLevel()).thenReturn(LOGGING_LEVEL);
+        when(extension.getVerboseModeEnabled()).thenReturn(verboseModeEnabled);
+        when(verboseModeEnabled.get()).thenReturn(true);
         when(beanRegistry.getBean(GradleLoggerAdapter.class)).thenReturn(adapter);
 
         taskLoggerConfigurer.beforeExecute(task);
 
-        verify(adapter).init(eq(gradleLogger), eq(LOGGING_LEVEL), anyString());
-        verifyNoMoreInteractions(adapter, beanRegistry);
+        verify(adapter).init(eq(gradleLogger), eq(LOGGING_LEVEL), eq(true), anyString());
+        verifyNoMoreInteractions(beanRegistry, task, taskLoggingManager, project, projectLoggingManager, gradle,
+            adapter);
+    }
+
+    @Test
+    void shouldInitLoggerBeforeTaskExecutionWithProjectLevel()
+        throws BeanInstanciationException, TooManyCandidateBeansException, ZeroOrMultiplePublicConstructorsException {
+        when(task.getName()).thenReturn(TASK_NAME);
+        when(task.getLogger()).thenReturn(gradleLogger);
+        when(task.getLogging()).thenReturn(taskLoggingManager);
+        when(task.getProject()).thenReturn(project);
+        when(project.getLogging()).thenReturn(projectLoggingManager);
+        when(projectLoggingManager.getLevel()).thenReturn(LOGGING_LEVEL);
+        when(extension.getVerboseModeEnabled()).thenReturn(verboseModeEnabled);
+        when(verboseModeEnabled.get()).thenReturn(true);
+        when(beanRegistry.getBean(GradleLoggerAdapter.class)).thenReturn(adapter);
+
+        taskLoggerConfigurer.beforeExecute(task);
+
+        verify(adapter).init(eq(gradleLogger), eq(LOGGING_LEVEL), eq(true), anyString());
+        verify(taskLoggingManager).getLevel();
+        verifyNoMoreInteractions(beanRegistry, task, taskLoggingManager, project, projectLoggingManager, gradle,
+            adapter);
+    }
+
+    @Test
+    void shouldInitLoggerBeforeTaskExecutionWithGradleStartLevel()
+        throws BeanInstanciationException, TooManyCandidateBeansException, ZeroOrMultiplePublicConstructorsException {
+        when(task.getName()).thenReturn(TASK_NAME);
+        when(task.getLogger()).thenReturn(gradleLogger);
+        when(task.getLogging()).thenReturn(taskLoggingManager);
+        when(task.getProject()).thenReturn(project);
+        when(project.getLogging()).thenReturn(projectLoggingManager);
+        when(project.getGradle()).thenReturn(gradle);
+        final StartParameter startParameter = new StartParameter();
+        startParameter.setLogLevel(LOGGING_LEVEL);
+        when(gradle.getStartParameter()).thenReturn(startParameter);
+        when(extension.getVerboseModeEnabled()).thenReturn(verboseModeEnabled);
+        when(verboseModeEnabled.get()).thenReturn(true);
+        when(beanRegistry.getBean(GradleLoggerAdapter.class)).thenReturn(adapter);
+
+        taskLoggerConfigurer.beforeExecute(task);
+
+        verify(adapter).init(eq(gradleLogger), eq(LOGGING_LEVEL), eq(true), anyString());
+        verify(taskLoggingManager).getLevel();
+        verify(projectLoggingManager).getLevel();
+        verifyNoMoreInteractions(beanRegistry, task, taskLoggingManager, project, projectLoggingManager, gradle,
+            adapter);
     }
 
     @Test
     void shouldDoNothingAfterTaskExecution() {
         taskLoggerConfigurer.afterExecute(task, mock(TaskState.class));
 
-        verifyNoMoreInteractions(adapter, beanRegistry);
+        verifyNoMoreInteractions(beanRegistry, task, taskLoggingManager, project, projectLoggingManager, gradle,
+            adapter);
     }
 }

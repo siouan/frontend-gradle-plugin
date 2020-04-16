@@ -56,13 +56,13 @@ public class ValidateNodeDistribution implements DistributionValidator {
             final URL shasumsFileUrl = new URL(distributionValidatorSettings.getDistributionUrl(), SHASUMS_FILENAME);
 
             // Download the shasum file
-            logger.log("Downloading shasums at '{}'", shasumsFileUrl);
+            logger.info("Downloading shasums at '{}'", shasumsFileUrl);
             downloadResource.execute(
                 new DownloadSettings(shasumsFileUrl, distributionValidatorSettings.getTemporaryDirectoryPath(),
                     shasumsFilePath));
 
             // Verify the distribution integrity
-            logger.log("Verifying distribution integrity");
+            logger.info("Verifying distribution integrity");
             expectedShasum = readNodeDistributionShasum
                 .execute(shasumsFilePath,
                     distributionValidatorSettings.getDistributionFilePath().getFileName().toString())

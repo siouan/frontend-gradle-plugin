@@ -17,10 +17,13 @@ public class GradleLoggerAdapter implements Logger {
 
     private LogLevel loggingLevel;
 
+    private boolean verboseModeEnabled;
+
     private String prefix;
 
     public GradleLoggerAdapter() {
         this.loggingLevel = LogLevel.LIFECYCLE;
+        this.verboseModeEnabled = false;
     }
 
     /**
@@ -30,24 +33,33 @@ public class GradleLoggerAdapter implements Logger {
      * @param loggingLevel Current logging level.
      * @param prefix Prefix prepended before each message logged.
      */
-    public void init(@Nullable org.gradle.api.logging.Logger gradleLogger, @Nonnull LogLevel loggingLevel,
-        @Nullable final String prefix) {
+    public void init(@Nullable final org.gradle.api.logging.Logger gradleLogger, @Nonnull final LogLevel loggingLevel,
+        final boolean verboseModeEnabled, @Nullable final String prefix) {
         this.gradleLogger = gradleLogger;
         this.loggingLevel = loggingLevel;
+        this.verboseModeEnabled = verboseModeEnabled;
         this.prefix = prefix;
     }
 
     @Override
     public void debug(@Nonnull final String message, @Nullable Object... parameters) {
-        if (gradleLogger != null) {
-            gradleLogger.debug(formatMessage(message), parameters);
+        if (gradleLogger == null) {
+            return;
         }
+
+        gradleLogger.debug(formatMessage(message), parameters);
     }
 
     @Override
-    public void log(@Nonnull final String message, @Nullable final Object... parameters) {
-        if (gradleLogger != null) {
+    public void info(@Nonnull final String message, @Nullable final Object... parameters) {
+        if (gradleLogger == null) {
+            return;
+        }
+
+        if (verboseModeEnabled) {
             gradleLogger.log(loggingLevel, formatMessage(message), parameters);
+        } else {
+            gradleLogger.info(formatMessage(message), parameters);
         }
     }
 

@@ -5,6 +5,8 @@ import javax.annotation.Nonnull;
 import org.gradle.api.GradleException;
 import org.gradle.api.Task;
 import org.gradle.api.execution.TaskExecutionListener;
+import org.gradle.api.logging.LogLevel;
+import org.gradle.api.logging.LoggingManager;
 import org.gradle.api.tasks.TaskState;
 import org.siouan.frontendgradleplugin.infrastructure.BeanRegistry;
 import org.siouan.frontendgradleplugin.infrastructure.BeanRegistryException;
@@ -31,11 +33,12 @@ public class TaskLoggerConfigurer implements TaskExecutionListener {
         task
             .getLogger()
             .debug("Configuring logger for task '{}' with default level: {}", task.getName(),
-                extension.getLoggingLevel().get());
+                extension.getVerboseModeEnabled().get());
         try {
             beanRegistry
                 .getBean(GradleLoggerAdapter.class)
-                .init(task.getLogger(), extension.getLoggingLevel().get(), '[' + task.getName() + "] ");
+                .init(task.getLogger(), resolveLogLevel(task), extension.getVerboseModeEnabled().get(),
+                    '[' + task.getName() + "] ");
         } catch (final BeanRegistryException e) {
             throw new GradleException("Cannot get instance of bean registry", e);
         }
@@ -44,5 +47,29 @@ public class TaskLoggerConfigurer implements TaskExecutionListener {
     @Override
     public void afterExecute(@Nonnull final Task task, @Nonnull final TaskState state) {
         // Event not used
+    }
+
+    /**
+     * Resolves the logging level currently active for a given task. This method allows to deal with Gradle's
+     * limitations when we need to get the applicable logging level for a task. Actually Gradle does not populate
+     * automatically the level in the task's {@link LoggingManager} with the level from the command line by default, and
+     * the only way to get it is to look at the start parameter.
+     *
+     * @param task Task.
+     * @return Logging level.
+     */
+    @Nonnull
+    private LogLevel resolveLogLevel(@Nonnull final Task task) {
+        LogLevel loggingLevel = task.getLogging().getLevel();
+        if (loggingLevel != null) {
+            return loggingLevel;
+        }
+
+        loggingLevel = task.getProject().getLogging().getLevel();
+        if (loggingLevel != null) {
+            return loggingLevel;
+        }
+
+        return task.getProject().getGradle().getStartParameter().getLogLevel();
     }
 }

@@ -75,10 +75,10 @@ public abstract class AbstractArchiver<C extends ArchiverContext, E extends Arch
      *
      * @param context Context.
      * @return Archive entry.
-     * @throws ArchiverException If an error occured when resolving the next entry available.
+     * @throws IOException If an I/O error occurs.
      */
     @Nonnull
-    protected abstract Optional<E> getNextEntry(@Nonnull C context) throws ArchiverException, IOException;
+    protected abstract Optional<E> getNextEntry(@Nonnull C context) throws IOException;
 
     /**
      * Gets the target path of a symbolic link entry.
@@ -86,11 +86,10 @@ public abstract class AbstractArchiver<C extends ArchiverContext, E extends Arch
      * @param context Context.
      * @param entry Archive entry.
      * @return Target path of the symbolic link described by the entry.
-     * @throws ArchiverException If the context cannot be closed.
+     * @throws IOException If an I/O error occurs.
      */
     @Nonnull
-    protected abstract String getSymbolicLinkTarget(@Nonnull C context, @Nonnull E entry)
-        throws ArchiverException, IOException;
+    protected abstract String getSymbolicLinkTarget(@Nonnull C context, @Nonnull E entry) throws IOException;
 
     @Override
     public void explode(@Nonnull final ExplodeSettings settings) throws ArchiverException, IOException {
@@ -185,10 +184,9 @@ public abstract class AbstractArchiver<C extends ArchiverContext, E extends Arch
      * @param entry Archive entry.
      * @param filePath Target file.
      * @throws IOException If an I/O error occurs.
-     * @throws ArchiverException If the archiver cannot write the file in the file system.
      */
     protected abstract void writeRegularFile(@Nonnull final C context, @Nonnull final E entry,
-        @Nonnull final Path filePath) throws IOException, ArchiverException;
+        @Nonnull final Path filePath) throws IOException;
 
     /**
      * Maps the given Unix mode (e.g. O755) to a set of POSIX permissions.
