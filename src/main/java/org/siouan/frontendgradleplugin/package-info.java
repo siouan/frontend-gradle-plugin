@@ -1,4 +1,4 @@
 /**
- * Provides the plugin's DSL and entry-point.
+ * Provides the plugin bootstrap class.
  */
 package org.siouan.frontendgradleplugin;

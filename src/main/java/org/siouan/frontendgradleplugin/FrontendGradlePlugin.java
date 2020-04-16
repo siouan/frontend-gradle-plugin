@@ -2,30 +2,44 @@ package org.siouan.frontendgradleplugin;
 
 import java.util.function.BiPredicate;
 
+import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
-import org.gradle.api.logging.LogLevel;
 import org.gradle.api.plugins.BasePlugin;
 import org.gradle.api.publish.plugins.PublishingPlugin;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.language.base.plugins.LifecycleBasePlugin;
-import org.siouan.frontendgradleplugin.tasks.AssembleTask;
-import org.siouan.frontendgradleplugin.tasks.CheckTask;
-import org.siouan.frontendgradleplugin.tasks.CleanTask;
-import org.siouan.frontendgradleplugin.tasks.InstallTask;
-import org.siouan.frontendgradleplugin.tasks.NodeInstallTask;
-import org.siouan.frontendgradleplugin.tasks.PublishTask;
-import org.siouan.frontendgradleplugin.tasks.YarnInstallTask;
+import org.siouan.frontendgradleplugin.domain.model.Platform;
+import org.siouan.frontendgradleplugin.domain.util.SystemUtils;
+import org.siouan.frontendgradleplugin.infrastructure.BeanRegistry;
+import org.siouan.frontendgradleplugin.infrastructure.BeanRegistryException;
+import org.siouan.frontendgradleplugin.infrastructure.Beans;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.AssembleTask;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.CheckTask;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.CleanTask;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.FrontendExtension;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.InstallTask;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.NodeInstallTask;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.PublishTask;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.TaskLoggerConfigurer;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.YarnInstallTask;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.adapter.GradleLoggerAdapter;
+import org.siouan.frontendgradleplugin.infrastructure.provider.ArchiverProviderImpl;
+import org.siouan.frontendgradleplugin.infrastructure.provider.ChannelProviderImpl;
+import org.siouan.frontendgradleplugin.infrastructure.provider.FileManagerImpl;
 
 /**
  * Main plugin class that bootstraps the plugin by declaring its DSL and its tasks.
  * <ul>
- * <li>The plugin applies the Gradle Base plugin, to attach its tasks to the Gradle lifecyle task.</li>
+ * <li>The plugin applies the Gradle Base plugin and the Gradle Publishing plugin, to attach its tasks to Gradle
+ * lifecycle tasks.</li>
  * <li>Tasks are registered lazily thanks to the use of the configuration avoidance API.</li>
- * <li>Task properties are mapped the plugin extension (DSL) using the lazy configuration API, allowing there
- * calculation is delayed until it is required.</li>
+ * <li>Task properties are mapped to the plugin extension (DSL) using the lazy configuration API, allowing their
+ * calculation to be delayed until it is required.</li>
+ * <li>The plugin initializes a bean registry, a mechanism that handles Inversion of Control, and is in charge of
+ * bean instanciation on-the-fly.</li>
  * </ul>
  *
  * @see <a href="https://docs.gradle.org/current/userguide/task_configuration_avoidance.html">Task configuration
@@ -103,16 +117,18 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         final FrontendExtension extension = project
             .getExtensions()
             .create(EXTENSION_NAME, FrontendExtension.class, project);
-        extension.getPackageJsonDirectory().convention(project.getLayout().getProjectDirectory().getAsFile());
-        extension.getLoggingLevel().convention(LogLevel.LIFECYCLE);
+        extension.getNodeDistributionProvided().convention(false);
         extension
             .getNodeInstallDirectory()
             .convention(project.getLayout().getProjectDirectory().dir(DEFAULT_NODE_INSTALL_DIRNAME));
         extension.getYarnEnabled().convention(false);
+        extension.getYarnDistributionProvided().convention(false);
         extension
             .getYarnInstallDirectory()
             .convention(project.getLayout().getProjectDirectory().dir(DEFAULT_YARN_INSTALL_DIRNAME));
         extension.getInstallScript().convention(DEFAULT_INSTALL_SCRIPT);
+        extension.getPackageJsonDirectory().convention(project.getLayout().getProjectDirectory().getAsFile());
+        extension.getVerboseModeEnabled().convention(false);
 
         final TaskContainer taskContainer = project.getTasks();
         taskContainer.register(NODE_INSTALL_TASK_NAME, NodeInstallTask.class,
@@ -130,12 +146,22 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         taskContainer.register(PUBLISH_TASK_NAME, PublishTask.class,
             task -> configurePublishTask(taskContainer, task, extension));
 
-        configureDependency(taskContainer, BasePlugin.CLEAN_TASK_NAME, Task.class, CLEAN_TASK_NAME, CleanTask.class);
-        configureDependency(taskContainer, BasePlugin.ASSEMBLE_TASK_NAME, Task.class, ASSEMBLE_TASK_NAME,
-            AssembleTask.class);
-        configureDependency(taskContainer, GRADLE_CHECK_TASK_NAME, Task.class, CHECK_TASK_NAME, CheckTask.class);
-        configureDependency(taskContainer, PublishingPlugin.PUBLISH_LIFECYCLE_TASK_NAME, Task.class, PUBLISH_TASK_NAME,
+        configureDependency(taskContainer, BasePlugin.CLEAN_TASK_NAME, CLEAN_TASK_NAME, CleanTask.class);
+        configureDependency(taskContainer, BasePlugin.ASSEMBLE_TASK_NAME, ASSEMBLE_TASK_NAME, AssembleTask.class);
+        configureDependency(taskContainer, GRADLE_CHECK_TASK_NAME, CHECK_TASK_NAME, CheckTask.class);
+        configureDependency(taskContainer, PublishingPlugin.PUBLISH_LIFECYCLE_TASK_NAME, PUBLISH_TASK_NAME,
             PublishTask.class);
+
+        Beans.registerBean(new Platform(SystemUtils.getSystemJvmArch(), SystemUtils.getSystemOsName()));
+        Beans.registerBean(GradleLoggerAdapter.class);
+        Beans.registerBean(FileManagerImpl.class);
+        Beans.registerBean(ChannelProviderImpl.class);
+        Beans.registerBean(ArchiverProviderImpl.class);
+        try {
+            project.getGradle().addListener(new TaskLoggerConfigurer(Beans.getBean(BeanRegistry.class), extension));
+        } catch (final BeanRegistryException e) {
+            throw new GradleException("Cannot get instance of bean registry", e);
+        }
     }
 
     /**
@@ -147,10 +173,10 @@ public class FrontendGradlePlugin implements Plugin<Project> {
     private void configureNodeInstallTask(final NodeInstallTask task, final FrontendExtension extension) {
         task.setGroup(TASK_GROUP);
         task.setDescription("Downloads and installs a Node distribution.");
-        task.getLoggingLevel().set(extension.getLoggingLevel());
         task.getNodeVersion().set(extension.getNodeVersion());
         task.getNodeDistributionUrl().set(extension.getNodeDistributionUrl());
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
+        task.setOnlyIf(t -> !extension.getNodeDistributionProvided().get());
     }
 
     /**
@@ -162,11 +188,10 @@ public class FrontendGradlePlugin implements Plugin<Project> {
     private void configureYarnInstallTask(final YarnInstallTask task, final FrontendExtension extension) {
         task.setGroup(TASK_GROUP);
         task.setDescription("Downloads and installs a Yarn distribution.");
-        task.getLoggingLevel().set(extension.getLoggingLevel());
         task.getYarnVersion().set(extension.getYarnVersion());
         task.getYarnDistributionUrl().set(extension.getYarnDistributionUrl());
         task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
-        task.setOnlyIf(t -> extension.getYarnEnabled().get());
+        task.setOnlyIf(t -> extension.getYarnEnabled().get() && !extension.getYarnDistributionProvided().get());
     }
 
     /**
@@ -180,7 +205,6 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.setGroup(TASK_GROUP);
         task.setDescription("Installs/updates frontend dependencies.");
         task.getPackageJsonDirectory().set(extension.getPackageJsonDirectory());
-        task.getLoggingLevel().set(extension.getLoggingLevel());
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
         task.getYarnEnabled().set(extension.getYarnEnabled());
         if (task.getYarnEnabled().get()) {
@@ -202,7 +226,6 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.setGroup(TASK_GROUP);
         task.setDescription("Cleans frontend resources outside the build directory by running a specific script.");
         task.getPackageJsonDirectory().set(extension.getPackageJsonDirectory());
-        task.getLoggingLevel().set(extension.getLoggingLevel());
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
         task.getYarnEnabled().set(extension.getYarnEnabled());
         if (task.getYarnEnabled().get()) {
@@ -225,7 +248,6 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.setGroup(TASK_GROUP);
         task.setDescription("Checks frontend by running a specific script.");
         task.getPackageJsonDirectory().set(extension.getPackageJsonDirectory());
-        task.getLoggingLevel().set(extension.getLoggingLevel());
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
         task.getYarnEnabled().set(extension.getYarnEnabled());
         if (task.getYarnEnabled().get()) {
@@ -248,7 +270,6 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.setGroup(TASK_GROUP);
         task.setDescription("Assembles frontend artifacts by running a specific script.");
         task.getPackageJsonDirectory().set(extension.getPackageJsonDirectory());
-        task.getLoggingLevel().set(extension.getLoggingLevel());
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
         task.getYarnEnabled().set(extension.getYarnEnabled());
         if (task.getYarnEnabled().get()) {
@@ -271,7 +292,6 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.setGroup(TASK_GROUP);
         task.setDescription("Publishes frontend artifacts by running a specific script.");
         task.getPackageJsonDirectory().set(extension.getPackageJsonDirectory());
-        task.getLoggingLevel().set(extension.getLoggingLevel());
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
         task.getYarnEnabled().set(extension.getYarnEnabled());
         if (task.getYarnEnabled().get()) {
@@ -288,16 +308,13 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      *
      * @param taskContainer Task container.
      * @param taskName Name of the task that may depend on another task.
-     * @param taskClass Task class.
      * @param dependsOnTaskName Name of the depending task.
      * @param dependsOnTaskClass Depending task class.
-     * @param <T> Type of the dependent task.
      * @param <D> Type of the depending task.
      */
-    private <T extends Task, D extends Task> void configureDependency(final TaskContainer taskContainer,
-        final String taskName, final Class<T> taskClass, final String dependsOnTaskName,
-        final Class<D> dependsOnTaskClass) {
-        taskContainer.named(taskName, taskClass,
+    private <D extends Task> void configureDependency(final TaskContainer taskContainer, final String taskName,
+        final String dependsOnTaskName, final Class<D> dependsOnTaskClass) {
+        taskContainer.named(taskName, Task.class,
             task -> configureDependency(taskContainer, task, dependsOnTaskName, dependsOnTaskClass));
     }
 
@@ -314,27 +331,6 @@ public class FrontendGradlePlugin implements Plugin<Project> {
     private <T extends Task, D extends Task> void configureDependency(final TaskContainer taskContainer, T task,
         final String dependsOnTaskName, final Class<D> dependsOnTaskClass) {
         configureDependency(taskContainer, task, dependsOnTaskName, dependsOnTaskClass, null);
-    }
-
-    /**
-     * Configures a dynamic dependency between 2 tasks, based on the evaluation of a condition: : task {@code taskName}
-     * depends on task {@code dependsOnTaskName} if the condition is verified.
-     *
-     * @param taskContainer Task container.
-     * @param taskName Name of the task that may depend on another task.
-     * @param taskClass Task class.
-     * @param dependsOnTaskName Name of the depending task.
-     * @param dependsOnTaskClass Depending task class.
-     * @param condition Function to configure any of the 2 tasks and return a decision to make the task depends on the
-     * depending task.
-     * @param <T> Type of the dependent task.
-     * @param <D> Type of the depending task.
-     */
-    private <T extends Task, D extends Task> void configureDependency(final TaskContainer taskContainer,
-        final String taskName, final Class<T> taskClass, final String dependsOnTaskName,
-        final Class<D> dependsOnTaskClass, final BiPredicate<T, D> condition) {
-        taskContainer.named(taskName, taskClass,
-            task -> configureDependency(taskContainer, task, dependsOnTaskName, dependsOnTaskClass, condition));
     }
 
     /**

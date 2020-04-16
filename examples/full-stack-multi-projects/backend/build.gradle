@@ -1,0 +1,25 @@
+plugins {
+    id 'java'
+    id 'war'
+}
+
+version '2.0.0'
+
+tasks.register('processFrontendResources', Copy) {
+    // Directory containing the artifacts in the frontend project
+    def frontendBuildDir = file("${project(':frontend').buildDir}/www")
+    // Directory where the frontend artifacts must be copied to be packaged alltogether with the backend by the 'war'
+    // plugin.
+    def frontendResourcesDir = file(project.webAppDir)
+
+    group 'Frontend'
+    description 'Process frontend resources'
+    dependsOn project(':frontend').tasks.named('assembleFrontend')
+
+    from frontendBuildDir
+    into frontendResourcesDir
+}
+
+tasks.named('processResources') {
+    dependsOn tasks.named('processFrontendResources')
+}

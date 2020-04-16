@@ -1,8 +1,10 @@
+import org.gradle.api.tasks.testing.logging.TestLogEvent
+
 plugins {
     id 'java-gradle-plugin'
     id 'maven-publish'
     id 'jacoco'
-    id 'com.gradle.plugin-publish' version '0.10.1'
+    id 'com.gradle.plugin-publish'
 }
 
 wrapper {
@@ -17,9 +19,9 @@ repositories {
 test {
     useJUnitPlatform()
     testLogging {
-        showStandardStreams = true
         exceptionFormat = 'full'
-        events "passed", "skipped", "failed"
+        events = [TestLogEvent.PASSED, TestLogEvent.SKIPPED, TestLogEvent.FAILED, TestLogEvent.STANDARD_OUT,
+          TestLogEvent.STANDARD_ERROR]
     }
 }
 
@@ -34,26 +36,27 @@ dependencies {
     implementation gradleApi()
     implementation 'org.apache.commons:commons-compress:1.20'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.6.1'
     testImplementation 'org.mockito:mockito-core:3.3.3'
     testImplementation 'org.mockito:mockito-junit-jupiter:3.3.3'
     testImplementation 'org.assertj:assertj-core:3.15.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.1'
 }
 
 group 'org.siouan'
-version '1.4.1'
-description 'Integrate your frontend Node/NPM/Yarn build into Gradle.'
+version '2.0.0'
+description 'Build Node.js, NPM, Yarn applications with Gradle.'
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
 
 gradlePlugin {
     plugins {
         frontend {
             id = 'org.siouan.frontend'
-            displayName = 'Frontend Gradle plugin'
-            description = 'Integrate your frontend Node/NPM/Yarn build into Gradle.'
             implementationClass = 'org.siouan.frontendgradleplugin.FrontendGradlePlugin'
         }
     }
@@ -62,5 +65,12 @@ gradlePlugin {
 pluginBundle {
     website = 'https://github.com/Siouan/frontend-gradle-plugin'
     vcsUrl = 'https://github.com/Siouan/frontend-gradle-plugin.git'
-    tags = ['node', 'npm', 'yarn', 'frontend']
+
+    plugins {
+        frontend {
+            displayName = 'Frontend Gradle plugin'
+            description = 'Build Node.js, NPM, Yarn applications with Gradle.'
+            tags = ['node', 'nodejs', 'npm', 'npx', 'yarn', 'frontend']
+        }
+    }
 }
