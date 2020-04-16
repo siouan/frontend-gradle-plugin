@@ -51,8 +51,6 @@ tasks.
   - [Run custom command with `node`](#run-a-custom-command-with-node)
   - [Run custom command with `npx`](#run-a-custom-command-with-npx)
   - [Run custom command with `npm` or `yarn`](#run-a-custom-command-with-npm-or-yarn)
-- [Usage guidelines][guidelines]
-  - [Packaging a frontend application in a Java artifact][single-java-artifact-packaging]
 - [Special thanks](#special-thanks)
 - [Contributing][contributing]
 
