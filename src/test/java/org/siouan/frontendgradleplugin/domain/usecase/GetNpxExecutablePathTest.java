@@ -13,25 +13,24 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.siouan.frontendgradleplugin.domain.provider.FileManager;
 
 @ExtendWith(MockitoExtension.class)
-class GetNodeExecutablePathTest {
+class GetNpxExecutablePathTest {
 
     @Mock
     private FileManager fileManager;
 
     @InjectMocks
-    private GetNodeExecutablePath usecase;
+    private GetNpxExecutablePath usecase;
 
     @Test
     void shouldReturnTwoExecutableWhenOsIsWindows() {
-        assertThat(usecase.getWindowsRelativeExecutablePaths()).containsExactly(Paths.get("node.exe"),
-            Paths.get("node.cmd"));
+        assertThat(usecase.getWindowsRelativeExecutablePaths()).containsExactly(Paths.get("npx.cmd"));
 
         verifyNoMoreInteractions(fileManager);
     }
 
     @Test
     void shouldReturnTwoExecutableWhenOsIsNotWindows() {
-        assertThat(usecase.getNonWindowsRelativeExecutablePaths()).containsExactly(Paths.get("bin", "node"));
+        assertThat(usecase.getNonWindowsRelativeExecutablePaths()).containsExactly(Paths.get("bin", "npx"));
 
         verifyNoMoreInteractions(fileManager);
     }

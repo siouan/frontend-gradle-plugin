@@ -7,14 +7,14 @@ import org.gradle.api.tasks.Input;
 import org.siouan.frontendgradleplugin.domain.model.ExecutableType;
 
 /**
- * Task provided as a type to let developers implement custom task based on it. The task does not expose Node related
- * options to avoid duplicating the plugin configuration. Using this task as a type to register a custom task requires
- * only to define the {@code script} attribute, and to make the custom task depends on the {@code installNode} or {@code
- * installFrontend} tasks. Choosing the related parent task will depend on the user needs.
+ * Task type allowing developers to implement custom task and run a {@code node} command. To do so, the {@code script}
+ * property must be defined, and custom task shall depend either on the {@code installNode} task or on the {@code
+ * installFrontend} task, depending on the user need.
  * <p>
- * A typical usage of this task in a 'build.gradle' file would be:
+ * A typical usage of this task type in a 'build.gradle' file would be:
  * <pre>
- * tasks.register('mytask', org.siouan.frontendgradleplugin.infrastructure.gradle.RunNodeTask) {
+ * import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNode
+ * tasks.register('mytask', RunNode) {
  *     dependsOn tasks.named('installFrontend')
  *     script = 'myscript'
  * }
@@ -22,9 +22,9 @@ import org.siouan.frontendgradleplugin.domain.model.ExecutableType;
  *
  * @since 1.2.0
  */
-public class RunNodeTask extends AbstractRunScriptTask {
+public class RunNode extends AbstractRunScriptTask {
 
-    public RunNodeTask() {
+    public RunNode() {
         super();
         final FrontendExtension extension = Objects.requireNonNull(
             getProject().getExtensions().findByType(FrontendExtension.class));
@@ -38,7 +38,7 @@ public class RunNodeTask extends AbstractRunScriptTask {
     }
 
     @Override
-    protected ExecutableType getExecutionType() {
+    protected ExecutableType getExecutableType() {
         return ExecutableType.NODE;
     }
 }

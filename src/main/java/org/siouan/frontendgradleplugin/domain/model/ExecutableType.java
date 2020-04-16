@@ -8,5 +8,6 @@ package org.siouan.frontendgradleplugin.domain.model;
 public enum ExecutableType {
     NODE,
     NPM,
+    NPX,
     YARN
 }

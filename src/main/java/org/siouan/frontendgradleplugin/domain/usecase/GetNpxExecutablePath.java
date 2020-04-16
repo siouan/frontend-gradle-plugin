@@ -1,8 +1,6 @@
 package org.siouan.frontendgradleplugin.domain.usecase;
 
-import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
-import static java.util.Collections.unmodifiableList;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -12,24 +10,23 @@ import javax.annotation.Nonnull;
 import org.siouan.frontendgradleplugin.domain.provider.FileManager;
 
 /**
- * Gets the path to a Node executable given an install directory and a platform.
+ * Gets the path to a NPX executable given an install directory and a platform.
  *
  * @since 2.0.0
  */
-public class GetNodeExecutablePath extends AbstractGetExecutablePath {
+public class GetNpxExecutablePath extends AbstractGetExecutablePath {
 
     /**
-     * Supported executables on a Windows O/S.
+     * Supported executable on a Windows O/S.
      */
-    public static final List<Path> WINDOWS_EXECUTABLE_PATHS = unmodifiableList(
-        asList(Paths.get("node.exe"), Paths.get("node.cmd")));
+    public static final List<Path> WINDOWS_EXECUTABLE_PATHS = singletonList(Paths.get("npx.cmd"));
 
     /**
      * Supported executable on other O/S.
      */
-    public static final List<Path> NON_WINDOWS_EXECUTABLE_PATHS = singletonList(Paths.get("bin", "node"));
+    public static final List<Path> NON_WINDOWS_EXECUTABLE_PATHS = singletonList(Paths.get("bin", "npx"));
 
-    public GetNodeExecutablePath(final FileManager fileManager) {
+    public GetNpxExecutablePath(final FileManager fileManager) {
         super(fileManager);
     }
 
