@@ -24,7 +24,7 @@ Such example demonstrates the following features:
 
 ## Use case
 
-A root project composed of a java backend project, a frontend project based on NPM, and packaged together in a
+A root project composed of a Java backend project, a frontend project based on NPM, and packaged together in a
 full-stack WAR artifact.
 
 ## Description
