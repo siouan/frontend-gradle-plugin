@@ -3,7 +3,7 @@ plugins {
     id 'war'
 }
 
-version '2.0.0'
+version '2.0.1'
 
 tasks.register('processFrontendResources', Copy) {
     // Directory containing the artifacts in the frontend project
