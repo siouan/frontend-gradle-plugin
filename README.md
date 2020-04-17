@@ -231,9 +231,9 @@ frontend {
     // the 'installFrontend' task is executed.
     packageJsonDirectory = file("$projectDir")
 
-    // [OPTIONAL] Domain name or IP address of a proxy server to use when downloading
+    // [OPTIONAL] IP address or domain name of a HTTP/HTTPS proxy server to use when downloading
     // distributions. By default, this property is 'null', and the plugin uses direct connections.
-    proxyHost = 'localhost'
+    proxyHost = '127.0.0.1'
 
     // [OPTIONAL] Port of the proxy server. This property is only relevant when the 'proxyHost'
     // property is set.
@@ -271,7 +271,7 @@ frontend {
     publishScript.set("run publish")
 
     packageJsonDirectory.set(project.layout.projectDirectory)
-    proxyHost.set("localhost")
+    proxyHost.set("127.0.0.1")
     proxyPort.set(8080)
     verboseModeEnabled.set(false)
 }
