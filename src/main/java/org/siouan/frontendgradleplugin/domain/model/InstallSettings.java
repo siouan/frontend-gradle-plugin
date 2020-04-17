@@ -1,5 +1,6 @@
 package org.siouan.frontendgradleplugin.domain.model;
 
+import java.net.Proxy;
 import java.net.URL;
 import java.nio.file.Path;
 import javax.annotation.Nonnull;
@@ -12,29 +13,16 @@ import javax.annotation.Nullable;
  */
 public class InstallSettings {
 
-    /**
-     * Underlying platform.
-     */
     private final Platform platform;
 
-    /**
-     * Version of the distribution.
-     */
     private final String version;
 
-    /**
-     * URL to download the distribution.
-     */
     private final URL downloadUrl;
 
-    /**
-     * Path to a temporary directory.
-     */
+    private final Proxy proxy;
+
     private final Path temporaryDirectoryPath;
 
-    /**
-     * Path to a directory where the distribution shall be installed.
-     */
     private final Path installDirectoryPath;
 
     /**
@@ -47,11 +35,12 @@ public class InstallSettings {
      * @param installDirectoryPath Path to a directory where the distribution shall be installed.
      */
     public InstallSettings(@Nonnull final Platform platform, @Nonnull final String version,
-        @Nullable final URL downloadUrl, @Nonnull final Path temporaryDirectoryPath,
+        @Nullable final URL downloadUrl, @Nullable final Proxy proxy, @Nonnull final Path temporaryDirectoryPath,
         @Nonnull final Path installDirectoryPath) {
         this.platform = platform;
         this.version = version;
         this.downloadUrl = downloadUrl;
+        this.proxy = proxy;
         this.temporaryDirectoryPath = temporaryDirectoryPath;
         this.installDirectoryPath = installDirectoryPath;
     }
@@ -84,6 +73,16 @@ public class InstallSettings {
     @Nullable
     public URL getDownloadUrl() {
         return downloadUrl;
+    }
+
+    /**
+     * Gets the proxy used for the connection.
+     *
+     * @return Proxy.
+     */
+    @Nonnull
+    public Proxy getProxy() {
+        return proxy;
     }
 
     /**

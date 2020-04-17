@@ -20,7 +20,8 @@ to install/configure the plugin, and build your frontend application.
 - Trigger automatically frontend build, check, clean, publish scripts in a `package.json` file from Gradle lifecycle
 tasks.
 - Create custom tasks to run a command with [Node.js][nodejs]/[NPX][npx]/[NPM][npm]/[Yarn][yarn].
-- Use a provided distribution of [Node.js][nodejs] or [Yarn][yarn].
+- Use a provided distribution of [Node.js][nodejs] or [Yarn][yarn] and share runtimes between projects.
+- Configure proxy settings for downloads and submit to the infrastructure.
 
 ## Summary
 
@@ -230,6 +231,14 @@ frontend {
     // the 'installFrontend' task is executed.
     packageJsonDirectory = file("$projectDir")
 
+    // [OPTIONAL] IP address or domain name of a HTTP/HTTPS proxy server to use when downloading
+    // distributions. By default, this property is 'null', and the plugin uses direct connections.
+    proxyHost = '127.0.0.1'
+
+    // [OPTIONAL] Port of the proxy server. This property is only relevant when the 'proxyHost'
+    // property is set.
+    proxyPort = 8080
+
     // [OPTIONAL] Whether messages logged by the plugin in Gradle with INFO level shall be visible
     // whatever the active Gradle logging level is. This property allows to track the plugin
     // execution without activating Gradle INFO or DEBUG levels that may be too much verbose on a
@@ -262,6 +271,8 @@ frontend {
     publishScript.set("run publish")
 
     packageJsonDirectory.set(project.layout.projectDirectory)
+    proxyHost.set("127.0.0.1")
+    proxyPort.set(8080)
     verboseModeEnabled.set(false)
 }
 ```
@@ -318,8 +329,10 @@ The `installNode` task downloads a [Node.js][nodejs] distribution and verifies i
 is checked by downloading a file providing the distribution shasum. This file is expected to be in the same remote web
 directory than the distribution. For example, if the distribution is located at URL
 `https://nodejs.org/dist/vX.Y.Z/node-vX.Y.Z-win-x64.zip`, the plugin attempts to download the shasum file located at
-URL `https://nodejs.org/dist/vX.Y.Z/SHASUMS256.txt`. Use the property `nodeInstallDirectory` to set the location where
-the distribution shall be installed, which by default is the `${projectDir}/node` directory.
+URL `https://nodejs.org/dist/vX.Y.Z/SHASUMS256.txt`. Optionally, the distribution and the shasum may be downloaded with
+a connection through a proxy server, if the `proxyHost` property and the `proxyPort` property are set. Use the property
+`nodeInstallDirectory` to set the location where the distribution shall be installed, which by default is the
+`${projectDir}/node` directory.
 
 If a Node distribution is already installed in the system, and shall be used instead of a downloaded distribution, sets
 the `nodeDistributionProvided` property to `true` and the location of the distribution with the `nodeInstallDirectory`
@@ -342,9 +355,10 @@ executed.
 ### Install Yarn
 
 The `installYarn` task downloads a [Yarn][yarn] distribution, if `yarnEnabled` property is `true`. If the
-`yarnInstallDirectory` property is ommitted, the URL is guessed using the `yarnVersion` property. Use the property
-`yarnInstallDirectory` to set the location where the distribution shall be installed, which, by default is the
-`${projectDir}/yarn` directory.
+`yarnDistributionUrl` property is ommitted, the URL is guessed using the `yarnVersion` property. Optionally, the
+distribution  may be downloaded with a connection through a proxy server, if the `proxyHost` property and the
+`proxyPort` property are set. Use the property `yarnInstallDirectory` to set the location where the distribution shall
+be installed, which, by default is the `${projectDir}/yarn` directory.
 
 If a Yarn distribution is already installed in the system, and shall be used instead of a downloaded distribution, sets
 the `yarnDistributionProvided` property to `true` and the location of the distribution with the `yarnInstallDirectory`

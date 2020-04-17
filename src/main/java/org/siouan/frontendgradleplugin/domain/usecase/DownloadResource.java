@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import javax.annotation.Nonnull;
 
 import org.siouan.frontendgradleplugin.domain.model.DownloadSettings;
+import org.siouan.frontendgradleplugin.domain.model.Logger;
 import org.siouan.frontendgradleplugin.domain.provider.ChannelProvider;
 import org.siouan.frontendgradleplugin.domain.provider.FileManager;
 
@@ -21,9 +22,12 @@ public class DownloadResource {
 
     private final ChannelProvider channelProvider;
 
-    public DownloadResource(final FileManager fileManager, final ChannelProvider channelProvider) {
+    private final Logger logger;
+
+    public DownloadResource(final FileManager fileManager, final ChannelProvider channelProvider, final Logger logger) {
         this.fileManager = fileManager;
         this.channelProvider = channelProvider;
+        this.logger = logger;
     }
 
     /**
@@ -38,7 +42,10 @@ public class DownloadResource {
         final URL resourceUrl = downloadSettings.getResourceUrl();
         final String resourceName = downloadSettings.getDestinationFilePath().getFileName().toString();
         final Path downloadedFilePath = downloadSettings.getTemporaryDirectoryPath().resolve(resourceName);
-        try (final ReadableByteChannel resourceInputChannel = channelProvider.getReadableByteChannel(resourceUrl);
+        logger.debug("Downloading resource at '{}' (proxy: {})", downloadSettings.getResourceUrl(),
+            downloadSettings.getProxy());
+        try (final ReadableByteChannel resourceInputChannel = channelProvider.getReadableByteChannel(resourceUrl,
+            downloadSettings.getProxy());
              final FileChannel resourceOutputChannel = channelProvider.getWritableFileChannelForNewFile(
                  downloadedFilePath)) {
             resourceOutputChannel.transferFrom(resourceInputChannel, 0, Long.MAX_VALUE);

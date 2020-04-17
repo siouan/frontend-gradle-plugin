@@ -91,6 +91,20 @@ public class FrontendExtension {
     private final Property<File> packageJsonDirectory;
 
     /**
+     * Proxy host used to download resources.
+     *
+     * @since 2.0.1
+     */
+    private final Property<String> proxyHost;
+
+    /**
+     * Proxy port used to download resources.
+     *
+     * @since 2.0.1
+     */
+    private final Property<Integer> proxyPort;
+
+    /**
      * Whether verbose mode is enabled.
      *
      * @since 2.0.0
@@ -113,6 +127,8 @@ public class FrontendExtension {
         checkScript = project.getObjects().property(String.class);
         publishScript = project.getObjects().property(String.class);
         packageJsonDirectory = project.getObjects().property(File.class);
+        proxyHost = project.getObjects().property(String.class);
+        proxyPort = project.getObjects().property(Integer.class);
         verboseModeEnabled = project.getObjects().property(Boolean.class);
     }
 
@@ -174,6 +190,14 @@ public class FrontendExtension {
 
     public Property<File> getPackageJsonDirectory() {
         return packageJsonDirectory;
+    }
+
+    public Property<String> getProxyHost() {
+        return proxyHost;
+    }
+
+    public Property<Integer> getProxyPort() {
+        return proxyPort;
     }
 
     public Property<Boolean> getVerboseModeEnabled() {

@@ -9,12 +9,14 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.Proxy;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import javax.annotation.Nonnull;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
@@ -23,6 +25,7 @@ import org.mockito.Mock;
 import org.mockito.exceptions.verification.NoInteractionsWanted;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.siouan.frontendgradleplugin.domain.model.DownloadSettings;
+import org.siouan.frontendgradleplugin.domain.model.Logger;
 import org.siouan.frontendgradleplugin.domain.provider.ChannelProvider;
 import org.siouan.frontendgradleplugin.domain.provider.FileManager;
 
@@ -36,6 +39,8 @@ import org.siouan.frontendgradleplugin.domain.provider.FileManager;
 class DownloadResourceTest {
 
     private static final String DOWNLOAD_DIRECTORY_NAME = "download";
+
+    private static final Proxy PROXY = Proxy.NO_PROXY;
 
     private static final String RESOURCE_NAME = "resource.zip";
 
@@ -51,11 +56,17 @@ class DownloadResourceTest {
     @InjectMocks
     private DownloadResource usecase;
 
+    @BeforeEach
+    void setUp() {
+        usecase = new DownloadResource(fileManager, channelProvider, mock(Logger.class));
+    }
+
     @Test
     void shouldFailWhenResourceCannotBeDownloaded() throws IOException {
         final DownloadSettings downloadSettings = buildDownloadParameters(Paths.get("/y45y97@p"));
         final IOException expectedException = new IOException();
-        when(channelProvider.getReadableByteChannel(downloadSettings.getResourceUrl())).thenThrow(expectedException);
+        when(channelProvider.getReadableByteChannel(downloadSettings.getResourceUrl(),
+            downloadSettings.getProxy())).thenThrow(expectedException);
 
         assertThatThrownBy(() -> usecase.execute(downloadSettings)).isEqualTo(expectedException);
 
@@ -66,8 +77,8 @@ class DownloadResourceTest {
     void shouldFailWhenTemporaryFileCannotBeCreated() throws IOException {
         final DownloadSettings downloadSettings = buildDownloadParameters(Paths.get("/volezp", "gixkkle"));
         final ReadableByteChannel resourceInputChannel = mock(ReadableByteChannel.class);
-        when(channelProvider.getReadableByteChannel(downloadSettings.getResourceUrl())).thenReturn(
-            resourceInputChannel);
+        when(channelProvider.getReadableByteChannel(downloadSettings.getResourceUrl(),
+            downloadSettings.getProxy())).thenReturn(resourceInputChannel);
         final Path temporaryFilePath = downloadSettings
             .getTemporaryDirectoryPath()
             .resolve(downloadSettings.getDestinationFilePath().getFileName().toString());
@@ -84,8 +95,8 @@ class DownloadResourceTest {
     void shouldFailWhenDataTransferFails() throws IOException {
         final DownloadSettings downloadSettings = buildDownloadParameters(Paths.get("/volezp", "gixkkle"));
         final ReadableByteChannel resourceInputChannel = mock(ReadableByteChannel.class);
-        when(channelProvider.getReadableByteChannel(downloadSettings.getResourceUrl())).thenReturn(
-            resourceInputChannel);
+        when(channelProvider.getReadableByteChannel(downloadSettings.getResourceUrl(),
+            downloadSettings.getProxy())).thenReturn(resourceInputChannel);
         final Path temporaryFilePath = downloadSettings
             .getTemporaryDirectoryPath()
             .resolve(downloadSettings.getDestinationFilePath().getFileName().toString());
@@ -104,8 +115,8 @@ class DownloadResourceTest {
     void shouldFailWhenTemporaryFileCannotBeMovedToDestinationFile() throws IOException {
         final DownloadSettings downloadSettings = buildDownloadParameters(Paths.get("/volezp", "gixkkle"));
         final ReadableByteChannel resourceInputChannel = mock(ReadableByteChannel.class);
-        when(channelProvider.getReadableByteChannel(downloadSettings.getResourceUrl())).thenReturn(
-            resourceInputChannel);
+        when(channelProvider.getReadableByteChannel(downloadSettings.getResourceUrl(),
+            downloadSettings.getProxy())).thenReturn(resourceInputChannel);
         final Path temporaryFilePath = downloadSettings
             .getTemporaryDirectoryPath()
             .resolve(downloadSettings.getDestinationFilePath().getFileName().toString());
@@ -130,8 +141,8 @@ class DownloadResourceTest {
         final Path destinationFilePath = destinationDirectoryPath.resolve(RESOURCE_NAME);
         final DownloadSettings downloadSettings = buildDownloadParameters(destinationFilePath);
         final ReadableByteChannel resourceInputChannel = mock(ReadableByteChannel.class);
-        when(channelProvider.getReadableByteChannel(downloadSettings.getResourceUrl())).thenReturn(
-            resourceInputChannel);
+        when(channelProvider.getReadableByteChannel(downloadSettings.getResourceUrl(),
+            downloadSettings.getProxy())).thenReturn(resourceInputChannel);
         final Path temporaryFilePath = downloadSettings
             .getTemporaryDirectoryPath()
             .resolve(downloadSettings.getDestinationFilePath().getFileName().toString());
@@ -160,7 +171,7 @@ class DownloadResourceTest {
 
     private DownloadSettings buildDownloadParameters(@Nonnull final Path destinationFilePath)
         throws MalformedURLException {
-        return new DownloadSettings(getResourceFilePath().toUri().toURL(), getDownloadDirectoryPath(),
+        return new DownloadSettings(getResourceFilePath().toUri().toURL(), PROXY, getDownloadDirectoryPath(),
             destinationFilePath);
     }
 }

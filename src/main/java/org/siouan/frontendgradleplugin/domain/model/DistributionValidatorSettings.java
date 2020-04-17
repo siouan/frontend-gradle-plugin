@@ -1,5 +1,6 @@
 package org.siouan.frontendgradleplugin.domain.model;
 
+import java.net.Proxy;
 import java.net.URL;
 import java.nio.file.Path;
 import javax.annotation.Nonnull;
@@ -11,20 +12,13 @@ import javax.annotation.Nonnull;
  */
 public class DistributionValidatorSettings {
 
-    /**
-     * Path to a temporary directory.
-     */
     private final Path temporaryDirectoryPath;
 
-    /**
-     * URL used to download the distribution.
-     */
     private final URL distributionUrl;
 
-    /**
-     * Path to the distribution archive.
-     */
     private final Path distributionFilePath;
+
+    private final Proxy proxy;
 
     /**
      * Builds validator settings.
@@ -32,12 +26,14 @@ public class DistributionValidatorSettings {
      * @param temporaryDirectoryPath Path to a temporary directory.
      * @param distributionUrl URL used to download the distribution.
      * @param distributionFilePath Path to the distribution archive.
+     * @param proxy Proxy used for any connections.
      */
     public DistributionValidatorSettings(@Nonnull final Path temporaryDirectoryPath, @Nonnull final URL distributionUrl,
-        @Nonnull final Path distributionFilePath) {
+        @Nonnull final Path distributionFilePath, @Nonnull final Proxy proxy) {
         this.temporaryDirectoryPath = temporaryDirectoryPath;
         this.distributionUrl = distributionUrl;
         this.distributionFilePath = distributionFilePath;
+        this.proxy = proxy;
     }
 
     /**
@@ -68,5 +64,15 @@ public class DistributionValidatorSettings {
     @Nonnull
     public Path getDistributionFilePath() {
         return distributionFilePath;
+    }
+
+    /**
+     * Gets the proxy used for the connection.
+     *
+     * @return Proxy.
+     */
+    @Nonnull
+    public Proxy getProxy() {
+        return proxy;
     }
 }
