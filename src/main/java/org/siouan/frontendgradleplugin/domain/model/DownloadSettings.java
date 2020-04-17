@@ -1,5 +1,6 @@
 package org.siouan.frontendgradleplugin.domain.model;
 
+import java.net.Proxy;
 import java.net.URL;
 import java.nio.file.Path;
 import javax.annotation.Nonnull;
@@ -11,31 +12,26 @@ import javax.annotation.Nonnull;
  */
 public class DownloadSettings {
 
-    /**
-     * URL to download the resource.
-     */
     private final URL resourceUrl;
 
-    /**
-     * Path to a temporary directory.
-     */
+    private final Proxy proxy;
+
     private final Path temporaryDirectoryPath;
 
-    /**
-     * Path to the file where the resource will be written.
-     */
     private final Path destinationFilePath;
 
     /**
      * Builds download settings.
      *
      * @param resourceUrl URL to download the resource.
+     * @param proxy Proxy used for the connection.
      * @param temporaryDirectoryPath Path to a temporary directory.
      * @param destinationFilePath Path to a destination file.
      */
-    public DownloadSettings(@Nonnull final URL resourceUrl, @Nonnull final Path temporaryDirectoryPath,
-        @Nonnull final Path destinationFilePath) {
+    public DownloadSettings(@Nonnull final URL resourceUrl, @Nonnull final Proxy proxy,
+        @Nonnull final Path temporaryDirectoryPath, @Nonnull final Path destinationFilePath) {
         this.resourceUrl = resourceUrl;
+        this.proxy = proxy;
         this.temporaryDirectoryPath = temporaryDirectoryPath;
         this.destinationFilePath = destinationFilePath;
     }
@@ -48,6 +44,16 @@ public class DownloadSettings {
     @Nonnull
     public URL getResourceUrl() {
         return resourceUrl;
+    }
+
+    /**
+     * Gets the proxy used for the connection.
+     *
+     * @return Proxy.
+     */
+    @Nonnull
+    public Proxy getProxy() {
+        return proxy;
     }
 
     /**

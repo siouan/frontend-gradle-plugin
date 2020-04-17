@@ -1,6 +1,7 @@
 package org.siouan.frontendgradleplugin.infrastructure.provider;
 
 import java.io.IOException;
+import java.net.Proxy;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
@@ -22,8 +23,9 @@ public class ChannelProviderImpl implements ChannelProvider {
 
     @Override
     @Nonnull
-    public ReadableByteChannel getReadableByteChannel(@Nonnull final URL resourceUrl) throws IOException {
-        return Channels.newChannel(resourceUrl.openStream());
+    public ReadableByteChannel getReadableByteChannel(@Nonnull final URL resourceUrl, @Nonnull final Proxy proxy)
+        throws IOException {
+        return Channels.newChannel(resourceUrl.openConnection(proxy).getInputStream());
     }
 
     @Override

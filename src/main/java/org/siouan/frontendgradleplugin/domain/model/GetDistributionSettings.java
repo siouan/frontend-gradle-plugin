@@ -1,5 +1,6 @@
 package org.siouan.frontendgradleplugin.domain.model;
 
+import java.net.Proxy;
 import java.net.URL;
 import java.nio.file.Path;
 import javax.annotation.Nonnull;
@@ -12,30 +13,17 @@ import javax.annotation.Nullable;
  */
 public class GetDistributionSettings {
 
-    /**
-     * Distribution ID.
-     */
     private final DistributionId distributionId;
 
-    /**
-     * Version of distribution.
-     */
     private final String version;
 
-    /**
-     * Underlying platform.
-     */
     private final Platform platform;
 
-    /**
-     * Path to a temporary directory.
-     */
     private final Path temporaryDirectoryPath;
 
-    /**
-     * URL to download the distribution.
-     */
     private final URL distributionUrl;
+
+    private final Proxy proxy;
 
     /**
      * Builds settings to get a distribution.
@@ -45,15 +33,17 @@ public class GetDistributionSettings {
      * @param version Version.
      * @param distributionUrl URL to download the distribution.
      * @param temporaryDirectoryPath Path to a temporary directory.
+     * @param proxy Proxy used for the connection.
      */
     public GetDistributionSettings(@Nonnull DistributionId distributionId, @Nonnull final Platform platform,
-        @Nonnull final String version, @Nullable final URL distributionUrl,
-        @Nonnull final Path temporaryDirectoryPath) {
+        @Nonnull final String version, @Nullable final URL distributionUrl, @Nonnull final Path temporaryDirectoryPath,
+        @Nonnull final Proxy proxy) {
         this.distributionId = distributionId;
         this.platform = platform;
         this.version = version;
         this.distributionUrl = distributionUrl;
         this.temporaryDirectoryPath = temporaryDirectoryPath;
+        this.proxy = proxy;
     }
 
     /**
@@ -104,5 +94,15 @@ public class GetDistributionSettings {
     @Nonnull
     public Path getTemporaryDirectoryPath() {
         return temporaryDirectoryPath;
+    }
+
+    /**
+     * Gets the proxy used for the connection.
+     *
+     * @return Proxy.
+     */
+    @Nonnull
+    public Proxy getProxy() {
+        return proxy;
     }
 }

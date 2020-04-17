@@ -1,6 +1,8 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.net.URL;
 
 import org.gradle.api.DefaultTask;
@@ -42,10 +44,26 @@ public class NodeInstallTask extends DefaultTask {
      */
     private final Property<String> nodeDistributionUrl;
 
+    /**
+     * Proxy host used to download resources.
+     *
+     * @since 2.0.1
+     */
+    private final Property<String> proxyHost;
+
+    /**
+     * Proxy port used to download resources.
+     *
+     * @since 2.0.1
+     */
+    private final Property<Integer> proxyPort;
+
     public NodeInstallTask() {
         this.nodeVersion = getProject().getObjects().property(String.class);
         this.nodeInstallDirectory = getProject().getObjects().directoryProperty();
         this.nodeDistributionUrl = getProject().getObjects().property(String.class);
+        this.proxyHost = getProject().getObjects().property(String.class);
+        this.proxyPort = getProject().getObjects().property(Integer.class);
     }
 
     @Input
@@ -65,6 +83,18 @@ public class NodeInstallTask extends DefaultTask {
         return nodeInstallDirectory;
     }
 
+    @Input
+    @Optional
+    public Property<String> getProxyHost() {
+        return proxyHost;
+    }
+
+    @Input
+    @Optional
+    public Property<Integer> getProxyPort() {
+        return proxyPort;
+    }
+
     /**
      * Installs a Node.js distribution.
      *
@@ -82,9 +112,12 @@ public class NodeInstallTask extends DefaultTask {
         UnsupportedPlatformException, UnsupportedDistributionIdException, InvalidDistributionUrlException,
         DistributionValidatorException, IOException {
         final URL distributionUrl = nodeDistributionUrl.isPresent() ? new URL(nodeDistributionUrl.get()) : null;
+        final Proxy proxy = proxyHost
+            .map(host -> new Proxy(Proxy.Type.HTTP, new InetSocketAddress(host, proxyPort.get())))
+            .getOrElse(Proxy.NO_PROXY);
         Beans
             .getBean(InstallNodeDistribution.class)
-            .execute(new InstallSettings(Beans.getBean(Platform.class), nodeVersion.get(), distributionUrl,
+            .execute(new InstallSettings(Beans.getBean(Platform.class), nodeVersion.get(), distributionUrl, proxy,
                 getTemporaryDir().toPath(), nodeInstallDirectory.getAsFile().get().toPath()));
     }
 }
