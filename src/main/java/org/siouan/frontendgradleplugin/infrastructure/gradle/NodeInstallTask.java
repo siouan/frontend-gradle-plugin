@@ -47,14 +47,14 @@ public class NodeInstallTask extends DefaultTask {
     /**
      * Proxy host used to download resources.
      *
-     * @since 2.0.1
+     * @since 2.1.0
      */
     private final Property<String> proxyHost;
 
     /**
      * Proxy port used to download resources.
      *
-     * @since 2.0.1
+     * @since 2.1.0
      */
     private final Property<Integer> proxyPort;
 

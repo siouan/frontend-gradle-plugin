@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
 import org.siouan.frontendgradleplugin.domain.provider.FileManager;
 
 /**
- * Gets the path to a NPM executable given an install directory and a platform.
+ * Gets the path to a npm executable given an install directory and a platform.
  *
  * @since 2.0.0
  */

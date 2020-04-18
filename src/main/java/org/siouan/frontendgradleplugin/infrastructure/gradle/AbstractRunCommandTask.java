@@ -82,7 +82,7 @@ public abstract class AbstractRunCommandTask extends DefaultTask {
      * Executes the task. If a command has been provided, it is run with the selected type of executable. Otherwise, the
      * task does nothing.
      *
-     * @throws ExecutableNotFoundException When the executable cannot be found (Node, NPX, NPM, Yarn).
+     * @throws ExecutableNotFoundException When the executable cannot be found (Node, npx, npm, Yarn).
      * @throws BeanRegistryException If a component cannot be instanciated.
      */
     @TaskAction

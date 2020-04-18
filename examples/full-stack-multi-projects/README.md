@@ -24,7 +24,7 @@ Such example demonstrates the following features:
 
 ## Use case
 
-A root project composed of a Java backend project, a frontend project based on NPM, and packaged together in a
+A root project composed of a Java backend project, a frontend project based on npm, and packaged together in a
 full-stack WAR artifact.
 
 ## Description
@@ -37,7 +37,7 @@ in the `src/main/webapp` directory at the root of the WAR artifact so as they ar
 
 If you plan to build a [Spring Boot][spring-boot] application, the WAR artifact may be replaced by a bootable WAR
 artifact with the [Gradle Spring Boot plugin][gradle-spring-boot-plugin] instead of the
-[Gradle WAR plugin][gradle-war-plugin]. To do so, modify the [`build.gradle`](build.gradle) file:
+[Gradle WAR plugin][gradle-war-plugin]. To do so, modify the [`build.gradle`](backend/build.gradle) file:
 
 ```groovy
 def frontendResourcesDir = file("${project('backend').buildDir}/resources/main/public")

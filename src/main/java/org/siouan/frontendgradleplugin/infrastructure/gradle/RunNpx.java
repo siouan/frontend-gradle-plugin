@@ -48,7 +48,7 @@ public class RunNpx extends AbstractRunCommandTask {
     @Override
     public void execute() throws BeanRegistryException, ExecutableNotFoundException {
         if (yarnEnabled.get()) {
-            throw new UnsupportedOperationException("Running a NPX command is not supported when Yarn is enabled"
+            throw new UnsupportedOperationException("Running a npx command is not supported when Yarn is enabled"
                 + " to avoid mixing dependencies from both package managers. An equivalent command with Yarn may be"
                 + " 'yarn create', runnable with the '" + RunNpmYarn.class.getSimpleName() + "' task type.");
         }

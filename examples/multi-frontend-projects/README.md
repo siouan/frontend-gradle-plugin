@@ -16,7 +16,7 @@ This example demonstrates the following features:
 
 ## Use case
 
-A root project composed of a first frontend project based on [NPM][npm], and a second frontend project based on
+A root project composed of a first frontend project based on [npm][npm], and a second frontend project based on
 [Yarn][yarn]. Both frontend projects share the same [Node.js][nodejs] distribution.
 
 ## Description
@@ -30,5 +30,5 @@ distribution is installed if one of the `yarn-frontend` project's task is execut
 [dsl-reference]: <../../README.md#dsl-reference> (DSL reference)
 [gradle-wrapper]: <https://docs.gradle.org/current/userguide/gradle_wrapper.html> (Gradle Wrapper)
 [nodejs]: <https://nodejs.org/> (Node.js)
-[npm]: <https://www.npmjs.com/> (NPM)
+[npm]: <https://www.npmjs.com/> (npm)
 [yarn]: <https://yarnpkg.com/> (Yarn)
