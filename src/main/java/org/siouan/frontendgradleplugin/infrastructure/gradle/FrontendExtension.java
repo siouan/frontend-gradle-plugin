@@ -93,7 +93,7 @@ public class FrontendExtension {
     /**
      * Whether verbose mode is enabled.
      *
-     * @since 1.4.1
+     * @since 2.0.0
      */
     private final Property<Boolean> verboseModeEnabled;
 

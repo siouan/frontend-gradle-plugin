@@ -26,7 +26,7 @@ Actual results: ...
 - OS: [e.g. Ubuntu 18.04.1, Windows 10 Pro, Mac OS X]
 - JDK: [e.g. Oracle JDK 11 64 bits]
 - Gradle: [e.g. Gradle 6.3]
-- Frontend Gradle plugin: [e.g. 2.0.0]
+- Frontend Gradle plugin: [e.g. 2.1.0]
 
 Settings in `build.gradle[.kts]` file:
 ```groovy
