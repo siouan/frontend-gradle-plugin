@@ -61,27 +61,27 @@ public class FrontendExtension {
     private final Property<String> yarnDistributionUrl;
 
     /**
-     * The NPM/Yarn script installing frontend dependencies.
+     * The npm/Yarn script installing frontend dependencies.
      */
     private final Property<String> installScript;
 
     /**
-     * The NPM/Yarn script cleaning frontend resources.
+     * The npm/Yarn script cleaning frontend resources.
      */
     private final Property<String> cleanScript;
 
     /**
-     * The NPM/Yarn script assembling frontend artifacts.
+     * The npm/Yarn script assembling frontend artifacts.
      */
     private final Property<String> assembleScript;
 
     /**
-     * The NPM/Yarn script to execute to check the frontend.
+     * The npm/Yarn script to execute to check the frontend.
      */
     private final Property<String> checkScript;
 
     /**
-     * The NPM/Yarn script publishing frontend artifacts.
+     * The npm/Yarn script publishing frontend artifacts.
      */
     private final Property<String> publishScript;
 
@@ -93,14 +93,14 @@ public class FrontendExtension {
     /**
      * Proxy host used to download resources.
      *
-     * @since 2.0.1
+     * @since 2.1.0
      */
     private final Property<String> proxyHost;
 
     /**
      * Proxy port used to download resources.
      *
-     * @since 2.0.1
+     * @since 2.1.0
      */
     private final Property<Integer> proxyPort;
 

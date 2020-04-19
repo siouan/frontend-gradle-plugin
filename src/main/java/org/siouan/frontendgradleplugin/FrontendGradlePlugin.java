@@ -101,7 +101,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
     public static final String GRADLE_CHECK_TASK_NAME = LifecycleBasePlugin.CHECK_TASK_NAME;
 
     /**
-     * Name of the NPM/Yarn command that shall be executed to install frontend dependencies.
+     * Name of the npm/Yarn command that shall be executed to install frontend dependencies.
      */
     private static final String DEFAULT_INSTALL_SCRIPT = "install";
 

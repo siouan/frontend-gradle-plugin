@@ -39,7 +39,7 @@ public class ScriptProperties {
     private final Path yarnInstallDirectory;
 
     /**
-     * The script run by the job with NPM or Yarn.
+     * The script run by the job with npm or Yarn.
      */
     private final String script;
 

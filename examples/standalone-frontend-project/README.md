@@ -6,7 +6,7 @@ to match exactly the developer needs and contraints.
 
 Such example demonstrates the following features:
 
-- Definition of a frontend project using [NPM][npm] or [Yarn][yarn].
+- Definition of a frontend project using [npm][npm] or [Yarn][yarn].
 
 ## Requirements
 
@@ -14,11 +14,11 @@ Such example demonstrates the following features:
 
 ## Use case
 
-A standalone frontend project based on [NPM][npm] or [Yarn][yarn].
+A standalone frontend project based on [npm][npm] or [Yarn][yarn].
 
 ## Description
 
-Source code shows configuration with [NPM][npm]. To use [Yarn][yarn], modify the following files:
+Source code shows configuration with [npm][npm]. To use [Yarn][yarn], modify the following files:
 
 - [`build.gradle`](build.gradle)
 
@@ -35,5 +35,5 @@ Replace `npm` executable with `yarn` executable in the `scripts` section.
 
 [dsl-reference]: <../../README.md#dsl-reference> (DSL reference)
 [gradle-wrapper]: <https://docs.gradle.org/current/userguide/gradle_wrapper.html> (Gradle Wrapper)
-[npm]: <https://www.npmjs.com/> (NPM)
+[npm]: <https://www.npmjs.com/> (npm)
 [yarn]: <https://yarnpkg.com/> (Yarn)

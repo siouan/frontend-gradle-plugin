@@ -1,7 +1,7 @@
 {
   "name": "frontend-gradle-plugin-npm-tests",
   "version": "1.0.0",
-  "description": "Empty project to test frontend scripts integration in a Gradle build with NPM",
+  "description": "Empty project to test frontend scripts integration in a Gradle build with npm",
   "private": true,
   "license": "UNLICENSED",
   "cacheDirectories": [
