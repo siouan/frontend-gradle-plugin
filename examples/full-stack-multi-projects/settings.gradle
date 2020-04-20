@@ -3,9 +3,8 @@ pluginManagement {
         id 'java'
         id 'war'
         id 'org.siouan.frontend' version '2.1.0'
-}
-
-repositories {
+    }
+    repositories {
         gradlePluginPortal()
     }
 }

@@ -9,6 +9,7 @@ import org.gradle.api.DefaultTask;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
@@ -83,14 +84,12 @@ public class YarnInstallTask extends DefaultTask {
         return yarnInstallDirectory;
     }
 
-    @Input
-    @Optional
+    @Internal
     public Property<String> getProxyHost() {
         return proxyHost;
     }
 
-    @Input
-    @Optional
+    @Internal
     public Property<Integer> getProxyPort() {
         return proxyPort;
     }

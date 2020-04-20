@@ -77,4 +77,4 @@ before_install:
   - chmod u+x gradlew
 
 script:
-  - ./gradlew check --scan
+  - ./gradlew check
