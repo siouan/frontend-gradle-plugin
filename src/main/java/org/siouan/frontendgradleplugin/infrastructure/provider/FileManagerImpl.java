@@ -18,7 +18,6 @@ import java.util.EnumSet;
 import java.util.Set;
 import java.util.stream.Stream;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.siouan.frontendgradleplugin.domain.model.Platform;
 import org.siouan.frontendgradleplugin.domain.provider.FileManager;
