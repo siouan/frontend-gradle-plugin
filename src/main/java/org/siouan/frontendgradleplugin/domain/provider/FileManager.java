@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.CopyOption;
 import java.nio.file.Path;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.Set;
@@ -137,11 +138,12 @@ public interface FileManager {
      *
      * @param sourcePath Path to the source file.
      * @param targetPath Path to the target file.
+     * @param options Copy options.
      * @return Path to the target file.
      * @throws IOException If an I/O error occurs.
      */
     @Nonnull
-    Path move(@Nonnull Path sourcePath, @Nonnull Path targetPath) throws IOException;
+    Path move(@Nonnull Path sourcePath, @Nonnull Path targetPath, @Nonnull CopyOption... options) throws IOException;
 
     /**
      * Opens the file at the given path for reading through a buffer.

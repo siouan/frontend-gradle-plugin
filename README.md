@@ -16,12 +16,12 @@ to install/configure the plugin, and build your frontend application.
 #### Key features
 
 - **Distribution management**: the plugin downloads and installs a [Node.js][nodejs] distribution and/or a [Yarn][yarn]
-distribution when required. Optionally, a shared/global distribution may be used instead to reduce network overheads
-and duplications. The plugin may also use a HTTP proxy server for downloads to take advantage of any caching facility
-and submit to the organization's security rules.
+distribution when required. Optionally, a shared/global distribution may be used instead to avoid network overhead and
+duplication. The plugin may also use a HTTP proxy server for downloads to take advantage of any caching facility and
+submit to the organization's security rules.
 - **Configurable initialization**: whether the environment is a development workstation, or a CI platform, installing
 frontend dependencies using the `package.json` file may require a different command (e.g. `npm ci`).
-- **Built-in tasks**: no need to define tasks to build, clean, test, check, or publish the frontend application through
+- **Built-in tasks**: no need to define tasks to build, clean,, check, or publish the frontend application through
 Gradle lifecycle. The plugin provides them out of the box, and ensures their implementation matches Gradle's
 recommandations. Plug scripts from a `package.json` file, and run `gradlew build`.
 - **Customization**: for more complex use cases, the plugin provides types to create tasks and run custom commands with

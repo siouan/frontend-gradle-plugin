@@ -8,8 +8,8 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
+import java.nio.file.OpenOption;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import javax.annotation.Nonnull;
 
 import org.siouan.frontendgradleplugin.domain.provider.ChannelProvider;
@@ -36,7 +36,8 @@ public class ChannelProviderImpl implements ChannelProvider {
 
     @Override
     @Nonnull
-    public FileChannel getWritableFileChannelForNewFile(@Nonnull final Path filePath) throws IOException {
-        return FileChannel.open(filePath, StandardOpenOption.WRITE, StandardOpenOption.CREATE_NEW);
+    public FileChannel getWritableFileChannelForNewFile(@Nonnull final Path filePath,
+        @Nonnull final OpenOption... options) throws IOException {
+        return FileChannel.open(filePath, options);
     }
 }
