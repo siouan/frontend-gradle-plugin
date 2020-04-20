@@ -2,7 +2,6 @@ package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
-import org.gradle.api.tasks.Optional;
 
 /**
  * This task installs frontend environment (by executing a {@code npm/yarn} command). Optionally, the command may be
@@ -11,7 +10,6 @@ import org.gradle.api.tasks.Optional;
 public class InstallTask extends AbstractRunPredefinedCommandTask {
 
     @Input
-    @Optional
     public Property<String> getInstallScript() {
         return script;
     }

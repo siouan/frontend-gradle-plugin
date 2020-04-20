@@ -7,16 +7,16 @@ plugins {
     id 'com.gradle.plugin-publish'
 }
 
-wrapper {
-    distributionType = Wrapper.DistributionType.ALL
-}
-
 repositories {
     jcenter()
     mavenCentral()
 }
 
-test {
+tasks.named('wrapper') {
+    distributionType = Wrapper.DistributionType.ALL
+}
+
+tasks.named('test') {
     useJUnitPlatform()
     testLogging {
         exceptionFormat = 'full'
@@ -25,7 +25,7 @@ test {
     }
 }
 
-jacocoTestReport {
+tasks.named('jacocoTestReport') {
     reports {
         xml.enabled = true
         xml.destination file("${buildDir}/reports/jacoco/report.xml")
