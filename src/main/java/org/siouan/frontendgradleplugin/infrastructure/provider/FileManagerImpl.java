@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.CopyOption;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,6 +18,7 @@ import java.util.EnumSet;
 import java.util.Set;
 import java.util.stream.Stream;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.siouan.frontendgradleplugin.domain.model.Platform;
 import org.siouan.frontendgradleplugin.domain.provider.FileManager;
@@ -97,8 +99,9 @@ public class FileManagerImpl implements FileManager {
 
     @Override
     @Nonnull
-    public Path move(@Nonnull final Path sourcePath, @Nonnull final Path targetPath) throws IOException {
-        return Files.move(sourcePath, targetPath);
+    public Path move(@Nonnull final Path sourcePath, @Nonnull final Path targetPath,
+        @Nonnull final CopyOption... options) throws IOException {
+        return Files.move(sourcePath, targetPath, options);
     }
 
     @Override
