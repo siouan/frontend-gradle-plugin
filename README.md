@@ -23,7 +23,7 @@ submit to the organization's security rules.
 `package.json` file may require a different command (e.g. `npm ci`).
 - **Built-in tasks**: no need to define tasks to build, clean, check, or publish the frontend application through
 Gradle lifecycle. The plugin provides them out of the box, and ensures their implementation matches Gradle's
-[recommandations][gradle-task-configuration-avoidance]. Plug scripts from a `package.json` file with the DSL, and run
+[recommendations][gradle-task-configuration-avoidance]. Plug scripts from a `package.json` file with the DSL, and run
 `gradlew build`.
 - **Customization**: for more complex use cases, the plugin provides types to create tasks and run custom commands with
 [Node.js][nodejs], [npm][npm], [npx][npx], [Yarn][yarn].
@@ -51,7 +51,7 @@ cross-platform unit tests. Code coverage and predictability increase.
     - [Final steps](#final-steps)
       - [Build the frontend](#build-the-frontend)
       - [Use Node/npm/npx/Yarn apart from Gradle](#use-nodenpmnpxyarn-apart-from-gradle)
-    - [Recommandations](#recommandations)
+    - [Recommendations](#recommendations)
       - [Using `*Script` properties](#using-script-properties)
       - [Customizing built-in tasks](#customizing-built-in-tasks)
 - [Tasks reference](#tasks-reference)
@@ -276,7 +276,7 @@ Optionally, if Yarn is enabled and you don't want to enter Yarn's executable abs
 Design of the plugin's tasks running a [Node.js][nodejs]/[npm][npm]/[npx][npx]/[Yarn][yarn] command
 (e.g. `assembleFrontend` task) rely on the assumption the `package.json` file contains all definitions of the frontend
 build actions, and is the single resource defining how to build the frontend, execute unit tests, lint source code, run
-a development server, publish artifacts... Our recommandation is to keep these definitions in this file, in the
+a development server, publish artifacts... Our recommendation is to keep these definitions in this file, in the
 `scripts` section, and avoid as much as possible using the plugin `*Script` properties to run complex commands. Keep the
 frontend build definitions in one place, and let everyone easily figure out where they are located. In an ideal
 situation, these properties shall all have a value such as `run <script-name>`, and nothing more. For example:
