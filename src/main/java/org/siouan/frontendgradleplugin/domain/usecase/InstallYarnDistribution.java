@@ -20,7 +20,7 @@ public class InstallYarnDistribution extends AbstractInstallDistribution {
 
     @Override
     @Nonnull
-    protected DistributionId getDistributionId() {
+    protected String getDistributionId() {
         return DistributionId.YARN;
     }
 }

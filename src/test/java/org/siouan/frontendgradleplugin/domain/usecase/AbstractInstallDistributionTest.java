@@ -181,7 +181,7 @@ class AbstractInstallDistributionTest {
 
         @Nonnull
         @Override
-        protected DistributionId getDistributionId() {
+        protected String getDistributionId() {
             return DistributionId.NODE;
         }
     }

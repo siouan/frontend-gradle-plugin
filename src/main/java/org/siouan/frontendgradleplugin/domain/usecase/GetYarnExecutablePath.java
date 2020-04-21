@@ -1,10 +1,7 @@
 package org.siouan.frontendgradleplugin.domain.usecase;
 
-import static java.util.Collections.singletonList;
-
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 import javax.annotation.Nonnull;
 
 import org.siouan.frontendgradleplugin.domain.provider.FileManager;
@@ -17,14 +14,14 @@ import org.siouan.frontendgradleplugin.domain.provider.FileManager;
 public class GetYarnExecutablePath extends AbstractGetExecutablePath {
 
     /**
-     * Supported executable on a Windows O/S.
+     * Relative executable path on Windows O/S.
      */
-    public static final List<Path> WINDOWS_EXECUTABLE_PATHS = singletonList(Paths.get("bin", "yarn.cmd"));
+    public static final Path WINDOWS_EXECUTABLE_PATH = Paths.get("bin", "yarn.cmd");
 
     /**
-     * Supported executable on other O/S.
+     * Relative executable path on non-Windows O/S.
      */
-    public static final List<Path> NON_WINDOWS_EXECUTABLE_PATHS = singletonList(Paths.get("bin", "yarn"));
+    public static final Path NON_WINDOWS_EXECUTABLE_PATH = Paths.get("bin", "yarn");
 
     public GetYarnExecutablePath(final FileManager fileManager) {
         super(fileManager);
@@ -32,13 +29,13 @@ public class GetYarnExecutablePath extends AbstractGetExecutablePath {
 
     @Override
     @Nonnull
-    protected List<Path> getWindowsRelativeExecutablePaths() {
-        return WINDOWS_EXECUTABLE_PATHS;
+    protected Path getWindowsRelativeExecutablePath() {
+        return WINDOWS_EXECUTABLE_PATH;
     }
 
     @Override
     @Nonnull
-    protected List<Path> getNonWindowsRelativeExecutablePaths() {
-        return NON_WINDOWS_EXECUTABLE_PATHS;
+    protected Path getNonWindowsRelativeExecutablePath() {
+        return NON_WINDOWS_EXECUTABLE_PATH;
     }
 }

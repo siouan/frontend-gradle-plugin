@@ -11,7 +11,6 @@ import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.TaskAction;
 import org.siouan.frontendgradleplugin.domain.exception.ExecutableNotFoundException;
-import org.siouan.frontendgradleplugin.domain.model.ExecutableType;
 import org.siouan.frontendgradleplugin.domain.model.Platform;
 import org.siouan.frontendgradleplugin.infrastructure.BeanRegistryException;
 import org.siouan.frontendgradleplugin.infrastructure.Beans;
@@ -76,7 +75,7 @@ public abstract class AbstractRunCommandTask extends DefaultTask {
     }
 
     @Internal
-    protected abstract ExecutableType getExecutableType();
+    protected abstract String getExecutableType();
 
     /**
      * Executes the task. If a command has been provided, it is run with the selected type of executable. Otherwise, the

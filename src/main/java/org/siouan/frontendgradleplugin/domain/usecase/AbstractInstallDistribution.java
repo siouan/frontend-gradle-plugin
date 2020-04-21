@@ -11,7 +11,6 @@ import org.siouan.frontendgradleplugin.domain.exception.UnsupportedDistributionA
 import org.siouan.frontendgradleplugin.domain.exception.UnsupportedDistributionIdException;
 import org.siouan.frontendgradleplugin.domain.exception.UnsupportedPlatformException;
 import org.siouan.frontendgradleplugin.domain.model.DeploymentSettings;
-import org.siouan.frontendgradleplugin.domain.model.DistributionId;
 import org.siouan.frontendgradleplugin.domain.model.GetDistributionSettings;
 import org.siouan.frontendgradleplugin.domain.model.InstallSettings;
 import org.siouan.frontendgradleplugin.domain.model.Logger;
@@ -48,7 +47,7 @@ public abstract class AbstractInstallDistribution {
      * @return Distribution ID.
      */
     @Nonnull
-    protected abstract DistributionId getDistributionId();
+    protected abstract String getDistributionId();
 
     /**
      * Installs a distribution:
@@ -72,7 +71,8 @@ public abstract class AbstractInstallDistribution {
         throws UnsupportedDistributionArchiveException, ArchiverException, UnsupportedPlatformException,
         UnsupportedDistributionIdException, InvalidDistributionUrlException, DistributionValidatorException,
         IOException {
-        logger.info("Removing install directory '{}'", installSettings.getInstallDirectoryPath());
+        logger.info(getClass().getSimpleName() + " Removing install directory '{}'",
+            installSettings.getInstallDirectoryPath());
         fileManager.deleteFileTree(installSettings.getInstallDirectoryPath(), true);
 
         final GetDistributionSettings getDistributionSettings = new GetDistributionSettings(getDistributionId(),

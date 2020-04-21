@@ -20,7 +20,7 @@ public class InstallNodeDistribution extends AbstractInstallDistribution {
 
     @Override
     @Nonnull
-    protected DistributionId getDistributionId() {
+    protected String getDistributionId() {
         return DistributionId.NODE;
     }
 }

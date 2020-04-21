@@ -1,10 +1,7 @@
 package org.siouan.frontendgradleplugin.domain.usecase;
 
-import static java.util.Collections.singletonList;
-
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 import javax.annotation.Nonnull;
 
 import org.siouan.frontendgradleplugin.domain.provider.FileManager;
@@ -17,14 +14,14 @@ import org.siouan.frontendgradleplugin.domain.provider.FileManager;
 public class GetNpxExecutablePath extends AbstractGetExecutablePath {
 
     /**
-     * Supported executable on a Windows O/S.
+     * Relative executable path on a Windows O/S.
      */
-    public static final List<Path> WINDOWS_EXECUTABLE_PATHS = singletonList(Paths.get("npx.cmd"));
+    public static final Path WINDOWS_EXECUTABLE_PATH = Paths.get("npx.cmd");
 
     /**
-     * Supported executable on other O/S.
+     * Relative executable path on non-Windows O/S.
      */
-    public static final List<Path> NON_WINDOWS_EXECUTABLE_PATHS = singletonList(Paths.get("bin", "npx"));
+    public static final Path NON_WINDOWS_EXECUTABLE_PATH = Paths.get("bin", "npx");
 
     public GetNpxExecutablePath(final FileManager fileManager) {
         super(fileManager);
@@ -32,13 +29,13 @@ public class GetNpxExecutablePath extends AbstractGetExecutablePath {
 
     @Override
     @Nonnull
-    protected List<Path> getWindowsRelativeExecutablePaths() {
-        return WINDOWS_EXECUTABLE_PATHS;
+    protected Path getWindowsRelativeExecutablePath() {
+        return WINDOWS_EXECUTABLE_PATH;
     }
 
     @Override
     @Nonnull
-    protected List<Path> getNonWindowsRelativeExecutablePaths() {
-        return NON_WINDOWS_EXECUTABLE_PATHS;
+    protected Path getNonWindowsRelativeExecutablePath() {
+        return NON_WINDOWS_EXECUTABLE_PATH;
     }
 }

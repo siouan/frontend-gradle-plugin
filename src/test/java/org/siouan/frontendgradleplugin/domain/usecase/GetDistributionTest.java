@@ -48,7 +48,7 @@ class GetDistributionTest {
 
     private static final URL DOWNLOAD_URL;
 
-    private static final DistributionId DISTRIBUTION_ID = DistributionId.NODE;
+    private static final String DISTRIBUTION_ID = DistributionId.NODE;
 
     private static final Proxy PROXY = Proxy.NO_PROXY;
 

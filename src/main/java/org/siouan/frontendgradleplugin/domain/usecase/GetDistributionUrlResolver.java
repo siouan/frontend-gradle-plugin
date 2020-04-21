@@ -18,13 +18,14 @@ public class GetDistributionUrlResolver {
      *
      * @param distributionId Distribution ID.
      * @return Distribution URL resolver.
+     * @see DistributionId
      */
     @Nonnull
-    public Optional<DistributionUrlResolver> execute(@Nonnull final DistributionId distributionId) {
+    public Optional<DistributionUrlResolver> execute(@Nonnull final String distributionId) {
         switch (distributionId) {
-        case NODE:
+        case DistributionId.NODE:
             return Optional.of(new ResolveNodeDistributionUrl());
-        case YARN:
+        case DistributionId.YARN:
             return Optional.of(new ResolveYarnDistributionUrl());
         default:
             return Optional.empty();

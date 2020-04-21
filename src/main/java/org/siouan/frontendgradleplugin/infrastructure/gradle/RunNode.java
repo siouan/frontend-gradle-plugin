@@ -38,7 +38,7 @@ public class RunNode extends AbstractRunCommandTask {
     }
 
     @Override
-    protected ExecutableType getExecutableType() {
+    protected String getExecutableType() {
         return ExecutableType.NODE;
     }
 }

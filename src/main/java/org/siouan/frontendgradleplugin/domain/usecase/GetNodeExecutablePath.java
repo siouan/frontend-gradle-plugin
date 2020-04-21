@@ -1,12 +1,7 @@
 package org.siouan.frontendgradleplugin.domain.usecase;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
-import static java.util.Collections.unmodifiableList;
-
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 import javax.annotation.Nonnull;
 
 import org.siouan.frontendgradleplugin.domain.provider.FileManager;
@@ -19,15 +14,14 @@ import org.siouan.frontendgradleplugin.domain.provider.FileManager;
 public class GetNodeExecutablePath extends AbstractGetExecutablePath {
 
     /**
-     * Supported executables on a Windows O/S.
+     * Relative executable path on Windows O/S.
      */
-    public static final List<Path> WINDOWS_EXECUTABLE_PATHS = unmodifiableList(
-        asList(Paths.get("node.exe"), Paths.get("node.cmd")));
+    public static final Path WINDOWS_EXECUTABLE_PATH = Paths.get("node.exe");
 
     /**
-     * Supported executable on other O/S.
+     * Relative executable path on non-Windows O/S.
      */
-    public static final List<Path> NON_WINDOWS_EXECUTABLE_PATHS = singletonList(Paths.get("bin", "node"));
+    public static final Path NON_WINDOWS_EXECUTABLE_PATH = Paths.get("bin", "node");
 
     public GetNodeExecutablePath(final FileManager fileManager) {
         super(fileManager);
@@ -35,13 +29,13 @@ public class GetNodeExecutablePath extends AbstractGetExecutablePath {
 
     @Override
     @Nonnull
-    protected List<Path> getWindowsRelativeExecutablePaths() {
-        return WINDOWS_EXECUTABLE_PATHS;
+    protected Path getWindowsRelativeExecutablePath() {
+        return WINDOWS_EXECUTABLE_PATH;
     }
 
     @Override
     @Nonnull
-    protected List<Path> getNonWindowsRelativeExecutablePaths() {
-        return NON_WINDOWS_EXECUTABLE_PATHS;
+    protected Path getNonWindowsRelativeExecutablePath() {
+        return NON_WINDOWS_EXECUTABLE_PATH;
     }
 }
