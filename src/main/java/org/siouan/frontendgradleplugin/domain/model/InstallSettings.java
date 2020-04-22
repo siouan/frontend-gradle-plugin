@@ -31,6 +31,7 @@ public class InstallSettings {
      * @param platform Underlying platform.
      * @param version Version of the distribution.
      * @param downloadUrl URL to download the distribution.
+     * @param proxy Proxy used for downloads.
      * @param temporaryDirectoryPath Path to a temporary directory.
      * @param installDirectoryPath Path to a directory where the distribution shall be installed.
      */

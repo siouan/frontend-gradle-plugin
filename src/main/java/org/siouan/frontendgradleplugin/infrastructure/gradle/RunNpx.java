@@ -41,7 +41,7 @@ public class RunNpx extends AbstractRunCommandTask {
     }
 
     @Override
-    protected ExecutableType getExecutableType() {
+    protected String getExecutableType() {
         return ExecutableType.NPX;
     }
 

@@ -80,14 +80,14 @@ public class ArchiverImpl extends AbstractArchiver<ArchiverContext, ArchiveEntry
 
     @Nonnull
     @Override
-    protected String getSymbolicLinkTarget(@Nonnull final ArchiverContext context, @Nonnull final ArchiveEntryImpl entry) {
+    protected String getSymbolicLinkTarget(@Nonnull final ArchiverContext context,
+        @Nonnull final ArchiveEntryImpl entry) {
         return entry.getContent();
     }
 
     @Override
-    protected void writeRegularFile(@Nonnull final ArchiverContext context, @Nonnull final ArchiveEntryImpl entry, @Nonnull
-    final Path filePath)
-        throws IOException {
+    protected void writeRegularFile(@Nonnull final ArchiverContext context, @Nonnull final ArchiveEntryImpl entry,
+        @Nonnull final Path filePath) throws IOException {
         if (writeException == null) {
             writtenFilePaths.put(filePath, entry.getContent());
         } else {

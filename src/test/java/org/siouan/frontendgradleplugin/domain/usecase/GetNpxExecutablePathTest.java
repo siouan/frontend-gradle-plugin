@@ -23,14 +23,14 @@ class GetNpxExecutablePathTest {
 
     @Test
     void shouldReturnTwoExecutableWhenOsIsWindows() {
-        assertThat(usecase.getWindowsRelativeExecutablePaths()).containsExactly(Paths.get("npx.cmd"));
+        assertThat(usecase.getWindowsRelativeExecutablePath()).isEqualTo(Paths.get("npx.cmd"));
 
         verifyNoMoreInteractions(fileManager);
     }
 
     @Test
     void shouldReturnTwoExecutableWhenOsIsNotWindows() {
-        assertThat(usecase.getNonWindowsRelativeExecutablePaths()).containsExactly(Paths.get("bin", "npx"));
+        assertThat(usecase.getNonWindowsRelativeExecutablePath()).isEqualTo(Paths.get("bin", "npx"));
 
         verifyNoMoreInteractions(fileManager);
     }

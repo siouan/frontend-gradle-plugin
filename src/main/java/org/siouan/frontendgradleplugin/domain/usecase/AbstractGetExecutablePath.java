@@ -1,8 +1,6 @@
 package org.siouan.frontendgradleplugin.domain.usecase;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import javax.annotation.Nonnull;
 
@@ -31,33 +29,29 @@ public abstract class AbstractGetExecutablePath {
      */
     @Nonnull
     public Optional<Path> execute(@Nonnull final Path installDirectory, @Nonnull final Platform platform) {
-        final List<Path> relativeExecutablePaths = new ArrayList<>();
+        final Path relativeExecutablePath;
         if (platform.isWindowsOs()) {
-            relativeExecutablePaths.addAll(getWindowsRelativeExecutablePaths());
+            relativeExecutablePath = getWindowsRelativeExecutablePath();
         } else {
-            relativeExecutablePaths.addAll(getNonWindowsRelativeExecutablePaths());
+            relativeExecutablePath = getNonWindowsRelativeExecutablePath();
         }
 
-        return relativeExecutablePaths.stream().map(installDirectory::resolve).filter(fileManager::exists).findAny();
+        return Optional.of(relativeExecutablePath).map(installDirectory::resolve).filter(fileManager::exists);
     }
 
     /**
-     * Gets the list of relative paths on Windows O/S, from the installation directory, to get an executable. The list
-     * allows to return multiple supported executables, ordered by priority, to try other alternatives in case one of
-     * the executables is not found.
+     * Gets the executable path on Windows O/S, relative to the installation directory.
      *
-     * @return List of relative paths to an executable.
+     * @return Relative path.
      */
     @Nonnull
-    protected abstract List<Path> getWindowsRelativeExecutablePaths();
+    protected abstract Path getWindowsRelativeExecutablePath();
 
     /**
-     * Gets the list of relative paths on non-Windows O/S, from the installation directory, to get an executable. The
-     * list allows to return multiple supported executables, ordered by priority, to try other alternatives in case one
-     * of the executables is not found.
+     * Gets the executable path on non-Windows O/S, relative to the installation directory.
      *
-     * @return List of relative paths to an executable.
+     * @return Relative path.
      */
     @Nonnull
-    protected abstract List<Path> getNonWindowsRelativeExecutablePaths();
+    protected abstract Path getNonWindowsRelativeExecutablePath();
 }

@@ -2,8 +2,6 @@ package org.siouan.frontendgradleplugin.domain.exception;
 
 import javax.annotation.Nonnull;
 
-import org.siouan.frontendgradleplugin.domain.model.DistributionId;
-
 /**
  * Exception thrown when a type of distribution is not supported.
  *
@@ -11,7 +9,7 @@ import org.siouan.frontendgradleplugin.domain.model.DistributionId;
  */
 public class UnsupportedDistributionIdException extends FrontendException {
 
-    public UnsupportedDistributionIdException(@Nonnull final DistributionId distributionId) {
+    public UnsupportedDistributionIdException(@Nonnull final String distributionId) {
         super("Unsupported distribution ID: " + distributionId);
     }
 }

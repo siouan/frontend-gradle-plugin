@@ -63,9 +63,7 @@ public class DeployDistribution {
         // Removes the root directory of exploded content, if any.
         final Set<Path> distributionFilePaths;
         try (final Stream<Path> childFilePaths = fileManager.list(extractDirectoryPath)) {
-            distributionFilePaths = childFilePaths
-                .filter(childFilePath -> !childFilePath.getFileName().equals(distributionFilePath.getFileName()))
-                .collect(toSet());
+            distributionFilePaths = childFilePaths.collect(toSet());
         }
         final Path distributionRootDirectoryPath;
         if (distributionFilePaths.size() == 1) {

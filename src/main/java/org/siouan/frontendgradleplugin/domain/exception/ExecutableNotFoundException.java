@@ -11,8 +11,8 @@ import org.siouan.frontendgradleplugin.domain.model.ExecutableType;
  */
 public class ExecutableNotFoundException extends FrontendException {
 
-    private ExecutableNotFoundException(@Nonnull final ExecutableType executableType) {
-        super(executableType.name());
+    private ExecutableNotFoundException(@Nonnull final String executableType) {
+        super(executableType);
     }
 
     /**

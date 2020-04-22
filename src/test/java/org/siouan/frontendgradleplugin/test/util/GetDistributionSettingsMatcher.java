@@ -18,7 +18,7 @@ public class GetDistributionSettingsMatcher extends AbstractArgumentMatcher<GetD
             return false;
         }
 
-        return (actualValue.getDistributionId() == expectedValue.getDistributionId()) && actualValue
+        return (actualValue.getDistributionId().equals(expectedValue.getDistributionId())) && actualValue
             .getVersion()
             .equals(expectedValue.getVersion()) && actualValue.getPlatform().equals(expectedValue.getPlatform())
             && actualValue.getTemporaryDirectoryPath().equals(expectedValue.getTemporaryDirectoryPath()) && actualValue

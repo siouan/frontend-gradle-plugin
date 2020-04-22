@@ -1,5 +1,7 @@
 package org.siouan.frontendgradleplugin.domain.usecase;
 
+import static java.util.stream.Collectors.toSet;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.attribute.PosixFilePermission;
@@ -7,7 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 
 import org.siouan.frontendgradleplugin.domain.exception.ArchiverException;
@@ -202,6 +203,6 @@ public abstract class AbstractArchiver<C extends ArchiverContext, E extends Arch
             .stream()
             .filter(entry -> (entry.getKey() & unixMode) != 0)
             .map(Map.Entry::getValue)
-            .collect(Collectors.toSet());
+            .collect(toSet());
     }
 }

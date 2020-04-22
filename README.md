@@ -28,13 +28,23 @@ Gradle lifecycle. The plugin provides them out of the box, and ensures their imp
 - **Customization**: for more complex use cases, the plugin provides types to create tasks and run custom commands with
 [Node.js][nodejs], [npm][npm], [npx][npx], [Yarn][yarn].
 
-Under the hood:
+#### Under the hood
 
 - **Lazy configuration**: tasks configuration is delayed until necessary thanks to the use of Gradle
 [lazy configuration API][gradle-lazy-configuration], to optimize performance of builds and ease tasks I/O chaining.
-- **Self-contained domain architecture**: the plugin design is influenced by [clean coding][clean-coder] principles.
+- **Self-contained domain design**: the plugin design is influenced by [clean coding][clean-coder] principles.
 Implementing a domain layer isolated from any framework and infrastructure eases maintenance, simplifies writing
 cross-platform unit tests. Code coverage and predictability increase.
+
+<p align="center">
+<a href="https://gradle.org/" title="Gradle"><img src="resources/gradle-icon.png" alt="Gradle icon"/></a>
+<img src="resources/bullet.png" alt="Bullet"/>
+<a href="https://nodejs.org/" title="Node.js"><img src="resources/nodejs-icon.png" alt="Node.js icon"/></a>
+<img src="resources/bullet.png" alt="Bullet"/>
+<a href="https://www.npmjs.com/" title="npm"><img src="resources/npm-icon.png" alt="npm icon"/></a>
+<img src="resources/bullet.png" alt="Bullet"/>
+<a href="https://yarnpkg.com/" title="Yarn"><img src="resources/yarn-icon.png" alt="Yarn icon"/></a>
+</p>
 
 ## Summary
 
@@ -150,7 +160,7 @@ frontend {
     ////// SCRIPT SETTINGS //////
     // Name of npm/Yarn scripts (see 'package.json' file) that shall be executed depending on this
     // plugin task. The values below are passed as arguments of the 'npm' or 'yarn' executables.
-    // Under Linux-like O/S, white space characters ' ' in an argument value must be escaped with a
+    // Under Unix-like O/S, white space characters ' ' in an argument value must be escaped with a
     // backslash character '\'. Under Windows O/S, the whole argument must be enclosed between
     // double-quotes. Example: assembleScript = 'run assemble single\ argument'
 
@@ -249,9 +259,6 @@ project's directory:
 gradlew build
 ```
 
-If the frontend application shall be packaged in a Java artifact, take a look at [this guide](#how-to-assemble-a-frontend-and-a-java-backend-into-a-single-artifact)
-to configure frontend and backend applications assembling.
-
 ##### Use Node/npm/npx/Yarn apart from Gradle
  
 If you plan to use the downloaded distributions of [Node.js][nodejs]/[npm][npm]/[npx][npx] or [Yarn][yarn] apart from
@@ -269,7 +276,7 @@ Optionally, if Yarn is enabled and you don't want to enter Yarn's executable abs
   - On Unix-like O/S, add the `$YARN_HOME/bin` path.
   - On Windows O/S, add the `%YARN_HOME%\bin` path.
 
-#### Recommandations
+#### Recommendations
 
 ##### Using `*Script` properties
 
@@ -302,31 +309,32 @@ implements. The examples below introduce the implementation expected with simple
 
 ```groovy
 // Configuring a predefined task.
-// LEGACY WAY: task 'installFrontend' is immediately created and configured, as well as task
+// FORMER SYNTAX: task 'installFrontend' is immediately created and configured, as well as task
 // 'otherTask', even if both tasks are not executed.
 installFrontend {
     dependsOn 'otherTask'
 }
-// MODERN WAY: task 'installFrontend' is created and configured only when Gradle is about to execute it.
+// MODERN SYNTAX: task 'installFrontend' is created and configured only when Gradle is about to execute it.
 // Consequently, task 'otherTask' is also created and configured later.
 tasks.named('installFrontend') {
     dependsOn 'otherTask'
 }
 
 // Defining a new task
-// LEGACY WAY: task 'eagerTask' is immediately created and configured, as well as task
+// LEGACY SYNTAX: task 'eagerTask' is immediately created and configured, as well as task
 // 'installFrontend', even if both tasks are not executed.
 task eagerTask {
     dependsOn 'installFrontend' 
 }
-// MODERN WAY: task 'eagerTask' is created and configured only when Gradle is about to execute it.
+// MODERN SYNTAX: task 'eagerTask' is created and configured only when Gradle is about to execute it.
 // Consequently, task 'installFrontend' is also created and configured later.
 tasks.register('eagerTask') {
     dependsOn 'installFrontend'
 }
 ```
 
-Gradle's [migration guide][gradle-migration-guide] provides further documentation.
+If your application uses the former syntax, you may find further instructions to migrate in this Gradle's
+[guide][gradle-migration-guide].
 
 ## Tasks reference
 
@@ -358,8 +366,7 @@ not be set for clarity. Consequently, the `installNode` task is automatically _S
 The task takes advantage of [Gradle incremental build][gradle-incremental-build], and is not executed again unless one
 of its inputs/outputs changed. The task is _UP-TO-DATE_ during a Gradle build, and skipped.
 
-This task should not be executed directly. It is called automatically by Gradle, if the `installFrontend` task is
-executed.
+> This task should not be executed directly. Gradle executes it if the build requires it.
 
 ### Install Yarn
 
@@ -378,8 +385,7 @@ automatically _SKIPPED_ during a Gradle build.
 The task takes advantage of [Gradle incremental build][gradle-incremental-build], and is not executed again unless one
 of its inputs/outputs changed. The task is _UP-TO-DATE_ during a Gradle build, and skipped.
 
-This task should not be executed directly. It is called automatically by Gradle, if the `installFrontend` task is
-executed.
+> This task should not be executed directly. Gradle executes it if the build requires it.
 
 ### Install frontend dependencies
 
@@ -390,9 +396,8 @@ this command may be customized (e.g. to run a `npm ci` command instead of a `npm
 `installScript` property must be set to the corresponding [npm][npm]/[Yarn][yarn] command. This task depends on the
 `installNode` task, and optionally on the `installYarn` task if the `yarnEnabled` property is `true`.
 
-This task may be executed directly, e.g. if one of the Node/Yarn version is modified and a distribution must be
-downloaded again. Otherwise, this task is called automatically by Gradle, if one of these tasks is executed:
-`cleanFrontend`, `assembleFrontend`, `checkFrontend`, `publishFrontend`.
+> This task may be executed directly, e.g. after modifying one of the Node.js/Yarn version and/or to update frontend
+> dependencies. Otherwise, Gradle executes it if the build requires it.
 
 ### Clean frontend
 
@@ -458,6 +463,8 @@ tasks.register<RunNode>("myCustomScript") {
 ```
 
 ### Run a custom command with `npx`
+
+> Requires Node.js 8.2.0+ on Unix-like O/S, Node.js 8.5.0+ on Windows O/S
 
 The plugin provides the task type `org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpx` that allows creating a
 custom task to run a npx command. The `script` property must be set with the corresponding [npx][npx] command. Custom
@@ -545,6 +552,7 @@ With their feedback, plugin improvement is possible. Special thanks to:
 [gradle-dsl]: <https://docs.gradle.org/current/userguide/plugins.html#sec:plugins_block> (Gradle DSL)
 [gradle-incremental-build]: <https://guides.gradle.org/performance/#incremental_build> (Gradle incremental build)
 [gradle-lazy-configuration]: <https://docs.gradle.org/current/userguide/lazy_configuration.html> (Lazy configuration)
+[gradle-icon]: <resources/gradle-icon.png> (Gradle)
 [gradle-migration-guide]: <https://docs.gradle.org/current/userguide/task_configuration_avoidance.html#sec:task_configuration_avoidance_migration_guidelines> (Migration guide)
 [gradle-plugin-page]: <https://plugins.gradle.org/plugin/org.siouan.frontend> (Frontend Gradle plugin's official page at the Gradle Plugin Portal)
 [gradle-task-configuration-avoidance]: <https://docs.gradle.org/current/userguide/task_configuration_avoidance.html> (Task configuration avoidance)
@@ -554,8 +562,11 @@ With their feedback, plugin improvement is possible. Special thanks to:
 [jetbrains]: <https://www.jetbrains.com/> (JetBrains)
 [jetbrains-logo]: <resources/jetbrains-128x128.png> (JetBrains)
 [nodejs]: <https://nodejs.org/> (Node.js)
+[nodejs-icon]: <resources/nodejs-icon.png> (Node.js)
 [npm]: <https://www.npmjs.com/> (npm)
+[npm-icon]: <resources/npm-icon.png> (NPM)
 [npx]: <https://github.com/npm/npx> (npx)
 [release-notes]: <https://github.com/siouan/frontend-gradle-plugin/releases> (Release notes)
 [task-tree]: <resources/task-tree.png>
 [yarn]: <https://yarnpkg.com/> (Yarn)
+[yarn-icon]: <resources/yarn-icon.png> (Yarn)

@@ -13,7 +13,7 @@ import javax.annotation.Nullable;
  */
 public class GetDistributionSettings {
 
-    private final DistributionId distributionId;
+    private final String distributionId;
 
     private final String version;
 
@@ -34,8 +34,9 @@ public class GetDistributionSettings {
      * @param distributionUrl URL to download the distribution.
      * @param temporaryDirectoryPath Path to a temporary directory.
      * @param proxy Proxy used for the connection.
+     * @see DistributionId
      */
-    public GetDistributionSettings(@Nonnull DistributionId distributionId, @Nonnull final Platform platform,
+    public GetDistributionSettings(@Nonnull String distributionId, @Nonnull final Platform platform,
         @Nonnull final String version, @Nullable final URL distributionUrl, @Nonnull final Path temporaryDirectoryPath,
         @Nonnull final Proxy proxy) {
         this.distributionId = distributionId;
@@ -52,7 +53,7 @@ public class GetDistributionSettings {
      * @return ID.
      */
     @Nonnull
-    public DistributionId getDistributionId() {
+    public String getDistributionId() {
         return distributionId;
     }
 
