@@ -1,23 +1,20 @@
-# Standalone frontend project build with pre-installed Node.js/Yarn distributions
+## Example: build a frontend application in a single project, using preinstalled distributions.
 
-_Notes_: this example is introduced with Groovy syntax. Translating it to the Kotlin syntax should be easy thanks to the
-DSL reference introduced [here][dsl-reference]. This is a basic example to configure such build. It shall be customized
-to match exactly the developer needs and contraints.
+_Notes_: this example is introduced with Groovy syntax, but can be easily translated to the Kotlin syntax using the DSL
+reference introduced [here][dsl-reference]. This example shall be customized to match exactly the developer needs and
+contraints.
 
-Such example demonstrates the following features:
-
-- Definition of a frontend project using [npm][npm] or [Yarn][yarn].
+This example demonstrates the following feature:
+- Definition of a frontend application build using [npm][npm] or [Yarn][yarn].
 - Using preinstalled distributions [Node.js][nodejs] and/or [Yarn][yarn] as provided runtimes.
 
-## Requirements
+### Requirements
 
-- A [Gradle Wrapper][gradle-wrapper] configured in the root directory of each example.
+- A [Gradle Wrapper][gradle-wrapper] configured in this directory.
+- Preinstalled distributions of [Node.js][nodejs] and/or [Yarn][yarn] on the workstation.
+- Sets the value of the `preinstalledNodeDistributionDirectory` variable in the [`build.gradle`](build.gradle) file.
 
-## Use case
-
-A standalone frontend project based on provided/shared distributions of [Node.js][nodejs] and/or [Yarn][yarn].
-
-## Description
+### Description
 
 Source code shows configuration with [npm][npm]. Set the install directory of the [Node.js][nodejs] distribution in the
 `build.gradle` file. To use [Yarn][yarn] and a pre-installed distribution instead of npm, modify the following files:
@@ -35,6 +32,8 @@ yarnInstallDirectory = file('<path-to-yarn-install-directory')
 - [`package.json`](package.json):
 
 Replace `npm` executable with `yarn` executable in the `scripts` section.
+
+Finally, enter `gradlew build` on a command line.
 
 [dsl-reference]: <../../README.md#dsl-reference> (DSL reference)
 [gradle-wrapper]: <https://docs.gradle.org/current/userguide/gradle_wrapper.html> (Gradle Wrapper)

@@ -1,0 +1,17 @@
+plugins {
+    id 'org.siouan.frontend'
+}
+
+//def preinstalledNodeDistributionDirectory = file('<path-to-node-distribution-install-directory>');
+def preinstalledNodeDistributionDirectory = null;
+if (preinstalledNodeDistributionDirectory == null) {
+    throw new GradleException("You must set variable 'preinstalledNodeDistributionDirectory' in the 'build.gradle' file.");
+}
+
+frontend {
+    nodeDistributionProvided = true
+    nodeInstallDirectory = preinstalledNodeDistributionDirectory
+    assembleScript = 'run build'
+    cleanScript = 'run clean'
+    checkScript = 'run check'
+}
