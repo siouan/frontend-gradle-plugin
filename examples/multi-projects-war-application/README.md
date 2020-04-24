@@ -1,8 +1,8 @@
-# Full-stack multi projects build
+## Example: build a full-stack Spring Boot WAR application with dedicated frontend and backend sub-projects
 
-_Notes_: this example is introduced with Groovy syntax. Translating it to the Kotlin syntax should be easy thanks to the
-DSL reference introduced [here][dsl-reference]. This is a basic example to configure such build. It shall be customized
-to match exactly the developer needs and contraints.
+_Notes_: this example is introduced with Groovy syntax, but can be easily translated to the Kotlin syntax using the DSL
+reference introduced [here][dsl-reference]. This example shall be customized to match exactly the developer needs and
+contraints.
 
 If you plan to serve your frontend with a Java backend (e.g. a [Spring Boot][spring-boot] application), you will
 probably use other Gradle plugins, such as the [Gradle Java plugin][gradle-java-plugin], the
@@ -13,21 +13,15 @@ In this configuration, you may package your full-stack application as a JAR/WAR 
 assembled before the backend, and generally provided in a special directory for the backend packaging task (e.g.
 `jar`/`war`/`bootJar`/`bootWar`... tasks). 
 
-Such example demonstrates the following features:
-
+This example demonstrates the following features:
 - Definition of a frontend sub-project.
-- Packaging a Java artifact containing frontend artifacts built in another sub-project.
+- Packaging a WAR artifact containing frontend artifacts built in another sub-project.
 
-## Requirements
+### Requirements
 
-- A [Gradle Wrapper][gradle-wrapper] configured in the root directory of each example.
+- A [Gradle Wrapper][gradle-wrapper] configured in this directory.
 
-## Use case
-
-A root project composed of a Java backend project, a frontend project based on npm, and packaged together in a
-full-stack WAR artifact.
-
-## Description
+### Description
 
 The frontend project builds an `index.html` file in the `build/www` directory. A custom task named
 `processFrontendResources`, launched before the `processResources` task of the backend project, copies this file in the
@@ -42,6 +36,11 @@ artifact with the [Gradle Spring Boot plugin][gradle-spring-boot-plugin] instead
 ```groovy
 def frontendResourcesDir = file("${project('backend').buildDir}/resources/main/public")
 ```
+
+Finally:
+- Enter `gradlew bootRun` on a command line.
+- Open a browser, connect to URL `http://localhost:8080`, and see the following message displayed: "Hello from the
+`frontend-gradle-plugin`!".
 
 [dsl-reference]: <../../README.md#dsl-reference> (DSL reference)
 [gradle-java-plugin]: <https://docs.gradle.org/current/userguide/java_plugin.html> (Gradle Java plugin)

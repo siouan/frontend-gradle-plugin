@@ -63,8 +63,8 @@ gradlePlugin {
 }
 
 pluginBundle {
-    website = 'https://github.com/Siouan/frontend-gradle-plugin'
-    vcsUrl = 'https://github.com/Siouan/frontend-gradle-plugin.git'
+    website = 'https://github.com/siouan/frontend-gradle-plugin'
+    vcsUrl = 'https://github.com/siouan/frontend-gradle-plugin.git'
 
     plugins {
         frontend {
