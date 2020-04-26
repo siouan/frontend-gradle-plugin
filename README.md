@@ -60,7 +60,7 @@ the plugin is easier. Code coverage and predictability increase.
         - [Build a full-stack Spring Boot WAR application with dedicated frontend and backend sub-projects][example-multi-projects-war-application]
     - [Final steps](#final-steps)
       - [Build the frontend](#build-the-frontend)
-      - [Use Node/npm/npx/Yarn apart from Gradle](#use-nodenpmnpxyarn-apart-from-gradle)
+      - [Use Node.js/npm/npx/Yarn apart from Gradle](#use-nodejsnpmnpxyarn-apart-from-gradle)
     - [Recommendations](#recommendations)
       - [Using `*Script` properties](#using-script-properties)
       - [Customizing built-in tasks](#customizing-built-in-tasks)
@@ -259,7 +259,7 @@ project's directory:
 gradlew build
 ```
 
-##### Use Node/npm/npx/Yarn apart from Gradle
+##### Use Node.js/npm/npx/Yarn apart from Gradle
  
 If you plan to use the downloaded distributions of [Node.js][nodejs]/[npm][npm]/[npx][npx] or [Yarn][yarn] apart from
 Gradle, apply the following steps:

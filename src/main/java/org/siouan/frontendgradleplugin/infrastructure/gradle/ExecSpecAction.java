@@ -13,7 +13,7 @@ import org.gradle.process.ExecSpec;
 import org.siouan.frontendgradleplugin.domain.model.ExecutionSettings;
 
 /**
- * Action that configures a {@link ExecSpec} instance to run a frontend script (Node/npm/Yarn) with Gradle.
+ * Action that configures a {@link ExecSpec} instance to run a script with Gradle.
  */
 public class ExecSpecAction implements Action<ExecSpec> {
 

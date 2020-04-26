@@ -61,7 +61,7 @@ public class ResolveExecutionSettings {
     }
 
     /**
-     * Resolves the execution settings to run the given script with a Node/npm/Yarn executable.
+     * Resolves the execution settings to run the given script with a node/npm/npx/yarn executable.
      *
      * @param packageJsonDirectoryPath Path to the {@code package.json} file, used as the working directory.
      * @param executableType Type of executable.
