@@ -1,8 +1,7 @@
 ## Example: build a frontend application in a single project.
 
-_Notes_: this example is introduced with Groovy syntax, but can be easily translated to the Kotlin syntax using the DSL
-reference introduced [here][dsl-reference]. This example shall be customized to match exactly the developer needs and
-contraints.
+_Note_: this example uses Groovy syntax, but can be easily translated to the Kotlin syntax using the DSL reference
+introduced [here][dsl-reference]. This example shall be customized to match exactly the developer needs and contraints.
 
 This example demonstrates the following feature:
 - Definition of a frontend application build using [npm][npm] or [Yarn][yarn].

@@ -1,8 +1,7 @@
 ## Example: build multiple frontend applications with dedicated sub-projects using shared distributions
 
-_Notes_: this example is introduced with Groovy syntax, but can be easily translated to the Kotlin syntax using the DSL
-reference introduced [here][dsl-reference]. This example shall be customized to match exactly the developer needs and
-contraints.
+_Note_: this example uses Groovy syntax, but can be easily translated to the Kotlin syntax using the DSL reference
+introduced [here][dsl-reference]. This example shall be customized to match exactly the developer needs and contraints.
 
 This example demonstrates the following features:
 - Definition of a frontend sub-project.

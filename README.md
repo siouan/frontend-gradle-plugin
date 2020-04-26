@@ -122,7 +122,7 @@ frontend {
     // 'nodeDistributionUrl' property is not set. By default, this property is 'null'
     nodeVersion = '12.16.1'
 
-    // [OPTIONAL] Sets this property to force the download from a custom website. By default, this
+    // [OPTIONAL] Set this property to force the download from a custom website. By default, this
     // property is 'null', and the plugin attempts to download the distribution compatible with the
     // current platform from Node's website. The version of the distribution is expected to be the
     // same as the one set in the 'nodeVersion' property, or this may lead to unexpected results.
@@ -148,7 +148,7 @@ frontend {
     // 'yarnEnabled' property is true.
     yarnVersion = '1.22.4'
 
-    // [OPTIONAL] Sets this property to force the download from a custom website. By default, this
+    // [OPTIONAL] Set this property to force the download from a custom website. By default, this
     // property is 'null', and the plugin attempts to download the distribution compatible with the
     // current platform from Yarn's website. The version of the distribution is expected to be the
     // same as the one set in the 'yarnVersion' property, or this may lead to unexpected results.
@@ -159,7 +159,7 @@ frontend {
 
     ////// SCRIPT SETTINGS //////
     // Name of npm/Yarn scripts (see 'package.json' file) that shall be executed depending on this
-    // plugin task. The values below are passed as arguments of the 'npm' or 'yarn' executables.
+    // plugin's task. The values below are passed as arguments of the 'npm' or 'yarn' executables.
     // Under Unix-like O/S, white space characters ' ' in an argument value must be escaped with a
     // backslash character '\'. Under Windows O/S, the whole argument must be enclosed between
     // double-quotes. Example: assembleScript = 'run assemble single\ argument'
@@ -197,7 +197,7 @@ frontend {
     // appropriate directory. This directory being used as the working directory when running JS
     // scripts, consequently, the 'node_modules' directory would be created at this location after
     // the 'installFrontend' task is executed.
-    packageJsonDirectory = file("$projectDir")
+    packageJsonDirectory = projectDir
 
     // [OPTIONAL] IP address or domain name of a HTTP/HTTPS proxy server to use when downloading
     // distributions. By default, this property is 'null', and the plugin uses direct connections.
@@ -283,9 +283,9 @@ Optionally, if Yarn is enabled and you don't want to enter Yarn's executable abs
 Design of the plugin's tasks running a [Node.js][nodejs]/[npm][npm]/[npx][npx]/[Yarn][yarn] command
 (e.g. `assembleFrontend` task) rely on the assumption the `package.json` file contains all definitions of the frontend
 build actions, and is the single resource defining how to build the frontend, execute unit tests, lint source code, run
-a development server, publish artifacts... Our recommendation is to keep these definitions in this file, in the
-`scripts` section, and avoid as much as possible using the plugin's `*Script` properties to run complex commands. Keep
-the frontend build definitions in one place, and let everyone easily find out where they are located. In an ideal
+a development server, publish artifacts... We recommend to keep these definitions in this file, in the `scripts`
+section, and avoid as much as possible using the plugin's `*Script` properties to run complex commands. Keep the
+frontend build definitions in one place, and let everyone easily finds out where they are located. In an ideal
 situation, these properties shall all have a value such as `run <script-name>`, and nothing more. For example:
 
 ```groovy
@@ -314,14 +314,12 @@ implements. The examples below introduce the implementation expected with simple
 installFrontend {
     dependsOn 'otherTask'
     inputs.files('package.json', 'package-lock.json')
-    outputs.dir('node_modules')
 }
 // MODERN SYNTAX: task 'installFrontend' is created and configured only when Gradle is about to execute it.
 // Consequently, task 'otherTask' is also created and configured later.
 tasks.named('installFrontend') {
     dependsOn 'otherTask'
     inputs.files('package.json', 'package-lock.json')
-    outputs.dir('node_modules')
 }
 
 // Defining a new task
@@ -406,22 +404,22 @@ this command may be customized (e.g. to run a `npm ci` command instead of a `npm
 **Note about task execution**
 
 If you execute this task multiple consecutive times with Gradle, you may notice NPM or Yarn always run, and Gradle does
-not 'skip' the task based on a previous succcessful build. This is the expected behavior because the task does not
-declare any input/output so as Gradle knows it is already _UP-TO-DATE_.
+not skip the task based on a previous succcessful build. This is the expected behavior because the task does not declare
+any input/output so as Gradle knows it is already _UP-TO-DATE_.
 
 If you think about tweaking this behavior, and skip the task execution on certain circumstances (e.g. declaring the
-`nodes_modules` directory as output), take care of impacts in Gradle. Gradle can not do magic things with high volume
-directories, and tracks each file individually to know if the task must be executed or not. Is it worth moving the
-performance impact in Gradle to skip task execution, or accepting the small overhead of re-running NPM or Yarn every
-time? In a development environment, using the Gradle command line may not be often necessary. On a CI workstation
-building the project from scratch after each change, overhead shall be unrelevant because the task must be executed
-anyhow.
+`nodes_modules` directory as output), take care of impacts in Gradle. Gradle cannot do magic things with high volume
+input/output directories, and must track each file individually to know if the task must be executed or not. Is it worth
+moving the performance impact in Gradle to skip task execution, or accepting the small overhead of re-running NPM or
+Yarn every time? In a development environment, using the Gradle command line may not be often necessary. On a CI
+workstation where the project is built from scratch after each change, overhead shall be unrelevant because the task
+must be executed anyhow.
 
 The plugin is designed with the requirement the task has a consistent and reliable behavior whatever the Javascript
 runtimes used underneath. If it is not acceptable, feel free to declare additional inputs/outputs, with the help of some
 [recommendations](#recommendations).
 
-_Some related discussions in Gradle forums: \[[1][reference-1]] \[[2][reference-2]] \[[3][reference-3]]_
+_Some related discussions in Gradle forums_: \[[1][reference-1]] \[[2][reference-2]] \[[3][reference-3]]
 
 ### `cleanFrontend` - Clean frontend
 
