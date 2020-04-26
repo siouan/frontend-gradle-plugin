@@ -59,7 +59,7 @@ the plugin is easier. Code coverage and predictability increase.
         - [Build multiple frontend applications with dedicated sub-projects using shared distributions][example-multi-projects-applications]
         - [Build a full-stack Spring Boot WAR application with dedicated frontend and backend sub-projects][example-multi-projects-war-application]
     - [Final steps](#final-steps)
-      - [Build the frontend](#build-the-frontend)
+      - [Build the frontend application](#build-the-frontend-application)
       - [Use Node.js/npm/npx/Yarn apart from Gradle](#use-nodejsnpmnpxyarn-apart-from-gradle)
     - [Recommendations](#recommendations)
       - [Using `*Script` properties](#using-script-properties)
@@ -69,10 +69,10 @@ the plugin is easier. Code coverage and predictability increase.
   - [`installNode` - Install Node.js](#installnode---install-nodejs)
   - [`installYarn` - Install Yarn](#installyarn---install-yarn)
   - [`installFrontend` - Install frontend dependencies](#installfrontend---install-frontend-dependencies)
-  - [`cleanFrontend` - Clean frontend project](#cleanfrontend---clean-frontend)
-  - [`assembleFrontend` - Assemble frontend artifacts](#assemblefrontend---assemble-frontend)
-  - [`checkFrontend` - Check frontend application](#checkfrontend---check-frontend)
-  - [`publishFrontend` - Publish frontend artifacts](#publishfrontend---publish-frontend)
+  - [`cleanFrontend` - Clean frontend project](#cleanfrontend---clean-frontend-project)
+  - [`assembleFrontend` - Assemble frontend artifacts](#assemblefrontend---assemble-frontend-artifacts)
+  - [`checkFrontend` - Check frontend application](#checkfrontend---check-frontend-application)
+  - [`publishFrontend` - Publish frontend artifacts](#publishfrontend---publish-frontend-artifacts)
   - [Run custom command with `node`](#run-a-custom-command-with-node)
   - [Run custom command with `npx`](#run-a-custom-command-with-npx)
   - [Run custom command with `npm` or `yarn`](#run-a-custom-command-with-npm-or-yarn)
@@ -179,14 +179,14 @@ frontend {
     // also executed when the Gradle built-in 'assemble' task is executed.
     assembleScript = 'run assemble'
 
-    // [OPTIONAL] Script called to check the frontend. Default value is <null>. This property is
-    // used by the 'checkFrontend' task. Apart from direct execution, the task is also executed
-    // when the Gradle built-in 'check' task is executed.
+    // [OPTIONAL] Script called to check the frontend application. Default value is <null>. This
+    // property is used by the 'checkFrontend' task. Apart from direct execution, the task is also
+    // executed when the Gradle built-in 'check' task is executed.
     checkScript = 'run check'
 
-    // [OPTIONAL] Script called to publish the frontend. Default value is <null>. This property is
-    // used by the 'publishFrontend' task. Apart from direct execution, the task is also executed
-    // when the Gradle built-in 'publish' task is executed.
+    // [OPTIONAL] Script called to publish the frontend artifacts. Default value is <null>. This
+    // property is used by the 'publishFrontend' task. Apart from direct execution, the task is
+    // also executed when the Gradle built-in 'publish' task is executed.
     publishScript = 'run publish'
 
     ////// GENERAL SETTINGS //////
@@ -250,7 +250,7 @@ See examples introduced [here][examples].
 
 #### Final steps
 
-##### Build the frontend
+##### Build the frontend application
 
 Now that the plugin is correctly installed and configured, open a terminal, and execute the following command in the
 project's directory:
@@ -282,10 +282,10 @@ Optionally, if Yarn is enabled and you don't want to enter Yarn's executable abs
 
 Design of the plugin's tasks running a [Node.js][nodejs]/[npm][npm]/[npx][npx]/[Yarn][yarn] command
 (e.g. `assembleFrontend` task) rely on the assumption the `package.json` file contains all definitions of the frontend
-build actions, and is the single resource defining how to build the frontend, execute unit tests, lint source code, run
-a development server, publish artifacts... We recommend to keep these definitions in this file, in the `scripts`
-section, and avoid as much as possible using the plugin's `*Script` properties to run complex commands. Keep the
-frontend build definitions in one place, and let everyone easily finds out where they are located. In an ideal
+build actions, and is the single resource defining how to build the frontend application, execute unit tests, lint
+source code, run a development server, publish artifacts... We recommend to keep these definitions in this file, in the
+`scripts` section, and avoid as much as possible using the plugin's `*Script` properties to run complex commands. Keep
+the frontend build definitions in one place, and let everyone easily finds out where they are located. In an ideal
 situation, these properties shall all have a value such as `run <script-name>`, and nothing more. For example:
 
 ```groovy
@@ -421,15 +421,15 @@ runtimes used underneath. If it is not acceptable, feel free to declare addition
 
 _Some related discussions in Gradle forums_: \[[1][reference-1]] \[[2][reference-2]] \[[3][reference-3]]
 
-### `cleanFrontend` - Clean frontend
+### `cleanFrontend` - Clean frontend project
 
-The `cleanFrontend` task does nothing by default, considering frontend generated resources (pre-processed Typescript
-files, SCSS stylesheets...) are written in the `${project.buildDir}` directory. If it is not the case, this task may be
+The `cleanFrontend` task does nothing by default, considering frontend generated artifacts (final Javascript, CSS, HTML
+files...) are written in the `${project.buildDir}` directory. If it is not the case, this task may be
 useful to clean the relevant directory. To do so, a clean script must be defined in the `package.json` file,
 and the `cleanScript` property must be set to the corresponding npm/Yarn command. This task depends on the
 `installFrontend` task, and is skipped if the `cleanScript` property is not set.
 
-### `assembleFrontend` - Assemble frontend
+### `assembleFrontend` - Assemble frontend artifacts
 
 The `assembleFrontend` task shall be used to integrate a frontend's build script into Gradle builds. The build script
 must be defined in the `package.json` file, and the `assembleScript` property must be set to the corresponding
@@ -439,8 +439,8 @@ not set.
 **Note about task execution**: 
 
 If you execute directly or indirectly this task with Gradle, you may notice NPM or Yarn runs every time, and Gradle does
-not 'skip' the task based on a previous succcessful build. This is the expected behavior because the task does not
-declare any input/output so as Gradle knows it is already _UP-TO-DATE_.
+not skip the task based on a previous succcessful build. This is the expected behavior because the task does not declare
+any input/output so as Gradle knows it is already _UP-TO-DATE_.
 
 Why the task has no inputs/outputs? This task provides the ability to connect the developer's own Javascript build
 process to Gradle, and nothing more. Every Javascript build process is unique. It depends on the project, the language
@@ -449,7 +449,7 @@ by the team. Moreover, some build utilities are already able to build frontend a
 and actually, it does not make sense to duplicate such behavior in the plugin. If it is not acceptable, feel free to
 declare additional inputs/outputs, with the help of some [recommendations](#recommendations).
 
-### `checkFrontend` - Check frontend
+### `checkFrontend` - Check frontend application
 
 The `checkFrontend` task may be used to integrate a frontend check script into a Gradle build. The check script must be
 defined in the project's `package.json` file, and the `checkscript` property must be set with the corresponding
@@ -457,7 +457,7 @@ npm/Yarn command. A typical check script defined in the project's `package.json`
 execute tests, and perform additional analysis tasks. This task depends on the `installFrontend` task, and is skipped if
 the `checkScript` property is not set.
 
-### `publishFrontend` - Publish frontend
+### `publishFrontend` - Publish frontend artifacts
 
 The `publishFrontend` task may be used to integrate a frontend publish script into a Gradle build. The publish script
 must be defined in the project's `package.json` file, and the `publishScript` property must be set with the
@@ -532,8 +532,8 @@ tasks.register<RunNpx>("npxVersion") {
 
 ### Run a custom command with `npm` or `yarn`
 
-The plugin provides the task type `org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpmYarn` that allows creating
-a custom task to run any frontend script. The `script` property must be set with the corresponding
+The plugin provides the task type `org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpmYarn` that allows
+creating a custom task to run any frontend script. The `script` property must be set with the corresponding
 [npm][npm]/[Yarn][yarn] command.
 
 The code below shows the configuration required to run frontend's end-to-end tests in a custom task:
