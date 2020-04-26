@@ -15,6 +15,11 @@ class GetDistributionUrlResolverTest {
     private GetDistributionUrlResolver usecase;
 
     @Test
+    void shouldReturnNoResolverWhenDistributionIdIsUnknown() {
+        assertThat(usecase.execute("JDK")).isEmpty();
+    }
+
+    @Test
     void shouldReturnNodeDistributionUrlResolver() {
         assertThat(usecase.execute(DistributionId.NODE)).containsInstanceOf(ResolveNodeDistributionUrl.class);
     }

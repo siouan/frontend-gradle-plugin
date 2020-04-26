@@ -18,6 +18,8 @@ public class DownloadSettingsMatcher extends AbstractArgumentMatcher<DownloadSet
         }
 
         return actualValue.getResourceUrl().equals(expectedValue.getResourceUrl()) && actualValue
+            .getProxy()
+            .equals(expectedValue.getProxy()) && actualValue
             .getTemporaryDirectoryPath()
             .equals(expectedValue.getTemporaryDirectoryPath()) && actualValue
             .getDestinationFilePath()

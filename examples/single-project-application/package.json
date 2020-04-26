@@ -1,9 +1,6 @@
 {
-  "name": "multi-projects-example",
-  "version": "2.0.0",
-  "devDependencies": {
-    "mkdirp": "1.0.4"
-  },
+  "name": "single-project-application-example",
+  "version": "2.1.0",
   "scripts": {
     "build": "echo Building frontend",
     "check": "echo Checking frontend && npm run lint && npm run test",

@@ -23,15 +23,14 @@ class GetNodeExecutablePathTest {
 
     @Test
     void shouldReturnTwoExecutableWhenOsIsWindows() {
-        assertThat(usecase.getWindowsRelativeExecutablePaths()).containsExactly(Paths.get("node.exe"),
-            Paths.get("node.cmd"));
+        assertThat(usecase.getWindowsRelativeExecutablePath()).isEqualTo(Paths.get("node.exe"));
 
         verifyNoMoreInteractions(fileManager);
     }
 
     @Test
     void shouldReturnTwoExecutableWhenOsIsNotWindows() {
-        assertThat(usecase.getNonWindowsRelativeExecutablePaths()).containsExactly(Paths.get("bin", "node"));
+        assertThat(usecase.getNonWindowsRelativeExecutablePath()).isEqualTo(Paths.get("bin", "node"));
 
         verifyNoMoreInteractions(fileManager);
     }

@@ -83,15 +83,15 @@ public class GetDistribution {
         final Path distributionFilePath = getDistributionSettings
             .getTemporaryDirectoryPath()
             .resolve(resolveDistributionFileName(distributionUrl));
-        downloadResource.execute(
-            new DownloadSettings(distributionUrl, getDistributionSettings.getTemporaryDirectoryPath(),
-                distributionFilePath));
+        downloadResource.execute(new DownloadSettings(distributionUrl, getDistributionSettings.getProxy(),
+            getDistributionSettings.getTemporaryDirectoryPath(), distributionFilePath));
 
         final Optional<DistributionValidator> distributionValidator = getDistributionValidator.execute(
             getDistributionSettings.getDistributionId());
         if (distributionValidator.isPresent()) {
             final DistributionValidatorSettings distributionValidatorSettings = new DistributionValidatorSettings(
-                getDistributionSettings.getTemporaryDirectoryPath(), distributionUrl, distributionFilePath);
+                getDistributionSettings.getTemporaryDirectoryPath(), distributionUrl, distributionFilePath,
+                getDistributionSettings.getProxy());
             distributionValidator.get().execute(distributionValidatorSettings);
         }
         return distributionFilePath;

@@ -7,16 +7,16 @@ plugins {
     id 'com.gradle.plugin-publish'
 }
 
-wrapper {
-    distributionType = Wrapper.DistributionType.ALL
-}
-
 repositories {
     jcenter()
     mavenCentral()
 }
 
-test {
+tasks.named('wrapper') {
+    distributionType = Wrapper.DistributionType.ALL
+}
+
+tasks.named('test') {
     useJUnitPlatform()
     testLogging {
         exceptionFormat = 'full'
@@ -25,7 +25,7 @@ test {
     }
 }
 
-jacocoTestReport {
+tasks.named('jacocoTestReport') {
     reports {
         xml.enabled = true
         xml.destination file("${buildDir}/reports/jacoco/report.xml")
@@ -45,8 +45,8 @@ dependencies {
 }
 
 group 'org.siouan'
-version '2.0.0'
-description 'Build Node.js, NPM, Yarn applications with Gradle.'
+version '2.1.0'
+description 'Build Node.js, npm, Yarn applications with Gradle.'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -63,13 +63,13 @@ gradlePlugin {
 }
 
 pluginBundle {
-    website = 'https://github.com/Siouan/frontend-gradle-plugin'
-    vcsUrl = 'https://github.com/Siouan/frontend-gradle-plugin.git'
+    website = 'https://github.com/siouan/frontend-gradle-plugin'
+    vcsUrl = 'https://github.com/siouan/frontend-gradle-plugin.git'
 
     plugins {
         frontend {
             displayName = 'Frontend Gradle plugin'
-            description = 'Build Node.js, NPM, Yarn applications with Gradle.'
+            description = 'Build Node.js, npm, Yarn applications with Gradle.'
             tags = ['node', 'nodejs', 'npm', 'npx', 'yarn', 'frontend']
         }
     }

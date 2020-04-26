@@ -74,6 +74,11 @@ public class FrontendGradlePlugin implements Plugin<Project> {
     public static final String DEFAULT_NODE_INSTALL_DIRNAME = "node";
 
     /**
+     * Default port for the proxy server.
+     */
+    public static final int DEFAULT_PROXY_PORT = 8080;
+
+    /**
      * Name of the task that installs a Yarn distribution.
      */
     public static final String DEFAULT_YARN_INSTALL_DIRNAME = "yarn";
@@ -96,7 +101,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
     public static final String GRADLE_CHECK_TASK_NAME = LifecycleBasePlugin.CHECK_TASK_NAME;
 
     /**
-     * Name of the NPM/Yarn command that shall be executed to install frontend dependencies.
+     * Name of the npm/Yarn command that shall be executed to install frontend dependencies.
      */
     private static final String DEFAULT_INSTALL_SCRIPT = "install";
 
@@ -128,6 +133,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
             .convention(project.getLayout().getProjectDirectory().dir(DEFAULT_YARN_INSTALL_DIRNAME));
         extension.getInstallScript().convention(DEFAULT_INSTALL_SCRIPT);
         extension.getPackageJsonDirectory().convention(project.getLayout().getProjectDirectory().getAsFile());
+        extension.getProxyPort().convention(DEFAULT_PROXY_PORT);
         extension.getVerboseModeEnabled().convention(false);
 
         final TaskContainer taskContainer = project.getTasks();
@@ -176,6 +182,8 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.getNodeVersion().set(extension.getNodeVersion());
         task.getNodeDistributionUrl().set(extension.getNodeDistributionUrl());
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
+        task.getProxyHost().set(extension.getProxyHost());
+        task.getProxyPort().set(extension.getProxyPort());
         task.setOnlyIf(t -> !extension.getNodeDistributionProvided().get());
     }
 
@@ -191,6 +199,8 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.getYarnVersion().set(extension.getYarnVersion());
         task.getYarnDistributionUrl().set(extension.getYarnDistributionUrl());
         task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
+        task.getProxyHost().set(extension.getProxyHost());
+        task.getProxyPort().set(extension.getProxyPort());
         task.setOnlyIf(t -> extension.getYarnEnabled().get() && !extension.getYarnDistributionProvided().get());
     }
 

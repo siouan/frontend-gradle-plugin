@@ -15,7 +15,7 @@ public abstract class AbstractRunPredefinedCommandTask extends AbstractRunComman
     }
 
     @Override
-    protected ExecutableType getExecutableType() {
+    protected String getExecutableType() {
         return yarnEnabled.get() ? ExecutableType.YARN : ExecutableType.NPM;
     }
 }

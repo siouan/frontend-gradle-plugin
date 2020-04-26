@@ -13,7 +13,7 @@ import org.gradle.process.ExecSpec;
 import org.siouan.frontendgradleplugin.domain.model.ExecutionSettings;
 
 /**
- * Action that configures a {@link ExecSpec} instance to run a frontend script (Node/NPM/Yarn) with Gradle.
+ * Action that configures a {@link ExecSpec} instance to run a script with Gradle.
  */
 public class ExecSpecAction implements Action<ExecSpec> {
 
@@ -45,7 +45,7 @@ public class ExecSpecAction implements Action<ExecSpec> {
     }
 
     /**
-     * Configures an execute specification to run the script with a NPM/Yarn command line.
+     * Configures an execute specification to run the script with a npm/Yarn command line.
      *
      * @param execSpec Execute specification.
      */
@@ -54,7 +54,7 @@ public class ExecSpecAction implements Action<ExecSpec> {
         execSpec.setWorkingDir(executionSettings.getWorkingDirectoryPath().toString());
 
         // Prepend directories containing the Node and Yarn executables to the 'PATH' environment variable.
-        // NPM is in the same directory than Node, do nothing for it.
+        // npm is in the same directory than Node, do nothing for it.
         final Map<String, Object> environment = execSpec.getEnvironment();
         final String pathVariable = findPathVariable(environment);
         final String executablePaths = executionSettings

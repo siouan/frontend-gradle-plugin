@@ -5,7 +5,12 @@ package org.siouan.frontendgradleplugin.domain.model;
  *
  * @since 2.0.0
  */
-public enum DistributionId {
-    NODE,
-    YARN
+public final class DistributionId {
+
+    public static final String NODE = "NODE";
+
+    public static final String YARN = "YARN";
+
+    private DistributionId() {
+    }
 }

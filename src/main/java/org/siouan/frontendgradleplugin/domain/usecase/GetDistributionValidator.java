@@ -39,15 +39,16 @@ public class GetDistributionValidator {
      *
      * @param distributionId Distribution ID.
      * @return Distribution validator.
+     * @see DistributionId
      */
     @Nonnull
-    public Optional<DistributionValidator> execute(@Nonnull DistributionId distributionId) {
+    public Optional<DistributionValidator> execute(@Nonnull String distributionId) {
         switch (distributionId) {
-        case NODE:
+        case DistributionId.NODE:
             return Optional.of(
                 new ValidateNodeDistribution(fileManager, downloadResource, readNodeDistributionShasum, hashFile,
                     logger));
-        case YARN:
+        case DistributionId.YARN:
         default:
             return Optional.empty();
         }

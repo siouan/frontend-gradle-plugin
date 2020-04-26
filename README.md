@@ -1,53 +1,78 @@
-# Frontend Gradle plugin
+<h2 align="center">Frontend Gradle plugin - Integrated <a href="https://nodejs.org/" title="Node.js">Node.js</a>, <a href="https://www.npmjs.com/" title="npm">npm</a>, <a href="https://yarnpkg.com/" title="Yarn">Yarn</a> builds</h2> 
+<p align="center">
+    <a href="https://github.com/siouan/frontend-gradle-plugin/releases/tag/v2.1.0"><img src="https://img.shields.io/badge/Latest%20release-2.1.0-blue.svg" alt="Latest release 2.1.0"/></a>
+    <a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-green.svg" alt="License Apache 2.0"/></a>
+    <br/>
+    <a href="https://travis-ci.com/siouan/frontend-gradle-plugin"><img src="https://travis-ci.com/siouan/frontend-gradle-plugin.svg?branch=master" alt="Build status"/></a>
+    <a href="https://sonarcloud.io/dashboard?id=siouan_frontend-gradle-plugin"><img src="https://sonarcloud.io/api/project_badges/measure?project=siouan_frontend-gradle-plugin&metric=alert_status" alt="Quality gate status"/></a>
+    <a href="https://sonarcloud.io/dashboard?id=siouan_frontend-gradle-plugin"><img src="https://sonarcloud.io/api/project_badges/measure?project=siouan_frontend-gradle-plugin&metric=coverage" alt="Code coverage"/></a>
+    <a href="https://sonarcloud.io/dashboard?id=siouan_frontend-gradle-plugin"><img src="https://sonarcloud.io/api/project_badges/measure?project=siouan_frontend-gradle-plugin&metric=reliability_rating" alt="Reliability"/></a>
+</p>
 
-[![Latest release 2.0.0](https://img.shields.io/badge/Latest%20release-2.0.0-blue.svg)](https://github.com/Siouan/frontend-gradle-plugin/releases/tag/v2.0.0)
-[![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
-
-[![Build status](https://travis-ci.com/Siouan/frontend-gradle-plugin.svg?branch=master)](https://travis-ci.com/Siouan/frontend-gradle-plugin)
-[![Quality gate status](https://sonarcloud.io/api/project_badges/measure?project=Siouan_frontend-gradle-plugin&metric=alert_status)](https://sonarcloud.io/dashboard?id=Siouan_frontend-gradle-plugin)
-[![Code coverage](https://sonarcloud.io/api/project_badges/measure?project=Siouan_frontend-gradle-plugin&metric=coverage)](https://sonarcloud.io/dashboard?id=Siouan_frontend-gradle-plugin)
-[![Reliability](https://sonarcloud.io/api/project_badges/measure?project=Siouan_frontend-gradle-plugin&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=Siouan_frontend-gradle-plugin)
-
-This plugin allows to integrate a [Node.js][nodejs]/[NPM][npm]/[Yarn][yarn] build into Gradle. It is inspired by the
+This plugin allows to integrate a [Node.js][nodejs]/[npm][npm]/[Yarn][yarn] build into Gradle. It is inspired by the
 philosophy of the [frontend-maven-plugin][frontend-maven-plugin]. See the [quick start guide](#quick-start-guide) below
 to install/configure the plugin, and build your frontend application.
 
-#### Features
+#### Key features
 
-- Download and install a [Node.js][nodejs] distribution.
-- Download and install a [Yarn][yarn] distribution.
-- Install frontend dependencies with a configurable NPM/Yarn command (e.g. `npm ci`).
-- Trigger automatically frontend build, check, clean, publish scripts in a `package.json` file from Gradle lifecycle
-tasks.
-- Create custom tasks to run a command with [Node.js][nodejs]/[NPX][npx]/[NPM][npm]/[Yarn][yarn].
-- Use a provided distribution of [Node.js][nodejs] or [Yarn][yarn].
+- **Distribution management**: the plugin downloads and installs a [Node.js][nodejs] distribution and/or a [Yarn][yarn]
+distribution when required. Optionally, a shared/global distribution may be used instead to avoid network overhead and
+duplication. The plugin may also use a HTTP proxy server for downloads, to take advantage of any caching facility, and
+submit to the organization's security rules.
+- **Configurable dependencies installation**: depending on the environment, installing frontend dependencies using the
+`package.json` file may require a different command (e.g. `npm ci`).
+- **Built-in tasks**: no need to define tasks to build, clean, check, or publish the frontend application through
+Gradle lifecycle. The plugin provides them out of the box, and ensures their implementation matches Gradle's
+[recommendations][gradle-task-configuration-avoidance]. Plug scripts from a `package.json` file with the
+[DSL](#dsl-reference), and run `gradlew build`.
+- **Customization**: for more complex use cases, the plugin provides types to create tasks and run custom commands with
+[Node.js][nodejs], [npm][npm], [npx][npx], [Yarn][yarn].
+
+#### Under the hood
+
+- **Lazy configuration**: tasks configuration is delayed until necessary thanks to the use of Gradle
+[lazy configuration API][gradle-lazy-configuration], to optimize performance of builds and ease chaining tasks I/O.
+- **Self-contained domain design**: the plugin design is influenced by [clean coding][clean-coder] principles.
+The domain layer is isolated from any framework and infrastructure. Writing cross-platform unit tests and maintaining
+the plugin is easier. Code coverage and predictability increase.
+
+<p align="center">
+<a href="https://gradle.org/" title="Gradle"><img src="resources/gradle-icon.png" alt="Gradle icon"/></a>
+<img src="resources/bullet.png" alt="Bullet"/>
+<a href="https://nodejs.org/" title="Node.js"><img src="resources/nodejs-icon.png" alt="Node.js icon"/></a>
+<img src="resources/bullet.png" alt="Bullet"/>
+<a href="https://www.npmjs.com/" title="npm"><img src="resources/npm-icon.png" alt="npm icon"/></a>
+<img src="resources/bullet.png" alt="Bullet"/>
+<a href="https://yarnpkg.com/" title="Yarn"><img src="resources/yarn-icon.png" alt="Yarn icon"/></a>
+</p>
 
 ## Summary
 
 - [Quick start guide](#quick-start-guide)
   - [Requirements](#requirements)
   - [Installation](#installation)
-    - [Using Gradle DSL](#using-gradle-dsl)
-    - [Using Gradle build script block](#using-gradle-build-script-block)
   - [Configuration](#configuration)
     - [DSL reference](#dsl-reference)
     - [Examples][examples]
-        - [Standalone frontend project build][example-standalone-frontend-project]
-        - [Standalone frontend project build with preinstalled Node.js/Yarn distributions][example-provided-distribution-project]
-        - [Multi frontend projects build][example-multi-frontend-projects]
-        - [Full-stack multi projects build][example-full-stack-multi-projects]
-  - [Final steps](#final-steps)
-    - [Build the frontend](#build-the-frontend)
-    - [Use Node/NPX/NPM/Yarn apart from Gradle](#use-nodenpxnpmyarn-apart-from-gradle)
+        - [Build a frontend application in a single project][example-single-project]
+        - [Build a frontend application in a single project using preinstalled distributions][example-single-project-preinstalled-distributions]
+        - [Build multiple frontend applications with dedicated sub-projects using shared distributions][example-multi-projects-applications]
+        - [Build a full-stack Spring Boot WAR application with dedicated frontend and backend sub-projects][example-multi-projects-war-application]
+    - [Final steps](#final-steps)
+      - [Build the frontend application](#build-the-frontend-application)
+      - [Use Node.js/npm/npx/Yarn apart from Gradle](#use-nodejsnpmnpxyarn-apart-from-gradle)
+    - [Recommendations](#recommendations)
+      - [Using `*Script` properties](#using-script-properties)
+      - [Customizing built-in tasks](#customizing-built-in-tasks)
 - [Tasks reference](#tasks-reference)
   - [Task tree](#task-tree)
-  - [Install Node.js](#install-nodejs)
-  - [Install Yarn](#install-yarn)
-  - [Install frontend dependencies](#install-frontend-dependencies)
-  - [Clean frontend](#clean-frontend)
-  - [Assemble frontend](#assemble-frontend)
-  - [Check frontend](#check-frontend)
-  - [Publish frontend](#publish-frontend)
+  - [`installNode` - Install Node.js](#installnode---install-nodejs)
+  - [`installYarn` - Install Yarn](#installyarn---install-yarn)
+  - [`installFrontend` - Install frontend dependencies](#installfrontend---install-frontend-dependencies)
+  - [`cleanFrontend` - Clean frontend project](#cleanfrontend---clean-frontend-project)
+  - [`assembleFrontend` - Assemble frontend artifacts](#assemblefrontend---assemble-frontend-artifacts)
+  - [`checkFrontend` - Check frontend application](#checkfrontend---check-frontend-application)
+  - [`publishFrontend` - Publish frontend artifacts](#publishfrontend---publish-frontend-artifacts)
   - [Run custom command with `node`](#run-a-custom-command-with-node)
   - [Run custom command with `npx`](#run-a-custom-command-with-npx)
   - [Run custom command with `npm` or `yarn`](#run-a-custom-command-with-npm-or-yarn)
@@ -64,80 +89,22 @@ The plugin supports:
 - [Gradle][gradle] 5.1+
 - [JDK][jdk] 8+ 64 bits
 - [Node.js][nodejs] 6.2.1+
-- [Yarn][yarn] 1.0.0+
+- [Yarn][yarn] 1.0+
 
 The plugin is built and tested on Linux, Mac OS, Windows. See the [contributing notes][contributing] to know the list of
 build environments used.
 
 ### Installation
 
-2 options are available.
-
-#### Using [Gradle DSL][gradle-dsl]
-
-This is the modern and recommended approach.
-
-- Groovy syntax:
-
-```groovy
-// build.gradle
-plugins {
-    id 'org.siouan.frontend' version '2.0.0'
-}
-```
-
-- Kotlin syntax:
-
-```kotlin
-// build.gradle.kts
-plugins {
-    id("org.siouan.frontend") version "2.0.0"
-}
-```
-
-#### Using [Gradle build script block][gradle-build-script-block]
-
-This approach is the legacy way to resolve and apply plugins.
-
-- Groovy syntax:
-
-```groovy
-// build.gradle
-buildscript {
-    repositories {
-        url 'https://plugins.gradle.org/m2/'
-    }
-    dependencies {
-        classpath 'org.siouan:frontend-gradle-plugin:2.0.0'
-    }
-}
-
-apply plugin: 'org.siouan.frontend'
-```
-
-- Kotlin syntax:
-
-```kotlin
-// build.gradle.kts
-buildscript {
-    repositories {
-        url = uri("https://plugins.gradle.org/m2/")
-    }
-    dependencies {
-        classpath("org.siouan:frontend-gradle-plugin:2.0.0")
-    }
-}
-
-apply(plugin = "org.siouan.frontend")
-```
+Follow instructions provided by the Gradle Plugin Portal [here][gradle-plugin-page].
 
 ### Configuration
 
 #### DSL reference
 
-All settings are introduced hereafter. Values of optional properties are the default ones applied by the plugin. Other
-values are provided for information. You may also take a look at [Tasks reference](#tasks-reference) section for
-additional information.
+All settings are introduced hereafter. Values of optional properties are the default ones applied by the plugin, unless
+otherwise stated. Other values are provided for information. You may also take a look at
+[Tasks reference](#tasks-reference) section for further information.
 
 - Groovy syntax:
 
@@ -146,15 +113,16 @@ additional information.
 frontend {
     ////// NODE SETTINGS //////
     // [OPTIONAL] Whether the Node distribution is already provided, and shall not be downloaded.
-    // The 'nodeInstallDirectory' shall be used to point the install directory of the distribution.
-    // If <false>, the 'nodeVersion' property - at least, must be set.
+    // The 'nodeInstallDirectory' property shall be used to point the install directory of the
+    // distribution, while other 'node*' properties should not be used for clarity. 
+    // If <false>, at least the 'nodeVersion' property must be set.
     nodeDistributionProvided = false
 
     // [OPTIONAL] Node version, used to build the URL to download the corresponding distribution, if the
     // 'nodeDistributionUrl' property is not set. By default, this property is 'null'
     nodeVersion = '12.16.1'
 
-    // [OPTIONAL] Sets this property to force the download from a custom website. By default, this
+    // [OPTIONAL] Set this property to force the download from a custom website. By default, this
     // property is 'null', and the plugin attempts to download the distribution compatible with the
     // current platform from Node's website. The version of the distribution is expected to be the
     // same as the one set in the 'nodeVersion' property, or this may lead to unexpected results.
@@ -164,14 +132,15 @@ frontend {
     nodeInstallDirectory = file("${projectDir}/node")
 
     ////// YARN SETTINGS //////
-    // [OPTIONAL] Whether Yarn shall be used instead of NPM when executing frontend tasks.
+    // [OPTIONAL] Whether Yarn shall be used instead of npm when executing frontend tasks.
     // Consequently, a Yarn distribution will be downloaded and installed by the plugin. If <true>,
-    // the 'yarnVersion' version property must be set.
+    // the 'yarnVersion' property must be set.
     yarnEnabled = false
 
     // [OPTIONAL] Whether the Yarn distribution is already provided, and shall not be downloaded.
-    // The 'yarnInstallDirectory' shall be used to point the install directory of the distribution.
-    // If <false>, the 'yarnVersion' property - at least, must be set.
+    // The 'yarnInstallDirectory' property shall be used to point the install directory of the
+    // distribution, while other 'yarn*' properties should not be used for clarity. 
+    // If <false>, at least the 'yarnVersion' property must be set.
     yarnDistributionProvided = false
 
     // [OPTIONAL] Yarn version, used to build the URL to download the corresponding distribution, if
@@ -179,7 +148,7 @@ frontend {
     // 'yarnEnabled' property is true.
     yarnVersion = '1.22.4'
 
-    // [OPTIONAL] Sets this property to force the download from a custom website. By default, this
+    // [OPTIONAL] Set this property to force the download from a custom website. By default, this
     // property is 'null', and the plugin attempts to download the distribution compatible with the
     // current platform from Yarn's website. The version of the distribution is expected to be the
     // same as the one set in the 'yarnVersion' property, or this may lead to unexpected results.
@@ -189,9 +158,9 @@ frontend {
     yarnInstallDirectory = file("${projectDir}/yarn")
 
     ////// SCRIPT SETTINGS //////
-    // Name of NPM/Yarn scripts (see 'package.json' file) that shall be executed depending on this
-    // plugin task. The values below are passed as arguments of the 'npm' or 'yarn' executables.
-    // Under Linux-like O/S, white space characters ' ' in an argument value must be escaped with a
+    // Name of npm/Yarn scripts (see 'package.json' file) that shall be executed depending on this
+    // plugin's task. The values below are passed as arguments of the 'npm' or 'yarn' executables.
+    // Under Unix-like O/S, white space characters ' ' in an argument value must be escaped with a
     // backslash character '\'. Under Windows O/S, the whole argument must be enclosed between
     // double-quotes. Example: assembleScript = 'run assemble single\ argument'
 
@@ -210,14 +179,14 @@ frontend {
     // also executed when the Gradle built-in 'assemble' task is executed.
     assembleScript = 'run assemble'
 
-    // [OPTIONAL] Script called to check the frontend. Default value is <null>. This property is
-    // used by the 'checkFrontend' task. Apart from direct execution, the task is also executed
-    // when the Gradle built-in 'check' task is executed.
+    // [OPTIONAL] Script called to check the frontend application. Default value is <null>. This
+    // property is used by the 'checkFrontend' task. Apart from direct execution, the task is also
+    // executed when the Gradle built-in 'check' task is executed.
     checkScript = 'run check'
 
-    // [OPTIONAL] Script called to publish the frontend. Default value is <null>. This property is
-    // used by the 'publishFrontend' task. Apart from direct execution, the task is also executed
-    // when the Gradle built-in 'publish' task is executed.
+    // [OPTIONAL] Script called to publish the frontend artifacts. Default value is <null>. This
+    // property is used by the 'publishFrontend' task. Apart from direct execution, the task is
+    // also executed when the Gradle built-in 'publish' task is executed.
     publishScript = 'run publish'
 
     ////// GENERAL SETTINGS //////
@@ -228,13 +197,20 @@ frontend {
     // appropriate directory. This directory being used as the working directory when running JS
     // scripts, consequently, the 'node_modules' directory would be created at this location after
     // the 'installFrontend' task is executed.
-    packageJsonDirectory = file("$projectDir")
+    packageJsonDirectory = projectDir
 
-    // [OPTIONAL] Whether messages logged by the plugin in Gradle with INFO level shall be visible
-    // whatever the active Gradle logging level is. This property allows to track the plugin
-    // execution without activating Gradle INFO or DEBUG levels that may be too much verbose on a
-    // global point of view. The plugin also logs some messages at lower levels, (e.g. debugging
-    // data). The visibility of these messages does not depend on this property.
+    // [OPTIONAL] IP address or domain name of a HTTP/HTTPS proxy server to use when downloading
+    // distributions. By default, this property is 'null', and the plugin uses direct connections.
+    proxyHost = '127.0.0.1'
+
+    // [OPTIONAL] Port of the proxy server. This property is only relevant when the 'proxyHost'
+    // property is set.
+    proxyPort = 8080
+
+    // [OPTIONAL] Whether the plugin shall log additional messages whatever Gradle's logging level
+    // is. Technically speaking, messages logged by the plugin with the INFO level are made
+    // visible. This property allows to track the plugin execution without activating Gradle's INFO
+    // or DEBUG levels, that may be too much verbose on a global point of view.
     verboseModeEnabled = false
 }
 ```
@@ -262,6 +238,8 @@ frontend {
     publishScript.set("run publish")
 
     packageJsonDirectory.set(project.layout.projectDirectory)
+    proxyHost.set("127.0.0.1")
+    proxyPort.set(8080)
     verboseModeEnabled.set(false)
 }
 ```
@@ -270,9 +248,9 @@ frontend {
 
 See examples introduced [here][examples].
 
-### Final steps
+#### Final steps
 
-#### Build the frontend
+##### Build the frontend application
 
 Now that the plugin is correctly installed and configured, open a terminal, and execute the following command in the
 project's directory:
@@ -281,16 +259,13 @@ project's directory:
 gradlew build
 ```
 
-If the frontend application shall be packaged in a Java artifact, take a look at [this guide](#how-to-assemble-a-frontend-and-a-java-backend-into-a-single-artifact)
-to configure frontend and backend applications assembling.
-
-#### Use Node/NPX/NPM/Yarn apart from Gradle
+##### Use Node.js/npm/npx/Yarn apart from Gradle
  
-If you plan to use the downloaded distributions of [Node.js][nodejs]/[NPX][npx]/[NPM][npm] or [Yarn][yarn] apart from
+If you plan to use the downloaded distributions of [Node.js][nodejs]/[npm][npm]/[npx][npx] or [Yarn][yarn] apart from
 Gradle, apply the following steps:
 
 - Create a `NODEJS_HOME` environment variable containing the real path set in the `nodeInstallDirectory` property.
-- Add the Node/NPM executables' directory to the `PATH` environment variable:
+- Add the Node/npm executables' directory to the `PATH` environment variable:
   - On Unix-like O/S, add the `$NODEJS_HOME/bin` path.
   - On Windows O/S, add `%NODEJS_HOME%` path.
 
@@ -300,6 +275,68 @@ Optionally, if Yarn is enabled and you don't want to enter Yarn's executable abs
 - Add the Yarn executable's directory to the `PATH` environment variable:
   - On Unix-like O/S, add the `$YARN_HOME/bin` path.
   - On Windows O/S, add the `%YARN_HOME%\bin` path.
+
+#### Recommendations
+
+##### Using `*Script` properties
+
+Design of the plugin's tasks running a [Node.js][nodejs]/[npm][npm]/[npx][npx]/[Yarn][yarn] command
+(e.g. `assembleFrontend` task) rely on the assumption the `package.json` file contains all definitions of the frontend
+build actions, and is the single resource defining how to build the frontend application, execute unit tests, lint
+source code, run a development server, publish artifacts... We recommend to keep these definitions in this file, in the
+`scripts` section, and avoid as much as possible using the plugin's `*Script` properties to run complex commands. Keep
+the frontend build definitions in one place, and let everyone easily finds out where they are located. In an ideal
+situation, these properties shall all have a value such as `run <script-name>`, and nothing more. For example:
+
+```groovy
+// Instead of:
+assembleScript = 'run webpack -- --config webpack.config.js --profile'
+
+// Prefer:
+assembleScript = 'run build'
+// with a package.json file containing:
+// "scripts": {
+//   "build": "webpack --config webpack/webpack.prod.js --profile"
+// }
+```
+
+##### Customizing built-in tasks
+
+If you need to customize the plugin's built-in tasks (e.g. declare additional I/O or dependencies), it is very important
+to conform to the [Configuration avoidance API][gradle-configuration-avoidance-api]: use references of task providers
+instead of references of tasks, and continue taking advantage of the lazy configuration behavior the plugin already
+implements. The examples below introduce the implementation expected with simple cases:
+
+```groovy
+// Configuring a predefined task.
+// FORMER SYNTAX: task 'installFrontend' is immediately created and configured, as well as task
+// 'otherTask', even if both tasks are not executed.
+installFrontend {
+    dependsOn 'otherTask'
+    inputs.files('package.json', 'package-lock.json')
+}
+// MODERN SYNTAX: task 'installFrontend' is created and configured only when Gradle is about to execute it.
+// Consequently, task 'otherTask' is also created and configured later.
+tasks.named('installFrontend') {
+    dependsOn 'otherTask'
+    inputs.files('package.json', 'package-lock.json')
+}
+
+// Defining a new task
+// LEGACY SYNTAX: task 'eagerTask' is immediately created and configured, as well as task
+// 'installFrontend', even if both tasks are not executed.
+task eagerTask {
+    dependsOn 'installFrontend' 
+}
+// MODERN SYNTAX: task 'eagerTask' is created and configured only when Gradle is about to execute it.
+// Consequently, task 'installFrontend' is also created and configured later.
+tasks.register('eagerTask') {
+    dependsOn 'installFrontend'
+}
+```
+
+If your application uses the legacy syntax, you may find further instructions to migrate to the modern syntax in this
+Gradle's [guide][gradle-migration-guide].
 
 ## Tasks reference
 
@@ -311,101 +348,120 @@ The plugin registers multiple tasks, that may have dependencies with each other,
 
 ![Task tree][task-tree]
 
-### Install Node.js
+### `installNode` - Install Node.js
 
 The `installNode` task downloads a [Node.js][nodejs] distribution and verifies its integrity. If the
-`nodeDistributionUrl` property is ommitted, the URL is guessed using the `nodeVersion` property. Distribution integrity
-is checked by downloading a file providing the distribution shasum. This file is expected to be in the same remote web
-directory than the distribution. For example, if the distribution is located at URL
+`nodeDistributionUrl` property is ommitted, the URL is guessed using the `nodeVersion` property. Checking the
+distribution integrity consists of downloading a file providing the distribution shasum. This file is expected to be in
+the same remote web directory than the distribution. For example, if the distribution is located at URL
 `https://nodejs.org/dist/vX.Y.Z/node-vX.Y.Z-win-x64.zip`, the plugin attempts to download the shasum file located at
-URL `https://nodejs.org/dist/vX.Y.Z/SHASUMS256.txt`. Use the property `nodeInstallDirectory` to set the location where
-the distribution shall be installed, which by default is the `${projectDir}/node` directory.
+URL `https://nodejs.org/dist/vX.Y.Z/SHASUMS256.txt`. Optionally, defining the `proxyHost` property and the `proxyPort`
+property allow to use a proxy server when downloading the distribution and the shasum. Set the location where the
+distribution shall be installed with the `nodeInstallDirectory` property, which by default is the `${projectDir}/node`
+directory.
 
-If a Node distribution is already installed in the system, and shall be used instead of a downloaded distribution, sets
-the `nodeDistributionProvided` property to `true` and the location of the distribution with the `nodeInstallDirectory`
-property. In this configuration, the `nodeVersion` property and the `nodeDistributionUrl` property are useless and shall
+If a [Node.js][nodejs] distribution is already installed in the system, and shall be used instead of a downloaded
+distribution, set the `nodeDistributionProvided` property to `true` and the location of the distribution with the
+`nodeInstallDirectory` property. The `nodeVersion` property and the `nodeDistributionUrl` property are useless and shall
 not be set for clarity. Consequently, the `installNode` task is automatically _SKIPPED_ during a Gradle build.
 
-The task takes advantage of
-[Gradle incremental build][gradle-incremental-build], and is not executed again unless at least one of the events below
-occurs:
+The task takes advantage of [Gradle incremental build][gradle-incremental-build], and is not executed again unless one
+of its inputs/outputs changed. The task is _UP-TO-DATE_ during a Gradle build, and skipped.
 
-- The plugins change in the project.
-- At least one of the properties `nodeVersion`, `nodeDistributionUrl`, `nodeInstallDirectory` is modified.
-- The content of the directory pointed by the `nodeInstallDirectory` is modified.
+> This task should not be executed directly. Gradle executes it if the build requires it.
 
-In other cases, the task will be marked as _UP-TO-DATE_ during a Gradle build, and skipped.
-
-This task should not be executed directly. It is called automatically by Gradle, if the `installFrontend` task is
-executed.
-
-### Install Yarn
+### `installYarn` - Install Yarn
 
 The `installYarn` task downloads a [Yarn][yarn] distribution, if `yarnEnabled` property is `true`. If the
-`yarnInstallDirectory` property is ommitted, the URL is guessed using the `yarnVersion` property. Use the property
-`yarnInstallDirectory` to set the location where the distribution shall be installed, which, by default is the
+`yarnDistributionUrl` property is ommitted, the URL is guessed using the `yarnVersion` property. Optionally, defining
+the `proxyHost` property and the `proxyPort` property allow to use a proxy server when downloading the distribution. Set
+the location where the distribution shall be installed with the `yarnInstallDirectory` property, which by default is the
 `${projectDir}/yarn` directory.
 
-If a Yarn distribution is already installed in the system, and shall be used instead of a downloaded distribution, sets
-the `yarnDistributionProvided` property to `true` and the location of the distribution with the `yarnInstallDirectory`
-property. In this configuration, the `yarnEnabled` property still must be `true`, the `yarnVersion` property and the
+If a [Yarn][yarn] distribution is already installed in the system, and shall be used instead of a downloaded
+distribution, set the `yarnDistributionProvided` property to `true` and the location of the distribution with the
+`yarnInstallDirectory` property. The `yarnEnabled` property still must be `true`, the `yarnVersion` property and the
 `yarnDistributionUrl` property are useless and shall not be set for clarity. Consequently, the `installYarn` task is
 automatically _SKIPPED_ during a Gradle build.
 
-The task takes advantage of [Gradle incremental build][gradle-incremental-build], and is not executed again unless at
-least one of the events below occurs:
+The task takes advantage of [Gradle incremental build][gradle-incremental-build], and is not executed again unless one
+of its inputs/outputs changed. The task is _UP-TO-DATE_ during a Gradle build, and skipped.
 
-- The plugins change in the project.
-- At least one of the properties `yarnEnabled`, `yarnVersion`, `yarnDistributionUrl`, `yarnInstallDirectory` is
-modified.
-- The content of the directory pointed by the `yarnInstallDirectory` is modified.
+> This task should not be executed directly. Gradle executes it if the build requires it.
 
-In other cases, the task will be marked as _UP-TO-DATE_ during a Gradle build, and skipped.
-
-This task should not be executed directly. It is called automatically by Gradle, if the `installFrontend` task is
-executed.
-
-### Install frontend dependencies
+### `installFrontend` - Install frontend dependencies
 
 Depending on the value of the `yarnEnabled` property, the `installFrontend` task issues either a `npm install` command
 or a `yarn install` command, by default. If a `package.json` file is found in the directory pointed by the
-`packageJsonDirectory` property, the command shall install dependencies and tools for frontend development. Optionally,
+`packageJsonDirectory` property, the command shall install/update dependencies and tools for development. Optionally,
 this command may be customized (e.g. to run a `npm ci` command instead of a `npm install` command). To do so, the
-`installScript` property must be set to the corresponding [NPM][npm]/[Yarn][yarn] command. This task depends on the
+`installScript` property must be set to the corresponding [npm][npm]/[Yarn][yarn] command. This task depends on the
 `installNode` task, and optionally on the `installYarn` task if the `yarnEnabled` property is `true`.
 
-This task may be executed directly, e.g. if one of the Node/Yarn version is modified, and a distribution must be
-downloaded again. Otherwise, this task is called automatically by Gradle, if one of these tasks is executed:
-`cleanFrontend`, `assembleFrontend`, `checkFrontend`, `publishFrontend`.
+> This task may be executed directly, e.g. after modifying one of the Node.js/Yarn versions and/or to update frontend
+> dependencies. Otherwise, Gradle executes it if the build requires it.
 
-### Clean frontend
+**Note about task execution**
 
-The `cleanFrontend` task does nothing by default, considering frontend generated resources (pre-processed Typescript
-files, SCSS stylesheets...) are written in the `${project.buildDir}` directory. If it is not the case, this task may be
+If you execute this task multiple consecutive times with Gradle, you may notice NPM or Yarn always run, and Gradle does
+not skip the task based on a previous succcessful build. This is the expected behavior because the task does not declare
+any input/output so as Gradle knows it is already _UP-TO-DATE_.
+
+If you think about tweaking this behavior, and skip the task execution on certain circumstances (e.g. declaring the
+`nodes_modules` directory as output), take care of impacts in Gradle. Gradle cannot do magic things with high volume
+input/output directories, and must track each file individually to know if the task must be executed or not. Is it worth
+moving the performance impact in Gradle to skip task execution, or accepting the small overhead of re-running NPM or
+Yarn every time? In a development environment, using the Gradle command line may not be often necessary. On a CI
+workstation where the project is built from scratch after each change, overhead shall be unrelevant because the task
+must be executed anyhow.
+
+The plugin is designed with the requirement the task has a consistent and reliable behavior whatever the Javascript
+runtimes used underneath. If it is not acceptable, feel free to declare additional inputs/outputs, with the help of some
+[recommendations](#recommendations).
+
+_Some related discussions in Gradle forums_: \[[1][reference-1]] \[[2][reference-2]] \[[3][reference-3]]
+
+### `cleanFrontend` - Clean frontend project
+
+The `cleanFrontend` task does nothing by default, considering frontend generated artifacts (final Javascript, CSS, HTML
+files...) are written in the `${project.buildDir}` directory. If it is not the case, this task may be
 useful to clean the relevant directory. To do so, a clean script must be defined in the `package.json` file,
-and the `cleanScript` property must be set to the corresponding NPM/Yarn command. This task depends on the
+and the `cleanScript` property must be set to the corresponding npm/Yarn command. This task depends on the
 `installFrontend` task, and is skipped if the `cleanScript` property is not set.
 
-### Assemble frontend
+### `assembleFrontend` - Assemble frontend artifacts
 
 The `assembleFrontend` task shall be used to integrate a frontend's build script into Gradle builds. The build script
 must be defined in the `package.json` file, and the `assembleScript` property must be set to the corresponding
-NPM/Yarn command. This task depends on the `installFrontend` task, and is skipped if the `assembleScript` property is
+npm/Yarn command. This task depends on the `installFrontend` task, and is skipped if the `assembleScript` property is
 not set.
 
-### Check frontend
+**Note about task execution**: 
+
+If you execute directly or indirectly this task with Gradle, you may notice NPM or Yarn runs every time, and Gradle does
+not skip the task based on a previous succcessful build. This is the expected behavior because the task does not declare
+any input/output so as Gradle knows it is already _UP-TO-DATE_.
+
+Why the task has no inputs/outputs? This task provides the ability to connect the developer's own Javascript build
+process to Gradle, and nothing more. Every Javascript build process is unique. It depends on the project, the language
+(e.g. TypeScript, JSX, ECMA script, SASS, SCSS...), the directory layout, the build utilities (Webpack...), etc, chosen
+by the team. Moreover, some build utilities are already able to build frontend artifacts incrementally. Consequently,
+and actually, it does not make sense to duplicate such behavior in the plugin. If it is not acceptable, feel free to
+declare additional inputs/outputs, with the help of some [recommendations](#recommendations).
+
+### `checkFrontend` - Check frontend application
 
 The `checkFrontend` task may be used to integrate a frontend check script into a Gradle build. The check script must be
 defined in the project's `package.json` file, and the `checkscript` property must be set with the corresponding
-NPM/Yarn command. A typical check script defined in the project's `package.json` file may lint frontend source files,
+npm/Yarn command. A typical check script defined in the project's `package.json` file may lint frontend source files,
 execute tests, and perform additional analysis tasks. This task depends on the `installFrontend` task, and is skipped if
 the `checkScript` property is not set.
 
-### Publish frontend
+### `publishFrontend` - Publish frontend artifacts
 
 The `publishFrontend` task may be used to integrate a frontend publish script into a Gradle build. The publish script
 must be defined in the project's `package.json` file, and the `publishScript` property must be set with the
-corresponding NPM/Yarn command. This task depends on the task `assembleFrontend`, and is skipped if either the
+corresponding npm/Yarn command. This task depends on the task `assembleFrontend`, and is skipped if either the
 `assembleScript` property or the `publishScript` property is not set.
 
 ### Run a custom command with `node`
@@ -443,12 +499,14 @@ tasks.register<RunNode>("myCustomScript") {
 
 ### Run a custom command with `npx`
 
+> Requires Node.js 8.2.0+ on Unix-like O/S, Node.js 8.5.0+ on Windows O/S
+
 The plugin provides the task type `org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpx` that allows creating a
-custom task to run a NPX command. The `script` property must be set with the corresponding [NPX][npx] command. Custom
-tasks will fail if the `yarnEnabled` property is `true`, to prevent unpredictable behaviours with mixed installation of
+custom task to run a npx command. The `script` property must be set with the corresponding [npx][npx] command. Custom
+tasks will fail if the `yarnEnabled` property is `true`, to prevent unpredictable behaviors with mixed installation of
 dependencies.
 
-The code below shows the configuration required to display NPX version:
+The code below shows the configuration required to display npx version:
 
 - Groovy syntax:
 
@@ -474,9 +532,9 @@ tasks.register<RunNpx>("npxVersion") {
 
 ### Run a custom command with `npm` or `yarn`
 
-The plugin provides the task type `org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpmYarn` that allows creating
-a custom task to run any frontend script. The `script` property must be set with the corresponding
-[NPM][npm]/[Yarn][yarn] command.
+The plugin provides the task type `org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpmYarn` that allows
+creating a custom task to run any frontend script. The `script` property must be set with the corresponding
+[npm][npm]/[Yarn][yarn] command.
 
 The code below shows the configuration required to run frontend's end-to-end tests in a custom task:
 
@@ -514,26 +572,42 @@ With their feedback, plugin improvement is possible. Special thanks to:
 
 @andreaschiona, @byxor, @ChFlick, @ckosloski, @davidkron, @mike-howell, @napstr, @nuth, @rolaca11, @TapaiBalazs
 
+[clean-coder]: <http://cleancoder.com/> (Clean coder)
 [contributing]: <CONTRIBUTING.md> (Contributing to this project)
-[example-full-stack-multi-projects]: <examples/full-stack-multi-projects> (Configure a full-stack multi projects build)
-[example-multi-frontend-projects]: <examples/multi-frontend-projects> (Configure a multi frontend projects build)
-[example-provided-distribution-project]: <examples/provided-distribution-project> (Configure a standalone frontend build with preinstalled Node.js/Yarn distributions)
-[example-standalone-frontend-project]: <examples/standalone-frontend-project> (Configure a standalone frontend build)
+[example-multi-projects-war-application]: <examples/multi-projects-war-application> (Build a full-stack Spring Boot WAR application with dedicated frontend and backend sub-projects)
+[example-multi-projects-applications]: <examples/multi-projects-applications-shared-distributions> (Build multiple frontend applications with dedicated sub-projects using shared distributions)
+[example-single-project]: <examples/single-project-application> (Build a frontend application in a single project)
+[example-single-project-preinstalled-distributions]: <examples/single-project-application-preinstalled-distributions> (Build a frontend application in a single project using preinstalled distributions)
 [examples]: <examples> (Examples)
 [frontend-maven-plugin]: <https://github.com/eirslett/frontend-maven-plugin> (Frontend Maven plugin)
 [gradle]: <https://gradle.org/> (Gradle)
 [gradle-base-plugin]: <https://docs.gradle.org/current/userguide/base_plugin.html> (Gradle Base plugin)
 [gradle-build-script-block]: <https://docs.gradle.org/current/userguide/plugins.html#sec:applying_plugins_buildscript> (Gradle build script block)
+[gradle-configuration-avoidance-api]: <https://docs.gradle.org/current/userguide/task_configuration_avoidance.html#sec:old_vs_new_configuration_api_overview> (Configuration avoidance API overview)
 [gradle-dsl]: <https://docs.gradle.org/current/userguide/plugins.html#sec:plugins_block> (Gradle DSL)
 [gradle-incremental-build]: <https://guides.gradle.org/performance/#incremental_build> (Gradle incremental build)
+[gradle-lazy-configuration]: <https://docs.gradle.org/current/userguide/lazy_configuration.html> (Lazy configuration)
+[gradle-icon]: <resources/gradle-icon.png> (Gradle)
+[gradle-migration-guide]: <https://docs.gradle.org/current/userguide/task_configuration_avoidance.html#sec:task_configuration_avoidance_migration_guidelines> (Migration guide)
+[gradle-plugin-page]: <https://plugins.gradle.org/plugin/org.siouan.frontend> (Frontend Gradle plugin's official page at the Gradle Plugin Portal)
+[gradle-task-configuration-avoidance]: <https://docs.gradle.org/current/userguide/task_configuration_avoidance.html> (Task configuration avoidance)
 [intellij-idea]: <https://www.jetbrains.com/idea/> (IntelliJ IDEA)
 [intellij-idea-logo]: <resources/intellij-idea-128x128.png> (IntelliJ IDEA)
 [jdk]: <https://docs.oracle.com/en/java/javase/> (Java Development Kit)
 [jetbrains]: <https://www.jetbrains.com/> (JetBrains)
 [jetbrains-logo]: <resources/jetbrains-128x128.png> (JetBrains)
 [nodejs]: <https://nodejs.org/> (Node.js)
-[npm]: <https://www.npmjs.com/> (NPM)
-[npx]: <https://github.com/npm/npx> (NPX)
+[nodejs-icon]: <resources/nodejs-icon.png> (Node.js)
+[npm]: <https://www.npmjs.com/> (npm)
+[npm-ci]: <https://docs.npmjs.com/cli/ci> (Install a project with a clean state)
+[npm-icon]: <resources/npm-icon.png> (NPM)
+[npm-install]: <https://docs.npmjs.com/cli/install> (Install a package)
+[npx]: <https://github.com/npm/npx> (npx)
+[reference-1]: <https://discuss.gradle.org/t/project-level-build-cache-for-javascript-and-yarn-projects/24134> (A discussion in the Gradle forums)
+[reference-2]: <https://discuss.gradle.org/t/gradle-having-problems-with-large-folders-as-task-inputs-outputs/34775> (A discussion in the Gradle forums)
+[reference-3]: <https://discuss.gradle.org/t/incremental-task-false-up-to-date-result/24619> (A discussion in the Gradle forums)
 [release-notes]: <https://github.com/siouan/frontend-gradle-plugin/releases> (Release notes)
 [task-tree]: <resources/task-tree.png>
 [yarn]: <https://yarnpkg.com/> (Yarn)
+[yarn-install]: <https://classic.yarnpkg.com/en/docs/cli/install> (Install all dependencies)
+[yarn-icon]: <resources/yarn-icon.png> (Yarn)

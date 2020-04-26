@@ -1,12 +1,15 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.net.URL;
 
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
@@ -42,10 +45,26 @@ public class YarnInstallTask extends DefaultTask {
      */
     private final Property<String> yarnDistributionUrl;
 
+    /**
+     * Proxy host used to download resources.
+     *
+     * @since 2.1.0
+     */
+    private final Property<String> proxyHost;
+
+    /**
+     * Proxy port used to download resources.
+     *
+     * @since 2.1.0
+     */
+    private final Property<Integer> proxyPort;
+
     public YarnInstallTask() {
-        yarnVersion = getProject().getObjects().property(String.class);
-        yarnInstallDirectory = getProject().getObjects().directoryProperty();
-        yarnDistributionUrl = getProject().getObjects().property(String.class);
+        this.yarnVersion = getProject().getObjects().property(String.class);
+        this.yarnInstallDirectory = getProject().getObjects().directoryProperty();
+        this.yarnDistributionUrl = getProject().getObjects().property(String.class);
+        this.proxyHost = getProject().getObjects().property(String.class);
+        this.proxyPort = getProject().getObjects().property(Integer.class);
     }
 
     @Input
@@ -65,6 +84,16 @@ public class YarnInstallTask extends DefaultTask {
         return yarnInstallDirectory;
     }
 
+    @Internal
+    public Property<String> getProxyHost() {
+        return proxyHost;
+    }
+
+    @Internal
+    public Property<Integer> getProxyPort() {
+        return proxyPort;
+    }
+
     /**
      * Installs a Yarn distribution.
      *
@@ -82,9 +111,12 @@ public class YarnInstallTask extends DefaultTask {
         UnsupportedPlatformException, UnsupportedDistributionIdException, InvalidDistributionUrlException,
         DistributionValidatorException, IOException {
         final URL distributionUrl = yarnDistributionUrl.isPresent() ? new URL(yarnDistributionUrl.get()) : null;
+        final Proxy proxy = proxyHost
+            .map(host -> new Proxy(Proxy.Type.HTTP, new InetSocketAddress(host, proxyPort.get())))
+            .getOrElse(Proxy.NO_PROXY);
         Beans
             .getBean(InstallYarnDistribution.class)
-            .execute(new InstallSettings(Beans.getBean(Platform.class), yarnVersion.get(), distributionUrl,
+            .execute(new InstallSettings(Beans.getBean(Platform.class), yarnVersion.get(), distributionUrl, proxy,
                 getTemporaryDir().toPath(), yarnInstallDirectory.getAsFile().get().toPath()));
     }
 }

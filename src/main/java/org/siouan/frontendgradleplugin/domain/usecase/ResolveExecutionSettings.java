@@ -61,7 +61,7 @@ public class ResolveExecutionSettings {
     }
 
     /**
-     * Resolves the execution settings to run the given script with a Node/NPM/Yarn executable.
+     * Resolves the execution settings to run the given script with a node/npm/npx/yarn executable.
      *
      * @param packageJsonDirectoryPath Path to the {@code package.json} file, used as the working directory.
      * @param executableType Type of executable.
@@ -71,31 +71,31 @@ public class ResolveExecutionSettings {
      * @param script Script.
      * @return Appropriate settings to run the script on the given platform.
      * @throws ExecutableNotFoundException If the executable is not found in one of the install directories.
+     * @see ExecutableType
      */
     @Nonnull
-    public ExecutionSettings execute(@Nonnull final Path packageJsonDirectoryPath,
-        @Nonnull final ExecutableType executableType, @Nonnull final Path nodeInstallDirectoryPath,
-        @Nullable final Path yarnInstallDirectoryPath, @Nonnull final Platform platform, @Nonnull final String script)
-        throws ExecutableNotFoundException {
+    public ExecutionSettings execute(@Nonnull final Path packageJsonDirectoryPath, @Nonnull final String executableType,
+        @Nonnull final Path nodeInstallDirectoryPath, @Nullable final Path yarnInstallDirectoryPath,
+        @Nonnull final Platform platform, @Nonnull final String script) throws ExecutableNotFoundException {
         final Path nodeExecutablePath = getNodeExecutablePath
             .execute(nodeInstallDirectoryPath, platform)
             .orElseThrow(ExecutableNotFoundException::newNodeExecutableNotFoundException);
         final Path scriptExecutablePath;
         switch (executableType) {
-        case NODE:
+        case ExecutableType.NODE:
             scriptExecutablePath = nodeExecutablePath;
             break;
-        case NPM:
+        case ExecutableType.NPM:
             scriptExecutablePath = getNpmExecutablePath
                 .execute(nodeInstallDirectoryPath, platform)
                 .orElseThrow(ExecutableNotFoundException::newNpmExecutableNotFoundException);
             break;
-        case NPX:
+        case ExecutableType.NPX:
             scriptExecutablePath = getNpxExecutablePath
                 .execute(nodeInstallDirectoryPath, platform)
                 .orElseThrow(ExecutableNotFoundException::newNpxExecutableNotFoundException);
             break;
-        case YARN:
+        case ExecutableType.YARN:
             scriptExecutablePath = getYarnExecutablePath
                 .execute(Objects.requireNonNull(yarnInstallDirectoryPath), platform)
                 .orElseThrow(ExecutableNotFoundException::newYarnExecutableNotFoundException);
@@ -120,7 +120,7 @@ public class ResolveExecutionSettings {
 
         final Set<Path> executablePaths = new HashSet<>();
         executablePaths.add(nodeExecutablePath.getParent());
-        if (executableType == ExecutableType.YARN) {
+        if (executableType.equals(ExecutableType.YARN)) {
             executablePaths.add(scriptExecutablePath.getParent());
         }
 

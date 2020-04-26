@@ -113,7 +113,6 @@ class ZipArchiverTest {
         final ExplodeSettings settings = new ExplodeSettings(platform, archiveFilePath, temporaryDirectoryPath);
 
         int count = 0;
-        final ZipArchiver archiver = new ZipArchiver(fileManager);
         try (final ZipArchiverContext context = archiver.initializeContext(settings)) {
             Optional<ZipEntry> option = archiver.getNextEntry(context);
             ZipEntry entry;

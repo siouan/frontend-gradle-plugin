@@ -5,9 +5,16 @@ package org.siouan.frontendgradleplugin.domain.model;
  *
  * @since 1.2.0
  */
-public enum ExecutableType {
-    NODE,
-    NPM,
-    NPX,
-    YARN
+public final class ExecutableType {
+
+    public static final String NODE = "node";
+
+    public static final String NPM = "npm";
+
+    public static final String NPX = "npx";
+
+    public static final String YARN = "yarn";
+
+    private ExecutableType() {
+    }
 }

@@ -5,9 +5,12 @@ import java.net.URL;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import javax.annotation.Nonnull;
 
 import org.siouan.frontendgradleplugin.domain.model.DownloadSettings;
+import org.siouan.frontendgradleplugin.domain.model.Logger;
 import org.siouan.frontendgradleplugin.domain.provider.ChannelProvider;
 import org.siouan.frontendgradleplugin.domain.provider.FileManager;
 
@@ -17,13 +20,18 @@ import org.siouan.frontendgradleplugin.domain.provider.FileManager;
  */
 public class DownloadResource {
 
+    public static final String TMP_EXTENSION = ".tmp";
+
     private final FileManager fileManager;
 
     private final ChannelProvider channelProvider;
 
-    public DownloadResource(final FileManager fileManager, final ChannelProvider channelProvider) {
+    private final Logger logger;
+
+    public DownloadResource(final FileManager fileManager, final ChannelProvider channelProvider, final Logger logger) {
         this.fileManager = fileManager;
         this.channelProvider = channelProvider;
+        this.logger = logger;
     }
 
     /**
@@ -32,18 +40,28 @@ public class DownloadResource {
      *
      * @param downloadSettings Download parameters.
      * @throws IOException If the resource could not be downloaded, or could not be written in the temporary directory,
-     * or moved to the destination file.
+     * or moved to the destination file. In this case, any file created in the temporary directory is removed.
      */
     public void execute(@Nonnull final DownloadSettings downloadSettings) throws IOException {
         final URL resourceUrl = downloadSettings.getResourceUrl();
         final String resourceName = downloadSettings.getDestinationFilePath().getFileName().toString();
-        final Path downloadedFilePath = downloadSettings.getTemporaryDirectoryPath().resolve(resourceName);
-        try (final ReadableByteChannel resourceInputChannel = channelProvider.getReadableByteChannel(resourceUrl);
+        final Path downloadedFilePath = downloadSettings
+            .getTemporaryDirectoryPath()
+            .resolve(resourceName + TMP_EXTENSION);
+        logger.debug("Downloading resource at '{}' (proxy: {})", downloadSettings.getResourceUrl(),
+            downloadSettings.getProxy());
+        try (final ReadableByteChannel resourceInputChannel = channelProvider.getReadableByteChannel(resourceUrl,
+            downloadSettings.getProxy());
              final FileChannel resourceOutputChannel = channelProvider.getWritableFileChannelForNewFile(
-                 downloadedFilePath)) {
+                 downloadedFilePath, StandardOpenOption.WRITE, StandardOpenOption.CREATE,
+                 StandardOpenOption.TRUNCATE_EXISTING)) {
             resourceOutputChannel.transferFrom(resourceInputChannel, 0, Long.MAX_VALUE);
+        } catch (final IOException e) {
+            fileManager.deleteIfExists(downloadedFilePath);
+            throw e;
         }
 
-        fileManager.move(downloadedFilePath, downloadSettings.getDestinationFilePath());
+        fileManager.move(downloadedFilePath, downloadSettings.getDestinationFilePath(),
+            StandardCopyOption.REPLACE_EXISTING);
     }
 }

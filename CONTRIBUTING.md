@@ -35,7 +35,7 @@ task classes.
 - It is a requirement to keep the plugin independent, small. That's why resorting to 3rd-party libraries is avoided
 unless mandatory (e.g. [Apache Commons Compress][apache-commons-compress] for ZIP/GZIP/TAR extraction).
 - All packages, classes, methods shall have a relevant documentation. A relevant documentation provides information to
-identify the responsibility and behaviour of the class/method, such as developers don't have to inspect the code to
+identify the responsibility and behavior of the class/method, such as developers don't have to inspect the code to
 understand how to use it.
 - Prefer adding relevant documentation directly in the code instead of creating an implementation document, to guarantee
 accessibility for developers.
@@ -45,7 +45,7 @@ independent possible, away from this API, with an appropriate level of abstracti
 - This separation between classes tightly coupled with Gradle API (inheritance) or other libraries, and classes
 containing business code is implemented with 2 packages: `org.siouan.frontendgradleplugin.domain` and
 `org.siouan.frontendgradleplugin.infrastructure`. 
-- Unit tests shall be written for each class, with the highest coverage possible, to avoid unknown behaviours at
+- Unit tests shall be written for each class, with the highest coverage possible, to avoid unknown behaviors at
 execution, and improve software maintainability, predictability, and reliability.
 - Functional tests shall be written for each Gradle task in the `org.siouan.frontendgradleplugin.infrastructure.gradle`
 package.
@@ -86,5 +86,5 @@ developed on Windows 10 Home with OracleJDK 1.8.0_202 64 bits and [JetBrains Int
 
 [apache-commons-compress]: <https://commons.apache.org/proper/commons-compress/> (Apache Commons Compress)
 [intellij-idea]: <https://www.jetbrains.com/idea/> (IntelliJ IDEA)
-[issues]: <https://github.com/Siouan/frontend-gradle-plugin/issues> (Issues)
+[issues]: <https://github.com/siouan/frontend-gradle-plugin/issues> (Issues)
 [travis]: <https://travis-ci.com/> (Travis CI)

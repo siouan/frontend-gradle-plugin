@@ -26,6 +26,10 @@ import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
  */
 class YarnInstallTaskFuncTest {
 
+    private static final String PROXY_HOST = "149.43.132.89";
+
+    private static final int PROXY_PORT = 59338;
+
     @TempDir
     Path projectDirectoryPath;
 
@@ -85,6 +89,22 @@ class YarnInstallTaskFuncTest {
             FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
 
         assertTaskFailed(result, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
+    }
+
+    @Test
+    void shouldFailWhenProxyHostIsUnknown() throws IOException {
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put("yarnEnabled", true);
+        properties.put("yarnVersion", "1.16.0");
+        properties.put("proxyHost", PROXY_HOST);
+        properties.put("proxyPort", PROXY_PORT);
+        properties.put("verboseModeEnabled", true);
+        createBuildFile(projectDirectoryPath, properties);
+
+        final BuildResult result1 = runGradleAndExpectFailure(projectDirectoryPath,
+            FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
+
+        assertTaskFailed(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
     }
 
     @Test
