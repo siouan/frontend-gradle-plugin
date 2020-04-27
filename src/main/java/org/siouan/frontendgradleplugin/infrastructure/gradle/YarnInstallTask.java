@@ -46,6 +46,11 @@ public class YarnInstallTask extends DefaultTask {
     private final Property<String> yarnDistributionUrl;
 
     /**
+     * URL pattern to download the distribution.
+     */
+    private final Property<String> yarnDistributionUrlPattern;
+
+    /**
      * Proxy host used to download resources.
      *
      * @since 2.1.0
@@ -63,6 +68,7 @@ public class YarnInstallTask extends DefaultTask {
         this.yarnVersion = getProject().getObjects().property(String.class);
         this.yarnInstallDirectory = getProject().getObjects().directoryProperty();
         this.yarnDistributionUrl = getProject().getObjects().property(String.class);
+        this.yarnDistributionUrlPattern = getProject().getObjects().property(String.class);
         this.proxyHost = getProject().getObjects().property(String.class);
         this.proxyPort = getProject().getObjects().property(Integer.class);
     }
@@ -76,6 +82,12 @@ public class YarnInstallTask extends DefaultTask {
     @Optional
     public Property<String> getYarnDistributionUrl() {
         return yarnDistributionUrl;
+    }
+
+    @Input
+    @Optional
+    public Property<String> getYarnDistributionUrlPattern() {
+        return yarnDistributionUrlPattern;
     }
 
     @OutputDirectory
@@ -116,7 +128,8 @@ public class YarnInstallTask extends DefaultTask {
             .getOrElse(Proxy.NO_PROXY);
         Beans
             .getBean(InstallYarnDistribution.class)
-            .execute(new InstallSettings(Beans.getBean(Platform.class), yarnVersion.get(), distributionUrl, proxy,
-                getTemporaryDir().toPath(), yarnInstallDirectory.getAsFile().get().toPath()));
+            .execute(new InstallSettings(Beans.getBean(Platform.class), yarnVersion.get(), distributionUrl,
+                yarnDistributionUrlPattern.getOrNull(), proxy, getTemporaryDir().toPath(),
+                yarnInstallDirectory.getAsFile().get().toPath()));
     }
 }

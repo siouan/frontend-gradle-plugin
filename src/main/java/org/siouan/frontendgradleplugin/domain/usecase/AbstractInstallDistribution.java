@@ -77,7 +77,8 @@ public abstract class AbstractInstallDistribution {
 
         final GetDistributionSettings getDistributionSettings = new GetDistributionSettings(getDistributionId(),
             installSettings.getPlatform(), installSettings.getVersion(), installSettings.getDownloadUrl(),
-            installSettings.getTemporaryDirectoryPath(), installSettings.getProxy());
+            installSettings.getDownloadUrlPattern(), installSettings.getTemporaryDirectoryPath(),
+            installSettings.getProxy());
         final Path distributionFilePath = getDistribution.execute(getDistributionSettings);
 
         // Deploys the distribution

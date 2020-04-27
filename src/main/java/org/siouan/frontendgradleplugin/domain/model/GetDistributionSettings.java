@@ -23,6 +23,8 @@ public class GetDistributionSettings {
 
     private final URL distributionUrl;
 
+    private final String distributionUrlPattern;
+
     private final Proxy proxy;
 
     /**
@@ -32,17 +34,19 @@ public class GetDistributionSettings {
      * @param platform Underlying platform.
      * @param version Version.
      * @param distributionUrl URL to download the distribution.
+     * @param distributionUrlPattern URL pattern to download the distribution.
      * @param temporaryDirectoryPath Path to a temporary directory.
      * @param proxy Proxy used for the connection.
      * @see DistributionId
      */
     public GetDistributionSettings(@Nonnull String distributionId, @Nonnull final Platform platform,
-        @Nonnull final String version, @Nullable final URL distributionUrl, @Nonnull final Path temporaryDirectoryPath,
-        @Nonnull final Proxy proxy) {
+        @Nonnull final String version, @Nullable final URL distributionUrl, @Nullable final String distributionUrlPattern,
+        @Nonnull final Path temporaryDirectoryPath, @Nonnull final Proxy proxy) {
         this.distributionId = distributionId;
         this.platform = platform;
         this.version = version;
         this.distributionUrl = distributionUrl;
+        this.distributionUrlPattern = distributionUrlPattern;
         this.temporaryDirectoryPath = temporaryDirectoryPath;
         this.proxy = proxy;
     }
@@ -85,6 +89,16 @@ public class GetDistributionSettings {
     @Nullable
     public URL getDistributionUrl() {
         return distributionUrl;
+    }
+
+    /**
+     * Gets the URL pattern to download the distribution.
+     *
+     * @return URL pattern, may be {@code null} if the URL must be resolved automatically or with another method.
+     */
+    @Nullable
+    public String getDistributionUrlPattern() {
+        return distributionUrlPattern;
     }
 
     /**

@@ -19,49 +19,60 @@ public class ResolveNodeDistributionUrl implements DistributionUrlResolver {
     /**
      * Extension of the distribution file name under a 64 bits Linux O/S.
      */
-    private static final String LINUX_64_EXTENSION = "-linux-x64.tar.gz";
+    private static final String LINUX_64_EXTENSION = "linux-x64.tar.gz";
 
     /**
      * Extension of the distribution file name under a 64 bits MacOS O/S.
      */
-    private static final String MACOS_64_EXTENSION = "-darwin-x64.tar.gz";
+    private static final String MACOS_64_EXTENSION = "darwin-x64.tar.gz";
 
     /**
      * Extension of the distribution file name under a 32 bits Windows O/S.
      */
-    private static final String WINDOWS_32_EXTENSION = "-win-x86.zip";
+    private static final String WINDOWS_32_EXTENSION = "win-x86.zip";
 
     /**
      * Extension of the distribution file name under a 64 bits Windows O/S.
      */
-    private static final String WINDOWS_64_EXTENSION = "-win-x64.zip";
+    private static final String WINDOWS_64_EXTENSION = "win-x64.zip";
 
-    private static final String NODE_CDN_PART_1 = "https://nodejs.org/dist/v";
+    /**
+     * Token in the download URL pattern that is replaced by the version.
+     */
+    private static final String VERSION_TOKEN = "VERSION";
 
-    private static final String NODE_CDN_PART_2 = "/node-v";
+    /**
+     * Token in the download URL pattern that is replaced by the detected OS.
+     */
+    private static final String OS_EXTENSION_TOKEN = "OS_EXTENSION";
+
+    private static final String URL_PATTERN = "https://nodejs.org/dist/v" + VERSION_TOKEN
+        + "/node-v" + VERSION_TOKEN +  "-" + OS_EXTENSION_TOKEN;
 
     @Override
     @Nonnull
     public URL execute(@Nonnull final DistributionDefinition distributionDefinition)
         throws UnsupportedPlatformException, MalformedURLException {
         final String version = distributionDefinition.getVersion();
-        if (distributionDefinition.getDownloadUrl() == null) {
-            final StringBuilder buffer = new StringBuilder();
-            buffer.append(NODE_CDN_PART_1);
-            buffer.append(version);
-            buffer.append(NODE_CDN_PART_2);
-            buffer.append(version);
-            final Optional<String> extension = resolveExtension(distributionDefinition.getPlatform());
-            if (extension.isPresent()) {
-                buffer.append(extension.get());
-            } else {
-                throw new UnsupportedPlatformException(distributionDefinition.getPlatform());
-            }
-
-            return URI.create(buffer.toString()).toURL();
+        if (distributionDefinition.getDownloadUrl() != null) {
+            return distributionDefinition.getDownloadUrl();
         }
 
-        return distributionDefinition.getDownloadUrl();
+        String urlPattern = URL_PATTERN;
+        if (distributionDefinition.getDownloadUrlPattern() != null) {
+            urlPattern = distributionDefinition.getDownloadUrlPattern();
+        }
+
+        final Optional<String> extension = resolveExtension(distributionDefinition.getPlatform());
+        if (!extension.isPresent()) {
+            throw new UnsupportedPlatformException(distributionDefinition.getPlatform());
+        }
+
+        String url = urlPattern
+            .replace(VERSION_TOKEN, version)
+            .replace(OS_EXTENSION_TOKEN, extension.get());
+
+        return URI.create(url).toURL();
     }
 
     /**

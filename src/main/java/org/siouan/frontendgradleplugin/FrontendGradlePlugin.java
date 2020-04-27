@@ -181,6 +181,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.setDescription("Downloads and installs a Node distribution.");
         task.getNodeVersion().set(extension.getNodeVersion());
         task.getNodeDistributionUrl().set(extension.getNodeDistributionUrl());
+        task.getNodeDistributionUrlPattern().set(extension.getNodeDistributionUrlPattern());
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
         task.getProxyHost().set(extension.getProxyHost());
         task.getProxyPort().set(extension.getProxyPort());
@@ -198,6 +199,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.setDescription("Downloads and installs a Yarn distribution.");
         task.getYarnVersion().set(extension.getYarnVersion());
         task.getYarnDistributionUrl().set(extension.getYarnDistributionUrl());
+        task.getYarnDistributionUrlPattern().set(extension.getYarnDistributionUrlPattern());
         task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
         task.getProxyHost().set(extension.getProxyHost());
         task.getProxyPort().set(extension.getProxyPort());

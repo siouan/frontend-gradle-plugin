@@ -128,6 +128,12 @@ frontend {
     // same as the one set in the 'nodeVersion' property, or this may lead to unexpected results.
     nodeDistributionUrl = 'https://nodejs.org/dist/vX.Y.Z/node-vX.Y.Z-win-x64.zip'
 
+    // [OPTIONAL] Set this property to force the download from a custom website. By default, this
+    // property is 'null', and the plugin attempts to download the distribution compatible with the
+    // current platform from Node's website. The plugin will replace any 'VERSION' token with the version
+    // configured via 'nodeVersion', and 'OS_EXTENSION' with the extension of the detected operating system.
+    nodeDistributionUrlPattern = 'https://foo.org/bar/vVERSION/node-vVERSION-OS_EXTENSION'
+
     // [OPTIONAL] Install directory where the distribution archive shall be exploded.
     nodeInstallDirectory = file("${projectDir}/node")
 
@@ -153,6 +159,12 @@ frontend {
     // current platform from Yarn's website. The version of the distribution is expected to be the
     // same as the one set in the 'yarnVersion' property, or this may lead to unexpected results.
     yarnDistributionUrl = 'https://github.com/yarnpkg/yarn/releases/download/vX.Y.Z/yarn-vX.Y.Z.tar.gz'
+
+    // [OPTIONAL] Set this property to force the download from a custom website. By default, this
+    // property is 'null', and the plugin attempts to download the distribution compatible with the
+    // current platform from Yarn's website. The plugin will replace any 'VERSION' token with the version
+    // configured via 'yarnVersion'.
+    yarnDistributionUrlPattern = 'https://foo.org/bar/yarn/vVERSION/yarn-vVERSION.tar.gz'
 
     // [OPTIONAL] Install directory where the distribution archive shall be exploded.
     yarnInstallDirectory = file("${projectDir}/yarn")
@@ -223,12 +235,14 @@ frontend {
     nodeDistributionProvided.set(false)
     nodeVersion.set("12.16.1")
     nodeDistributionUrl.set("https://nodejs.org/dist/vX.Y.Z/node-vX.Y.Z-win-x64.zip")
+    nodeDistributionUrlPattern.set("https://foo.org/bar/vVERSION/node-vVERSION-OS_EXTENSION")
     nodeInstallDirectory.set(project.layout.projectDirectory.dir("node"))
 
     yarnEnabled.set(false)
     yarnDistributionProvided.set(false)
     yarnVersion.set("1.22.4")
     yarnDistributionUrl.set("https://github.com/yarnpkg/yarn/releases/download/vX.Y.Z/yarn-vX.Y.Z.tar.gz")
+    yarnDistributionUrlPattern.set("https:/foo.org/bar/yarn/vVERSION/yarn-vVERSION.tar.gz")
     yarnInstallDirectory.set(project.layout.projectDirectory.dir("yarn"))
 
     installScript.set("install")
@@ -351,7 +365,8 @@ The plugin registers multiple tasks, that may have dependencies with each other,
 ### `installNode` - Install Node.js
 
 The `installNode` task downloads a [Node.js][nodejs] distribution and verifies its integrity. If the
-`nodeDistributionUrl` property is ommitted, the URL is guessed using the `nodeVersion` property. Checking the
+`nodeDistributionUrl` property is ommitted, the URL is guessed using the `nodeVersion` property. Alternatively, if a
+`nodeDistributionUrlPattern` is provided, the version and OS is replaced and the resulting URL used. Checking the
 distribution integrity consists of downloading a file providing the distribution shasum. This file is expected to be in
 the same remote web directory than the distribution. For example, if the distribution is located at URL
 `https://nodejs.org/dist/vX.Y.Z/node-vX.Y.Z-win-x64.zip`, the plugin attempts to download the shasum file located at
@@ -362,8 +377,9 @@ directory.
 
 If a [Node.js][nodejs] distribution is already installed in the system, and shall be used instead of a downloaded
 distribution, set the `nodeDistributionProvided` property to `true` and the location of the distribution with the
-`nodeInstallDirectory` property. The `nodeVersion` property and the `nodeDistributionUrl` property are useless and shall
-not be set for clarity. Consequently, the `installNode` task is automatically _SKIPPED_ during a Gradle build.
+`nodeInstallDirectory` property. The `nodeVersion`, `nodeDistributionUrl` and `nodeDistributionUrlPattern` properties
+are useless and shall not be set for clarity. Consequently, the `installNode` task is automatically _SKIPPED_ during a
+Gradle build.
 
 The task takes advantage of [Gradle incremental build][gradle-incremental-build], and is not executed again unless one
 of its inputs/outputs changed. The task is _UP-TO-DATE_ during a Gradle build, and skipped.
@@ -373,16 +389,17 @@ of its inputs/outputs changed. The task is _UP-TO-DATE_ during a Gradle build, a
 ### `installYarn` - Install Yarn
 
 The `installYarn` task downloads a [Yarn][yarn] distribution, if `yarnEnabled` property is `true`. If the
-`yarnDistributionUrl` property is ommitted, the URL is guessed using the `yarnVersion` property. Optionally, defining
+`yarnDistributionUrl` property is ommitted, the URL is guessed using the `yarnVersion` property. Alternatively, if a
+`yarnDistributionUrlPattern` is provided, the version is replaced and the resulting URL used. Optionally, defining
 the `proxyHost` property and the `proxyPort` property allow to use a proxy server when downloading the distribution. Set
 the location where the distribution shall be installed with the `yarnInstallDirectory` property, which by default is the
 `${projectDir}/yarn` directory.
 
 If a [Yarn][yarn] distribution is already installed in the system, and shall be used instead of a downloaded
 distribution, set the `yarnDistributionProvided` property to `true` and the location of the distribution with the
-`yarnInstallDirectory` property. The `yarnEnabled` property still must be `true`, the `yarnVersion` property and the
-`yarnDistributionUrl` property are useless and shall not be set for clarity. Consequently, the `installYarn` task is
-automatically _SKIPPED_ during a Gradle build.
+`yarnInstallDirectory` property. The `yarnEnabled` property still must be `true`, the `yarnVersion` property, the
+`yarnDistributionUrl` and the `yarnDistributionUrlPattern` property are useless and shall not be set for clarity.
+Consequently, the `installYarn` task is automatically _SKIPPED_ during a Gradle build.
 
 The task takes advantage of [Gradle incremental build][gradle-incremental-build], and is not executed again unless one
 of its inputs/outputs changed. The task is _UP-TO-DATE_ during a Gradle build, and skipped.

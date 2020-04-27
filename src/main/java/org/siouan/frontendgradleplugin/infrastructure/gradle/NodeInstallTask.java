@@ -46,6 +46,11 @@ public class NodeInstallTask extends DefaultTask {
     private final Property<String> nodeDistributionUrl;
 
     /**
+     * URL pattern to download the Node distribution.
+     */
+    private final Property<String> nodeDistributionUrlPattern;
+
+    /**
      * Proxy host used to download resources.
      *
      * @since 2.1.0
@@ -63,6 +68,7 @@ public class NodeInstallTask extends DefaultTask {
         this.nodeVersion = getProject().getObjects().property(String.class);
         this.nodeInstallDirectory = getProject().getObjects().directoryProperty();
         this.nodeDistributionUrl = getProject().getObjects().property(String.class);
+        this.nodeDistributionUrlPattern = getProject().getObjects().property(String.class);
         this.proxyHost = getProject().getObjects().property(String.class);
         this.proxyPort = getProject().getObjects().property(Integer.class);
     }
@@ -76,6 +82,12 @@ public class NodeInstallTask extends DefaultTask {
     @Optional
     public Property<String> getNodeDistributionUrl() {
         return nodeDistributionUrl;
+    }
+
+    @Input
+    @Optional
+    public Property<String> getNodeDistributionUrlPattern() {
+        return nodeDistributionUrlPattern;
     }
 
     @OutputDirectory
@@ -116,7 +128,8 @@ public class NodeInstallTask extends DefaultTask {
             .getOrElse(Proxy.NO_PROXY);
         Beans
             .getBean(InstallNodeDistribution.class)
-            .execute(new InstallSettings(Beans.getBean(Platform.class), nodeVersion.get(), distributionUrl, proxy,
-                getTemporaryDir().toPath(), nodeInstallDirectory.getAsFile().get().toPath()));
+            .execute(new InstallSettings(Beans.getBean(Platform.class), nodeVersion.get(), distributionUrl,
+                nodeDistributionUrlPattern.getOrNull(), proxy, getTemporaryDir().toPath(),
+                nodeInstallDirectory.getAsFile().get().toPath()));
     }
 }

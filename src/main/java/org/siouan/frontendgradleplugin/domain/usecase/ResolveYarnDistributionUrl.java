@@ -19,10 +19,18 @@ public class ResolveYarnDistributionUrl implements DistributionUrlResolver {
     @Nonnull
     @Override
     public URL execute(@Nonnull final DistributionDefinition distributionDefinition) throws MalformedURLException {
-        if (distributionDefinition.getDownloadUrl() == null) {
-            return new URL(URL_PATTERN.replace(VERSION_TOKEN, distributionDefinition.getVersion()));
+        if (distributionDefinition.getDownloadUrl() != null) {
+            return distributionDefinition.getDownloadUrl();
         }
 
-        return distributionDefinition.getDownloadUrl();
+        String urlPattern = URL_PATTERN;
+        if (distributionDefinition.getDownloadUrlPattern() != null) {
+            urlPattern = distributionDefinition.getDownloadUrlPattern();
+        }
+
+        String url = urlPattern
+            .replace(VERSION_TOKEN, distributionDefinition.getVersion());
+
+        return new URL(url);
     }
 }

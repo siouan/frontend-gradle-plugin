@@ -75,7 +75,7 @@ public class GetDistribution {
             .orElseThrow(() -> new UnsupportedDistributionIdException(getDistributionSettings.getDistributionId()));
         final DistributionDefinition distributionDefinition = new DistributionDefinition(
             getDistributionSettings.getPlatform(), getDistributionSettings.getVersion(),
-            getDistributionSettings.getDistributionUrl());
+            getDistributionSettings.getDistributionUrl(), getDistributionSettings.getDistributionUrlPattern());
         final URL distributionUrl = distributionUrlResolver.execute(distributionDefinition);
 
         // Download the distribution

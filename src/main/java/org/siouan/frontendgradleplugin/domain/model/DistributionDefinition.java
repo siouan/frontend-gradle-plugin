@@ -27,17 +27,24 @@ public class DistributionDefinition {
     private final URL downloadUrl;
 
     /**
+     * URL to download the distribution.
+     */
+    private final String downloadUrlPattern;
+
+    /**
      * Builds a definition.
      *
      * @param platform Underlying platform.
      * @param version Version of distribution.
      * @param downloadUrl URL to download the distribution.
+     * @param downloadUrlPattern URL pattern to download the distribution.
      */
     public DistributionDefinition(@Nonnull final Platform platform, @Nonnull final String version,
-        @Nullable final URL downloadUrl) {
+        @Nullable final URL downloadUrl, @Nullable String downloadUrlPattern) {
         this.platform = platform;
         this.version = version;
         this.downloadUrl = downloadUrl;
+        this.downloadUrlPattern = downloadUrlPattern;
     }
 
     /**
@@ -68,5 +75,15 @@ public class DistributionDefinition {
     @Nullable
     public URL getDownloadUrl() {
         return downloadUrl;
+    }
+
+    /**
+     * Gets the URL pattern to download the distribution.
+     *
+     * @return URL.
+     */
+    @Nullable
+    public String getDownloadUrlPattern() {
+        return downloadUrlPattern;
     }
 }

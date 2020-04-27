@@ -19,6 +19,8 @@ public class InstallSettings {
 
     private final URL downloadUrl;
 
+    private final String downloadUrlPattern;
+
     private final Proxy proxy;
 
     private final Path temporaryDirectoryPath;
@@ -31,16 +33,18 @@ public class InstallSettings {
      * @param platform Underlying platform.
      * @param version Version of the distribution.
      * @param downloadUrl URL to download the distribution.
+     * @param downloadUrlPattern URL pattern to download the distribution.
      * @param proxy Proxy used for downloads.
      * @param temporaryDirectoryPath Path to a temporary directory.
      * @param installDirectoryPath Path to a directory where the distribution shall be installed.
      */
     public InstallSettings(@Nonnull final Platform platform, @Nonnull final String version,
-        @Nullable final URL downloadUrl, @Nullable final Proxy proxy, @Nonnull final Path temporaryDirectoryPath,
-        @Nonnull final Path installDirectoryPath) {
+        @Nullable final URL downloadUrl, @Nullable final String downloadUrlPattern, @Nullable final Proxy proxy,
+        @Nonnull final Path temporaryDirectoryPath, @Nonnull final Path installDirectoryPath) {
         this.platform = platform;
         this.version = version;
         this.downloadUrl = downloadUrl;
+        this.downloadUrlPattern = downloadUrlPattern;
         this.proxy = proxy;
         this.temporaryDirectoryPath = temporaryDirectoryPath;
         this.installDirectoryPath = installDirectoryPath;
@@ -74,6 +78,16 @@ public class InstallSettings {
     @Nullable
     public URL getDownloadUrl() {
         return downloadUrl;
+    }
+
+    /**
+     * Gets the URL pattern to download the distribution.
+     *
+     * @return URL pattern.
+     */
+    @Nullable
+    public String getDownloadUrlPattern() {
+        return downloadUrlPattern;
     }
 
     /**

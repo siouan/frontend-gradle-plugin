@@ -93,7 +93,7 @@ class GetDistributionTest {
     void shouldFailGettingDistributionUrlResolverWhenDistributionIdIsUnknown() {
         when(getDistributionUrlResolver.execute(DISTRIBUTION_ID)).thenReturn(Optional.empty());
         final GetDistributionSettings getDistributionSettings = new GetDistributionSettings(DISTRIBUTION_ID,
-            PlatformFixture.LOCAL_PLATFORM, VERSION, null, temporaryDirectoryPath, PROXY);
+            PlatformFixture.LOCAL_PLATFORM, VERSION, null, null, temporaryDirectoryPath, PROXY);
 
         assertThatThrownBy(() -> usecase.execute(getDistributionSettings)).isInstanceOf(
             UnsupportedDistributionIdException.class);
@@ -108,9 +108,9 @@ class GetDistributionTest {
         when(getDistributionUrlResolver.execute(DISTRIBUTION_ID)).thenReturn(Optional.of(distributionUrlResolver));
         final Exception expectedException = new UnsupportedPlatformException(PlatformFixture.LOCAL_PLATFORM);
         when(distributionUrlResolver.execute(argThat(new DistributionDefintionMatcher(
-            new DistributionDefinition(PlatformFixture.LOCAL_PLATFORM, VERSION, null))))).thenThrow(expectedException);
+            new DistributionDefinition(PlatformFixture.LOCAL_PLATFORM, VERSION, null, null))))).thenThrow(expectedException);
         final GetDistributionSettings getDistributionSettings = new GetDistributionSettings(DistributionId.NODE,
-            PlatformFixture.LOCAL_PLATFORM, VERSION, null, temporaryDirectoryPath, PROXY);
+            PlatformFixture.LOCAL_PLATFORM, VERSION, null, null, temporaryDirectoryPath, PROXY);
 
         assertThatThrownBy(() -> usecase.execute(getDistributionSettings)).isEqualTo(expectedException);
 
@@ -124,10 +124,10 @@ class GetDistributionTest {
         when(getDistributionUrlResolver.execute(DISTRIBUTION_ID)).thenReturn(Optional.of(distributionUrlResolver));
         final Exception expectedException = new MalformedURLException();
         when(distributionUrlResolver.execute(argThat(new DistributionDefintionMatcher(
-            new DistributionDefinition(PlatformFixture.LOCAL_PLATFORM, VERSION, DOWNLOAD_URL))))).thenThrow(
+            new DistributionDefinition(PlatformFixture.LOCAL_PLATFORM, VERSION, DOWNLOAD_URL, null))))).thenThrow(
             expectedException);
         final GetDistributionSettings getDistributionSettings = new GetDistributionSettings(DistributionId.NODE,
-            PlatformFixture.LOCAL_PLATFORM, VERSION, DOWNLOAD_URL, temporaryDirectoryPath, PROXY);
+            PlatformFixture.LOCAL_PLATFORM, VERSION, DOWNLOAD_URL, null, temporaryDirectoryPath, PROXY);
 
         assertThatThrownBy(() -> usecase.execute(getDistributionSettings)).isEqualTo(expectedException);
 
@@ -136,13 +136,30 @@ class GetDistributionTest {
     }
 
     @Test
+    void shouldFailResolvingDistributionUrlWhenPredefinedDownloadUrlPatternIsMalformed()
+            throws UnsupportedPlatformException, MalformedURLException {
+        when(getDistributionUrlResolver.execute(DISTRIBUTION_ID)).thenReturn(Optional.of(distributionUrlResolver));
+        final Exception expectedException = new MalformedURLException();
+        when(distributionUrlResolver.execute(argThat(new DistributionDefintionMatcher(
+                new DistributionDefinition(PlatformFixture.LOCAL_PLATFORM, VERSION, null, "foo"))))).thenThrow(
+                expectedException);
+        final GetDistributionSettings getDistributionSettings = new GetDistributionSettings(DistributionId.NODE,
+                PlatformFixture.LOCAL_PLATFORM, VERSION, null, "foo", temporaryDirectoryPath, PROXY);
+
+        assertThatThrownBy(() -> usecase.execute(getDistributionSettings)).isEqualTo(expectedException);
+
+        verifyNoMoreInteractions(getDistributionUrlResolver, distributionUrlResolver, downloadResource,
+                getDistributionValidator, distributionValidator);
+    }
+
+    @Test
     void shouldFailWhenResolvedDistributionUrlIsMalformed() throws UnsupportedPlatformException, MalformedURLException {
         when(getDistributionUrlResolver.execute(DISTRIBUTION_ID)).thenReturn(Optional.of(distributionUrlResolver));
         when(distributionUrlResolver.execute(argThat(new DistributionDefintionMatcher(
-            new DistributionDefinition(PlatformFixture.LOCAL_PLATFORM, VERSION, null))))).thenReturn(
+            new DistributionDefinition(PlatformFixture.LOCAL_PLATFORM, VERSION, null, "foo"))))).thenReturn(
             new URL("https://domain.com/"));
         final GetDistributionSettings getDistributionSettings = new GetDistributionSettings(DistributionId.NODE,
-            PlatformFixture.LOCAL_PLATFORM, VERSION, null, temporaryDirectoryPath, PROXY);
+            PlatformFixture.LOCAL_PLATFORM, VERSION, null, "foo", temporaryDirectoryPath, PROXY);
 
         assertThatThrownBy(() -> usecase.execute(getDistributionSettings)).isInstanceOf(
             InvalidDistributionUrlException.class);
@@ -152,11 +169,27 @@ class GetDistributionTest {
     }
 
     @Test
+    void shouldFailWhenResolvedDistributionUrlPatternIsMalformed() throws UnsupportedPlatformException, MalformedURLException {
+        when(getDistributionUrlResolver.execute(DISTRIBUTION_ID)).thenReturn(Optional.of(distributionUrlResolver));
+        when(distributionUrlResolver.execute(argThat(new DistributionDefintionMatcher(
+                new DistributionDefinition(PlatformFixture.LOCAL_PLATFORM, VERSION, null, null))))).thenReturn(
+                new URL("https://domain.com/"));
+        final GetDistributionSettings getDistributionSettings = new GetDistributionSettings(DistributionId.NODE,
+                PlatformFixture.LOCAL_PLATFORM, VERSION, null, null, temporaryDirectoryPath, PROXY);
+
+        assertThatThrownBy(() -> usecase.execute(getDistributionSettings)).isInstanceOf(
+                InvalidDistributionUrlException.class);
+
+        verifyNoMoreInteractions(getDistributionUrlResolver, distributionUrlResolver, downloadResource,
+                getDistributionValidator, distributionValidator);
+    }
+
+    @Test
     void shouldFailInstallingDistributionWhenDistributionCannotBeDownloaded()
         throws UnsupportedPlatformException, IOException {
         when(getDistributionUrlResolver.execute(DISTRIBUTION_ID)).thenReturn(Optional.of(distributionUrlResolver));
         when(distributionUrlResolver.execute(argThat(new DistributionDefintionMatcher(
-            new DistributionDefinition(PlatformFixture.LOCAL_PLATFORM, VERSION, DOWNLOAD_URL))))).thenReturn(
+            new DistributionDefinition(PlatformFixture.LOCAL_PLATFORM, VERSION, DOWNLOAD_URL, null))))).thenReturn(
             DOWNLOAD_URL);
         final Path distributionFilePath = temporaryDirectoryPath.resolve(DISTRIBUTION_NAME);
         final Exception expectedException = new IOException();
@@ -165,7 +198,7 @@ class GetDistributionTest {
             .execute(argThat(new DownloadSettingsMatcher(
                 new DownloadSettings(DOWNLOAD_URL, PROXY, temporaryDirectoryPath, distributionFilePath))));
         final GetDistributionSettings getDistributionSettings = new GetDistributionSettings(DistributionId.NODE,
-            PlatformFixture.LOCAL_PLATFORM, VERSION, DOWNLOAD_URL, temporaryDirectoryPath, PROXY);
+            PlatformFixture.LOCAL_PLATFORM, VERSION, DOWNLOAD_URL, null, temporaryDirectoryPath, PROXY);
 
         assertThatThrownBy(() -> usecase.execute(getDistributionSettings)).isEqualTo(expectedException);
 
@@ -179,11 +212,11 @@ class GetDistributionTest {
         UnsupportedDistributionIdException, InvalidDistributionUrlException {
         when(getDistributionUrlResolver.execute(DISTRIBUTION_ID)).thenReturn(Optional.of(distributionUrlResolver));
         when(distributionUrlResolver.execute(argThat(new DistributionDefintionMatcher(
-            new DistributionDefinition(PlatformFixture.LOCAL_PLATFORM, VERSION, DOWNLOAD_URL))))).thenReturn(
+            new DistributionDefinition(PlatformFixture.LOCAL_PLATFORM, VERSION, DOWNLOAD_URL, null))))).thenReturn(
             DOWNLOAD_URL);
         when(getDistributionValidator.execute(DISTRIBUTION_ID)).thenReturn(Optional.empty());
         final GetDistributionSettings getDistributionSettings = new GetDistributionSettings(DistributionId.NODE,
-            PlatformFixture.LOCAL_PLATFORM, VERSION, DOWNLOAD_URL, temporaryDirectoryPath, PROXY);
+            PlatformFixture.LOCAL_PLATFORM, VERSION, DOWNLOAD_URL, null, temporaryDirectoryPath, PROXY);
         final Path distributionFilePath = temporaryDirectoryPath.resolve(DISTRIBUTION_NAME);
 
         assertThat(usecase.execute(getDistributionSettings)).isEqualTo(distributionFilePath);
@@ -199,7 +232,7 @@ class GetDistributionTest {
         throws UnsupportedPlatformException, IOException, DistributionValidatorException {
         when(getDistributionUrlResolver.execute(DISTRIBUTION_ID)).thenReturn(Optional.of(distributionUrlResolver));
         when(distributionUrlResolver.execute(argThat(new DistributionDefintionMatcher(
-            new DistributionDefinition(PlatformFixture.LOCAL_PLATFORM, VERSION, DOWNLOAD_URL))))).thenReturn(
+            new DistributionDefinition(PlatformFixture.LOCAL_PLATFORM, VERSION, DOWNLOAD_URL, null))))).thenReturn(
             DOWNLOAD_URL);
         when(getDistributionValidator.execute(DISTRIBUTION_ID)).thenReturn(Optional.of(distributionValidator));
         final Path distributionFilePath = temporaryDirectoryPath.resolve(DISTRIBUTION_NAME);
@@ -209,7 +242,7 @@ class GetDistributionTest {
             .execute(argThat(new DistributionValidatorSettingsMatcher(
                 new DistributionValidatorSettings(temporaryDirectoryPath, DOWNLOAD_URL, distributionFilePath, PROXY))));
         final GetDistributionSettings getDistributionSettings = new GetDistributionSettings(DistributionId.NODE,
-            PlatformFixture.LOCAL_PLATFORM, VERSION, DOWNLOAD_URL, temporaryDirectoryPath, PROXY);
+            PlatformFixture.LOCAL_PLATFORM, VERSION, DOWNLOAD_URL, null, temporaryDirectoryPath, PROXY);
 
         assertThatThrownBy(() -> usecase.execute(getDistributionSettings)).isEqualTo(expectedException);
 
@@ -225,11 +258,11 @@ class GetDistributionTest {
         UnsupportedDistributionIdException, InvalidDistributionUrlException {
         when(getDistributionUrlResolver.execute(DISTRIBUTION_ID)).thenReturn(Optional.of(distributionUrlResolver));
         when(distributionUrlResolver.execute(argThat(new DistributionDefintionMatcher(
-            new DistributionDefinition(PlatformFixture.LOCAL_PLATFORM, VERSION, DOWNLOAD_URL))))).thenReturn(
+            new DistributionDefinition(PlatformFixture.LOCAL_PLATFORM, VERSION, DOWNLOAD_URL, null))))).thenReturn(
             DOWNLOAD_URL);
         when(getDistributionValidator.execute(DISTRIBUTION_ID)).thenReturn(Optional.of(distributionValidator));
         final GetDistributionSettings getDistributionSettings = new GetDistributionSettings(DistributionId.NODE,
-            PlatformFixture.LOCAL_PLATFORM, VERSION, DOWNLOAD_URL, temporaryDirectoryPath, PROXY);
+            PlatformFixture.LOCAL_PLATFORM, VERSION, DOWNLOAD_URL, null, temporaryDirectoryPath, PROXY);
         final Path distributionFilePath = temporaryDirectoryPath.resolve(DISTRIBUTION_NAME);
 
         assertThat(usecase.execute(getDistributionSettings)).isEqualTo(distributionFilePath);
