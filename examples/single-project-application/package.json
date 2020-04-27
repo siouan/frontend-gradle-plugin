@@ -1,6 +1,6 @@
 {
   "name": "single-project-application-example",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "scripts": {
     "build": "echo Building frontend",
     "check": "echo Checking frontend && npm run lint && npm run test",
