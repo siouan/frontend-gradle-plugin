@@ -45,7 +45,7 @@ dependencies {
 }
 
 group 'org.siouan'
-version '2.1.0'
+version '2.2.0'
 description 'Build Node.js, npm, Yarn applications with Gradle.'
 
 java {
