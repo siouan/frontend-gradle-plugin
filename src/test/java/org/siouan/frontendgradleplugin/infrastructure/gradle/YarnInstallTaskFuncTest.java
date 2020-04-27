@@ -2,13 +2,14 @@ package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.assertTaskFailed;
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.assertTaskSkipped;
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.assertTaskSuccess;
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.assertTaskUpToDate;
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.createBuildFile;
+import static org.siouan.frontendgradleplugin.test.util.GradleBuildAssertions.assertTaskFailed;
+import static org.siouan.frontendgradleplugin.test.util.GradleBuildAssertions.assertTaskSkipped;
+import static org.siouan.frontendgradleplugin.test.util.GradleBuildAssertions.assertTaskSuccess;
+import static org.siouan.frontendgradleplugin.test.util.GradleBuildAssertions.assertTaskUpToDate;
+import static org.siouan.frontendgradleplugin.test.util.GradleBuildFiles.createBuildFile;
 import static org.siouan.frontendgradleplugin.test.util.GradleHelper.runGradle;
 import static org.siouan.frontendgradleplugin.test.util.GradleHelper.runGradleAndExpectFailure;
+import static org.siouan.frontendgradleplugin.test.util.Resources.getResourceUrl;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -112,7 +113,7 @@ class YarnInstallTaskFuncTest {
         final Map<String, Object> properties = new HashMap<>();
         properties.put("yarnEnabled", true);
         properties.put("yarnVersion", "1.16.0");
-        properties.put("yarnDistributionUrl", getClass().getClassLoader().getResource("yarn-v1.16.0.tar.gz"));
+        properties.put("yarnDistributionUrl", getResourceUrl("yarn-v1.16.0.tar.gz"));
         createBuildFile(projectDirectoryPath, properties);
 
         final BuildResult result1 = runGradle(projectDirectoryPath, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);

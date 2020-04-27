@@ -1,15 +1,16 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.assertTaskIgnored;
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.assertTaskSkipped;
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.assertTaskSuccess;
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.assertTaskUpToDate;
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.createBuildFile;
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.createSettingsFile;
+import static org.siouan.frontendgradleplugin.test.util.GradleBuildAssertions.assertTaskIgnored;
+import static org.siouan.frontendgradleplugin.test.util.GradleBuildAssertions.assertTaskSkipped;
+import static org.siouan.frontendgradleplugin.test.util.GradleBuildAssertions.assertTaskSuccess;
+import static org.siouan.frontendgradleplugin.test.util.GradleBuildAssertions.assertTaskUpToDate;
+import static org.siouan.frontendgradleplugin.test.util.GradleBuildFiles.createBuildFile;
 import static org.siouan.frontendgradleplugin.test.util.GradleHelper.runGradle;
+import static org.siouan.frontendgradleplugin.test.util.GradleSettingsFiles.createSettingsFile;
+import static org.siouan.frontendgradleplugin.test.util.Resources.getResourcePath;
+import static org.siouan.frontendgradleplugin.test.util.Resources.getResourceUrl;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -49,23 +50,22 @@ class MultiProjectsFuncTest {
     Path temporaryDirectorypath;
 
     @Test
-    void shouldRunTasksInSubProjects() throws IOException, URISyntaxException {
+    void shouldRunTasksInSubProjects() throws IOException {
         // Root project
         final Path projectDirectoryPath = temporaryDirectorypath;
         createSettingsFile(projectDirectoryPath, "multi-projects-test", SUB_PROJECT_1_NAME, SUB_PROJECT_2_NAME);
         createBuildFile(projectDirectoryPath, true, false);
-        final Path packageJsonFilePath = Paths.get(
-            getClass().getClassLoader().getResource("package-yarn.json").toURI());
+        final Path packageJsonFilePath = getResourcePath("package-yarn.json");
 
         // Sub-project 1
         final Path nodeInstallDirectory = Paths.get("${rootProject.projectDir}/node");
         final Map<String, Object> properties = new HashMap<>();
         properties.put("nodeVersion", "10.16.0");
         properties.put("nodeInstallDirectory", nodeInstallDirectory);
-        properties.put("nodeDistributionUrl", getClass().getClassLoader().getResource("node-v10.16.0.zip"));
+        properties.put("nodeDistributionUrl", getResourceUrl("node-v10.16.0.zip"));
         properties.put("yarnEnabled", true);
         properties.put("yarnVersion", "1.16.0");
-        properties.put("yarnDistributionUrl", getClass().getClassLoader().getResource("yarn-v1.16.0.tar.gz"));
+        properties.put("yarnDistributionUrl", getResourceUrl("yarn-v1.16.0.tar.gz"));
         properties.put("installScript", "run install1");
         properties.put("cleanScript", "run clean1");
         properties.put("assembleScript", "run assemble1");

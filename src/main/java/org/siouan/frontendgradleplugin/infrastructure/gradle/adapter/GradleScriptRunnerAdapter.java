@@ -2,6 +2,7 @@ package org.siouan.frontendgradleplugin.infrastructure.gradle.adapter;
 
 import javax.annotation.Nonnull;
 
+import org.gradle.process.ExecSpec;
 import org.siouan.frontendgradleplugin.domain.exception.ExecutableNotFoundException;
 import org.siouan.frontendgradleplugin.domain.model.ExecutionSettings;
 import org.siouan.frontendgradleplugin.domain.model.Logger;
@@ -38,10 +39,16 @@ public class GradleScriptRunnerAdapter {
             scriptProperties.getPlatform(), scriptProperties.getScript());
         logger.debug("Execution settings: {}", executionSettings);
 
-        scriptProperties.getProject().exec(new ExecSpecAction(executionSettings, execSpec -> {
-            logger.debug("Execution environment: {}", execSpec.getEnvironment());
-            logger.info("Running '{}' with arguments: [{}]", execSpec.getExecutable(),
-                String.join("], [", execSpec.getArgs()));
-        })).rethrowFailure().assertNormalExitValue();
+        scriptProperties
+            .getProject()
+            .exec(new ExecSpecAction(executionSettings, this::logExecSpecBeforeExecution))
+            .rethrowFailure()
+            .assertNormalExitValue();
+    }
+
+    private void logExecSpecBeforeExecution(@Nonnull final ExecSpec execSpec) {
+        logger.debug("Execution environment: {}", execSpec.getEnvironment());
+        logger.info("Running '{}' with arguments: [{}]", execSpec.getExecutable(),
+            String.join("], [", execSpec.getArgs()));
     }
 }

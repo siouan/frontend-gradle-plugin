@@ -42,42 +42,45 @@ class ResolveNodeDistributionUrlTest {
     @Test
     void shouldResolveUrlWhenOsIsWindowsNTAndJreArchIsX86() throws UnsupportedPlatformException, MalformedURLException {
         assertThat(usecase
-            .execute(new DistributionDefinition(new Platform("x86", "Windows NT"), VERSION, null))
+            .execute(new DistributionDefinition(new Platform("x86", "Windows NT", null, null), VERSION, null))
             .toString()).endsWith("-win-x86.zip");
     }
 
     @Test
     void shouldResolveUrlWhenOsIsWindowsNTAndJreArchIsX64() throws UnsupportedPlatformException, MalformedURLException {
-        assertThat(
-            usecase.execute(new DistributionDefinition(new Platform("x64", "Windows NT"), VERSION, null)).toString()).
+        assertThat(usecase
+            .execute(new DistributionDefinition(new Platform("x64", "Windows NT", null, null), VERSION, null))
+            .toString()).
             endsWith("-win-x64.zip");
     }
 
     @Test
     void shouldResolveUrlWhenOsIsLinuxAndJreArchIsAmd64() throws UnsupportedPlatformException, MalformedURLException {
-        assertThat(
-            usecase.execute(new DistributionDefinition(new Platform("amd64", "Linux"), VERSION, null)).toString()).
+        assertThat(usecase
+            .execute(new DistributionDefinition(new Platform("amd64", "Linux", null, null), VERSION, null))
+            .toString()).
             endsWith("-linux-x64.tar.gz");
     }
 
     @Test
     void shouldFailWhenOsIsLinuxAndJreArchIsI386() {
         assertThatThrownBy(
-            () -> usecase.execute(new DistributionDefinition(new Platform("i386", "Linux"), VERSION, null)))
+            () -> usecase.execute(new DistributionDefinition(new Platform("i386", "Linux", null, null), VERSION, null)))
             .isInstanceOf(UnsupportedPlatformException.class);
     }
 
     @Test
     void shouldResolveUrlWhenOsIsMacAndJreArchIsPPC() throws UnsupportedPlatformException, MalformedURLException {
-        assertThat(
-            usecase.execute(new DistributionDefinition(new Platform("ppc", "Mac OS X"), VERSION, null)).toString()).
+        assertThat(usecase
+            .execute(new DistributionDefinition(new Platform("ppc", "Mac OS X", null, null), VERSION, null))
+            .toString()).
             endsWith("-darwin-x64.tar.gz");
     }
 
     @Test
     void shouldFailWhenOsIsSolarisAndJreArchIsSparc() {
         assertThatThrownBy(() -> usecase.execute(
-            new DistributionDefinition(new Platform("sparc", "Solaris"), VERSION, null))).isInstanceOf(
+            new DistributionDefinition(new Platform("sparc", "Solaris", null, null), VERSION, null))).isInstanceOf(
             UnsupportedPlatformException.class);
     }
 }

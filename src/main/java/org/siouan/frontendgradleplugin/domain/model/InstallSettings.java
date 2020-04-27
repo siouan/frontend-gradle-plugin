@@ -36,7 +36,7 @@ public class InstallSettings {
      * @param installDirectoryPath Path to a directory where the distribution shall be installed.
      */
     public InstallSettings(@Nonnull final Platform platform, @Nonnull final String version,
-        @Nullable final URL downloadUrl, @Nullable final Proxy proxy, @Nonnull final Path temporaryDirectoryPath,
+        @Nullable final URL downloadUrl, @Nonnull final Proxy proxy, @Nonnull final Path temporaryDirectoryPath,
         @Nonnull final Path installDirectoryPath) {
         this.platform = platform;
         this.version = version;
