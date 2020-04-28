@@ -27,6 +27,8 @@ public class GetDistributionSettings {
 
     private final Proxy proxy;
 
+    private final String authorizationHeader;
+
     /**
      * Builds settings to get a distribution.
      *
@@ -37,11 +39,12 @@ public class GetDistributionSettings {
      * @param distributionUrlPattern URL pattern to download the distribution.
      * @param temporaryDirectoryPath Path to a temporary directory.
      * @param proxy Proxy used for the connection.
+     * @param authorizationHeader optional authorization header to send with the request.
      * @see DistributionId
      */
     public GetDistributionSettings(@Nonnull String distributionId, @Nonnull final Platform platform,
         @Nonnull final String version, @Nullable final URL distributionUrl, @Nullable final String distributionUrlPattern,
-        @Nonnull final Path temporaryDirectoryPath, @Nonnull final Proxy proxy) {
+        @Nonnull final Path temporaryDirectoryPath, @Nonnull final Proxy proxy, @Nullable final String authorizationHeader) {
         this.distributionId = distributionId;
         this.platform = platform;
         this.version = version;
@@ -49,6 +52,7 @@ public class GetDistributionSettings {
         this.distributionUrlPattern = distributionUrlPattern;
         this.temporaryDirectoryPath = temporaryDirectoryPath;
         this.proxy = proxy;
+        this.authorizationHeader = authorizationHeader;
     }
 
     /**
@@ -119,5 +123,15 @@ public class GetDistributionSettings {
     @Nonnull
     public Proxy getProxy() {
         return proxy;
+    }
+
+    /**
+     * Gets the optional authorization header to send with the request.
+     *
+     * @return authorization header.
+     */
+    @Nullable
+    public String getAuthorizationHeader() {
+        return authorizationHeader;
     }
 }

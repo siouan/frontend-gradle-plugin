@@ -51,7 +51,7 @@ public class DownloadResource {
         logger.debug("Downloading resource at '{}' (proxy: {})", downloadSettings.getResourceUrl(),
             downloadSettings.getProxy());
         try (final ReadableByteChannel resourceInputChannel = channelProvider.getReadableByteChannel(resourceUrl,
-            downloadSettings.getProxy());
+            downloadSettings.getProxy(), downloadSettings.getAuthorizationHeader());
              final FileChannel resourceOutputChannel = channelProvider.getWritableFileChannelForNewFile(
                  downloadedFilePath, StandardOpenOption.WRITE, StandardOpenOption.CREATE,
                  StandardOpenOption.TRUNCATE_EXISTING)) {

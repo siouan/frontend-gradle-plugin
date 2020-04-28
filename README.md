@@ -134,6 +134,12 @@ frontend {
     // configured via 'nodeVersion', and 'OS_EXTENSION' with the extension of the detected operating system.
     nodeDistributionUrlPattern = 'https://foo.org/bar/vVERSION/node-vVERSION-OS_EXTENSION'
 
+    // [OPTIONAL] Set this property to send a custom 'Authorization' header along with the request to download the
+    // node distribution. By default, this property is 'null' and the plugin does not send any Authorization header.
+    // Setting this property is useful when using a custom url or pattern to download from a web service that
+    // requires authentication.
+    nodeDistributionRequestAuthorization = 'Basic ' + "$user:$pass".bytes.encodeBase64().toString()
+
     // [OPTIONAL] Install directory where the distribution archive shall be exploded.
     nodeInstallDirectory = file("${projectDir}/node")
 
@@ -165,6 +171,12 @@ frontend {
     // current platform from Yarn's website. The plugin will replace any 'VERSION' token with the version
     // configured via 'yarnVersion'.
     yarnDistributionUrlPattern = 'https://foo.org/bar/yarn/vVERSION/yarn-vVERSION.tar.gz'
+
+    // [OPTIONAL] Set this property to send a custom 'Authorization' header along with the request to download the
+    // yarn distribution. By default, this property is 'null' and the plugin does not send any Authorization header.
+    // Setting this property is useful when using a custom url or pattern to download from a web service that
+    // requires authentication.
+    yarnDistributionRequestAuthorization = 'Basic ' + "$user:$pass".bytes.encodeBase64().toString()
 
     // [OPTIONAL] Install directory where the distribution archive shall be exploded.
     yarnInstallDirectory = file("${projectDir}/yarn")
@@ -236,6 +248,7 @@ frontend {
     nodeVersion.set("12.16.1")
     nodeDistributionUrl.set("https://nodejs.org/dist/vX.Y.Z/node-vX.Y.Z-win-x64.zip")
     nodeDistributionUrlPattern.set("https://foo.org/bar/vVERSION/node-vVERSION-OS_EXTENSION")
+    nodeDistributionRequestAuthorization.set("auth")
     nodeInstallDirectory.set(project.layout.projectDirectory.dir("node"))
 
     yarnEnabled.set(false)
@@ -243,6 +256,7 @@ frontend {
     yarnVersion.set("1.22.4")
     yarnDistributionUrl.set("https://github.com/yarnpkg/yarn/releases/download/vX.Y.Z/yarn-vX.Y.Z.tar.gz")
     yarnDistributionUrlPattern.set("https:/foo.org/bar/yarn/vVERSION/yarn-vVERSION.tar.gz")
+    yarnDistributionRequestAuthorization.set("auth")
     yarnInstallDirectory.set(project.layout.projectDirectory.dir("yarn"))
 
     installScript.set("install")
@@ -375,11 +389,14 @@ property allow to use a proxy server when downloading the distribution and the s
 distribution shall be installed with the `nodeInstallDirectory` property, which by default is the `${projectDir}/node`
 directory.
 
+If the `nodeDistributionRequestAuthorization` property is set, the http requests to download the distribution and shasum
+will have an `Authorization` header set with the provided value.
+
 If a [Node.js][nodejs] distribution is already installed in the system, and shall be used instead of a downloaded
 distribution, set the `nodeDistributionProvided` property to `true` and the location of the distribution with the
-`nodeInstallDirectory` property. The `nodeVersion`, `nodeDistributionUrl` and `nodeDistributionUrlPattern` properties
-are useless and shall not be set for clarity. Consequently, the `installNode` task is automatically _SKIPPED_ during a
-Gradle build.
+`nodeInstallDirectory` property. The `nodeVersion`, `nodeDistributionUrl`, `nodeDistributionUrlPattern` and
+`nodeDistributionRequestAuthorization` properties are useless and shall not be set for clarity. Consequently, the
+`installNode` task is automatically _SKIPPED_ during a Gradle build.
 
 The task takes advantage of [Gradle incremental build][gradle-incremental-build], and is not executed again unless one
 of its inputs/outputs changed. The task is _UP-TO-DATE_ during a Gradle build, and skipped.
@@ -395,11 +412,14 @@ the `proxyHost` property and the `proxyPort` property allow to use a proxy serve
 the location where the distribution shall be installed with the `yarnInstallDirectory` property, which by default is the
 `${projectDir}/yarn` directory.
 
+If the `yarnDistributionRequestAuthorization` property is set, the http request to download the distribution
+will have an `Authorization` header set with the provided value.
+
 If a [Yarn][yarn] distribution is already installed in the system, and shall be used instead of a downloaded
 distribution, set the `yarnDistributionProvided` property to `true` and the location of the distribution with the
-`yarnInstallDirectory` property. The `yarnEnabled` property still must be `true`, the `yarnVersion` property, the
-`yarnDistributionUrl` and the `yarnDistributionUrlPattern` property are useless and shall not be set for clarity.
-Consequently, the `installYarn` task is automatically _SKIPPED_ during a Gradle build.
+`yarnInstallDirectory` property. The `yarnEnabled` property still must be `true`, the `yarnVersion`,
+`yarnDistributionUrl`, `yarnDistributionUrlPattern` and `yarnDistributionRequestAuthorization` properties are useless
+and shall not be set for clarity. Consequently, the `installYarn` task is automatically _SKIPPED_ during a Gradle build.
 
 The task takes advantage of [Gradle incremental build][gradle-incremental-build], and is not executed again unless one
 of its inputs/outputs changed. The task is _UP-TO-DATE_ during a Gradle build, and skipped.

@@ -23,6 +23,8 @@ public class InstallSettings {
 
     private final Proxy proxy;
 
+    private final String authorizationHeader;
+
     private final Path temporaryDirectoryPath;
 
     private final Path installDirectoryPath;
@@ -37,15 +39,18 @@ public class InstallSettings {
      * @param proxy Proxy used for downloads.
      * @param temporaryDirectoryPath Path to a temporary directory.
      * @param installDirectoryPath Path to a directory where the distribution shall be installed.
+     * @param authorizationHeader optional authorization header to send with the request.
      */
     public InstallSettings(@Nonnull final Platform platform, @Nonnull final String version,
         @Nullable final URL downloadUrl, @Nullable final String downloadUrlPattern, @Nullable final Proxy proxy,
-        @Nonnull final Path temporaryDirectoryPath, @Nonnull final Path installDirectoryPath) {
+        @Nullable final String authorizationHeader, @Nonnull final Path temporaryDirectoryPath,
+        @Nonnull final Path installDirectoryPath) {
         this.platform = platform;
         this.version = version;
         this.downloadUrl = downloadUrl;
         this.downloadUrlPattern = downloadUrlPattern;
         this.proxy = proxy;
+        this.authorizationHeader = authorizationHeader;
         this.temporaryDirectoryPath = temporaryDirectoryPath;
         this.installDirectoryPath = installDirectoryPath;
     }
@@ -98,6 +103,16 @@ public class InstallSettings {
     @Nonnull
     public Proxy getProxy() {
         return proxy;
+    }
+
+    /**
+     * Gets the optional authorization header to send with the request.
+     *
+     * @return authorization header.
+     */
+    @Nullable
+    public String getAuthorizationHeader() {
+        return authorizationHeader;
     }
 
     /**

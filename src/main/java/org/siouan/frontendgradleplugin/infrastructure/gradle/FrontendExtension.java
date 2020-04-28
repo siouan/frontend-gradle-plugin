@@ -39,6 +39,18 @@ public class FrontendExtension {
     private final Property<String> nodeDistributionUrlPattern;
 
     /**
+     * The Authorization header for downloading the Node distribution. This is useful when using a custom url or pattern
+     * to download from a web service that requires authentication.
+     *
+     * For Basic Authentication, you can calculate the base64 representation in your Gradle script like
+     *
+     * frontend {
+     *     nodeDistributionRequestAuthorization = 'Basic ' + "$user:$pass".bytes.encodeBase64().toString()
+     * }
+     */
+    private final Property<String> nodeDistributionRequestAuthorization;
+
+    /**
      * Whether a Yarn distribution shall be downloaded and installed.
      */
     private final Property<Boolean> yarnEnabled;
@@ -69,6 +81,18 @@ public class FrontendExtension {
      * URL pattern to download the Yarn distribution.
      */
     private final Property<String> yarnDistributionUrlPattern;
+
+    /**
+     * The Authorization header for downloading the Yarn distribution. This is useful when using a custom url or pattern
+     * to download from a web service that requires authentication.
+     *
+     * For Basic Authentication, you can calculate the base64 representation in your Gradle script like
+     *
+     * frontend {
+     *     yarnDistributionRequestAuthorization = 'Basic ' + "$user:$pass".bytes.encodeBase64().toString()
+     * }
+     */
+    private final Property<String> yarnDistributionRequestAuthorization;
 
     /**
      * The npm/Yarn script installing frontend dependencies.
@@ -127,12 +151,14 @@ public class FrontendExtension {
         nodeInstallDirectory = project.getObjects().directoryProperty();
         nodeDistributionUrl = project.getObjects().property(String.class);
         nodeDistributionUrlPattern = project.getObjects().property(String.class);
+        nodeDistributionRequestAuthorization = project.getObjects().property(String.class);
         yarnDistributionProvided = project.getObjects().property(Boolean.class);
         yarnEnabled = project.getObjects().property(Boolean.class);
         yarnVersion = project.getObjects().property(String.class);
         yarnInstallDirectory = project.getObjects().directoryProperty();
         yarnDistributionUrl = project.getObjects().property(String.class);
         yarnDistributionUrlPattern = project.getObjects().property(String.class);
+        yarnDistributionRequestAuthorization = project.getObjects().property(String.class);
         installScript = project.getObjects().property(String.class);
         cleanScript = project.getObjects().property(String.class);
         assembleScript = project.getObjects().property(String.class);
@@ -164,6 +190,10 @@ public class FrontendExtension {
         return nodeDistributionUrlPattern;
     }
 
+    public Property<String> getNodeDistributionRequestAuthorization() {
+        return nodeDistributionRequestAuthorization;
+    }
+
     public Property<Boolean> getYarnEnabled() {
         return yarnEnabled;
     }
@@ -186,6 +216,10 @@ public class FrontendExtension {
 
     public Property<String> getYarnDistributionUrlPattern() {
         return yarnDistributionUrlPattern;
+    }
+
+    public Property<String> getYarnDistributionRequestAuthorization() {
+        return yarnDistributionRequestAuthorization;
     }
 
     public Property<String> getInstallScript() {

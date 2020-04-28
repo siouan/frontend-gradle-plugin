@@ -51,6 +51,11 @@ public class YarnInstallTask extends DefaultTask {
     private final Property<String> yarnDistributionUrlPattern;
 
     /**
+     * The Authorization header for downloading the distribution.
+     */
+    private final Property<String> yarnDistributionRequestAuthorization;
+
+    /**
      * Proxy host used to download resources.
      *
      * @since 2.1.0
@@ -69,6 +74,7 @@ public class YarnInstallTask extends DefaultTask {
         this.yarnInstallDirectory = getProject().getObjects().directoryProperty();
         this.yarnDistributionUrl = getProject().getObjects().property(String.class);
         this.yarnDistributionUrlPattern = getProject().getObjects().property(String.class);
+        this.yarnDistributionRequestAuthorization = getProject().getObjects().property(String.class);
         this.proxyHost = getProject().getObjects().property(String.class);
         this.proxyPort = getProject().getObjects().property(Integer.class);
     }
@@ -88,6 +94,12 @@ public class YarnInstallTask extends DefaultTask {
     @Optional
     public Property<String> getYarnDistributionUrlPattern() {
         return yarnDistributionUrlPattern;
+    }
+
+    @Input
+    @Optional
+    public Property<String> getYarnDistributionRequestAuthorization() {
+        return yarnDistributionRequestAuthorization;
     }
 
     @OutputDirectory
@@ -129,7 +141,7 @@ public class YarnInstallTask extends DefaultTask {
         Beans
             .getBean(InstallYarnDistribution.class)
             .execute(new InstallSettings(Beans.getBean(Platform.class), yarnVersion.get(), distributionUrl,
-                yarnDistributionUrlPattern.getOrNull(), proxy, getTemporaryDir().toPath(),
-                yarnInstallDirectory.getAsFile().get().toPath()));
+                yarnDistributionUrlPattern.getOrNull(), proxy, yarnDistributionRequestAuthorization.getOrNull(),
+                getTemporaryDir().toPath(), yarnInstallDirectory.getAsFile().get().toPath()));
     }
 }

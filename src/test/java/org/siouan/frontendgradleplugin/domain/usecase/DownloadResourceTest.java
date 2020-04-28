@@ -68,7 +68,7 @@ class DownloadResourceTest {
         final DownloadSettings downloadSettings = buildDownloadParameters(Paths.get("/y45y97@p"));
         final IOException expectedException = new IOException();
         when(channelProvider.getReadableByteChannel(downloadSettings.getResourceUrl(),
-            downloadSettings.getProxy())).thenThrow(expectedException);
+            downloadSettings.getProxy(), null)).thenThrow(expectedException);
 
         assertThatThrownBy(() -> usecase.execute(downloadSettings)).isEqualTo(expectedException);
 
@@ -85,7 +85,7 @@ class DownloadResourceTest {
         final DownloadSettings downloadSettings = buildDownloadParameters(Paths.get("/volezp", "gixkkle"));
         final ReadableByteChannel resourceInputChannel = mock(ReadableByteChannel.class);
         when(channelProvider.getReadableByteChannel(downloadSettings.getResourceUrl(),
-            downloadSettings.getProxy())).thenReturn(resourceInputChannel);
+            downloadSettings.getProxy(), null)).thenReturn(resourceInputChannel);
         final Path temporaryFilePath = downloadSettings
             .getTemporaryDirectoryPath()
             .resolve(
@@ -106,7 +106,7 @@ class DownloadResourceTest {
         final DownloadSettings downloadSettings = buildDownloadParameters(Paths.get("/volezp", "gixkkle"));
         final ReadableByteChannel resourceInputChannel = mock(ReadableByteChannel.class);
         when(channelProvider.getReadableByteChannel(downloadSettings.getResourceUrl(),
-            downloadSettings.getProxy())).thenReturn(resourceInputChannel);
+            downloadSettings.getProxy(), null)).thenReturn(resourceInputChannel);
         final Path temporaryFilePath = downloadSettings
             .getTemporaryDirectoryPath()
             .resolve(
@@ -129,7 +129,7 @@ class DownloadResourceTest {
         final DownloadSettings downloadSettings = buildDownloadParameters(Paths.get("/volezp", "gixkkle"));
         final ReadableByteChannel resourceInputChannel = mock(ReadableByteChannel.class);
         when(channelProvider.getReadableByteChannel(downloadSettings.getResourceUrl(),
-            downloadSettings.getProxy())).thenReturn(resourceInputChannel);
+            downloadSettings.getProxy(), null)).thenReturn(resourceInputChannel);
         final Path temporaryFilePath = downloadSettings
             .getTemporaryDirectoryPath()
             .resolve(
@@ -155,7 +155,7 @@ class DownloadResourceTest {
         final DownloadSettings downloadSettings = buildDownloadParameters(destinationFilePath);
         final ReadableByteChannel resourceInputChannel = mock(ReadableByteChannel.class);
         when(channelProvider.getReadableByteChannel(downloadSettings.getResourceUrl(),
-            downloadSettings.getProxy())).thenReturn(resourceInputChannel);
+            downloadSettings.getProxy(), null)).thenReturn(resourceInputChannel);
         final Path temporaryFilePath = downloadSettings
             .getTemporaryDirectoryPath()
             .resolve(
@@ -183,7 +183,7 @@ class DownloadResourceTest {
 
     private DownloadSettings buildDownloadParameters(@Nonnull final Path destinationFilePath)
         throws MalformedURLException {
-        return new DownloadSettings(getResourceFilePath().toUri().toURL(), PROXY, getDownloadDirectoryPath(),
+        return new DownloadSettings(getResourceFilePath().toUri().toURL(), PROXY, null, getDownloadDirectoryPath(),
             destinationFilePath);
     }
 }

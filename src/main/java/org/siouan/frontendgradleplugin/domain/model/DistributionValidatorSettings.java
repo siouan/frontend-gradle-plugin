@@ -4,6 +4,7 @@ import java.net.Proxy;
 import java.net.URL;
 import java.nio.file.Path;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Settings for distribution validation.
@@ -20,6 +21,8 @@ public class DistributionValidatorSettings {
 
     private final Proxy proxy;
 
+    private final String authorizationHeader;
+
     /**
      * Builds validator settings.
      *
@@ -27,13 +30,15 @@ public class DistributionValidatorSettings {
      * @param distributionUrl URL used to download the distribution.
      * @param distributionFilePath Path to the distribution archive.
      * @param proxy Proxy used for any connections.
+     * @param authorizationHeader optional authorization header to send with the request.
      */
     public DistributionValidatorSettings(@Nonnull final Path temporaryDirectoryPath, @Nonnull final URL distributionUrl,
-        @Nonnull final Path distributionFilePath, @Nonnull final Proxy proxy) {
+        @Nonnull final Path distributionFilePath, @Nonnull final Proxy proxy, @Nullable final String authorizationHeader) {
         this.temporaryDirectoryPath = temporaryDirectoryPath;
         this.distributionUrl = distributionUrl;
         this.distributionFilePath = distributionFilePath;
         this.proxy = proxy;
+        this.authorizationHeader = authorizationHeader;
     }
 
     /**
@@ -74,5 +79,15 @@ public class DistributionValidatorSettings {
     @Nonnull
     public Proxy getProxy() {
         return proxy;
+    }
+
+    /**
+     * Gets the optional authorization header to send with the request.
+     *
+     * @return authorization header.
+     */
+    @Nullable
+    public String getAuthorizationHeader() {
+        return authorizationHeader;
     }
 }

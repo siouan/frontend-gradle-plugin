@@ -10,6 +10,7 @@ import java.nio.channels.SeekableByteChannel;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Provider of Java NIO {@link Channel}.
@@ -23,11 +24,13 @@ public interface ChannelProvider {
      *
      * @param resourceUrl URL to download the resource.
      * @param proxy Proxy to use for the connection.
+     * @param authorizationHeader optional authorization header to send with the request.
      * @return Channel to read the resource content.
      * @throws IOException In case an I/O error occurs.
      */
     @Nonnull
-    ReadableByteChannel getReadableByteChannel(@Nonnull URL resourceUrl, @Nonnull Proxy proxy) throws IOException;
+    ReadableByteChannel getReadableByteChannel(@Nonnull URL resourceUrl, @Nonnull Proxy proxy,
+                                               @Nullable final String authorizationHeader) throws IOException;
 
     /**
      * Opens the file at the given path for reading.
