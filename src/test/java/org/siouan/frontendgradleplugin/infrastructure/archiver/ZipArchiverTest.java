@@ -7,12 +7,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.siouan.frontendgradleplugin.test.util.Resources.getResourcePath;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Optional;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
@@ -58,8 +57,8 @@ class ZipArchiverTest {
     }
 
     @Test
-    void shouldFailInitializingContextWhenZipArchiveIsInvalid() throws URISyntaxException {
-        final Path archiveFile = Paths.get(getClass().getClassLoader().getResource("invalid-archive.unknown").toURI());
+    void shouldFailInitializingContextWhenZipArchiveIsInvalid() {
+        final Path archiveFile =getResourcePath("invalid-archive.unknown");
         final ExplodeSettings settings = new ExplodeSettings(PlatformFixture.LOCAL_PLATFORM, archiveFile,
             temporaryDirectoryPath);
 
@@ -69,8 +68,8 @@ class ZipArchiverTest {
     }
 
     @Test
-    void shouldFailReadingSymbolicLinkTarget() throws URISyntaxException, IOException {
-        final Path archiveFile = Paths.get(getClass().getClassLoader().getResource("archive-linux.zip").toURI());
+    void shouldFailReadingSymbolicLinkTarget() throws IOException {
+        final Path archiveFile =getResourcePath("archive-linux.zip");
         final ExplodeSettings settings = new ExplodeSettings(PlatformFixture.LOCAL_PLATFORM, archiveFile,
             temporaryDirectoryPath);
 
@@ -95,7 +94,7 @@ class ZipArchiverTest {
     }
 
     @Test
-    void shouldCheckZipArchiveOnWindows() throws URISyntaxException, IOException {
+    void shouldCheckZipArchiveOnWindows() throws IOException {
         final Path targetFilePath = temporaryDirectoryPath.resolve("aFile");
         String symbolicLinkTarget = null;
         final String archiveFileName;
@@ -108,7 +107,7 @@ class ZipArchiverTest {
             archiveFileName = "archive-linux.zip";
             expectedCount = 2;
         }
-        final Path archiveFilePath = Paths.get(getClass().getClassLoader().getResource(archiveFileName).toURI());
+        final Path archiveFilePath =getResourcePath(archiveFileName);
         when(fileManager.copy(any(InputStream.class), eq(targetFilePath))).thenCallRealMethod();
         final ExplodeSettings settings = new ExplodeSettings(platform, archiveFilePath, temporaryDirectoryPath);
 

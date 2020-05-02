@@ -2,13 +2,14 @@ package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.assertTaskFailed;
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.assertTaskSkipped;
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.assertTaskSuccess;
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.assertTaskUpToDate;
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.createBuildFile;
+import static org.siouan.frontendgradleplugin.test.util.GradleBuildAssertions.assertTaskFailed;
+import static org.siouan.frontendgradleplugin.test.util.GradleBuildAssertions.assertTaskSkipped;
+import static org.siouan.frontendgradleplugin.test.util.GradleBuildAssertions.assertTaskSuccess;
+import static org.siouan.frontendgradleplugin.test.util.GradleBuildAssertions.assertTaskUpToDate;
+import static org.siouan.frontendgradleplugin.test.util.GradleBuildFiles.createBuildFile;
 import static org.siouan.frontendgradleplugin.test.util.GradleHelper.runGradle;
 import static org.siouan.frontendgradleplugin.test.util.GradleHelper.runGradleAndExpectFailure;
+import static org.siouan.frontendgradleplugin.test.util.Resources.getResourceUrl;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -94,7 +95,7 @@ class NodeInstallTaskFuncTest {
     void shouldSucceedFirstTimeAndBeUpToDateSecondTime() throws IOException {
         final Map<String, Object> properties = new HashMap<>();
         properties.put("nodeVersion", "10.16.0");
-        properties.put("nodeDistributionUrl", getClass().getClassLoader().getResource("node-v10.16.0.zip"));
+        properties.put("nodeDistributionUrl", getResourceUrl("node-v10.16.0.zip"));
         createBuildFile(projectDirectoryPath, properties);
 
         final BuildResult result1 = runGradle(projectDirectoryPath, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);

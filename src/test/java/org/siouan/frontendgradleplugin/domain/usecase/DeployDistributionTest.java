@@ -10,12 +10,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.siouan.frontendgradleplugin.test.util.Resources.getResourcePath;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -116,9 +115,8 @@ class DeployDistributionTest {
 
     @Test
     void shouldInstallDistributionWithoutRootDirectory()
-        throws ArchiverException, UnsupportedDistributionArchiveException, IOException, URISyntaxException {
-        final Path distributionFilePath = Paths.get(
-            getClass().getClassLoader().getResource(DISTRIBUTION_FILENAME).toURI());
+        throws ArchiverException, UnsupportedDistributionArchiveException, IOException {
+        final Path distributionFilePath = getResourcePath(DISTRIBUTION_FILENAME);
         when(fileManager.createDirectory(extractDirectoryPath)).then(returnsFirstArg());
         final Archiver archiver = mock(Archiver.class);
         when(archiverProvider.findByArchiveFilePath(distributionFilePath)).thenReturn(Optional.of(archiver));
@@ -140,9 +138,8 @@ class DeployDistributionTest {
 
     @Test
     void shouldInstallDistributionAndRemoveRootDirectory()
-        throws ArchiverException, UnsupportedDistributionArchiveException, IOException, URISyntaxException {
-        final Path distributionFilePath = Paths.get(
-            getClass().getClassLoader().getResource(DISTRIBUTION_FILENAME).toURI());
+        throws ArchiverException, UnsupportedDistributionArchiveException, IOException {
+        final Path distributionFilePath = getResourcePath(DISTRIBUTION_FILENAME);
         when(fileManager.createDirectory(extractDirectoryPath)).then(returnsFirstArg());
         final Archiver archiver = mock(Archiver.class);
         when(archiverProvider.findByArchiveFilePath(distributionFilePath)).thenReturn(Optional.of(archiver));

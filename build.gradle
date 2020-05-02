@@ -1,4 +1,3 @@
-import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
     id 'java-gradle-plugin'
@@ -16,13 +15,9 @@ tasks.named('wrapper') {
     distributionType = Wrapper.DistributionType.ALL
 }
 
-tasks.named('test') {
-    useJUnitPlatform()
-    testLogging {
-        exceptionFormat = 'full'
-        events = [TestLogEvent.PASSED, TestLogEvent.SKIPPED, TestLogEvent.FAILED, TestLogEvent.STANDARD_OUT,
-          TestLogEvent.STANDARD_ERROR]
-    }
+tasks.named('test', Test) { t ->
+    t.useJUnitPlatform()
+    gradle.addListener(new SiouanTestListener(logger))
 }
 
 tasks.named('jacocoTestReport') {
@@ -36,17 +31,17 @@ dependencies {
     implementation gradleApi()
     implementation 'org.apache.commons:commons-compress:1.20'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.1'
-    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.6.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.6.2'
     testImplementation 'org.mockito:mockito-core:3.3.3'
     testImplementation 'org.mockito:mockito-inline:3.3.3'
     testImplementation 'org.mockito:mockito-junit-jupiter:3.3.3'
     testImplementation 'org.assertj:assertj-core:3.15.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
 }
 
 group 'org.siouan'
-version '2.1.0'
+version '2.2.0'
 description 'Build Node.js, npm, Yarn applications with Gradle.'
 
 java {
@@ -72,6 +67,36 @@ pluginBundle {
             displayName = 'Frontend Gradle plugin'
             description = 'Build Node.js, npm, Yarn applications with Gradle.'
             tags = ['node', 'nodejs', 'npm', 'npx', 'yarn', 'frontend']
+        }
+    }
+}
+
+class SiouanTestListener implements TestListener, TestOutputListener {
+    Logger logger;
+
+    SiouanTestListener(Logger logger) {
+        this.logger = logger;
+    }
+
+    void beforeSuite(TestDescriptor testSuite) {}
+
+    void afterSuite(TestDescriptor testSuite, TestResult result) {}
+
+    void beforeTest(TestDescriptor testDescriptor) {
+        logger.lifecycle('\n========== TEST {}.{} STARTED ==========',
+                testDescriptor.className.substring(testDescriptor.className.lastIndexOf('.') + 1),
+                testDescriptor.displayName);
+    }
+
+    void afterTest(TestDescriptor testDescriptor, TestResult result) {
+        logger.lifecycle('========== TEST {}.{} {} ==========',
+                testDescriptor.className.substring(testDescriptor.className.lastIndexOf('.') + 1),
+                testDescriptor.displayName, result.resultType);
+    }
+
+    void onOutput(TestDescriptor testDescriptor, TestOutputEvent outputEvent) {
+        if (!outputEvent.message.trim().isBlank()) {
+            logger.lifecycle('  {}', outputEvent.message);
         }
     }
 }

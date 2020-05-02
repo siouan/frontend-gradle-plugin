@@ -1,9 +1,9 @@
 <h2 align="center">Frontend Gradle plugin - Integrated <a href="https://nodejs.org/" title="Node.js">Node.js</a>, <a href="https://www.npmjs.com/" title="npm">npm</a>, <a href="https://yarnpkg.com/" title="Yarn">Yarn</a> builds</h2> 
 <p align="center">
-    <a href="https://github.com/siouan/frontend-gradle-plugin/releases/tag/v2.1.0"><img src="https://img.shields.io/badge/Latest%20release-2.1.0-blue.svg" alt="Latest release 2.1.0"/></a>
+    <a href="https://github.com/siouan/frontend-gradle-plugin/releases/tag/v2.2.0"><img src="https://img.shields.io/badge/Latest%20release-2.2.0-blue.svg" alt="Latest release 2.2.0"/></a>
     <a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-green.svg" alt="License Apache 2.0"/></a>
     <br/>
-    <a href="https://travis-ci.com/siouan/frontend-gradle-plugin"><img src="https://travis-ci.com/siouan/frontend-gradle-plugin.svg?branch=master" alt="Build status"/></a>
+    <a href="https://travis-ci.com/siouan/frontend-gradle-plugin"><img src="https://travis-ci.com/siouan/frontend-gradle-plugin.svg?branch=2.2" alt="Build status"/></a>
     <a href="https://sonarcloud.io/dashboard?id=siouan_frontend-gradle-plugin"><img src="https://sonarcloud.io/api/project_badges/measure?project=siouan_frontend-gradle-plugin&metric=alert_status" alt="Quality gate status"/></a>
     <a href="https://sonarcloud.io/dashboard?id=siouan_frontend-gradle-plugin"><img src="https://sonarcloud.io/api/project_badges/measure?project=siouan_frontend-gradle-plugin&metric=coverage" alt="Code coverage"/></a>
     <a href="https://sonarcloud.io/dashboard?id=siouan_frontend-gradle-plugin"><img src="https://sonarcloud.io/api/project_badges/measure?project=siouan_frontend-gradle-plugin&metric=reliability_rating" alt="Reliability"/></a>
@@ -113,9 +113,12 @@ otherwise stated. Other values are provided for information. You may also take a
 frontend {
     ////// NODE SETTINGS //////
     // [OPTIONAL] Whether the Node distribution is already provided, and shall not be downloaded.
-    // The 'nodeInstallDirectory' property shall be used to point the install directory of the
-    // distribution, while other 'node*' properties should not be used for clarity. 
-    // If <false>, at least the 'nodeVersion' property must be set.
+    // To find node/npm/npx executables, the plugin relies on these locations in this exact order:
+    // - The directory pointed by the 'nodeInstallDirectory' property, if set.
+    // - The directory pointed by the NODEJS_HOME environment variable, if set.
+    // - Any directory in the PATH environment variable.
+    // Other 'node*' properties should not be used for clarity. If <false>, at least the
+    // 'nodeVersion' property must be set.
     nodeDistributionProvided = false
 
     // [OPTIONAL] Node version, used to build the URL to download the corresponding distribution, if the
@@ -150,9 +153,12 @@ frontend {
     yarnEnabled = false
 
     // [OPTIONAL] Whether the Yarn distribution is already provided, and shall not be downloaded.
-    // The 'yarnInstallDirectory' property shall be used to point the install directory of the
-    // distribution, while other 'yarn*' properties should not be used for clarity. 
-    // If <false>, at least the 'yarnVersion' property must be set.
+    // To find the yarn executable, the plugin relies on these locations in this exact order:
+    // - The directory pointed by the 'yarnInstallDirectory' property, if set.
+    // - The directory pointed by the YARN_HOME environment variable, if set.
+    // - Any directory in the PATH environment variable.
+    // Other 'yarn*' properties should not be used for clarity. If <false>, at least the
+    // 'yarnVersion' property must be set.
     yarnDistributionProvided = false
 
     // [OPTIONAL] Yarn version, used to build the URL to download the corresponding distribution, if
@@ -394,9 +400,11 @@ will have an `Authorization` header set with the provided value.
 
 If a [Node.js][nodejs] distribution is already installed in the system, and shall be used instead of a downloaded
 distribution, set the `nodeDistributionProvided` property to `true` and the location of the distribution with the
-`nodeInstallDirectory` property. The `nodeVersion`, `nodeDistributionUrl`, `nodeDistributionUrlPattern` and
-`nodeDistributionRequestAuthorization` properties are useless and shall not be set for clarity. Consequently, the
-`installNode` task is automatically _SKIPPED_ during a Gradle build.
+`nodeInstallDirectory` property. Alternatively, this latter property may not be set, and the plugin would locate the
+distribution using the `NODEJS_HOME` environment variable, or the `PATH` environment variable. The `nodeVersion`
+property, `nodeDistributionUrl`, `nodeDistributionUrlPattern` and `nodeDistributionRequestAuthorization` properties are
+useless and shall not be set for clarity. Consequently, the `installNode` task is automatically _SKIPPED_ during a Gradle
+build.
 
 The task takes advantage of [Gradle incremental build][gradle-incremental-build], and is not executed again unless one
 of its inputs/outputs changed. The task is _UP-TO-DATE_ during a Gradle build, and skipped.
@@ -417,9 +425,11 @@ will have an `Authorization` header set with the provided value.
 
 If a [Yarn][yarn] distribution is already installed in the system, and shall be used instead of a downloaded
 distribution, set the `yarnDistributionProvided` property to `true` and the location of the distribution with the
-`yarnInstallDirectory` property. The `yarnEnabled` property still must be `true`, the `yarnVersion`,
-`yarnDistributionUrl`, `yarnDistributionUrlPattern` and `yarnDistributionRequestAuthorization` properties are useless
-and shall not be set for clarity. Consequently, the `installYarn` task is automatically _SKIPPED_ during a Gradle build.
+`yarnInstallDirectory` property. Alternatively, this latter property may not be set, and the plugin would locate the
+distribution using the `YARN_HOME` environment variable, or the `PATH` environment variable. The `yarnEnabled` property
+still must be `true`, the `yarnVersion`, `yarnDistributionUrl`, `yarnDistributionUrlPattern` and
+`yarnDistributionRequestAuthorization` properties are useless and shall not be set for clarity. Consequently, the
+`installYarn` task is automatically _SKIPPED_ during a Gradle build.
 
 The task takes advantage of [Gradle incremental build][gradle-incremental-build], and is not executed again unless one
 of its inputs/outputs changed. The task is _UP-TO-DATE_ during a Gradle build, and skipped.
@@ -440,9 +450,9 @@ this command may be customized (e.g. to run a `npm ci` command instead of a `npm
 
 **Note about task execution**
 
-If you execute this task multiple consecutive times with Gradle, you may notice NPM or Yarn always run, and Gradle does
-not skip the task based on a previous succcessful build. This is the expected behavior because the task does not declare
-any input/output so as Gradle knows it is already _UP-TO-DATE_.
+If you execute this task with consecutive Gradle builds, you may notice NPM or Yarn always run, and Gradle does not skip
+the task based on a previous succcessful build. This is the expected behavior because the task does not declare any
+input/output so as Gradle knows it is already _UP-TO-DATE_.
 
 If you think about tweaking this behavior, and skip the task execution on certain circumstances (e.g. declaring the
 `nodes_modules` directory as output), take care of impacts in Gradle. Gradle cannot do magic things with high volume
@@ -475,9 +485,9 @@ not set.
 
 **Note about task execution**: 
 
-If you execute directly or indirectly this task with Gradle, you may notice NPM or Yarn runs every time, and Gradle does
-not skip the task based on a previous succcessful build. This is the expected behavior because the task does not declare
-any input/output so as Gradle knows it is already _UP-TO-DATE_.
+If you execute this task with consecutive Gradle builds, you may notice NPM or Yarn always run, and Gradle does not skip
+the task based on a previous succcessful build. This is the expected behavior because the task does not declare any
+input/output so as Gradle knows it is already _UP-TO-DATE_.
 
 Why the task has no inputs/outputs? This task provides the ability to connect the developer's own Javascript build
 process to Gradle, and nothing more. Every Javascript build process is unique. It depends on the project, the language
@@ -607,7 +617,17 @@ IDE, and their support to this project.
 
 With their feedback, plugin improvement is possible. Special thanks to:
 
-@andreaschiona, @byxor, @ChFlick, @ckosloski, @davidkron, @mike-howell, @napstr, @nuth, @rolaca11, @TapaiBalazs
+@[andreaschiona](https://github.com/andreaschiona),
+@[byxor](https://github.com/byxor),
+@[ChFlick](https://github.com/ChFlick),
+@[ckosloski](https://github.com/ckosloski),
+@[davidkron](https://github.com/davidkron),
+@[ludik0](https://github.com/ludik0),
+@[mike-howell](https://github.com/mike-howell),
+@[napstr](https://github.com/napstr),
+@[nuth](https://github.com/nuth),
+@[rolaca11](https://github.com/rolaca11),
+@[TapaiBalazs](https://github.com/TapaiBalazs)
 
 [clean-coder]: <http://cleancoder.com/> (Clean coder)
 [contributing]: <CONTRIBUTING.md> (Contributing to this project)

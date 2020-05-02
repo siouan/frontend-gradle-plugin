@@ -90,7 +90,7 @@ public abstract class AbstractRunCommandTask extends DefaultTask {
             Beans
                 .getBean(GradleScriptRunnerAdapter.class)
                 .execute(new ScriptProperties(getProject(), packageJsonDirectory.map(File::toPath).get(),
-                    getExecutableType(), nodeInstallDirectory.getAsFile().map(File::toPath).get(),
+                    getExecutableType(), nodeInstallDirectory.getAsFile().map(File::toPath).getOrNull(),
                     yarnInstallDirectory.getAsFile().map(File::toPath).getOrNull(), script.get(),
                     Beans.getBean(Platform.class)));
         }
