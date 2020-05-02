@@ -193,7 +193,7 @@ public interface FileManager {
      * Marks the file as executable. This method does nothing under Windows.
      *
      * @param path Path.
-     * @param platform Execution platform.
+     * @param platform Underlying platform.
      * @return {@code true} if the file permissions were touched, i.e. under a Non-Windows O/S, the file exists and has
      * not the executable permission yet.
      * @throws IOException If an I/O error occurs.

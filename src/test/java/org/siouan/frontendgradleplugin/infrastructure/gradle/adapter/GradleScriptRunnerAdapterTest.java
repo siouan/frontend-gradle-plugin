@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
 
@@ -55,7 +56,7 @@ class GradleScriptRunnerAdapterTest {
         final ScriptProperties scriptProperties = new ScriptProperties(project,
             PathFixture.ANY_PATH.resolve("frontend"), ExecutableType.NPM, PathFixture.ANY_PATH.resolve("node"),
             PathFixture.ANY_PATH.resolve("yarn"), SCRIPT, PlatformFixture.LOCAL_PLATFORM);
-        final ExecutableNotFoundException expectedException = ExecutableNotFoundException.newNodeExecutableNotFoundException();
+        final ExecutableNotFoundException expectedException = new ExecutableNotFoundException(Paths.get("exe"));
         when(resolveExecutionSettings.execute(scriptProperties.getPackageJsonDirectoryPath(),
             scriptProperties.getExecutableType(), scriptProperties.getNodeInstallDirectory(),
             scriptProperties.getYarnInstallDirectory(), scriptProperties.getPlatform(),

@@ -21,12 +21,12 @@ class FileManagerImplTest {
     @Test
     void shouldNotTouchFilePermissionsWhenOsIsWindows() throws IOException {
         assertThat(fileProvider.setFileExecutable(Paths.get("afile"),
-            new Platform(SystemUtils.getSystemJvmArch(), "Windows NT"))).isFalse();
+            new Platform(SystemUtils.getSystemJvmArch(), "Windows NT", null, null))).isFalse();
     }
 
     @Test
     void shouldNotTouchFilePermissionsWhenFileNotFound() throws IOException {
         assertThat(fileProvider.setFileExecutable(Paths.get("afile"),
-            new Platform(SystemUtils.getSystemJvmArch(), "Linux"))).isFalse();
+            new Platform(SystemUtils.getSystemJvmArch(), "Linux", null, null))).isFalse();
     }
 }

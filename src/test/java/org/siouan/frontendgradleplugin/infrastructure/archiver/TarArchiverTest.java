@@ -7,13 +7,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.siouan.frontendgradleplugin.test.util.Resources.getResourcePath;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Optional;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
@@ -60,8 +59,8 @@ class TarArchiverTest {
     }
 
     @Test
-    void shouldFailInitializingContextWhenUncompressingErrorOccurs() throws URISyntaxException, IOException {
-        final Path archiveFilePath = Paths.get(getClass().getClassLoader().getResource("archive.tar").toURI());
+    void shouldFailInitializingContextWhenUncompressingErrorOccurs() throws IOException {
+        final Path archiveFilePath = getResourcePath("archive.tar");
         final InputStream inputStream = mock(InputStream.class);
         when(fileManager.newInputStream(archiveFilePath)).thenReturn(inputStream);
         final ExplodeSettings settings = new ExplodeSettings(PlatformFixture.LOCAL_PLATFORM, archiveFilePath,
@@ -76,9 +75,8 @@ class TarArchiverTest {
     }
 
     @Test
-    void shouldFailGettingEntryWhenTarArchiveIsInvalid() throws URISyntaxException, IOException {
-        final Path archiveFilePath = Paths.get(
-            getClass().getClassLoader().getResource("invalid-archive.unknown").toURI());
+    void shouldFailGettingEntryWhenTarArchiveIsInvalid() throws IOException {
+        final Path archiveFilePath = getResourcePath("invalid-archive.unknown");
         when(fileManager.newInputStream(archiveFilePath)).thenCallRealMethod();
         final ExplodeSettings settings = new ExplodeSettings(PlatformFixture.LOCAL_PLATFORM, archiveFilePath,
             targetDirectoryPath);
@@ -91,8 +89,8 @@ class TarArchiverTest {
     }
 
     @Test
-    void shouldFailWritingFileEntryWhenUnexpectedEofAppears() throws URISyntaxException, IOException {
-        final Path archiveFilePath = Paths.get(getClass().getClassLoader().getResource("archive.tar").toURI());
+    void shouldFailWritingFileEntryWhenUnexpectedEofAppears() throws IOException {
+        final Path archiveFilePath = getResourcePath("archive.tar");
         when(fileManager.newInputStream(archiveFilePath)).thenCallRealMethod();
         final Path entryFilePath = targetDirectoryPath.resolve("aFile");
         when(fileManager.newOutputStream(entryFilePath)).thenCallRealMethod();
@@ -118,8 +116,8 @@ class TarArchiverTest {
     }
 
     @Test
-    void shouldCheckTarGzArchive() throws URISyntaxException, IOException {
-        final Path archiveFilePath = Paths.get(getClass().getClassLoader().getResource("archive.tar.gz").toURI());
+    void shouldCheckTarGzArchive() throws IOException {
+        final Path archiveFilePath = getResourcePath("archive.tar.gz");
         when(fileManager.newInputStream(archiveFilePath)).thenCallRealMethod();
         final Path entryFilePath = targetDirectoryPath.resolve("aFile");
         when(fileManager.newOutputStream(entryFilePath)).thenCallRealMethod();
@@ -148,8 +146,8 @@ class TarArchiverTest {
     }
 
     @Test
-    void shouldCheckTarArchive() throws URISyntaxException, IOException {
-        final Path archiveFilePath = Paths.get(getClass().getClassLoader().getResource("archive.tar").toURI());
+    void shouldCheckTarArchive() throws IOException {
+        final Path archiveFilePath = getResourcePath("archive.tar");
         when(fileManager.newInputStream(archiveFilePath)).thenCallRealMethod();
         final Path entryFilePath = targetDirectoryPath.resolve("aFile");
         when(fileManager.newOutputStream(entryFilePath)).thenCallRealMethod();

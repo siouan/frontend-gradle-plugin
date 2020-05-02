@@ -1,7 +1,6 @@
 package org.siouan.frontendgradleplugin.infrastructure.archiver;
 
 import java.io.IOException;
-
 import javax.annotation.Nonnull;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;

@@ -1,6 +1,8 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle.adapter;
 
 import java.nio.file.Path;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.gradle.api.Project;
 import org.siouan.frontendgradleplugin.domain.model.ExecutableType;
@@ -60,9 +62,9 @@ public class ScriptProperties {
      * @param platform Underlying platform.
      * @see ExecutableType
      */
-    public ScriptProperties(final Project project, final Path packageJsonDirectoryPath, final String executableType,
-        final Path nodeInstallDirectory, final Path yarnInstallDirectory, final String script,
-        final Platform platform) {
+    public ScriptProperties(@Nonnull final Project project, @Nonnull final Path packageJsonDirectoryPath,
+        @Nonnull final String executableType, @Nullable final Path nodeInstallDirectory,
+        @Nullable final Path yarnInstallDirectory, @Nonnull final String script, @Nonnull final Platform platform) {
         this.project = project;
         this.packageJsonDirectoryPath = packageJsonDirectoryPath;
         this.executableType = executableType;
@@ -72,30 +74,37 @@ public class ScriptProperties {
         this.platform = platform;
     }
 
+    @Nonnull
     public Project getProject() {
         return project;
     }
 
+    @Nonnull
     public Path getPackageJsonDirectoryPath() {
         return packageJsonDirectoryPath;
     }
 
+    @Nonnull
     public String getExecutableType() {
         return executableType;
     }
 
+    @Nullable
     public Path getNodeInstallDirectory() {
         return nodeInstallDirectory;
     }
 
+    @Nullable
     public Path getYarnInstallDirectory() {
         return yarnInstallDirectory;
     }
 
+    @Nonnull
     public String getScript() {
         return script;
     }
 
+    @Nonnull
     public Platform getPlatform() {
         return platform;
     }

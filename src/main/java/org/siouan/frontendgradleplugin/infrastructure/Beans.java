@@ -15,6 +15,10 @@ public final class Beans {
     private Beans() {
     }
 
+    public static void init() {
+        REGISTRY.init();
+    }
+
     public static <T> T getBean(@Nonnull final Class<T> beanClass)
         throws BeanInstanciationException, TooManyCandidateBeansException, ZeroOrMultiplePublicConstructorsException {
         return REGISTRY.getBean(beanClass);

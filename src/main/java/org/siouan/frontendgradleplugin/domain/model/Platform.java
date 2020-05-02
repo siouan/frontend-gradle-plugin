@@ -1,7 +1,9 @@
 package org.siouan.frontendgradleplugin.domain.model;
 
+import java.nio.file.Path;
 import java.util.Arrays;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This class represents an execution platform, identified by the architecture of the JVM, and the name of the OS.
@@ -30,14 +32,29 @@ public class Platform {
     private final String osName;
 
     /**
+     * Install directory of Node.js.
+     */
+    private final Path nodeInstallDirectory;
+
+    /**
+     * Install directory of Yarn.
+     */
+    private final Path yarnInstallDirectory;
+
+    /**
      * Builds a platform with custom architecture.
      *
      * @param jvmArch JVM architecture.
      * @param osName Underlying O/S name.
+     * @param nodeInstallDirectory Path to a platform-wide Node.js installation.
+     * @param yarnInstallDirectory Path to a platform-wide Yarn installation.
      */
-    public Platform(@Nonnull final String jvmArch, @Nonnull final String osName) {
+    public Platform(@Nonnull final String jvmArch, @Nonnull final String osName,
+        @Nullable final Path nodeInstallDirectory, @Nullable final Path yarnInstallDirectory) {
         this.jvmArch = jvmArch;
         this.osName = osName;
+        this.nodeInstallDirectory = nodeInstallDirectory;
+        this.yarnInstallDirectory = yarnInstallDirectory;
     }
 
     /**
@@ -76,9 +93,30 @@ public class Platform {
         return matchesAnyIdPart(osName, SUPPORTED_WINDOWS_OS_IDS);
     }
 
+    /**
+     * Gets the path to a global Node.js installation.
+     *
+     * @return Path to an install directory.
+     */
+    @Nullable
+    public Path getNodeInstallDirectory() {
+        return nodeInstallDirectory;
+    }
+
+    /**
+     * Gets the path to a global Yarn installation.
+     *
+     * @return Path to an install directory.
+     */
+    @Nullable
+    public Path getYarnInstallDirectory() {
+        return yarnInstallDirectory;
+    }
+
     @Override
     public String toString() {
-        return Platform.class.getSimpleName() + " {jvmArch=" + jvmArch + ", osName=" + osName + '}';
+        return Platform.class.getSimpleName() + " {jvmArch=" + jvmArch + ", osName=" + osName
+            + ", nodeInstallDirectory=" + nodeInstallDirectory + ", yarnInstallDirectory=" + yarnInstallDirectory + '}';
     }
 
     /**
