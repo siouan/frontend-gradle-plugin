@@ -1,6 +1,6 @@
 {
   "name": "single-project-application-with-preinstalled-distributions-example",
-  "version": "2.2.0",
+  "version": "3.0.0",
   "scripts": {
     "build": "echo Building frontend",
     "check": "echo Checking frontend && npm run lint && npm run test",
