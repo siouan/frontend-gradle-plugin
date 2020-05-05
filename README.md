@@ -89,7 +89,7 @@ The plugin supports:
 - [Gradle][gradle] 5.1+
 - [JDK][jdk] 8+ 64 bits
 - [Node.js][nodejs] 6.2.1+
-- [Yarn][yarn] 1.0.0+
+- [Yarn][yarn] 1.0+
 
 The plugin is built and tested on Linux, Mac OS, Windows. See the [contributing notes][contributing] to know the list of
 build environments used.
@@ -102,121 +102,251 @@ Follow instructions provided by the Gradle Plugin Portal [here][gradle-plugin-pa
 
 #### DSL reference
 
-All settings are introduced hereafter. Values of optional properties are the default ones applied by the plugin, unless
-otherwise stated. Other values are provided for information. You may also take a look at
-[Tasks reference](#tasks-reference) section for further information.
+The plugin declares an extension to Gradle DSL, named `frontend`. Declare a `frontend` block in the `build.gradle[.kts]`
+file, and use the properties below to setup the build. The table hereafter introduces all properties, followed by
+examples. <b>Bold case</b> is used to highlight required properties, an example is provided when default property value
+is <code>null</code>. You may also take a look at [Tasks reference](#tasks-reference) section for further information.
+
+<table>
+<thead>
+<tr>
+    <th align="left">Property</th>
+    <th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+    <td align="left"><b><code>nodeDistributionProvided</code></b></td>
+    <td align="left">
+<b>Default value</b>: <code>false</code><br/>
+<br/>
+Whether the Node distribution is already provided, and shall not be downloaded. When <code>true</code>, the plugin
+relies on the following locations in this exact order to find node/npm/npx executables:
+<ul>
+<li>The directory pointed by the <code>nodeInstallDirectory</code> property, if set.</li>
+<li>The directory pointed by the <code>NODEJS_HOME</code> environment variable, if set.</li>
+<li>Any directory in the <code>PATH</code> environment variable.</li>
+</ul>
+Other <code>node*</code> properties should not be used for clarity. When <code>false</code>, at least the
+<code>nodeVersion</code> property must be set.
+    </td>
+</tr>
+<tr>
+    <td align="left"><code>nodeVersion</code></td>
+    <td align="left">
+<b>Default value</b>: <code>null</code><br/>
+<b>Example</b>: <code>'12.16.1'</code><br/>
+<br/>
+Version number used to build the exact URL to download the distribution. The property is required when the
+<code>nodeDistributionProvided</code> property is <code>false</code>.
+    </td>
+</tr>
+<tr>
+    <td align="left"><b><code>nodeDistributionUrlPattern</code></b></td>
+    <td align="left">
+<b>Default value</b>: <code>'https://nodejs.org/dist/vVERSION/node-vVERSION-ARCH.TYPE'</code><br/>
+<br/>
+Set this property to download the distribution from a custom website. By default, the plugin attempts to download the
+distribution compatible with the current platform from Node.js' website. The version of the distribution is expected to
+be the same as the one set in the <code>nodeVersion</code> property, or this may lead to unexpected results. The
+property may be set with a fixed URL (e.g. <code>https://myorganisation.com/dist/node-v10.12.1-win-x64.zip</code>), or
+take advantage of the automatic distribution resolution in the plugin, using specific tokens in the URL pattern:
+<code>VERSION</code>, <code>ARCH</code>, <code>TYPE</code>. See the <code>installNode</code> task for details about when
+and how to use these tokens.
+</td>
+</tr>
+<tr>
+    <td align="left"><code>nodeInstallDirectory</code></td>
+    <td align="left">
+<b>Default value</b>: <code>file("${projectDir}/node")</code><br/>
+<br/>
+Install directory where the distribution archive shall be exploded.
+    </td>
+</tr>
+<tr>
+    <td align="left"><b><code>yarnEnabled</code></b></td>
+    <td align="left">
+<b>Default value</b>: <code>false</code><br/>
+<br/>
+Whether Yarn shall be used instead of npm when executing frontend tasks. Consequently, a Yarn distribution will be
+downloaded and installed by the plugin. If <code>true</code>, the <code>yarnVersion</code> property must be set.
+</td>
+</tr>
+<tr>
+    <td align="left"><b><code>yarnDistributionProvided</code></b></td>
+    <td align="left">
+<b>Default value</b>: <code>false</code><br/>
+<br/>
+Whether the Yarn distribution is already provided, and shall not be downloaded. When <code>true</code>, the plugin
+relies on the following locations in this exact order to find the yarn executable:
+<ul>
+<li>The directory pointed by the <code>yarnInstallDirectory</code> property, if not <code>null</code>.</li>
+<li>The directory pointed by the <code>YARN_HOME</code> environment variable, if not <code>null</code>.</li>
+<li>Any directory in the <code>PATH</code> environment variable.</li>
+</ul>
+Other <code>yarn*</code> properties should not be used for clarity. When <code>false</code>, at least the
+<code>yarnVersion</code> property must be set.
+    </td>
+</tr>
+<tr>
+    <td align="left"><code>yarnVersion</code></td>
+    <td align="left">
+<b>Default value</b>: <code>null</code><br/>
+<b>Example</b>: <code>'1.22.4'</code><br/>
+<br/>
+Version number used to build the exact URL to download the distribution. The property is required when the
+<code>yarnEnabled</code> property is <code>true</code>, and the <code>yarnDistributionProvided</code> property is
+<code>false</code>.
+    </td>
+</tr>
+<tr>
+    <td align="left"><b><code>yarnDistributionUrlPattern</code></b></td>
+    <td align="left">
+<b>Default value</b>: <code>'https://github.com/yarnpkg/yarn/releases/download/vVERSION/yarn-vVERSION.tar.gz'</code><br/>
+<br/>
+Set this property to download the distribution from a custom website. By default, the plugin attempts to download the
+distribution from Yarn website. The version of the distribution is expected to be the same as the one set in the
+<code>yarnVersion</code> property, or this may lead to unexpected results. The property may be set with a fixed URL
+(e.g. <code>https://myorganisation.com/dist/yarn-v1.22.4.tar.gz</code>), or take advantage of the automatic distribution
+resolution in the plugin, using specific token <code>VERSION</code> in the URL pattern. See the <code>installYarn</code>
+task for details about when and how to use this token.
+    </td>
+</tr>
+<tr>
+    <td align="left"><code>yarnInstallDirectory</code></td>
+    <td align="left">
+<b>Default value</b>: <code>file("${projectDir}/yarn")</code><br/>
+<br/>
+Install directory where the distribution archive shall be exploded.
+    </td>
+</tr>
+<tr>
+    <td align="left"><b><code>installScript</code></b></td>
+    <td align="left">
+<b>Default value</b>: <code>'install'</code><br/>
+<br/>
+Use this property to customize the command line used to install frontend dependencies. This property is used by the
+<code>installFrontend</code> task.
+    </td>
+</tr>
+<tr>
+    <td align="left" colspan="2">
+<b>Script settings</b>: name of npm/Yarn scripts (see <code>package.json</code> file) that shall be executed depending
+on this plugin's task. The values below are passed as arguments of npm/yarn executables. Under Unix-like O/S, white
+space characters ' ' in an argument value must be escaped with a backslash character '\'. Under Windows O/S, the whole
+argument must be enclosed between double-quotes. Example: <code>assembleScript = 'run assemble single\ argument'</code>
+    </td>
+</tr>
+<tr>
+    <td align="left"><code>cleanScript</code></td>
+    <td align="left">
+<b>Default value</b>: <code>null</code><br/>
+<b>Example</b>: <code>'run clean'</code><br/>
+<br/>
+Use this property only if frontend's compiled resources are generated out of the <code>${project.buildDir}</code>
+directory. This property is used by the <code>cleanFrontend</code> task. Apart from direct execution, the task is also
+executed when the Gradle built-in <code>clean</code> task is executed.
+    </td>
+</tr>
+<tr>
+    <td align="left"><code>assembleScript</code></td>
+    <td align="left">
+<b>Default value</b>: <code>null</code><br/>
+<b>Example</b>: <code>'run assemble'</code><br/>
+<br/>
+Script called to build frontend's artifacts. This property is used by the <code>assembleFrontend</code> task. Apart from
+direct execution, the task is also executed when the Gradle built-in <code>assemble</code> task is executed.
+    </td>
+</tr>
+<tr>
+    <td align="left"><code>checkScript</code></td>
+    <td align="left">
+<b>Default value</b>: <code>null</code><br/>
+<b>Example</b>: <code>'run check'</code><br/>
+<br/>
+Script called to check the frontend application. This property is used by the <code>checkFrontend</code> task. Apart
+from direct execution, the task is also executed when the Gradle built-in <code>check</code> task is executed.
+    </td>
+</tr>
+<tr>
+    <td align="left"><code>publishScript</code></td>
+    <td align="left">
+<b>Default value</b>: <code>null</code><br/>
+<b>Example</b>: <code>'run publish'</code><br/>
+<br/>
+Script called to publish the frontend artifacts. This property is used by the <code>publishFrontend</code> task. Apart
+from direct execution, the task is also executed when the Gradle built-in <code>publish</code> task is executed.
+    </td>
+</tr>
+<tr>
+    <td align="left"><b><code>packageJsonDirectory</code></b></td>
+    <td align="left">
+<b>Default value</b>: <code>projectDir</code><br/>
+<br/>
+Location of the directory containing the <code>package.json</code> file. By default, this file is considered to be
+located in the project's directory, at the same level than this <code>build.gradle[.kts]</code> file. If the
+<code>package.json</code> file is located in another directory, it is recommended either to set up a Gradle
+multi-project build, or to set this property with the appropriate directory. This directory being used as the working
+directory when running JS scripts, consequently, the <code>node_modules</code> directory would be created at this
+location after the <code>installFrontend</code> task is executed.
+    </td>
+</tr>
+<tr>
+    <td align="left"><code>proxyHost</code></td>
+    <td align="left">
+<b>Default value</b>: <code>null</code><br/>
+<b>Example</b>: <code>'127.0.0.1'</code><br/>
+<br/>
+IP address or domain name of a HTTP proxy server to use when downloading distributions. By default, the plugin uses
+direct connections.
+    </td>
+</tr>
+<tr>
+    <td align="left"><code>proxyPort</code></td>
+    <td align="left">
+<b>Default value</b>: <code>8080</code><br/>
+<br/>
+Port of the proxy server. This property is only relevant when the <code>proxyHost</code> property is set.
+    </td>
+</tr>
+<tr>
+    <td align="left"><b><code>verboseModeEnabled</code></b></td>
+    <td align="left">
+<b>Default value</b>: <code>false</code><br/>
+<br/>
+Whether the plugin shall log additional messages whatever Gradle's logging level is. Technically speaking, messages
+logged by the plugin with the INFO level are made visible. This property allows to track the plugin execution without
+activating Gradle's INFO or DEBUG levels, that may be too much verbose on a global point of view.
+    </td>
+</tr>
+</tbody>
+</table>
 
 - Groovy syntax:
 
 ```groovy
 // build.gradle
 frontend {
-    ////// NODE SETTINGS //////
-    // [OPTIONAL] Whether the Node distribution is already provided, and shall not be downloaded.
-    // To find node/npm/npx executables, the plugin relies on these locations in this exact order:
-    // - The directory pointed by the 'nodeInstallDirectory' property, if set.
-    // - The directory pointed by the NODEJS_HOME environment variable, if set.
-    // - Any directory in the PATH environment variable.
-    // Other 'node*' properties should not be used for clarity. If <false>, at least the
-    // 'nodeVersion' property must be set.
     nodeDistributionProvided = false
-
-    // [OPTIONAL] Node version, used to build the URL to download the corresponding distribution, if the
-    // 'nodeDistributionUrl' property is not set. By default, this property is 'null'
     nodeVersion = '12.16.1'
-
-    // [OPTIONAL] Set this property to force the download from a custom website. By default, this
-    // property is 'null', and the plugin attempts to download the distribution compatible with the
-    // current platform from Node's website. The version of the distribution is expected to be the
-    // same as the one set in the 'nodeVersion' property, or this may lead to unexpected results.
-    nodeDistributionUrl = 'https://nodejs.org/dist/vX.Y.Z/node-vX.Y.Z-win-x64.zip'
-
-    // [OPTIONAL] Install directory where the distribution archive shall be exploded.
+    nodeDistributionUrlPattern = 'https://nodejs.org/dist/vVERSION/node-vVERSION-ARCH.TYPE'
     nodeInstallDirectory = file("${projectDir}/node")
 
-    ////// YARN SETTINGS //////
-    // [OPTIONAL] Whether Yarn shall be used instead of npm when executing frontend tasks.
-    // Consequently, a Yarn distribution will be downloaded and installed by the plugin. If <true>,
-    // the 'yarnVersion' property must be set.
     yarnEnabled = false
-
-    // [OPTIONAL] Whether the Yarn distribution is already provided, and shall not be downloaded.
-    // To find the yarn executable, the plugin relies on these locations in this exact order:
-    // - The directory pointed by the 'yarnInstallDirectory' property, if set.
-    // - The directory pointed by the YARN_HOME environment variable, if set.
-    // - Any directory in the PATH environment variable.
-    // Other 'yarn*' properties should not be used for clarity. If <false>, at least the
-    // 'yarnVersion' property must be set.
     yarnDistributionProvided = false
-
-    // [OPTIONAL] Yarn version, used to build the URL to download the corresponding distribution, if
-    // the 'yarnDistributionUrl' property is not set. This property is mandatory when the
-    // 'yarnEnabled' property is true.
     yarnVersion = '1.22.4'
-
-    // [OPTIONAL] Set this property to force the download from a custom website. By default, this
-    // property is 'null', and the plugin attempts to download the distribution compatible with the
-    // current platform from Yarn's website. The version of the distribution is expected to be the
-    // same as the one set in the 'yarnVersion' property, or this may lead to unexpected results.
-    yarnDistributionUrl = 'https://github.com/yarnpkg/yarn/releases/download/vX.Y.Z/yarn-vX.Y.Z.tar.gz'
-
-    // [OPTIONAL] Install directory where the distribution archive shall be exploded.
+    yarnDistributionUrl = 'https://github.com/yarnpkg/yarn/releases/download/vVERSION/yarn-vVERSION.tar.gz'
     yarnInstallDirectory = file("${projectDir}/yarn")
 
-    ////// SCRIPT SETTINGS //////
-    // Name of npm/Yarn scripts (see 'package.json' file) that shall be executed depending on this
-    // plugin's task. The values below are passed as arguments of the 'npm' or 'yarn' executables.
-    // Under Unix-like O/S, white space characters ' ' in an argument value must be escaped with a
-    // backslash character '\'. Under Windows O/S, the whole argument must be enclosed between
-    // double-quotes. Example: assembleScript = 'run assemble single\ argument'
-
-    // [OPTIONAL] Use this property to customize the command line used to install frontend
-    // dependencies. This property is used by the 'installFrontend' task.
     installScript = 'install'
-
-    // [OPTIONAL] Use this property only if frontend's compiled resources are generated out of the
-    // '${project.buildDir}' directory. Default value is <null>. This property is used by the
-    // 'cleanFrontend' task. Apart from direct execution, the task is also executed when the Gradle
-    // built-in 'clean' task is executed.
     cleanScript = 'run clean'
-
-    // [OPTIONAL] Script called to build frontend's artifacts. Default value is <null>. This
-    // property is used by the 'assembleFrontend' task. Apart from direct execution, the task is
-    // also executed when the Gradle built-in 'assemble' task is executed.
     assembleScript = 'run assemble'
-
-    // [OPTIONAL] Script called to check the frontend application. Default value is <null>. This
-    // property is used by the 'checkFrontend' task. Apart from direct execution, the task is also
-    // executed when the Gradle built-in 'check' task is executed.
     checkScript = 'run check'
-
-    // [OPTIONAL] Script called to publish the frontend artifacts. Default value is <null>. This
-    // property is used by the 'publishFrontend' task. Apart from direct execution, the task is
-    // also executed when the Gradle built-in 'publish' task is executed.
     publishScript = 'run publish'
 
-    ////// GENERAL SETTINGS //////
-    // [OPTIONAL] Location of the directory containing the 'package.json' file. By default, this
-    // file is considered to be located in the project's directory, at the same level than this
-    // 'build.gradle[.kts]' file. If the 'package.json' file is located in another directory, it is
-    // recommended either to set up a Gradle multi-project build, or to set this property with the
-    // appropriate directory. This directory being used as the working directory when running JS
-    // scripts, consequently, the 'node_modules' directory would be created at this location after
-    // the 'installFrontend' task is executed.
     packageJsonDirectory = projectDir
-
-    // [OPTIONAL] IP address or domain name of a HTTP/HTTPS proxy server to use when downloading
-    // distributions. By default, this property is 'null', and the plugin uses direct connections.
     proxyHost = '127.0.0.1'
-
-    // [OPTIONAL] Port of the proxy server. This property is only relevant when the 'proxyHost'
-    // property is set.
     proxyPort = 8080
-
-    // [OPTIONAL] Whether the plugin shall log additional messages whatever Gradle's logging level
-    // is. Technically speaking, messages logged by the plugin with the INFO level are made
-    // visible. This property allows to track the plugin execution without activating Gradle's INFO
-    // or DEBUG levels, that may be too much verbose on a global point of view.
     verboseModeEnabled = false
 }
 ```
@@ -228,13 +358,13 @@ frontend {
 frontend {
     nodeDistributionProvided.set(false)
     nodeVersion.set("12.16.1")
-    nodeDistributionUrl.set("https://nodejs.org/dist/vX.Y.Z/node-vX.Y.Z-win-x64.zip")
+    nodeDistributionUrlPattern.set("https://nodejs.org/dist/vVERSION/node-vVERSION-ARCH.TYPE")
     nodeInstallDirectory.set(project.layout.projectDirectory.dir("node"))
 
     yarnEnabled.set(false)
     yarnDistributionProvided.set(false)
     yarnVersion.set("1.22.4")
-    yarnDistributionUrl.set("https://github.com/yarnpkg/yarn/releases/download/vX.Y.Z/yarn-vX.Y.Z.tar.gz")
+    yarnDistributionUrlPattern.set("https://github.com/yarnpkg/yarn/releases/download/vVERSION/yarn-vVERSION.tar.gz")
     yarnInstallDirectory.set(project.layout.projectDirectory.dir("yarn"))
 
     installScript.set("install")
@@ -356,47 +486,69 @@ The plugin registers multiple tasks, that may have dependencies with each other,
 
 ### `installNode` - Install Node.js
 
-The `installNode` task downloads a [Node.js][nodejs] distribution and verifies its integrity. If the
-`nodeDistributionUrl` property is ommitted, the URL is guessed using the `nodeVersion` property. Checking the
-distribution integrity consists of downloading a file providing the distribution shasum. This file is expected to be in
-the same remote web directory than the distribution. For example, if the distribution is located at URL
-`https://nodejs.org/dist/vX.Y.Z/node-vX.Y.Z-win-x64.zip`, the plugin attempts to download the shasum file located at
-URL `https://nodejs.org/dist/vX.Y.Z/SHASUMS256.txt`. Optionally, defining the `proxyHost` property and the `proxyPort`
-property allow to use a proxy server when downloading the distribution and the shasum. Set the location where the
-distribution shall be installed with the `nodeInstallDirectory` property, which by default is the `${projectDir}/node`
-directory.
+The `installNode` task downloads a [Node.js][nodejs] distribution and verifies its integrity. By default, the exact
+download URL is guessed using the `nodeVersion` property, the `nodeDistributionUrlPattern` property, and the current
+platform. Checking the distribution integrity consists of downloading a file providing the distribution shasum. This
+file is expected to be in the same remote web directory than the distribution. For example, if the distribution is
+located at URL `https://nodejs.org/dist/v12.16.3/node-v12.16.3-win-x64.zip`, the plugin attempts to download the shasum
+file located at URL `https://nodejs.org/dist/v12.16.3/SHASUMS256.txt`. Optionally, defining the `proxyHost` property and
+the `proxyPort` property allows to use a proxy server when downloading the distribution and the shasum. Set the location
+where the distribution shall be installed with the `nodeInstallDirectory` property, which by default is the
+`${projectDir}/node` directory.
 
 If a [Node.js][nodejs] distribution is already installed in the system, and shall be used instead of a downloaded
 distribution, set the `nodeDistributionProvided` property to `true` and the location of the distribution with the
 `nodeInstallDirectory` property. Alternatively, this latter property may not be set, and the plugin would locate the
-distribution using the `NODEJS_HOME` environment variable, or the `PATH` environment variable. The `nodeVersion`
-property and the `nodeDistributionUrl` property are useless and shall not be set for clarity. Consequently, the
-`installNode` task is automatically _SKIPPED_ during a Gradle build.
+distribution using the `NODEJS_HOME` environment variable, or the `PATH` environment variable. Consequently, the
+`installNode` task is automatically _SKIPPED_ during a Gradle build. The `nodeVersion` property and the
+`nodeDistributionUrlPattern` property are useless and shall not be set for clarity. 
 
 The task takes advantage of [Gradle incremental build][gradle-incremental-build], and is not executed again unless one
 of its inputs/outputs changed. The task is _UP-TO-DATE_ during a Gradle build, and skipped.
 
 > This task should not be executed directly. Gradle executes it if the build requires it.
 
+**About the distribution URL pattern**
+
+The `nodeDistributionUrlPattern` property offers a convenient way to download distributions from a custom website and
+still take advantage of the automatic resolution of the exact URL, based on the current platform. The pattern may
+contain the following tokens:
+- `VERSION`: automatically replaced with the version number set in the `nodeVersion` property.
+- `ARCH`: automatically replaced with the architecture ID matching the current platform. For example, if the current O/S
+is MacOS 64 bits, the plugin replaces the token with `darwin-x64`.
+- `TYPE`:  automatically replaced with the type of the distribution file expected for the current platform. For example,
+if the current O/S is Windows, the plugin replaces the token with `zip`.
+
+If the distribution needs to be upgraded, update only the `nodeVersion` property and the plugin will download the
+relevant distribution from the custom website.
+
 ### `installYarn` - Install Yarn
 
-The `installYarn` task downloads a [Yarn][yarn] distribution, if `yarnEnabled` property is `true`. If the
-`yarnDistributionUrl` property is ommitted, the URL is guessed using the `yarnVersion` property. Optionally, defining
-the `proxyHost` property and the `proxyPort` property allow to use a proxy server when downloading the distribution. Set
-the location where the distribution shall be installed with the `yarnInstallDirectory` property, which by default is the
-`${projectDir}/yarn` directory.
+The `installYarn` task downloads a [Yarn][yarn] distribution, if `yarnEnabled` property is `true`. By default, the exact
+download URL is guessed using the `yarnVersion` property, and the `yarnDistributionUrlPattern` property. Optionally,
+defining the `proxyHost` property and the `proxyPort` property allow to use a proxy server when downloading the
+distribution. Set the location where the distribution shall be installed with the `yarnInstallDirectory` property, which
+by default is the `${projectDir}/yarn` directory.
 
 If a [Yarn][yarn] distribution is already installed in the system, and shall be used instead of a downloaded
 distribution, set the `yarnDistributionProvided` property to `true` and the location of the distribution with the
 `yarnInstallDirectory` property. Alternatively, this latter property may not be set, and the plugin would locate the
-distribution using the `YARN_HOME` environment variable, or the `PATH` environment variable. The `yarnEnabled` property
-still must be `true`, the `yarnVersion` property and the `yarnDistributionUrl` property are useless and shall not be set
-for clarity. Consequently, the `installYarn` task is automatically _SKIPPED_ during a Gradle build.
+distribution using the `YARN_HOME` environment variable, or the `PATH` environment variable. Consequently, the
+`installYarn` task is automatically _SKIPPED_ during a Gradle build. The `yarnEnabled` property still must be `true`,
+the `yarnVersion` property and the `yarnDistributionUrlPattern` property are useless and shall not be set for clarity. 
 
 The task takes advantage of [Gradle incremental build][gradle-incremental-build], and is not executed again unless one
 of its inputs/outputs changed. The task is _UP-TO-DATE_ during a Gradle build, and skipped.
 
 > This task should not be executed directly. Gradle executes it if the build requires it.
+
+**About the distribution URL pattern**
+
+The `yarnDistributionUrlPattern` property offers a convenient way to download distributions from a custom website and
+still take advantage of the automatic resolution of the exact URL, based on the version number. The pattern may contain
+the `VERSION` token, automatically replaced with the version number set in the `yarnVersion` property. If the distribution
+needs to be upgraded, update only the `yarnVersion` property and the plugin will download the relevant distribution
+from the custom website.
 
 ### `installFrontend` - Install frontend dependencies
 
@@ -410,7 +562,7 @@ this command may be customized (e.g. to run a `npm ci` command instead of a `npm
 > This task may be executed directly, e.g. after modifying one of the Node.js/Yarn versions and/or to update frontend
 > dependencies. Otherwise, Gradle executes it if the build requires it.
 
-**Note about task execution**
+**About task execution**
 
 If you execute this task with consecutive Gradle builds, you may notice NPM or Yarn always run, and Gradle does not skip
 the task based on a previous succcessful build. This is the expected behavior because the task does not declare any
@@ -445,7 +597,7 @@ must be defined in the `package.json` file, and the `assembleScript` property mu
 npm/Yarn command. This task depends on the `installFrontend` task, and is skipped if the `assembleScript` property is
 not set.
 
-**Note about task execution**: 
+**About task execution**
 
 If you execute this task with consecutive Gradle builds, you may notice NPM or Yarn always run, and Gradle does not skip
 the task based on a previous succcessful build. This is the expected behavior because the task does not declare any

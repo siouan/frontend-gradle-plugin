@@ -1,10 +1,8 @@
 package org.siouan.frontendgradleplugin.domain.model;
 
 import java.net.Proxy;
-import java.net.URL;
 import java.nio.file.Path;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * Settings to install a distribution.
@@ -17,7 +15,7 @@ public class InstallSettings {
 
     private final String version;
 
-    private final URL downloadUrl;
+    private final String distributionUrlPattern;
 
     private final Proxy proxy;
 
@@ -30,17 +28,17 @@ public class InstallSettings {
      *
      * @param platform Underlying platform.
      * @param version Version of the distribution.
-     * @param downloadUrl URL to download the distribution.
+     * @param distributionUrlPattern URL pattern to download the distribution.
      * @param proxy Proxy used for downloads.
      * @param temporaryDirectoryPath Path to a temporary directory.
      * @param installDirectoryPath Path to a directory where the distribution shall be installed.
      */
     public InstallSettings(@Nonnull final Platform platform, @Nonnull final String version,
-        @Nullable final URL downloadUrl, @Nonnull final Proxy proxy, @Nonnull final Path temporaryDirectoryPath,
-        @Nonnull final Path installDirectoryPath) {
+        @Nonnull final String distributionUrlPattern, @Nonnull final Proxy proxy,
+        @Nonnull final Path temporaryDirectoryPath, @Nonnull final Path installDirectoryPath) {
         this.platform = platform;
         this.version = version;
-        this.downloadUrl = downloadUrl;
+        this.distributionUrlPattern = distributionUrlPattern;
         this.proxy = proxy;
         this.temporaryDirectoryPath = temporaryDirectoryPath;
         this.installDirectoryPath = installDirectoryPath;
@@ -67,13 +65,13 @@ public class InstallSettings {
     }
 
     /**
-     * Gets the URL to download the distribution.
+     * Gets the URL pattern to download the distribution.
      *
-     * @return URL.
+     * @return URL pattern.
      */
-    @Nullable
-    public URL getDownloadUrl() {
-        return downloadUrl;
+    @Nonnull
+    public String getDistributionUrlPattern() {
+        return distributionUrlPattern;
     }
 
     /**

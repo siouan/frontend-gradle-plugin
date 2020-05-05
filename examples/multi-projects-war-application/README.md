@@ -29,7 +29,7 @@ automatically packages files in the `${project.buildDir}/resources/main/public` 
 are publicly accessible. Finally, enter `gradlew build` on a command line to build the WAR artifact in the backend
 project.
 
-If you plan to build a [Spring Boot][spring-boot] application, the WAR artifact may be replaced by a bootable WAR
+If you plan to build a [Spring Boot][spring-boot] application, the WAR artifact may be replaced with a bootable WAR
 artifact with the [Gradle Spring Boot plugin][gradle-spring-boot-plugin] instead of the
 [Gradle WAR plugin][gradle-war-plugin]. To do so, modify the [`build.gradle`](backend/build.gradle) file:
 

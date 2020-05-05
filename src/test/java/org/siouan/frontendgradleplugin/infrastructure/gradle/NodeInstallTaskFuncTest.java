@@ -13,13 +13,12 @@ import static org.siouan.frontendgradleplugin.test.util.Resources.getResourceUrl
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.gradle.testkit.runner.BuildResult;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
+import org.siouan.frontendgradleplugin.test.util.FrontendMapBuilder;
 
 /**
  * Functional tests to verify the {@link NodeInstallTask} integration in a Gradle build. Test cases uses a fake Node
@@ -36,7 +35,7 @@ class NodeInstallTaskFuncTest {
 
     @Test
     void shouldBeSkippedWhenDistributionIsProvided() throws IOException {
-        createBuildFile(projectDirectoryPath, singletonMap("nodeDistributionProvided", true));
+        createBuildFile(projectDirectoryPath, new FrontendMapBuilder().nodeDistributionProvided(true).toMap());
 
         final BuildResult result = runGradle(projectDirectoryPath, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
 
@@ -65,10 +64,10 @@ class NodeInstallTaskFuncTest {
 
     @Test
     void shouldFailWhenDistributionCannotBeDownloadedWithInvalidUrl() throws IOException {
-        final Map<String, Object> properties = new HashMap<>();
-        properties.put("nodeVersion", "10.16.0");
-        properties.put("nodeDistributionUrl", "protocol://domain/unknown");
-        createBuildFile(projectDirectoryPath, properties);
+        final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
+            .nodeVersion("10.16.0")
+            .nodeDistributionUrlPattern("protocol://domain/unknown");
+        createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result = runGradleAndExpectFailure(projectDirectoryPath,
             FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
@@ -78,12 +77,12 @@ class NodeInstallTaskFuncTest {
 
     @Test
     void shouldFailWhenProxyHostIsUnknown() throws IOException {
-        final Map<String, Object> properties = new HashMap<>();
-        properties.put("nodeVersion", "10.16.0");
-        properties.put("proxyHost", PROXY_HOST);
-        properties.put("proxyPort", PROXY_PORT);
-        properties.put("verboseModeEnabled", true);
-        createBuildFile(projectDirectoryPath, properties);
+        final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
+            .nodeVersion("10.16.0")
+            .proxyHost(PROXY_HOST)
+            .proxyPort(PROXY_PORT)
+            .verboseModeEnabled(true);
+        createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradleAndExpectFailure(projectDirectoryPath,
             FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
@@ -93,10 +92,10 @@ class NodeInstallTaskFuncTest {
 
     @Test
     void shouldSucceedFirstTimeAndBeUpToDateSecondTime() throws IOException {
-        final Map<String, Object> properties = new HashMap<>();
-        properties.put("nodeVersion", "10.16.0");
-        properties.put("nodeDistributionUrl", getResourceUrl("node-v10.16.0.zip"));
-        createBuildFile(projectDirectoryPath, properties);
+        final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
+            .nodeVersion("10.16.0")
+            .nodeDistributionUrlPattern(getResourceUrl("node-v10.16.0.zip"));
+        createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
 

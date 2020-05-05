@@ -16,6 +16,7 @@ import org.gradle.api.publish.plugins.PublishingPlugin;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.language.base.plugins.LifecycleBasePlugin;
+import org.siouan.frontendgradleplugin.domain.model.Environment;
 import org.siouan.frontendgradleplugin.domain.model.Platform;
 import org.siouan.frontendgradleplugin.domain.util.SystemUtils;
 import org.siouan.frontendgradleplugin.infrastructure.BeanRegistry;
@@ -74,14 +75,24 @@ public class FrontendGradlePlugin implements Plugin<Project> {
     public static final String PUBLISH_TASK_NAME = "publishFrontend";
 
     /**
-     * Name of the task that installs a Node distribution.
+     * Name of the task that installs a Node.js distribution.
      */
     public static final String DEFAULT_NODE_INSTALL_DIRNAME = "node";
+
+    /**
+     * URL pattern used to download the Node.js distribution.
+     */
+    public static final String DEFAULT_NODE_DISTRIBUTION_URL_PATTERN = "https://nodejs.org/dist/vVERSION/node-vVERSION-ARCH.TYPE";
 
     /**
      * Default port for the proxy server.
      */
     public static final int DEFAULT_PROXY_PORT = 8080;
+
+    /**
+     * URL pattern used to download the Yarn distribution.
+     */
+    public static final String DEFAULT_YARN_DISTRIBUTION_URL_PATTERN = "https://github.com/yarnpkg/yarn/releases/download/vVERSION/yarn-vVERSION.tar.gz";
 
     /**
      * Name of the task that installs a Yarn distribution.
@@ -139,11 +150,13 @@ public class FrontendGradlePlugin implements Plugin<Project> {
             .create(EXTENSION_NAME, FrontendExtension.class, project);
 
         extension.getNodeDistributionProvided().convention(false);
+        extension.getNodeDistributionUrlPattern().convention(DEFAULT_NODE_DISTRIBUTION_URL_PATTERN);
         extension
             .getNodeInstallDirectory()
             .convention(project.getLayout().getProjectDirectory().dir(DEFAULT_NODE_INSTALL_DIRNAME));
         extension.getYarnEnabled().convention(false);
         extension.getYarnDistributionProvided().convention(false);
+        extension.getYarnDistributionUrlPattern().convention(DEFAULT_YARN_DISTRIBUTION_URL_PATTERN);
         extension
             .getYarnInstallDirectory()
             .convention(project.getLayout().getProjectDirectory().dir(DEFAULT_YARN_INSTALL_DIRNAME));
@@ -178,8 +191,8 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         final Path yarnHomePath = getEnvironmentVariable(YARN_HOME_ENV_VAR).map(Paths::get).orElse(null);
 
         Beans.init();
-        Beans.registerBean(
-            new Platform(SystemUtils.getSystemJvmArch(), SystemUtils.getSystemOsName(), nodejsHomePath, yarnHomePath));
+        Beans.registerBean(new Platform(SystemUtils.getSystemJvmArch(), SystemUtils.getSystemOsName(),
+            new Environment(nodejsHomePath, yarnHomePath)));
         Beans.registerBean(GradleLoggerAdapter.class);
         Beans.registerBean(FileManagerImpl.class);
         Beans.registerBean(ChannelProviderImpl.class);
@@ -218,7 +231,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.setGroup(TASK_GROUP);
         task.setDescription("Downloads and installs a Node distribution.");
         task.getNodeVersion().set(extension.getNodeVersion());
-        task.getNodeDistributionUrl().set(extension.getNodeDistributionUrl());
+        task.getNodeDistributionUrlPattern().set(extension.getNodeDistributionUrlPattern());
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
         task.getProxyHost().set(extension.getProxyHost());
         task.getProxyPort().set(extension.getProxyPort());
@@ -235,7 +248,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.setGroup(TASK_GROUP);
         task.setDescription("Downloads and installs a Yarn distribution.");
         task.getYarnVersion().set(extension.getYarnVersion());
-        task.getYarnDistributionUrl().set(extension.getYarnDistributionUrl());
+        task.getYarnDistributionUrlPattern().set(extension.getYarnDistributionUrlPattern());
         task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
         task.getProxyHost().set(extension.getProxyHost());
         task.getProxyPort().set(extension.getProxyPort());

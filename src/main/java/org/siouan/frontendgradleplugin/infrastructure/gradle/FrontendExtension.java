@@ -29,9 +29,9 @@ public class FrontendExtension {
     private final DirectoryProperty nodeInstallDirectory;
 
     /**
-     * URL to download the Node distribution.
+     * URL pattern to download the Node.js distribution.
      */
-    private final Property<String> nodeDistributionUrl;
+    private final Property<String> nodeDistributionUrlPattern;
 
     /**
      * Whether a Yarn distribution shall be downloaded and installed.
@@ -56,9 +56,9 @@ public class FrontendExtension {
     private final DirectoryProperty yarnInstallDirectory;
 
     /**
-     * URL to download the distribution.
+     * URL pattern to download the Yarn distribution.
      */
-    private final Property<String> yarnDistributionUrl;
+    private final Property<String> yarnDistributionUrlPattern;
 
     /**
      * The npm/Yarn script installing frontend dependencies.
@@ -115,12 +115,12 @@ public class FrontendExtension {
         nodeDistributionProvided = project.getObjects().property(Boolean.class);
         nodeVersion = project.getObjects().property(String.class);
         nodeInstallDirectory = project.getObjects().directoryProperty();
-        nodeDistributionUrl = project.getObjects().property(String.class);
+        nodeDistributionUrlPattern = project.getObjects().property(String.class);
         yarnDistributionProvided = project.getObjects().property(Boolean.class);
         yarnEnabled = project.getObjects().property(Boolean.class);
         yarnVersion = project.getObjects().property(String.class);
         yarnInstallDirectory = project.getObjects().directoryProperty();
-        yarnDistributionUrl = project.getObjects().property(String.class);
+        yarnDistributionUrlPattern = project.getObjects().property(String.class);
         installScript = project.getObjects().property(String.class);
         cleanScript = project.getObjects().property(String.class);
         assembleScript = project.getObjects().property(String.class);
@@ -144,8 +144,8 @@ public class FrontendExtension {
         return nodeInstallDirectory;
     }
 
-    public Property<String> getNodeDistributionUrl() {
-        return nodeDistributionUrl;
+    public Property<String> getNodeDistributionUrlPattern() {
+        return nodeDistributionUrlPattern;
     }
 
     public Property<Boolean> getYarnEnabled() {
@@ -164,8 +164,8 @@ public class FrontendExtension {
         return yarnInstallDirectory;
     }
 
-    public Property<String> getYarnDistributionUrl() {
-        return yarnDistributionUrl;
+    public Property<String> getYarnDistributionUrlPattern() {
+        return yarnDistributionUrlPattern;
     }
 
     public Property<String> getInstallScript() {

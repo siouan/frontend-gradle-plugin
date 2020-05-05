@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.siouan.frontendgradleplugin.domain.model.Environment;
 import org.siouan.frontendgradleplugin.domain.model.Platform;
 import org.siouan.frontendgradleplugin.domain.util.SystemUtils;
 
@@ -21,12 +22,12 @@ class FileManagerImplTest {
     @Test
     void shouldNotTouchFilePermissionsWhenOsIsWindows() throws IOException {
         assertThat(fileProvider.setFileExecutable(Paths.get("afile"),
-            new Platform(SystemUtils.getSystemJvmArch(), "Windows NT", null, null))).isFalse();
+            new Platform(SystemUtils.getSystemJvmArch(), "Windows NT", new Environment(null, null)))).isFalse();
     }
 
     @Test
     void shouldNotTouchFilePermissionsWhenFileNotFound() throws IOException {
         assertThat(fileProvider.setFileExecutable(Paths.get("afile"),
-            new Platform(SystemUtils.getSystemJvmArch(), "Linux", null, null))).isFalse();
+            new Platform(SystemUtils.getSystemJvmArch(), "Linux", new Environment(null, null)))).isFalse();
     }
 }

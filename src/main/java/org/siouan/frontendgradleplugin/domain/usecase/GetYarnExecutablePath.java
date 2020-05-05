@@ -69,6 +69,6 @@ public class GetYarnExecutablePath extends AbstractGetExecutablePath {
     @Nonnull
     @Override
     protected Optional<Path> getInstallDirectoryFromEnvironment(@Nonnull final Platform platform) {
-        return Optional.ofNullable(platform.getYarnInstallDirectory());
+        return Optional.ofNullable(platform.getEnvironment().getYarnInstallDirectoryPath());
     }
 }

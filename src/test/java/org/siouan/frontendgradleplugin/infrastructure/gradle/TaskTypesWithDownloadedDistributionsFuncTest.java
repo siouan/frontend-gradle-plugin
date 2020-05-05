@@ -73,8 +73,8 @@ class TaskTypesWithDownloadedDistributionsFuncTest {
     void shouldFailRunningCustomNpxTaskWhenYarnIsEnabled() throws IOException {
         Files.copy(getResourcePath("package-npm.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("12.16.1")
-            .nodeDistributionUrl(getResourceUrl("node-v10.16.0.zip"))
+            .nodeVersion("12.16.0")
+            .nodeDistributionUrlPattern(getResourceUrl("node-v10.16.0.zip"))
             .yarnEnabled(true);
         final String runNpxTaskDefinition = buildNpxTaskDefinition(RUN_NPX_TASK_NAME,
             FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, "--version");

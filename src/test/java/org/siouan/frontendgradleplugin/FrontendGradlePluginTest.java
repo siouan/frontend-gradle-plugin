@@ -51,7 +51,7 @@ class FrontendGradlePluginTest {
             .named(FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, NodeInstallTask.class)
             .get();
         assertThat(nodeInstallTask.getNodeVersion().isPresent()).isFalse();
-        assertThat(nodeInstallTask.getNodeDistributionUrl().isPresent()).isFalse();
+        assertThat(nodeInstallTask.getNodeDistributionUrlPattern().isPresent()).isTrue();
         assertThat(nodeInstallTask.getNodeInstallDirectory().get()).isEqualTo(
             extension.getNodeInstallDirectory().get());
         assertThat(nodeInstallTask.getDependsOn()).isEmpty();
@@ -62,7 +62,7 @@ class FrontendGradlePluginTest {
             .get();
         assertThat(yarnInstallTask.getOnlyIf()).isNotNull();
         assertThat(yarnInstallTask.getYarnVersion().isPresent()).isFalse();
-        assertThat(yarnInstallTask.getYarnDistributionUrl().isPresent()).isFalse();
+        assertThat(yarnInstallTask.getYarnDistributionUrlPattern().isPresent()).isTrue();
         assertThat(yarnInstallTask.getYarnInstallDirectory().get()).isEqualTo(
             extension.getYarnInstallDirectory().get());
         assertThat(yarnInstallTask.getDependsOn()).isEmpty();
@@ -124,11 +124,11 @@ class FrontendGradlePluginTest {
 
         final FrontendExtension extension = project.getExtensions().findByType(FrontendExtension.class);
         extension.getNodeVersion().set("3.65.4");
-        extension.getNodeDistributionUrl().set("https://node");
+        extension.getNodeDistributionUrlPattern().set("https://node");
         extension.getNodeInstallDirectory().set(project.file("node-dist"));
         extension.getYarnEnabled().set(true);
         extension.getYarnVersion().set("6.5.4");
-        extension.getYarnDistributionUrl().set("http://yarn");
+        extension.getYarnDistributionUrlPattern().set("http://yarn");
         extension.getYarnInstallDirectory().set(project.file("yarn-dist"));
         extension.getCleanScript().set("clean");
         extension.getAssembleScript().set("assemble");
@@ -139,7 +139,7 @@ class FrontendGradlePluginTest {
             .named(FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, NodeInstallTask.class)
             .get();
         assertThat(nodeInstallTask.getNodeVersion().get()).isEqualTo(extension.getNodeVersion().get());
-        assertThat(nodeInstallTask.getNodeDistributionUrl().get()).isEqualTo(extension.getNodeDistributionUrl().get());
+        assertThat(nodeInstallTask.getNodeDistributionUrlPattern().get()).isEqualTo(extension.getNodeDistributionUrlPattern().get());
         assertThat(nodeInstallTask.getNodeInstallDirectory().get()).isEqualTo(
             extension.getNodeInstallDirectory().get());
         assertThat(nodeInstallTask.getDependsOn()).isEmpty();
@@ -150,7 +150,7 @@ class FrontendGradlePluginTest {
             .get();
         assertThat(yarnInstallTask.getOnlyIf()).isNotNull();
         assertThat(yarnInstallTask.getYarnVersion().get()).isEqualTo(extension.getYarnVersion().get());
-        assertThat(yarnInstallTask.getYarnDistributionUrl().get()).isEqualTo(extension.getYarnDistributionUrl().get());
+        assertThat(yarnInstallTask.getYarnDistributionUrlPattern().get()).isEqualTo(extension.getYarnDistributionUrlPattern().get());
         assertThat(yarnInstallTask.getYarnInstallDirectory().get()).isEqualTo(
             extension.getYarnInstallDirectory().get());
         assertThat(yarnInstallTask.getDependsOn()).isEmpty();
