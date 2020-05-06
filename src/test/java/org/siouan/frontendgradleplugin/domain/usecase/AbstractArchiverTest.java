@@ -37,6 +37,7 @@ import org.siouan.frontendgradleplugin.domain.exception.InvalidRelativizedSymbol
 import org.siouan.frontendgradleplugin.domain.exception.SlipAttackException;
 import org.siouan.frontendgradleplugin.domain.exception.UnsupportedEntryException;
 import org.siouan.frontendgradleplugin.domain.model.ArchiverContext;
+import org.siouan.frontendgradleplugin.domain.model.Environment;
 import org.siouan.frontendgradleplugin.domain.model.ExplodeSettings;
 import org.siouan.frontendgradleplugin.domain.model.Platform;
 import org.siouan.frontendgradleplugin.domain.provider.FileManager;
@@ -175,7 +176,8 @@ public class AbstractArchiverTest {
         final Path otherEmptyDirPath = rootDirPath.resolve("other-empty-dir");
         final Path rootFilePath = temporaryDirectoryPath.resolve("root-file");
         final ExplodeSettings settings = new ExplodeSettings(
-            new Platform(SystemUtils.getSystemJvmArch(), osName, null, null), archiveFilePath, temporaryDirectoryPath);
+            new Platform(SystemUtils.getSystemJvmArch(), osName, new Environment(null, null)), archiveFilePath,
+            temporaryDirectoryPath);
 
         when(fileManager.isDirectory(temporaryDirectoryPath)).thenReturn(true);
         when(context.getSettings()).thenReturn(settings);

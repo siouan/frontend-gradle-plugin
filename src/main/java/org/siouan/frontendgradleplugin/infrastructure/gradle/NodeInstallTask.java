@@ -3,7 +3,6 @@ package org.siouan.frontendgradleplugin.infrastructure.gradle;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
-import java.net.URL;
 
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.DirectoryProperty;
@@ -41,9 +40,9 @@ public class NodeInstallTask extends DefaultTask {
     private final DirectoryProperty nodeInstallDirectory;
 
     /**
-     * URL to download the Node distribution.
+     * URL pattern to download the Node.js distribution.
      */
-    private final Property<String> nodeDistributionUrl;
+    private final Property<String> nodeDistributionUrlPattern;
 
     /**
      * Proxy host used to download resources.
@@ -62,7 +61,7 @@ public class NodeInstallTask extends DefaultTask {
     public NodeInstallTask() {
         this.nodeVersion = getProject().getObjects().property(String.class);
         this.nodeInstallDirectory = getProject().getObjects().directoryProperty();
-        this.nodeDistributionUrl = getProject().getObjects().property(String.class);
+        this.nodeDistributionUrlPattern = getProject().getObjects().property(String.class);
         this.proxyHost = getProject().getObjects().property(String.class);
         this.proxyPort = getProject().getObjects().property(Integer.class);
     }
@@ -73,9 +72,8 @@ public class NodeInstallTask extends DefaultTask {
     }
 
     @Input
-    @Optional
-    public Property<String> getNodeDistributionUrl() {
-        return nodeDistributionUrl;
+    public Property<String> getNodeDistributionUrlPattern() {
+        return nodeDistributionUrlPattern;
     }
 
     @OutputDirectory
@@ -110,13 +108,13 @@ public class NodeInstallTask extends DefaultTask {
     public void execute() throws BeanRegistryException, ArchiverException, UnsupportedDistributionArchiveException,
         UnsupportedPlatformException, UnsupportedDistributionIdException, InvalidDistributionUrlException,
         DistributionValidatorException, IOException {
-        final URL distributionUrl = nodeDistributionUrl.isPresent() ? new URL(nodeDistributionUrl.get()) : null;
         final Proxy proxy = proxyHost
             .map(host -> new Proxy(Proxy.Type.HTTP, new InetSocketAddress(host, proxyPort.get())))
             .getOrElse(Proxy.NO_PROXY);
         Beans
             .getBean(InstallNodeDistribution.class)
-            .execute(new InstallSettings(Beans.getBean(Platform.class), nodeVersion.get(), distributionUrl, proxy,
-                getTemporaryDir().toPath(), nodeInstallDirectory.getAsFile().get().toPath()));
+            .execute(
+                new InstallSettings(Beans.getBean(Platform.class), nodeVersion.get(), nodeDistributionUrlPattern.get(),
+                    proxy, getTemporaryDir().toPath(), nodeInstallDirectory.getAsFile().get().toPath()));
     }
 }

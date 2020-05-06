@@ -1,9 +1,7 @@
 package org.siouan.frontendgradleplugin.domain.model;
 
-import java.nio.file.Path;
 import java.util.Arrays;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * This class represents an execution platform, identified by the architecture of the JVM, and the name of the OS.
@@ -32,29 +30,22 @@ public class Platform {
     private final String osName;
 
     /**
-     * Install directory of Node.js.
+     * Environment.
      */
-    private final Path nodeInstallDirectory;
+    private final Environment environment;
 
     /**
-     * Install directory of Yarn.
-     */
-    private final Path yarnInstallDirectory;
-
-    /**
-     * Builds a platform with custom architecture.
+     * Builds a platform with the given architecture.
      *
      * @param jvmArch JVM architecture.
      * @param osName Underlying O/S name.
-     * @param nodeInstallDirectory Path to a platform-wide Node.js installation.
-     * @param yarnInstallDirectory Path to a platform-wide Yarn installation.
+     * @param environment Environment.
      */
     public Platform(@Nonnull final String jvmArch, @Nonnull final String osName,
-        @Nullable final Path nodeInstallDirectory, @Nullable final Path yarnInstallDirectory) {
+        @Nonnull final Environment environment) {
         this.jvmArch = jvmArch;
         this.osName = osName;
-        this.nodeInstallDirectory = nodeInstallDirectory;
-        this.yarnInstallDirectory = yarnInstallDirectory;
+        this.environment = environment;
     }
 
     /**
@@ -94,29 +85,19 @@ public class Platform {
     }
 
     /**
-     * Gets the path to a global Node.js installation.
+     * Gets the environment.
      *
-     * @return Path to an install directory.
+     * @return Environment.
      */
-    @Nullable
-    public Path getNodeInstallDirectory() {
-        return nodeInstallDirectory;
-    }
-
-    /**
-     * Gets the path to a global Yarn installation.
-     *
-     * @return Path to an install directory.
-     */
-    @Nullable
-    public Path getYarnInstallDirectory() {
-        return yarnInstallDirectory;
+    @Nonnull
+    public Environment getEnvironment() {
+        return environment;
     }
 
     @Override
     public String toString() {
-        return Platform.class.getSimpleName() + " {jvmArch=" + jvmArch + ", osName=" + osName
-            + ", nodeInstallDirectory=" + nodeInstallDirectory + ", yarnInstallDirectory=" + yarnInstallDirectory + '}';
+        return Platform.class.getSimpleName() + " {jvmArch=" + jvmArch + ", osName=" + osName + ", environment="
+            + environment + '}';
     }
 
     /**

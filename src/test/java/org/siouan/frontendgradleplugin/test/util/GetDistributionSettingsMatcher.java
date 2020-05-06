@@ -18,12 +18,12 @@ public class GetDistributionSettingsMatcher extends AbstractArgumentMatcher<GetD
             return false;
         }
 
-        return (actualValue.getDistributionId().equals(expectedValue.getDistributionId())) && actualValue
-            .getVersion()
-            .equals(expectedValue.getVersion()) && actualValue.getPlatform().equals(expectedValue.getPlatform())
-            && actualValue.getTemporaryDirectoryPath().equals(expectedValue.getTemporaryDirectoryPath()) && actualValue
-            .getPlatform()
-            .equals(expectedValue.getPlatform()) && Objects.equals(actualValue.getDistributionUrl(),
-            expectedValue.getDistributionUrl()) && actualValue.getProxy().equals(expectedValue.getProxy());
+        return (actualValue.getDistributionId().equals(expectedValue.getDistributionId()))
+            && actualValue.getVersion().equals(expectedValue.getVersion())
+            && actualValue.getPlatform().equals(expectedValue.getPlatform())
+            && actualValue.getTemporaryDirectoryPath().equals(expectedValue.getTemporaryDirectoryPath())
+            && actualValue.getPlatform().equals(expectedValue.getPlatform())
+            && Objects.equals(actualValue.getDistributionUrlPattern(), expectedValue.getDistributionUrlPattern())
+            && actualValue.getProxy().equals(expectedValue.getProxy());
     }
 }

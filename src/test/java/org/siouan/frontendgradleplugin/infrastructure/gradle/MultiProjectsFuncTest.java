@@ -14,8 +14,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.gradle.api.logging.LogLevel;
 import org.gradle.api.plugins.BasePlugin;
@@ -25,6 +23,7 @@ import org.gradle.testkit.runner.BuildResult;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
+import org.siouan.frontendgradleplugin.test.util.FrontendMapBuilder;
 
 /**
  * This test suite verifies task execution in a multi-projects build, where Node and Yarn distributions are downloaded
@@ -59,37 +58,37 @@ class MultiProjectsFuncTest {
 
         // Sub-project 1
         final Path nodeInstallDirectory = Paths.get("${rootProject.projectDir}/node");
-        final Map<String, Object> properties = new HashMap<>();
-        properties.put("nodeVersion", "10.16.0");
-        properties.put("nodeInstallDirectory", nodeInstallDirectory);
-        properties.put("nodeDistributionUrl", getResourceUrl("node-v10.16.0.zip"));
-        properties.put("yarnEnabled", true);
-        properties.put("yarnVersion", "1.16.0");
-        properties.put("yarnDistributionUrl", getResourceUrl("yarn-v1.16.0.tar.gz"));
-        properties.put("installScript", "run install1");
-        properties.put("cleanScript", "run clean1");
-        properties.put("assembleScript", "run assemble1");
-        properties.put("checkScript", "run check1");
-        properties.put("publishScript", "run publish1");
+        final FrontendMapBuilder frontendMapBuilder1 = new FrontendMapBuilder()
+            .nodeVersion("10.16.0")
+            .nodeInstallDirectory(nodeInstallDirectory)
+            .nodeDistributionUrlPattern(getResourceUrl("node-v10.16.0.zip"))
+            .yarnEnabled(true)
+            .yarnVersion("1.16.0")
+            .yarnDistributionUrlPattern(getResourceUrl("yarn-v1.16.0.tar.gz"))
+            .installScript("run install1")
+            .cleanScript("run clean1")
+            .assembleScript("run assemble1")
+            .checkScript("run check1")
+            .publishScript("run publish1");
         final Path subProject1Path = Files.createDirectory(projectDirectoryPath.resolve(SUB_PROJECT_1_NAME));
         Files.copy(packageJsonFilePath, subProject1Path.resolve("package.json"));
-        createBuildFile(subProject1Path, properties);
+        createBuildFile(subProject1Path, frontendMapBuilder1.toMap());
 
         // Sub-project 2
         final Path subProject2Path = Files.createDirectory(projectDirectoryPath.resolve(SUB_PROJECT_2_NAME));
-        properties.clear();
-        properties.put("nodeDistributionProvided", true);
-        properties.put("nodeInstallDirectory", nodeInstallDirectory);
-        properties.put("yarnEnabled", true);
-        properties.put("yarnDistributionProvided", true);
-        properties.put("yarnInstallDirectory", subProject1Path.resolve("yarn"));
-        properties.put("installScript", "run install2");
-        properties.put("cleanScript", "run clean2");
-        properties.put("assembleScript", "run assemble2");
-        properties.put("checkScript", "run check2");
-        properties.put("publishScript", "run publish2");
+        final FrontendMapBuilder frontendMapBuilder2 = new FrontendMapBuilder()
+            .nodeDistributionProvided(true)
+            .nodeInstallDirectory(nodeInstallDirectory)
+            .yarnEnabled(true)
+            .yarnDistributionProvided(true)
+            .yarnInstallDirectory(subProject1Path.resolve("yarn"))
+            .installScript("run install2")
+            .cleanScript("run clean2")
+            .assembleScript("run assemble2")
+            .checkScript("run check2")
+            .publishScript("run publish2");
         Files.copy(packageJsonFilePath, subProject2Path.resolve("package.json"));
-        createBuildFile(subProject2Path, properties,
+        createBuildFile(subProject2Path, frontendMapBuilder2.toMap(),
             "tasks.named('installFrontend').configure {" + "dependsOn project(':" + SUB_PROJECT_1_NAME
                 + "').installNode\ndependsOn project(':" + SUB_PROJECT_1_NAME + "').installYarn\n}");
 

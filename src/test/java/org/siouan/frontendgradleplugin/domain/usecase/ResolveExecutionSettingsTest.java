@@ -14,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.siouan.frontendgradleplugin.domain.exception.ExecutableNotFoundException;
+import org.siouan.frontendgradleplugin.domain.model.Environment;
 import org.siouan.frontendgradleplugin.domain.model.ExecutableType;
 import org.siouan.frontendgradleplugin.domain.model.ExecutionSettings;
 import org.siouan.frontendgradleplugin.domain.model.Platform;
@@ -126,7 +127,8 @@ class ResolveExecutionSettingsTest {
     @Test
     void shouldResolveExecSettingsWithWindowsCmdWhenExecutableIsNodeInPathAndOsIsWindows()
         throws ExecutableNotFoundException {
-        final Platform platform = new Platform(SystemUtils.getSystemJvmArch(), "Windows NT", null, null);
+        final Platform platform = new Platform(SystemUtils.getSystemJvmArch(), "Windows NT",
+            new Environment(null, null));
         final Path nodeExecutablePath = Paths.get("node");
         when(getNodeExecutablePath.execute(null, platform)).thenReturn(nodeExecutablePath);
 
@@ -145,7 +147,8 @@ class ResolveExecutionSettingsTest {
     @Test
     void shouldResolveExecSettingsWithWindowsCmdWhenExecutableIsNodeInDistributionAndOsIsWindows()
         throws ExecutableNotFoundException {
-        final Platform platform = new Platform(SystemUtils.getSystemJvmArch(), "Windows NT", null, null);
+        final Platform platform = new Platform(SystemUtils.getSystemJvmArch(), "Windows NT",
+            new Environment(null, null));
         final Path nodeExecutablePath = NODE_INSTALL_DIRECTORY_PATH.resolve("node");
         when(getNodeExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenReturn(nodeExecutablePath);
 
@@ -164,7 +167,8 @@ class ResolveExecutionSettingsTest {
     @Test
     void shouldResolveExecSettingsWithWindowsCmdWhenExecutableIsNpmInDistributionAndOsIsWindows()
         throws ExecutableNotFoundException {
-        final Platform platform = new Platform(SystemUtils.getSystemJvmArch(), "Windows NT", null, null);
+        final Platform platform = new Platform(SystemUtils.getSystemJvmArch(), "Windows NT",
+            new Environment(null, null));
         final Path nodeExecutablePath = NODE_INSTALL_DIRECTORY_PATH.resolve("node");
         final Path npmExecutablePath = NODE_INSTALL_DIRECTORY_PATH.resolve("npm");
         when(getNodeExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenReturn(nodeExecutablePath);
@@ -185,7 +189,8 @@ class ResolveExecutionSettingsTest {
     @Test
     void shouldResolveExecSettingsWithWindowsCmdWhenExecutableIsNpxInDistributionAndOsIsWindows()
         throws ExecutableNotFoundException {
-        final Platform platform = new Platform(SystemUtils.getSystemJvmArch(), "Windows NT", null, null);
+        final Platform platform = new Platform(SystemUtils.getSystemJvmArch(), "Windows NT",
+            new Environment(null, null));
         final Path nodeExecutablePath = NODE_INSTALL_DIRECTORY_PATH.resolve("node");
         final Path npxExecutablePath = NODE_INSTALL_DIRECTORY_PATH.resolve("npx");
         when(getNodeExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenReturn(nodeExecutablePath);
@@ -206,7 +211,8 @@ class ResolveExecutionSettingsTest {
     @Test
     void shouldResolveExecSettingsWithWindowsCmdWhenExecutableIsYarnInDistributionAndNodeIsInDistributionAndOsIsWindows()
         throws ExecutableNotFoundException {
-        final Platform platform = new Platform(SystemUtils.getSystemJvmArch(), "Windows NT", null, null);
+        final Platform platform = new Platform(SystemUtils.getSystemJvmArch(), "Windows NT",
+            new Environment(null, null));
         final Path nodeExecutablePath = NODE_INSTALL_DIRECTORY_PATH.resolve("node");
         final Path yarnExecutablePath = YARN_INSTALL_DIRECTORY_PATH.resolve("yarn");
         when(getNodeExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenReturn(nodeExecutablePath);
@@ -227,7 +233,8 @@ class ResolveExecutionSettingsTest {
     @Test
     void shouldResolveExecSettingsWithWindowsCmdWhenExecutableIsYarnInPathAndNodeIsInPathAndOsIsWindows()
         throws ExecutableNotFoundException {
-        final Platform platform = new Platform(SystemUtils.getSystemJvmArch(), "Windows NT", null, null);
+        final Platform platform = new Platform(SystemUtils.getSystemJvmArch(), "Windows NT",
+            new Environment(null, null));
         final Path nodeExecutablePath = Paths.get("node");
         final Path yarnExecutablePath = Paths.get("yarn");
         when(getNodeExecutablePath.execute(null, platform)).thenReturn(nodeExecutablePath);
@@ -248,7 +255,7 @@ class ResolveExecutionSettingsTest {
     @Test
     void shouldResolveExecSettingsWithUnixShellWhenExecutableIsNodeInPathAndOsIsNotWindows()
         throws ExecutableNotFoundException {
-        final Platform platform = new Platform(SystemUtils.getSystemJvmArch(), "Linux", null, null);
+        final Platform platform = new Platform(SystemUtils.getSystemJvmArch(), "Linux", new Environment(null, null));
         final Path nodeExecutablePath = NODE_INSTALL_DIRECTORY_PATH.resolve("node");
         when(getNodeExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenReturn(nodeExecutablePath);
 
@@ -267,7 +274,7 @@ class ResolveExecutionSettingsTest {
     @Test
     void shouldResolveExecSettingsWithUnixShellWhenExecutableIsNpmInPathAndOsIsNotWindows()
         throws ExecutableNotFoundException {
-        final Platform platform = new Platform(SystemUtils.getSystemJvmArch(), "Linux", null, null);
+        final Platform platform = new Platform(SystemUtils.getSystemJvmArch(), "Linux", new Environment(null, null));
         final Path nodeExecutablePath = NODE_INSTALL_DIRECTORY_PATH.resolve("node");
         final Path npmExecutablePath = nodeExecutablePath.resolveSibling("npm");
         when(getNodeExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenReturn(nodeExecutablePath);
@@ -288,7 +295,7 @@ class ResolveExecutionSettingsTest {
     @Test
     void shouldResolveExecSettingsWithUnixShellWhenExecutableIsNpxInPathAndOsIsNotWindows()
         throws ExecutableNotFoundException {
-        final Platform platform = new Platform(SystemUtils.getSystemJvmArch(), "Linux", null, null);
+        final Platform platform = new Platform(SystemUtils.getSystemJvmArch(), "Linux", new Environment(null, null));
         final Path nodeExecutablePath = NODE_INSTALL_DIRECTORY_PATH.resolve("node");
         final Path npxExecutablePath = nodeExecutablePath.resolveSibling("npx");
         when(getNodeExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenReturn(nodeExecutablePath);
@@ -309,7 +316,7 @@ class ResolveExecutionSettingsTest {
     @Test
     void shouldResolveExecSettingsWithUnixShellWhenExecutableIsYarnInPathAndOsIsNotWindows()
         throws ExecutableNotFoundException {
-        final Platform platform = new Platform(SystemUtils.getSystemJvmArch(), "Linux", null, null);
+        final Platform platform = new Platform(SystemUtils.getSystemJvmArch(), "Linux", new Environment(null, null));
         final Path nodeExecutablePath = NODE_INSTALL_DIRECTORY_PATH.resolve("node");
         final Path yarnExecutablePath = YARN_INSTALL_DIRECTORY_PATH.resolve("yarn");
         when(getNodeExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenReturn(nodeExecutablePath);

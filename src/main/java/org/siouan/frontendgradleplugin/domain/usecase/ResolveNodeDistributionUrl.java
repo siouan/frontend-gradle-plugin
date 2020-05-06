@@ -1,7 +1,6 @@
 package org.siouan.frontendgradleplugin.domain.usecase;
 
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.util.Optional;
 import javax.annotation.Nonnull;
@@ -12,85 +11,110 @@ import org.siouan.frontendgradleplugin.domain.model.DistributionUrlResolver;
 import org.siouan.frontendgradleplugin.domain.model.Platform;
 
 /**
- * Resolves the URL to download a Node distribution.
+ * Resolves the URL to download a Node.js distribution.
  */
 public class ResolveNodeDistributionUrl implements DistributionUrlResolver {
 
     /**
-     * Extension of the distribution file name under a 64 bits Linux O/S.
+     * Token in the download URL pattern replaced with the version number.
      */
-    private static final String LINUX_64_EXTENSION = "-linux-x64.tar.gz";
+    public static final String VERSION_TOKEN = "VERSION";
 
     /**
-     * Extension of the distribution file name under a 64 bits MacOS O/S.
+     * Token in the download URL pattern replaced with the architecture ID of the underlying platform.
      */
-    private static final String MACOS_64_EXTENSION = "-darwin-x64.tar.gz";
+    public static final String ARCHITECTURE_ID_TOKEN = "ARCH";
 
     /**
-     * Extension of the distribution file name under a 32 bits Windows O/S.
+     * Token in the download URL pattern replaced with the archive type supported on the underlying platform.
      */
-    private static final String WINDOWS_32_EXTENSION = "-win-x86.zip";
+    public static final String TYPE_TOKEN = "TYPE";
 
     /**
-     * Extension of the distribution file name under a 64 bits Windows O/S.
+     * A gzipped TAR distribution archive.
      */
-    private static final String WINDOWS_64_EXTENSION = "-win-x64.zip";
+    private static final String TAR_GZ_TYPE = "tar.gz";
 
-    private static final String NODE_CDN_PART_1 = "https://nodejs.org/dist/v";
+    /**
+     * A zipped distribution archive.
+     */
+    private static final String ZIP_TYPE = "zip";
 
-    private static final String NODE_CDN_PART_2 = "/node-v";
+    /**
+     * Architecture ID for a 64 bits Linux O/S.
+     */
+    private static final String LINUX_64_ARCH = "linux-x64";
+
+    /**
+     * Architecture ID for a 64 bits MacOS O/S.
+     */
+    private static final String MACOS_64_ARCH = "darwin-x64";
+
+    /**
+     * Architecture ID for a 32 bits Windows O/S.
+     */
+    private static final String WINDOWS_32_ARCH = "win-x86";
+
+    /**
+     * Architecture ID for a 64 bits Linux O/S.
+     */
+    private static final String WINDOWS_64_ARCH = "win-x64";
 
     @Override
     @Nonnull
     public URL execute(@Nonnull final DistributionDefinition distributionDefinition)
         throws UnsupportedPlatformException, MalformedURLException {
-        final String version = distributionDefinition.getVersion();
-        if (distributionDefinition.getDownloadUrl() == null) {
-            final StringBuilder buffer = new StringBuilder();
-            buffer.append(NODE_CDN_PART_1);
-            buffer.append(version);
-            buffer.append(NODE_CDN_PART_2);
-            buffer.append(version);
-            final Optional<String> extension = resolveExtension(distributionDefinition.getPlatform());
-            if (extension.isPresent()) {
-                buffer.append(extension.get());
-            } else {
-                throw new UnsupportedPlatformException(distributionDefinition.getPlatform());
-            }
-
-            return URI.create(buffer.toString()).toURL();
+        final Platform platform = distributionDefinition.getPlatform();
+        final Optional<String> architectureId = resolveArchitectureId(platform);
+        if (!architectureId.isPresent()) {
+            throw new UnsupportedPlatformException(distributionDefinition.getPlatform());
         }
 
-        return distributionDefinition.getDownloadUrl();
+        return new URL(distributionDefinition
+            .getDownloadUrlPattern()
+            .replace(VERSION_TOKEN, distributionDefinition.getVersion())
+            .replace(ARCHITECTURE_ID_TOKEN, architectureId.get())
+            .replace(TYPE_TOKEN, resolveType(platform)));
     }
 
     /**
-     * Resolves the extension of the distribution file name considering a target platform.
+     * Resolves the architecture ID for a given platform.
      *
-     * @param targetPlatform Target platform.
-     * @return The extension of the distribution file name. If empty, the target platform is not supported.
+     * @param platform Platform.
+     * @return The architecture ID. If empty, the target platform is not supported.
      */
     @Nonnull
-    private Optional<String> resolveExtension(@Nonnull final Platform targetPlatform) {
+    private Optional<String> resolveArchitectureId(@Nonnull final Platform platform) {
         final String extension;
-        if (targetPlatform.is64BitsArch()) {
-            if (targetPlatform.isWindowsOs()) {
-                extension = WINDOWS_64_EXTENSION;
-            } else if (targetPlatform.isLinuxOs()) {
-                extension = LINUX_64_EXTENSION;
-            } else if (targetPlatform.isMacOs()) {
-                extension = MACOS_64_EXTENSION;
+        if (platform.is64BitsArch()) {
+            if (platform.isWindowsOs()) {
+                extension = WINDOWS_64_ARCH;
+            } else if (platform.isLinuxOs()) {
+                extension = LINUX_64_ARCH;
+            } else if (platform.isMacOs()) {
+                extension = MACOS_64_ARCH;
             } else {
                 extension = null;
             }
         } else {
-            if (targetPlatform.isWindowsOs()) {
-                extension = WINDOWS_32_EXTENSION;
+            if (platform.isWindowsOs()) {
+                extension = WINDOWS_32_ARCH;
             } else {
                 extension = null;
             }
         }
 
         return Optional.ofNullable(extension);
+    }
+
+    /**
+     * Resolves the distribution type supported for a given platform.
+     *
+     * @param platform Platform.
+     * @return The distribution type.
+     */
+    @Nonnull
+    private String resolveType(@Nonnull final Platform platform) {
+        return platform.isWindowsOs() ? ZIP_TYPE : TAR_GZ_TYPE;
     }
 }

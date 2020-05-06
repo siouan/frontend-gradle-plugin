@@ -57,7 +57,7 @@ public class GetNpxExecutablePath extends AbstractGetExecutablePath {
     @Nonnull
     @Override
     protected Optional<Path> getInstallDirectoryFromEnvironment(@Nonnull final Platform platform) {
-        return Optional.ofNullable(platform.getNodeInstallDirectory());
+        return Optional.ofNullable(platform.getEnvironment().getNodeInstallDirectoryPath());
     }
 
     @Nonnull

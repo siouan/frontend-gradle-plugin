@@ -18,7 +18,7 @@ public final class FrontendMapBuilder {
 
     private String nodeVersion;
 
-    private URL nodeDistributionUrl;
+    private String nodeDistributionUrlPattern;
 
     private Path nodeInstallDirectory;
 
@@ -28,13 +28,27 @@ public final class FrontendMapBuilder {
 
     private String yarnVersion;
 
-    private URL yarnDistributionUrl;
+    private String yarnDistributionUrlPattern;
 
     private Path yarnInstallDirectory;
+
+    private String installScript;
+
+    private String cleanScript;
+
+    private String assembleScript;
+
+    private String checkScript;
+
+    private String publishScript;
 
     private Path packageJsonDirectory;
 
     private Boolean verboseModeEnabled;
+
+    private String proxyHost;
+
+    private Integer proxyPort;
 
     @Nonnull
     public FrontendMapBuilder nodeDistributionProvided(@Nullable final Boolean nodeDistributionProvided) {
@@ -49,9 +63,14 @@ public final class FrontendMapBuilder {
     }
 
     @Nonnull
-    public FrontendMapBuilder nodeDistributionUrl(@Nullable final URL nodeDistributionUrl) {
-        this.nodeDistributionUrl = nodeDistributionUrl;
+    public FrontendMapBuilder nodeDistributionUrlPattern(@Nullable final String nodeDistributionUrlPattern) {
+        this.nodeDistributionUrlPattern = nodeDistributionUrlPattern;
         return this;
+    }
+
+    @Nonnull
+    public FrontendMapBuilder nodeDistributionUrlPattern(@Nullable final URL nodeDistributionUrlPattern) {
+        return nodeDistributionUrlPattern(nodeDistributionUrlPattern.toString());
     }
 
     @Nonnull
@@ -79,14 +98,49 @@ public final class FrontendMapBuilder {
     }
 
     @Nonnull
-    public FrontendMapBuilder yarnDistributionUrl(@Nullable final URL yarnDistributionUrl) {
-        this.yarnDistributionUrl = yarnDistributionUrl;
+    public FrontendMapBuilder yarnDistributionUrlPattern(@Nullable final String yarnDistributionUrlPattern) {
+        this.yarnDistributionUrlPattern = yarnDistributionUrlPattern;
         return this;
+    }
+
+    @Nonnull
+    public FrontendMapBuilder yarnDistributionUrlPattern(@Nullable final URL yarnDistributionUrlPattern) {
+        return yarnDistributionUrlPattern(yarnDistributionUrlPattern.toString());
     }
 
     @Nonnull
     public FrontendMapBuilder yarnInstallDirectory(@Nullable final Path yarnInstallDirectory) {
         this.yarnInstallDirectory = yarnInstallDirectory;
+        return this;
+    }
+
+    @Nonnull
+    public FrontendMapBuilder installScript(@Nullable final String installScript) {
+        this.installScript = installScript;
+        return this;
+    }
+
+    @Nonnull
+    public FrontendMapBuilder cleanScript(@Nullable final String cleanScript) {
+        this.cleanScript = cleanScript;
+        return this;
+    }
+
+    @Nonnull
+    public FrontendMapBuilder assembleScript(@Nullable final String assembleScript) {
+        this.assembleScript = assembleScript;
+        return this;
+    }
+
+    @Nonnull
+    public FrontendMapBuilder checkScript(@Nullable final String checkScript) {
+        this.checkScript = checkScript;
+        return this;
+    }
+
+    @Nonnull
+    public FrontendMapBuilder publishScript(@Nullable final String publishScript) {
+        this.publishScript = publishScript;
         return this;
     }
 
@@ -103,6 +157,18 @@ public final class FrontendMapBuilder {
     }
 
     @Nonnull
+    public FrontendMapBuilder proxyHost(@Nullable final String proxyHost) {
+        this.proxyHost = proxyHost;
+        return this;
+    }
+
+    @Nonnull
+    public FrontendMapBuilder proxyPort(@Nullable final Integer proxyPort) {
+        this.proxyPort = proxyPort;
+        return this;
+    }
+
+    @Nonnull
     public Map<String, Object> toMap() {
         final Map<String, Object> properties = new HashMap<>();
         if (nodeDistributionProvided != null) {
@@ -111,8 +177,8 @@ public final class FrontendMapBuilder {
         if (nodeVersion != null) {
             properties.put("nodeVersion", nodeVersion);
         }
-        if (nodeDistributionUrl != null) {
-            properties.put("nodeDistributionUrl", nodeDistributionUrl);
+        if (nodeDistributionUrlPattern != null) {
+            properties.put("nodeDistributionUrlPattern", nodeDistributionUrlPattern);
         }
         if (nodeInstallDirectory != null) {
             properties.put("nodeInstallDirectory", nodeInstallDirectory);
@@ -126,17 +192,38 @@ public final class FrontendMapBuilder {
         if (yarnVersion != null) {
             properties.put("yarnVersion", yarnVersion);
         }
-        if (yarnDistributionUrl != null) {
-            properties.put("yarnDistributionUrl", yarnDistributionUrl);
+        if (yarnDistributionUrlPattern != null) {
+            properties.put("yarnDistributionUrlPattern", yarnDistributionUrlPattern);
         }
         if (yarnInstallDirectory != null) {
             properties.put("yarnInstallDirectory", yarnInstallDirectory);
+        }
+        if (installScript != null) {
+            properties.put("installScript", installScript);
+        }
+        if (cleanScript != null) {
+            properties.put("cleanScript", cleanScript);
+        }
+        if (assembleScript != null) {
+            properties.put("assembleScript", assembleScript);
+        }
+        if (checkScript != null) {
+            properties.put("checkScript", checkScript);
+        }
+        if (publishScript != null) {
+            properties.put("publishScript", publishScript);
         }
         if (packageJsonDirectory != null) {
             properties.put("packageJsonDirectory", packageJsonDirectory);
         }
         if (verboseModeEnabled != null) {
             properties.put("verboseModeEnabled", verboseModeEnabled);
+        }
+        if (proxyHost != null) {
+            properties.put("proxyHost", proxyHost);
+        }
+        if (proxyPort != null) {
+            properties.put("proxyPort", proxyPort);
         }
         return unmodifiableMap(properties);
     }

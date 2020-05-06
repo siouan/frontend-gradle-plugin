@@ -1,7 +1,6 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
 import static java.util.Collections.emptyMap;
-import static java.util.Collections.singletonMap;
 import static org.siouan.frontendgradleplugin.test.util.GradleBuildAssertions.assertTaskFailed;
 import static org.siouan.frontendgradleplugin.test.util.GradleBuildAssertions.assertTaskSkipped;
 import static org.siouan.frontendgradleplugin.test.util.GradleBuildAssertions.assertTaskSuccess;
@@ -13,13 +12,12 @@ import static org.siouan.frontendgradleplugin.test.util.Resources.getResourceUrl
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.gradle.testkit.runner.BuildResult;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
+import org.siouan.frontendgradleplugin.test.util.FrontendMapBuilder;
 
 /**
  * Functional tests to verify the {@link YarnInstallTask} integration in a Gradle build. Test cases uses a fake Yarn
@@ -45,10 +43,10 @@ class YarnInstallTaskFuncTest {
 
     @Test
     void shouldBeSkippedWhenDistributionIsProvided() throws IOException {
-        final Map<String, Object> properties = new HashMap<>();
-        properties.put("yarnEnabled", true);
-        properties.put("yarnDistributionProvided", true);
-        createBuildFile(projectDirectoryPath, properties);
+        final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
+            .yarnEnabled(true)
+            .yarnDistributionProvided(true);
+        createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result = runGradle(projectDirectoryPath, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
 
@@ -57,7 +55,7 @@ class YarnInstallTaskFuncTest {
 
     @Test
     void shouldFailWhenVersionIsNotSet() throws IOException {
-        createBuildFile(projectDirectoryPath, singletonMap("yarnEnabled", true));
+        createBuildFile(projectDirectoryPath, new FrontendMapBuilder().yarnEnabled(true).toMap());
 
         final BuildResult result = runGradleAndExpectFailure(projectDirectoryPath,
             FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
@@ -67,10 +65,8 @@ class YarnInstallTaskFuncTest {
 
     @Test
     void shouldFailWhenDistributionCannotBeDownloadedWithUnknownVersion() throws IOException {
-        final Map<String, Object> properties = new HashMap<>();
-        properties.put("yarnEnabled", true);
-        properties.put("yarnVersion", "0.56.3");
-        createBuildFile(projectDirectoryPath, properties);
+        final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder().yarnEnabled(true).yarnVersion("0.56.3");
+        createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result = runGradleAndExpectFailure(projectDirectoryPath,
             FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
@@ -80,11 +76,11 @@ class YarnInstallTaskFuncTest {
 
     @Test
     void shouldFailWhenDistributionCannotBeDownloadedWithInvalidUrl() throws IOException {
-        final Map<String, Object> properties = new HashMap<>();
-        properties.put("yarnEnabled", true);
-        properties.put("yarnVersion", "1.16.0");
-        properties.put("yarnDistributionUrl", "protocol://domain/unknown");
-        createBuildFile(projectDirectoryPath, properties);
+        final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
+            .yarnEnabled(true)
+            .yarnVersion("1.16.0")
+            .yarnDistributionUrlPattern("protocol://domain/unknown");
+        createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result = runGradleAndExpectFailure(projectDirectoryPath,
             FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
@@ -94,13 +90,13 @@ class YarnInstallTaskFuncTest {
 
     @Test
     void shouldFailWhenProxyHostIsUnknown() throws IOException {
-        final Map<String, Object> properties = new HashMap<>();
-        properties.put("yarnEnabled", true);
-        properties.put("yarnVersion", "1.16.0");
-        properties.put("proxyHost", PROXY_HOST);
-        properties.put("proxyPort", PROXY_PORT);
-        properties.put("verboseModeEnabled", true);
-        createBuildFile(projectDirectoryPath, properties);
+        final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
+            .yarnEnabled(true)
+            .yarnVersion("1.16.0")
+            .proxyHost(PROXY_HOST)
+            .proxyPort(PROXY_PORT)
+            .verboseModeEnabled(true);
+        createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradleAndExpectFailure(projectDirectoryPath,
             FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
@@ -110,11 +106,11 @@ class YarnInstallTaskFuncTest {
 
     @Test
     void shouldSucceedFirstTimeAndBeUpToDateSecondTime() throws IOException {
-        final Map<String, Object> properties = new HashMap<>();
-        properties.put("yarnEnabled", true);
-        properties.put("yarnVersion", "1.16.0");
-        properties.put("yarnDistributionUrl", getResourceUrl("yarn-v1.16.0.tar.gz"));
-        createBuildFile(projectDirectoryPath, properties);
+        final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
+            .yarnEnabled(true)
+            .yarnVersion("1.16.0")
+            .yarnDistributionUrlPattern(getResourceUrl("yarn-v1.16.0.tar.gz"));
+        createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
 

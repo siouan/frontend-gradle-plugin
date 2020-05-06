@@ -1,10 +1,8 @@
 package org.siouan.frontendgradleplugin.domain.model;
 
 import java.net.Proxy;
-import java.net.URL;
 import java.nio.file.Path;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * Settings to get a distribution.
@@ -21,7 +19,7 @@ public class GetDistributionSettings {
 
     private final Path temporaryDirectoryPath;
 
-    private final URL distributionUrl;
+    private final String distributionUrlPattern;
 
     private final Proxy proxy;
 
@@ -31,18 +29,18 @@ public class GetDistributionSettings {
      * @param distributionId Distribution ID.
      * @param platform Underlying platform.
      * @param version Version.
-     * @param distributionUrl URL to download the distribution.
+     * @param distributionUrlPattern URL pattern to download the distribution.
      * @param temporaryDirectoryPath Path to a temporary directory.
      * @param proxy Proxy used for the connection.
      * @see DistributionId
      */
     public GetDistributionSettings(@Nonnull String distributionId, @Nonnull final Platform platform,
-        @Nonnull final String version, @Nullable final URL distributionUrl, @Nonnull final Path temporaryDirectoryPath,
-        @Nonnull final Proxy proxy) {
+        @Nonnull final String version, @Nonnull final String distributionUrlPattern,
+        @Nonnull final Path temporaryDirectoryPath, @Nonnull final Proxy proxy) {
         this.distributionId = distributionId;
         this.platform = platform;
         this.version = version;
-        this.distributionUrl = distributionUrl;
+        this.distributionUrlPattern = distributionUrlPattern;
         this.temporaryDirectoryPath = temporaryDirectoryPath;
         this.proxy = proxy;
     }
@@ -78,13 +76,13 @@ public class GetDistributionSettings {
     }
 
     /**
-     * Gets the URL to download the distribution.
+     * Gets the URL pattern to download the distribution.
      *
-     * @return URL, may be {@code null} if the URL must be resolved automatically or with another method.
+     * @return URL pattern.
      */
-    @Nullable
-    public URL getDistributionUrl() {
-        return distributionUrl;
+    @Nonnull
+    public String getDistributionUrlPattern() {
+        return distributionUrlPattern;
     }
 
     /**
