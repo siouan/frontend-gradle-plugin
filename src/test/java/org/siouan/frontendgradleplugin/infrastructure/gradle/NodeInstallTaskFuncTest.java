@@ -65,7 +65,7 @@ class NodeInstallTaskFuncTest {
     @Test
     void shouldFailWhenDistributionCannotBeDownloadedWithInvalidUrl() throws IOException {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("10.16.0")
+            .nodeVersion("12.16.3")
             .nodeDistributionUrlPattern("protocol://domain/unknown");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
@@ -78,7 +78,7 @@ class NodeInstallTaskFuncTest {
     @Test
     void shouldFailWhenProxyHostIsUnknown() throws IOException {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("10.16.0")
+            .nodeVersion("12.16.3")
             .proxyHost(PROXY_HOST)
             .proxyPort(PROXY_PORT)
             .verboseModeEnabled(true);
@@ -93,8 +93,8 @@ class NodeInstallTaskFuncTest {
     @Test
     void shouldSucceedFirstTimeAndBeUpToDateSecondTime() throws IOException {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("10.16.0")
-            .nodeDistributionUrlPattern(getResourceUrl("node-v10.16.0.zip"));
+            .nodeVersion("12.16.3")
+            .nodeDistributionUrlPattern(getResourceUrl("node-v12.16.3.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);

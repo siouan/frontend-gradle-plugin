@@ -63,7 +63,7 @@ class GradleLoggerAdapterTest {
 
         adapter.info(MESSAGE, PARAMETER_1, PARAMETER_2);
 
-        verify(logger).info(PREFIX + MESSAGE, new Object[] {PARAMETER_1, PARAMETER_2});
+        verify(logger).log(LogLevel.INFO, PREFIX + MESSAGE, new Object[] {PARAMETER_1, PARAMETER_2});
         verifyNoMoreInteractions(logger);
     }
 
@@ -72,6 +72,33 @@ class GradleLoggerAdapterTest {
         adapter.init(logger, LOGGING_LEVEL, true, PREFIX);
 
         adapter.info(MESSAGE, PARAMETER_1, PARAMETER_2);
+
+        verify(logger).log(LOGGING_LEVEL, PREFIX + MESSAGE, PARAMETER_1, PARAMETER_2);
+        verifyNoMoreInteractions(logger);
+    }
+
+    @Test
+    void shouldNotLogWarnMessageWhenNotInitialized() {
+        adapter.warn(MESSAGE, PARAMETER_1, PARAMETER_2);
+
+        verifyNoMoreInteractions(logger);
+    }
+
+    @Test
+    void shouldDelegateWarnLoggingToGradleLoggerWithSameLevelWhenVerboseModeIsNotEnabled() {
+        adapter.init(logger, LOGGING_LEVEL, false, PREFIX);
+
+        adapter.warn(MESSAGE, PARAMETER_1, PARAMETER_2);
+
+        verify(logger).log(LogLevel.WARN, PREFIX + MESSAGE, new Object[] {PARAMETER_1, PARAMETER_2});
+        verifyNoMoreInteractions(logger);
+    }
+
+    @Test
+    void shouldDelegateWarnLoggingToGradleLoggerWithCurrentLevelWhenVerboseModeIsEnabled() {
+        adapter.init(logger, LOGGING_LEVEL, true, PREFIX);
+
+        adapter.warn(MESSAGE, PARAMETER_1, PARAMETER_2);
 
         verify(logger).log(LOGGING_LEVEL, PREFIX + MESSAGE, PARAMETER_1, PARAMETER_2);
         verifyNoMoreInteractions(logger);

@@ -34,6 +34,16 @@ public class FrontendExtension {
     private final Property<String> nodeDistributionUrlPattern;
 
     /**
+     * Username to authenticate on the server providing Node.js distributions.
+     */
+    private final Property<String> nodeDistributionServerUsername;
+
+    /**
+     * Password to authenticate on the server providing Node.js distributions.
+     */
+    private final Property<String> nodeDistributionServerPassword;
+
+    /**
      * Whether a Yarn distribution shall be downloaded and installed.
      */
     private final Property<Boolean> yarnEnabled;
@@ -59,6 +69,16 @@ public class FrontendExtension {
      * URL pattern to download the Yarn distribution.
      */
     private final Property<String> yarnDistributionUrlPattern;
+
+    /**
+     * Username to authenticate on the server providing Yarn distributions.
+     */
+    private final Property<String> yarnDistributionServerUsername;
+
+    /**
+     * Password to authenticate on the server providing Yarn distributions.
+     */
+    private final Property<String> yarnDistributionServerPassword;
 
     /**
      * The npm/Yarn script installing frontend dependencies.
@@ -116,11 +136,15 @@ public class FrontendExtension {
         nodeVersion = project.getObjects().property(String.class);
         nodeInstallDirectory = project.getObjects().directoryProperty();
         nodeDistributionUrlPattern = project.getObjects().property(String.class);
+        nodeDistributionServerUsername = project.getObjects().property(String.class);
+        nodeDistributionServerPassword = project.getObjects().property(String.class);
         yarnDistributionProvided = project.getObjects().property(Boolean.class);
         yarnEnabled = project.getObjects().property(Boolean.class);
         yarnVersion = project.getObjects().property(String.class);
         yarnInstallDirectory = project.getObjects().directoryProperty();
         yarnDistributionUrlPattern = project.getObjects().property(String.class);
+        yarnDistributionServerUsername = project.getObjects().property(String.class);
+        yarnDistributionServerPassword = project.getObjects().property(String.class);
         installScript = project.getObjects().property(String.class);
         cleanScript = project.getObjects().property(String.class);
         assembleScript = project.getObjects().property(String.class);
@@ -148,6 +172,14 @@ public class FrontendExtension {
         return nodeDistributionUrlPattern;
     }
 
+    public Property<String> getNodeDistributionServerUsername() {
+        return nodeDistributionServerUsername;
+    }
+
+    public Property<String> getNodeDistributionServerPassword() {
+        return nodeDistributionServerPassword;
+    }
+
     public Property<Boolean> getYarnEnabled() {
         return yarnEnabled;
     }
@@ -166,6 +198,14 @@ public class FrontendExtension {
 
     public Property<String> getYarnDistributionUrlPattern() {
         return yarnDistributionUrlPattern;
+    }
+
+    public Property<String> getYarnDistributionServerUsername() {
+        return yarnDistributionServerUsername;
+    }
+
+    public Property<String> getYarnDistributionServerPassword() {
+        return yarnDistributionServerPassword;
     }
 
     public Property<String> getInstallScript() {

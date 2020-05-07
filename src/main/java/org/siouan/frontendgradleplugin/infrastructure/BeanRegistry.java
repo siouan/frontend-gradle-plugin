@@ -98,7 +98,7 @@ public class BeanRegistry {
     }
 
     /**
-     * Registers the given bean instance. If an instance of the same class is already registered, this method has no
+     * Registers the given bean instances. If an instance of the same class is already registered, this method has no
      * effect. For security reasons, trying to register an instance of a {@link BeanRegistry} has no effect.
      *
      * @param bean Bean.

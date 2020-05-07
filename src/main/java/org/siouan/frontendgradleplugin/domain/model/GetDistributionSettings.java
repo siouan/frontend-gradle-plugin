@@ -3,6 +3,7 @@ package org.siouan.frontendgradleplugin.domain.model;
 import java.net.Proxy;
 import java.nio.file.Path;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Settings to get a distribution.
@@ -17,11 +18,13 @@ public class GetDistributionSettings {
 
     private final Platform platform;
 
-    private final Path temporaryDirectoryPath;
-
     private final String distributionUrlPattern;
 
+    private final Credentials distributionServerCredentials;
+
     private final Proxy proxy;
+
+    private final Path temporaryDirectoryPath;
 
     /**
      * Builds settings to get a distribution.
@@ -30,19 +33,22 @@ public class GetDistributionSettings {
      * @param platform Underlying platform.
      * @param version Version.
      * @param distributionUrlPattern URL pattern to download the distribution.
-     * @param temporaryDirectoryPath Path to a temporary directory.
+     * @param distributionServerCredentials Credentials to authenticate on the distribution server before download.
      * @param proxy Proxy used for the connection.
+     * @param temporaryDirectoryPath Path to a temporary directory.
      * @see DistributionId
      */
     public GetDistributionSettings(@Nonnull String distributionId, @Nonnull final Platform platform,
         @Nonnull final String version, @Nonnull final String distributionUrlPattern,
-        @Nonnull final Path temporaryDirectoryPath, @Nonnull final Proxy proxy) {
+        @Nullable final Credentials distributionServerCredentials, @Nonnull final Proxy proxy,
+        @Nonnull final Path temporaryDirectoryPath) {
         this.distributionId = distributionId;
         this.platform = platform;
         this.version = version;
         this.distributionUrlPattern = distributionUrlPattern;
-        this.temporaryDirectoryPath = temporaryDirectoryPath;
+        this.distributionServerCredentials = distributionServerCredentials;
         this.proxy = proxy;
+        this.temporaryDirectoryPath = temporaryDirectoryPath;
     }
 
     /**
@@ -86,13 +92,13 @@ public class GetDistributionSettings {
     }
 
     /**
-     * Gets the path to the temporary directory.
+     * Gets credentials used to authenticate on the distribution server before download.
      *
-     * @return Path.
+     * @return Credentials.
      */
-    @Nonnull
-    public Path getTemporaryDirectoryPath() {
-        return temporaryDirectoryPath;
+    @Nullable
+    public Credentials getDistributionServerCredentials() {
+        return distributionServerCredentials;
     }
 
     /**
@@ -103,5 +109,15 @@ public class GetDistributionSettings {
     @Nonnull
     public Proxy getProxy() {
         return proxy;
+    }
+
+    /**
+     * Gets the path to the temporary directory.
+     *
+     * @return Path.
+     */
+    @Nonnull
+    public Path getTemporaryDirectoryPath() {
+        return temporaryDirectoryPath;
     }
 }

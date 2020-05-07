@@ -1,3 +1,4 @@
+import org.siouan.frontendgradleplugin.GradleTestListener
 
 plugins {
     id 'java-gradle-plugin'
@@ -17,7 +18,7 @@ tasks.named('wrapper') {
 
 tasks.named('test', Test) { t ->
     t.useJUnitPlatform()
-    gradle.addListener(new SiouanTestListener(logger))
+    gradle.addListener(new GradleTestListener(logger))
 }
 
 tasks.named('jacocoTestReport') {
@@ -66,36 +67,6 @@ pluginBundle {
             displayName = 'Frontend Gradle plugin'
             description = 'Build Node.js, npm, Yarn applications with Gradle.'
             tags = ['node', 'nodejs', 'npm', 'npx', 'yarn', 'frontend']
-        }
-    }
-}
-
-class SiouanTestListener implements TestListener, TestOutputListener {
-    Logger logger;
-
-    SiouanTestListener(Logger logger) {
-        this.logger = logger;
-    }
-
-    void beforeSuite(TestDescriptor testSuite) {}
-
-    void afterSuite(TestDescriptor testSuite, TestResult result) {}
-
-    void beforeTest(TestDescriptor testDescriptor) {
-        logger.lifecycle('\n========== TEST {}.{} STARTED ==========',
-                testDescriptor.className.substring(testDescriptor.className.lastIndexOf('.') + 1),
-                testDescriptor.displayName);
-    }
-
-    void afterTest(TestDescriptor testDescriptor, TestResult result) {
-        logger.lifecycle('========== TEST {}.{} {} ==========',
-                testDescriptor.className.substring(testDescriptor.className.lastIndexOf('.') + 1),
-                testDescriptor.displayName, result.resultType);
-    }
-
-    void onOutput(TestDescriptor testDescriptor, TestOutputEvent outputEvent) {
-        if (!outputEvent.message.trim().isBlank()) {
-            logger.lifecycle('  {}', outputEvent.message);
         }
     }
 }

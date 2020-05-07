@@ -18,6 +18,7 @@ import org.siouan.frontendgradleplugin.domain.exception.InvalidDistributionUrlEx
 import org.siouan.frontendgradleplugin.domain.exception.UnsupportedDistributionArchiveException;
 import org.siouan.frontendgradleplugin.domain.exception.UnsupportedDistributionIdException;
 import org.siouan.frontendgradleplugin.domain.exception.UnsupportedPlatformException;
+import org.siouan.frontendgradleplugin.domain.model.Credentials;
 import org.siouan.frontendgradleplugin.domain.model.InstallSettings;
 import org.siouan.frontendgradleplugin.domain.model.Platform;
 import org.siouan.frontendgradleplugin.domain.usecase.InstallYarnDistribution;
@@ -45,6 +46,16 @@ public class YarnInstallTask extends DefaultTask {
     private final Property<String> yarnDistributionUrlPattern;
 
     /**
+     * Username to authenticate on the server providing Yarn distributions.
+     */
+    private final Property<String> yarnDistributionServerUsername;
+
+    /**
+     * Password to authenticate on the server providing Yarn distributions.
+     */
+    private final Property<String> yarnDistributionServerPassword;
+
+    /**
      * Proxy host used to download resources.
      *
      * @since 2.1.0
@@ -62,6 +73,8 @@ public class YarnInstallTask extends DefaultTask {
         this.yarnVersion = getProject().getObjects().property(String.class);
         this.yarnInstallDirectory = getProject().getObjects().directoryProperty();
         this.yarnDistributionUrlPattern = getProject().getObjects().property(String.class);
+        this.yarnDistributionServerUsername = getProject().getObjects().property(String.class);
+        this.yarnDistributionServerPassword = getProject().getObjects().property(String.class);
         this.proxyHost = getProject().getObjects().property(String.class);
         this.proxyPort = getProject().getObjects().property(Integer.class);
     }
@@ -74,6 +87,16 @@ public class YarnInstallTask extends DefaultTask {
     @Input
     public Property<String> getYarnDistributionUrlPattern() {
         return yarnDistributionUrlPattern;
+    }
+
+    @Internal
+    public Property<String> getYarnDistributionServerUsername() {
+        return yarnDistributionServerUsername;
+    }
+
+    @Internal
+    public Property<String> getYarnDistributionServerPassword() {
+        return yarnDistributionServerPassword;
     }
 
     @OutputDirectory
@@ -108,6 +131,10 @@ public class YarnInstallTask extends DefaultTask {
     public void execute() throws BeanRegistryException, ArchiverException, UnsupportedDistributionArchiveException,
         UnsupportedPlatformException, UnsupportedDistributionIdException, InvalidDistributionUrlException,
         DistributionValidatorException, IOException {
+        final Credentials credentials = yarnDistributionServerUsername
+            .map(
+                username -> new Credentials(yarnDistributionServerUsername.get(), yarnDistributionServerPassword.get()))
+            .getOrNull();
         final Proxy proxy = proxyHost
             .map(host -> new Proxy(Proxy.Type.HTTP, new InetSocketAddress(host, proxyPort.get())))
             .getOrElse(Proxy.NO_PROXY);
@@ -115,6 +142,6 @@ public class YarnInstallTask extends DefaultTask {
             .getBean(InstallYarnDistribution.class)
             .execute(
                 new InstallSettings(Beans.getBean(Platform.class), yarnVersion.get(), yarnDistributionUrlPattern.get(),
-                    proxy, getTemporaryDir().toPath(), yarnInstallDirectory.getAsFile().get().toPath()));
+                    credentials, proxy, getTemporaryDir().toPath(), yarnInstallDirectory.getAsFile().get().toPath()));
     }
 }

@@ -4,6 +4,7 @@ import java.net.Proxy;
 import java.net.URL;
 import java.nio.file.Path;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Settings for distribution validation.
@@ -16,24 +17,29 @@ public class DistributionValidatorSettings {
 
     private final URL distributionUrl;
 
-    private final Path distributionFilePath;
+    private final Credentials distributionServerCredentials;
 
     private final Proxy proxy;
+
+    private final Path distributionFilePath;
 
     /**
      * Builds validator settings.
      *
      * @param temporaryDirectoryPath Path to a temporary directory.
      * @param distributionUrl URL used to download the distribution.
-     * @param distributionFilePath Path to the distribution archive.
+     * @param distributionServerCredentials Credentials to authenticate on the distribution server before download.
      * @param proxy Proxy used for any connections.
+     * @param distributionFilePath Path to the distribution archive.
      */
     public DistributionValidatorSettings(@Nonnull final Path temporaryDirectoryPath, @Nonnull final URL distributionUrl,
-        @Nonnull final Path distributionFilePath, @Nonnull final Proxy proxy) {
+        @Nullable final Credentials distributionServerCredentials, @Nonnull final Proxy proxy,
+        @Nonnull final Path distributionFilePath) {
         this.temporaryDirectoryPath = temporaryDirectoryPath;
         this.distributionUrl = distributionUrl;
-        this.distributionFilePath = distributionFilePath;
+        this.distributionServerCredentials = distributionServerCredentials;
         this.proxy = proxy;
+        this.distributionFilePath = distributionFilePath;
     }
 
     /**
@@ -57,13 +63,13 @@ public class DistributionValidatorSettings {
     }
 
     /**
-     * Gets the path to the distribution archive.
+     * Gets credentials used to authenticate on the distribution server before download.
      *
-     * @return Path;
+     * @return Credentials.
      */
-    @Nonnull
-    public Path getDistributionFilePath() {
-        return distributionFilePath;
+    @Nullable
+    public Credentials getDistributionServerCredentials() {
+        return distributionServerCredentials;
     }
 
     /**
@@ -74,5 +80,15 @@ public class DistributionValidatorSettings {
     @Nonnull
     public Proxy getProxy() {
         return proxy;
+    }
+
+    /**
+     * Gets the path to the distribution archive.
+     *
+     * @return Path;
+     */
+    @Nonnull
+    public Path getDistributionFilePath() {
+        return distributionFilePath;
     }
 }

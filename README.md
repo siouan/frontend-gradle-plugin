@@ -9,16 +9,16 @@
     <a href="https://sonarcloud.io/dashboard?id=siouan_frontend-gradle-plugin"><img src="https://sonarcloud.io/api/project_badges/measure?project=siouan_frontend-gradle-plugin&metric=reliability_rating" alt="Reliability"/></a>
 </p>
 
-This plugin allows to integrate a [Node.js][nodejs]/[npm][npm]/[Yarn][yarn] build into Gradle. It is inspired by the
-philosophy of the [frontend-maven-plugin][frontend-maven-plugin]. See the [quick start guide](#quick-start-guide) below
-to install/configure the plugin, and build your frontend application.
+This plugin allows to integrate a [Node.js][nodejs]/[npm][npm]/[Yarn][classic-yarn] build into Gradle. It is inspired by
+the philosophy of the [frontend-maven-plugin][frontend-maven-plugin]. See the [quick start guide](#quick-start-guide)
+below to install/configure the plugin, and build your frontend application.
 
 #### Key features
 
-- **Distribution management**: the plugin downloads and installs a [Node.js][nodejs] distribution and/or a [Yarn][yarn]
-distribution when required. Optionally, a shared/global distribution may be used instead to avoid network overhead and
-duplication. The plugin may also use a HTTP proxy server for downloads, to take advantage of any caching facility, and
-submit to the organization's security rules.
+- **Distribution management**: the plugin downloads and installs a [Node.js][nodejs] distribution and/or a
+[Yarn][classic-yarn] distribution when required. Optionally, a shared/global distribution may be used instead to avoid
+network overhead and duplication. The plugin may also use a HTTP proxy server for downloads, to take advantage of any
+caching facility, and submit to the organization's security rules.
 - **Configurable dependencies installation**: depending on the environment, installing frontend dependencies using the
 `package.json` file may require a different command (e.g. `npm ci`).
 - **Built-in tasks**: no need to define tasks to build, clean, check, or publish the frontend application through
@@ -26,7 +26,7 @@ Gradle lifecycle. The plugin provides them out of the box, and ensures their imp
 [recommendations][gradle-task-configuration-avoidance]. Plug scripts from a `package.json` file with the
 [DSL](#dsl-reference), and run `gradlew build`.
 - **Customization**: for more complex use cases, the plugin provides types to create tasks and run custom commands with
-[Node.js][nodejs], [npm][npm], [npx][npx], [Yarn][yarn].
+[Node.js][nodejs], [npm][npm], [npx][npx], [Yarn][classic-yarn].
 
 #### Under the hood
 
@@ -53,17 +53,19 @@ the plugin is easier. Code coverage and predictability increase.
   - [Installation](#installation)
   - [Configuration](#configuration)
     - [DSL reference](#dsl-reference)
+      - [Table of properties](#table-of-properties)
+      - [Configuration blocks](#configuration-blocks)
     - [Examples][examples]
         - [Build a frontend application in a single project][example-single-project]
         - [Build a frontend application in a single project using preinstalled distributions][example-single-project-preinstalled-distributions]
         - [Build multiple frontend applications with dedicated sub-projects using shared distributions][example-multi-projects-applications]
         - [Build a full-stack Spring Boot WAR application with dedicated frontend and backend sub-projects][example-multi-projects-war-application]
-    - [Final steps](#final-steps)
-      - [Build the frontend application](#build-the-frontend-application)
-      - [Use Node.js/npm/npx/Yarn apart from Gradle](#use-nodejsnpmnpxyarn-apart-from-gradle)
-    - [Recommendations](#recommendations)
-      - [Using `*Script` properties](#using-script-properties)
-      - [Customizing built-in tasks](#customizing-built-in-tasks)
+  - [Final steps](#final-steps)
+    - [Build the frontend application](#build-the-frontend-application)
+    - [Use Node.js/npm/npx/Yarn apart from Gradle](#use-nodejsnpmnpxyarn-apart-from-gradle)
+  - [Recommendations](#recommendations)
+    - [Using `*Script` properties](#using-script-properties)
+    - [Customizing built-in tasks](#customizing-built-in-tasks)
 - [Tasks reference](#tasks-reference)
   - [Task tree](#task-tree)
   - [`installNode` - Install Node.js](#installnode---install-nodejs)
@@ -89,7 +91,7 @@ The plugin supports:
 - [Gradle][gradle] 5.1+
 - [JDK][jdk] 8+ 64 bits
 - [Node.js][nodejs] 6.2.1+
-- [Yarn][yarn] 1.0+
+- [Yarn][classic-yarn] 1.0+ ([Yarn 2][yarn] not supported)
 
 The plugin is built and tested on Linux, Mac OS, Windows. See the [contributing notes][contributing] to know the list of
 build environments used.
@@ -102,19 +104,20 @@ Follow instructions provided by the Gradle Plugin Portal [here][gradle-plugin-pa
 
 #### DSL reference
 
-The plugin declares an extension to Gradle DSL, named `frontend`. Declare a `frontend` block in the `build.gradle[.kts]`
-file, and use the properties below to setup the build. The table hereafter introduces all properties, followed by
-examples. <b>Bold case</b> is used to highlight required properties, an example is provided when default property value
-is <code>null</code>. You may also take a look at [Tasks reference](#tasks-reference) section for further information.
+##### Table of properties
+
+The table below introduces each property in details. You may also take a look at [Tasks reference](#tasks-reference)
+section for further information. **Bold case** highlights required properties.
 
 <table>
-<thead>
-<tr>
-    <th align="left">Property</th>
-    <th align="left">Description</th>
-</tr>
-</thead>
 <tbody>
+<tr>
+    <th scope="col" align="left">Property</th>
+    <th scope="col" align="left">Description</th>
+</tr>
+<tr>
+    <th scope="col" align="center" colspan="2">NODE.JS SETTINGS</th>
+</tr>
 <tr>
     <td align="left"><b><code>nodeDistributionProvided</code></b></td>
     <td align="left">
@@ -135,7 +138,7 @@ Other <code>node*</code> properties should not be used for clarity. When <code>f
     <td align="left"><code>nodeVersion</code></td>
     <td align="left">
 <b>Default value</b>: <code>null</code><br/>
-<b>Example</b>: <code>'12.16.1'</code><br/>
+<b>Example</b>: <code>'12.16.3'</code><br/>
 <br/>
 Version number used to build the exact URL to download the distribution. The property is required when the
 <code>nodeDistributionProvided</code> property is <code>false</code>.
@@ -149,10 +152,28 @@ Version number used to build the exact URL to download the distribution. The pro
 Set this property to download the distribution from a custom website. By default, the plugin attempts to download the
 distribution compatible with the current platform from Node.js' website. The version of the distribution is expected to
 be the same as the one set in the <code>nodeVersion</code> property, or this may lead to unexpected results. The
-property may be set with a fixed URL (e.g. <code>https://myorganisation.com/dist/node-v10.12.1-win-x64.zip</code>), or
+property may be set with a fixed URL (e.g. <code>https://myorganisation.com/dist/node-v12.16.3-win-x64.zip</code>), or
 take advantage of the automatic distribution resolution in the plugin, using specific tokens in the URL pattern:
 <code>VERSION</code>, <code>ARCH</code>, <code>TYPE</code>. See the <code>installNode</code> task for details about when
 and how to use these tokens.
+</td>
+</tr>
+<tr>
+    <td align="left"><code>nodeDistributionServerUsername</code></td>
+    <td align="left">
+<b>Default value</b>: <code>null</code><br/>
+<br/>
+This property may be used to download the distribution with a given identity (BASIC scheme server-side). When not
+<code>null</code>, the <code>nodeDistributionServerPassword</code> property is required. 
+</td>
+</tr>
+<tr>
+    <td align="left"><code>nodeDistributionServerPassword</code></td>
+    <td align="left">
+<b>Default value</b>: <code>null</code><br/>
+<br/>
+Set this property to authenticate the distribution download (BASIC scheme server-side). The property is ignored unless
+the <code>nodeDistributionServerUsername</code> property is defined.
 </td>
 </tr>
 <tr>
@@ -160,16 +181,19 @@ and how to use these tokens.
     <td align="left">
 <b>Default value</b>: <code>file("${projectDir}/node")</code><br/>
 <br/>
-Install directory where the distribution archive shall be exploded.
+Install directory where the distribution archive shall be exploded, or where a provided distribution is located.
     </td>
+</tr>
+<tr>
+    <th scope="col" align="center" colspan="2">YARN SETTINGS</th>
 </tr>
 <tr>
     <td align="left"><b><code>yarnEnabled</code></b></td>
     <td align="left">
 <b>Default value</b>: <code>false</code><br/>
 <br/>
-Whether Yarn shall be used instead of npm when executing frontend tasks. Consequently, a Yarn distribution will be
-downloaded and installed by the plugin. If <code>true</code>, the <code>yarnVersion</code> property must be set.
+Whether Yarn shall be used instead of npm when executing frontend tasks. Consequently, a Yarn distribution may be
+downloaded and installed by the plugin, or may be provided on the local platform.
 </td>
 </tr>
 <tr>
@@ -178,7 +202,7 @@ downloaded and installed by the plugin. If <code>true</code>, the <code>yarnVers
 <b>Default value</b>: <code>false</code><br/>
 <br/>
 Whether the Yarn distribution is already provided, and shall not be downloaded. When <code>true</code>, the plugin
-relies on the following locations in this exact order to find the yarn executable:
+relies on the following locations in this exact order to find the <code>yarn</code> executable:
 <ul>
 <li>The directory pointed by the <code>yarnInstallDirectory</code> property, if not <code>null</code>.</li>
 <li>The directory pointed by the <code>YARN_HOME</code> environment variable, if not <code>null</code>.</li>
@@ -213,11 +237,40 @@ task for details about when and how to use this token.
     </td>
 </tr>
 <tr>
+    <td align="left"><code>yarnDistributionServerUsername</code></td>
+    <td align="left">
+<b>Default value</b>: <code>null</code><br/>
+<br/>
+This property may be used to download the distribution with a given identity (BASIC scheme server-side). When not
+<code>null</code>, the <code>yarnDistributionServerPassword</code> property is required. 
+</td>
+</tr>
+<tr>
+    <td align="left"><code>yarnDistributionServerPassword</code></td>
+    <td align="left">
+<b>Default value</b>: <code>null</code><br/>
+<br/>
+Set this property to authenticate the distribution download (BASIC scheme server-side). The property is ignored unless
+the <code>yarnDistributionServerUsername</code> property is defined.
+</td>
+</tr>
+<tr>
     <td align="left"><code>yarnInstallDirectory</code></td>
     <td align="left">
 <b>Default value</b>: <code>file("${projectDir}/yarn")</code><br/>
 <br/>
-Install directory where the distribution archive shall be exploded.
+Install directory where the distribution archive shall be exploded, or where a provided distribution is located.
+    </td>
+</tr>
+<tr>
+    <th scope="col" align="center" colspan="2">SCRIPT SETTINGS</th>
+</tr>
+<tr>
+    <td align="left" colspan="2">
+Name of npm/Yarn scripts (see <code>package.json</code> file) that shall be executed depending
+on this plugin's task. The values below are passed as arguments of npm/yarn executables. Under Unix-like O/S, white
+space characters ' ' in an argument value must be escaped with a backslash character '\'. Under Windows O/S, the whole
+argument must be enclosed between double-quotes. Example: <code>assembleScript = 'run assemble single\ argument'</code>
     </td>
 </tr>
 <tr>
@@ -227,14 +280,6 @@ Install directory where the distribution archive shall be exploded.
 <br/>
 Use this property to customize the command line used to install frontend dependencies. This property is used by the
 <code>installFrontend</code> task.
-    </td>
-</tr>
-<tr>
-    <td align="left" colspan="2">
-<b>Script settings</b>: name of npm/Yarn scripts (see <code>package.json</code> file) that shall be executed depending
-on this plugin's task. The values below are passed as arguments of npm/yarn executables. Under Unix-like O/S, white
-space characters ' ' in an argument value must be escaped with a backslash character '\'. Under Windows O/S, the whole
-argument must be enclosed between double-quotes. Example: <code>assembleScript = 'run assemble single\ argument'</code>
     </td>
 </tr>
 <tr>
@@ -277,6 +322,9 @@ from direct execution, the task is also executed when the Gradle built-in <code>
 Script called to publish the frontend artifacts. This property is used by the <code>publishFrontend</code> task. Apart
 from direct execution, the task is also executed when the Gradle built-in <code>publish</code> task is executed.
     </td>
+</tr>
+<tr>
+    <th scope="col" align="center" colspan="2">OTHER SETTINGS</th>
 </tr>
 <tr>
     <td align="left"><b><code>packageJsonDirectory</code></b></td>
@@ -322,13 +370,18 @@ activating Gradle's INFO or DEBUG levels, that may be too much verbose on a glob
 </tbody>
 </table>
 
+##### Configuration blocks
+
+The plugin declares an extension to Gradle DSL, named `frontend`. Declare a `frontend` block in the `build.gradle[.kts]`
+file, and setup the build with the plugin DSL.
+
 - Groovy syntax:
 
 ```groovy
 // build.gradle
 frontend {
     nodeDistributionProvided = false
-    nodeVersion = '12.16.1'
+    nodeVersion = '12.16.3'
     nodeDistributionUrlPattern = 'https://nodejs.org/dist/vVERSION/node-vVERSION-ARCH.TYPE'
     nodeInstallDirectory = file("${projectDir}/node")
 
@@ -357,7 +410,7 @@ frontend {
 // build.gradle.kts
 frontend {
     nodeDistributionProvided.set(false)
-    nodeVersion.set("12.16.1")
+    nodeVersion.set("12.16.3")
     nodeDistributionUrlPattern.set("https://nodejs.org/dist/vVERSION/node-vVERSION-ARCH.TYPE")
     nodeInstallDirectory.set(project.layout.projectDirectory.dir("node"))
 
@@ -384,9 +437,9 @@ frontend {
 
 See examples introduced [here][examples].
 
-#### Final steps
+### Final steps
 
-##### Build the frontend application
+#### Build the frontend application
 
 Now that the plugin is correctly installed and configured, open a terminal, and execute the following command in the
 project's directory:
@@ -395,10 +448,10 @@ project's directory:
 gradlew build
 ```
 
-##### Use Node.js/npm/npx/Yarn apart from Gradle
+#### Use Node.js/npm/npx/Yarn apart from Gradle
  
-If you plan to use the downloaded distributions of [Node.js][nodejs]/[npm][npm]/[npx][npx] or [Yarn][yarn] apart from
-Gradle, apply the following steps:
+If you plan to use the downloaded distributions of [Node.js][nodejs]/[npm][npm]/[npx][npx] or [Yarn][classic-yarn] apart
+from Gradle, apply the following steps:
 
 - Create a `NODEJS_HOME` environment variable containing the real path set in the `nodeInstallDirectory` property.
 - Add the Node/npm executables' directory to the `PATH` environment variable:
@@ -412,14 +465,14 @@ Optionally, if Yarn is enabled and you don't want to enter Yarn's executable abs
   - On Unix-like O/S, add the `$YARN_HOME/bin` path.
   - On Windows O/S, add the `%YARN_HOME%\bin` path.
 
-#### Recommendations
+### Recommendations
 
-##### Using `*Script` properties
+#### Using `*Script` properties
 
-Design of the plugin's tasks running a [Node.js][nodejs]/[npm][npm]/[npx][npx]/[Yarn][yarn] command
-(e.g. `assembleFrontend` task) rely on the assumption the `package.json` file contains all definitions of the frontend
-build actions, and is the single resource defining how to build the frontend application, execute unit tests, lint
-source code, run a development server, publish artifacts... We recommend to keep these definitions in this file, in the
+Design of the plugin's tasks running a [Node.js][nodejs]/[npm][npm]/[npx][npx]/[Yarn][classic-yarn] command (e.g.
+`assembleFrontend` task) rely on the assumption the `package.json` file contains all definitions of the frontend build
+actions, and is the single resource defining how to build the frontend application, execute unit tests, lint source
+code, run a development server, publish artifacts... We recommend to keep these definitions in this file, in the
 `scripts` section, and avoid as much as possible using the plugin's `*Script` properties to run complex commands. Keep
 the frontend build definitions in one place, and let everyone easily finds out where they are located. In an ideal
 situation, these properties shall all have a value such as `run <script-name>`, and nothing more. For example:
@@ -436,7 +489,7 @@ assembleScript = 'run build'
 // }
 ```
 
-##### Customizing built-in tasks
+#### Customizing built-in tasks
 
 If you need to customize the plugin's built-in tasks (e.g. declare additional I/O or dependencies), it is very important
 to conform to the [Configuration avoidance API][gradle-configuration-avoidance-api]: use references of task providers
@@ -524,13 +577,13 @@ relevant distribution from the custom website.
 
 ### `installYarn` - Install Yarn
 
-The `installYarn` task downloads a [Yarn][yarn] distribution, if `yarnEnabled` property is `true`. By default, the exact
-download URL is guessed using the `yarnVersion` property, and the `yarnDistributionUrlPattern` property. Optionally,
-defining the `proxyHost` property and the `proxyPort` property allow to use a proxy server when downloading the
-distribution. Set the location where the distribution shall be installed with the `yarnInstallDirectory` property, which
-by default is the `${projectDir}/yarn` directory.
+The `installYarn` task downloads a [Yarn][classic-yarn] distribution, if `yarnEnabled` property is `true`. By default,
+the exact download URL is guessed using the `yarnVersion` property, and the `yarnDistributionUrlPattern` property.
+Optionally, defining the `proxyHost` property and the `proxyPort` property allow to use a proxy server when downloading
+the distribution. Set the location where the distribution shall be installed with the `yarnInstallDirectory` property,
+which by default is the `${projectDir}/yarn` directory.
 
-If a [Yarn][yarn] distribution is already installed in the system, and shall be used instead of a downloaded
+If a [Yarn][classic-yarn] distribution is already installed in the system, and shall be used instead of a downloaded
 distribution, set the `yarnDistributionProvided` property to `true` and the location of the distribution with the
 `yarnInstallDirectory` property. Alternatively, this latter property may not be set, and the plugin would locate the
 distribution using the `YARN_HOME` environment variable, or the `PATH` environment variable. Consequently, the
@@ -556,7 +609,7 @@ Depending on the value of the `yarnEnabled` property, the `installFrontend` task
 or a `yarn install` command, by default. If a `package.json` file is found in the directory pointed by the
 `packageJsonDirectory` property, the command shall install/update dependencies and tools for development. Optionally,
 this command may be customized (e.g. to run a `npm ci` command instead of a `npm install` command). To do so, the
-`installScript` property must be set to the corresponding [npm][npm]/[Yarn][yarn] command. This task depends on the
+`installScript` property must be set to the corresponding [npm][npm]/[Yarn][classic-yarn] command. This task depends on the
 `installNode` task, and optionally on the `installYarn` task if the `yarnEnabled` property is `true`.
 
 > This task may be executed directly, e.g. after modifying one of the Node.js/Yarn versions and/or to update frontend
@@ -572,9 +625,9 @@ If you think about tweaking this behavior, and skip the task execution on certai
 `nodes_modules` directory as output), take care of impacts in Gradle. Gradle cannot do magic things with high volume
 input/output directories, and must track each file individually to know if the task must be executed or not. Is it worth
 moving the performance impact in Gradle to skip task execution, or accepting the small overhead of re-running NPM or
-Yarn every time? In a development environment, using the Gradle command line may not be often necessary. On a CI
-workstation where the project is built from scratch after each change, overhead shall be unrelevant because the task
-must be executed anyhow.
+Yarn every time? During development, some people would rather use direct npm/yarn CLI to start a development server, or
+run tests. On a CI workstation where the project is built from scratch after each change, overhead shall be unrelevant
+because the task would be required anyhow.
 
 The plugin is designed with the requirement the task has a consistent and reliable behavior whatever the Javascript
 runtimes used underneath. If it is not acceptable, feel free to declare additional inputs/outputs, with the help of some
@@ -695,7 +748,7 @@ tasks.register<RunNpx>("npxVersion") {
 
 The plugin provides the task type `org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpmYarn` that allows
 creating a custom task to run any frontend script. The `script` property must be set with the corresponding
-[npm][npm]/[Yarn][yarn] command.
+[npm][npm]/[Yarn][classic-yarn] command.
 
 The code below shows the configuration required to run frontend's end-to-end tests in a custom task:
 
@@ -743,6 +796,7 @@ With their feedback, plugin improvement is possible. Special thanks to:
 @[rolaca11](https://github.com/rolaca11),
 @[TapaiBalazs](https://github.com/TapaiBalazs)
 
+[classic-yarn]: <https://classic.yarnpkg.com/> (Yarn 1.x)
 [clean-coder]: <http://cleancoder.com/> (Clean coder)
 [contributing]: <CONTRIBUTING.md> (Contributing to this project)
 [example-multi-projects-war-application]: <examples/multi-projects-war-application> (Build a full-stack Spring Boot WAR application with dedicated frontend and backend sub-projects)
@@ -779,6 +833,6 @@ With their feedback, plugin improvement is possible. Special thanks to:
 [reference-3]: <https://discuss.gradle.org/t/incremental-task-false-up-to-date-result/24619> (A discussion in the Gradle forums)
 [release-notes]: <https://github.com/siouan/frontend-gradle-plugin/releases> (Release notes)
 [task-tree]: <resources/task-tree.png>
-[yarn]: <https://yarnpkg.com/> (Yarn)
+[yarn]: <https://yarnpkg.com/> (Yarn 2)
 [yarn-install]: <https://classic.yarnpkg.com/en/docs/cli/install> (Install all dependencies)
 [yarn-icon]: <resources/yarn-icon.png> (Yarn)

@@ -6,6 +6,7 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -70,7 +71,7 @@ public final class FrontendMapBuilder {
 
     @Nonnull
     public FrontendMapBuilder nodeDistributionUrlPattern(@Nullable final URL nodeDistributionUrlPattern) {
-        return nodeDistributionUrlPattern(nodeDistributionUrlPattern.toString());
+        return nodeDistributionUrlPattern(Objects.toString(nodeDistributionUrlPattern, null));
     }
 
     @Nonnull
@@ -105,7 +106,7 @@ public final class FrontendMapBuilder {
 
     @Nonnull
     public FrontendMapBuilder yarnDistributionUrlPattern(@Nullable final URL yarnDistributionUrlPattern) {
-        return yarnDistributionUrlPattern(yarnDistributionUrlPattern.toString());
+        return yarnDistributionUrlPattern(Objects.toString(yarnDistributionUrlPattern, null));
     }
 
     @Nonnull
