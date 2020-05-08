@@ -9,7 +9,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.net.Proxy;
 import java.nio.file.Path;
 import javax.annotation.Nonnull;
 
@@ -30,15 +29,17 @@ import org.siouan.frontendgradleplugin.domain.model.DistributionId;
 import org.siouan.frontendgradleplugin.domain.model.GetDistributionSettings;
 import org.siouan.frontendgradleplugin.domain.model.InstallSettings;
 import org.siouan.frontendgradleplugin.domain.model.Logger;
+import org.siouan.frontendgradleplugin.domain.model.ProxySettings;
 import org.siouan.frontendgradleplugin.domain.provider.FileManager;
 import org.siouan.frontendgradleplugin.test.fixture.PlatformFixture;
+import org.siouan.frontendgradleplugin.test.fixture.ProxySettingsFixture;
 import org.siouan.frontendgradleplugin.test.util.DeploymentSettingsMatcher;
 import org.siouan.frontendgradleplugin.test.util.GetDistributionSettingsMatcher;
 
 @ExtendWith(MockitoExtension.class)
 class AbstractInstallDistributionTest {
 
-    private static final Proxy PROXY = Proxy.NO_PROXY;
+    private static final ProxySettings PROXY_SETTINGS = ProxySettingsFixture.NO_PROXY_SETTINGS;
 
     private static final String VERSION = "7.34.1";
 
@@ -74,7 +75,7 @@ class AbstractInstallDistributionTest {
         final Exception expectedException = new IOException();
         doThrow(expectedException).when(fileManager).deleteFileTree(installDirectoryPath, true);
         final InstallSettings installSettings = new InstallSettings(PlatformFixture.LOCAL_PLATFORM, VERSION,
-            DISTRIBUTION_URL_PATTERN, null, PROXY, temporaryDirectoryPath, installDirectoryPath);
+            DISTRIBUTION_URL_PATTERN, null, PROXY_SETTINGS, temporaryDirectoryPath, installDirectoryPath);
 
         assertThatThrownBy(() -> usecase.execute(installSettings)).isEqualTo(expectedException);
 
@@ -88,9 +89,10 @@ class AbstractInstallDistributionTest {
         final Exception expectedException = new UnsupportedPlatformException(PlatformFixture.LOCAL_PLATFORM);
         when(getDistribution.execute(argThat(new GetDistributionSettingsMatcher(
             new GetDistributionSettings(usecase.getDistributionId(), PlatformFixture.LOCAL_PLATFORM, VERSION,
-                DISTRIBUTION_URL_PATTERN, null, PROXY, temporaryDirectoryPath))))).thenThrow(expectedException);
+                DISTRIBUTION_URL_PATTERN, null, PROXY_SETTINGS, temporaryDirectoryPath))))).thenThrow(
+            expectedException);
         final InstallSettings installSettings = new InstallSettings(PlatformFixture.LOCAL_PLATFORM, VERSION,
-            DISTRIBUTION_URL_PATTERN, null, PROXY, temporaryDirectoryPath, installDirectoryPath);
+            DISTRIBUTION_URL_PATTERN, null, PROXY_SETTINGS, temporaryDirectoryPath, installDirectoryPath);
 
         assertThatThrownBy(() -> usecase.execute(installSettings)).isEqualTo(expectedException);
 
@@ -106,7 +108,8 @@ class AbstractInstallDistributionTest {
         final Path distributionFilePath = temporaryDirectoryPath.resolve("dist.zip");
         when(getDistribution.execute(argThat(new GetDistributionSettingsMatcher(
             new GetDistributionSettings(usecase.getDistributionId(), PlatformFixture.LOCAL_PLATFORM, VERSION,
-                DISTRIBUTION_URL_PATTERN, null, PROXY, temporaryDirectoryPath))))).thenReturn(distributionFilePath);
+                DISTRIBUTION_URL_PATTERN, null, PROXY_SETTINGS, temporaryDirectoryPath))))).thenReturn(
+            distributionFilePath);
         final Exception expectedException = mock(UnsupportedDistributionArchiveException.class);
         doThrow(expectedException)
             .when(deployDistribution)
@@ -114,7 +117,7 @@ class AbstractInstallDistributionTest {
                 new DeploymentSettings(PlatformFixture.LOCAL_PLATFORM, extractDirectoryPath, installDirectoryPath,
                     distributionFilePath))));
         final InstallSettings installSettings = new InstallSettings(PlatformFixture.LOCAL_PLATFORM, VERSION,
-            DISTRIBUTION_URL_PATTERN, null, PROXY, temporaryDirectoryPath, installDirectoryPath);
+            DISTRIBUTION_URL_PATTERN, null, PROXY_SETTINGS, temporaryDirectoryPath, installDirectoryPath);
 
         assertThatThrownBy(() -> usecase.execute(installSettings)).isEqualTo(expectedException);
 
@@ -130,11 +133,12 @@ class AbstractInstallDistributionTest {
         final Path distributionFilePath = temporaryDirectoryPath.resolve("dist.zip");
         when(getDistribution.execute(argThat(new GetDistributionSettingsMatcher(
             new GetDistributionSettings(usecase.getDistributionId(), PlatformFixture.LOCAL_PLATFORM, VERSION,
-                DISTRIBUTION_URL_PATTERN, null, PROXY, temporaryDirectoryPath))))).thenReturn(distributionFilePath);
+                DISTRIBUTION_URL_PATTERN, null, PROXY_SETTINGS, temporaryDirectoryPath))))).thenReturn(
+            distributionFilePath);
         final Exception expectedException = new IOException();
         doThrow(expectedException).when(fileManager).delete(distributionFilePath);
         final InstallSettings installSettings = new InstallSettings(PlatformFixture.LOCAL_PLATFORM, VERSION,
-            DISTRIBUTION_URL_PATTERN, null, PROXY, temporaryDirectoryPath, installDirectoryPath);
+            DISTRIBUTION_URL_PATTERN, null, PROXY_SETTINGS, temporaryDirectoryPath, installDirectoryPath);
 
         assertThatThrownBy(() -> usecase.execute(installSettings)).isEqualTo(expectedException);
 
@@ -153,9 +157,10 @@ class AbstractInstallDistributionTest {
         final Path distributionFilePath = temporaryDirectoryPath.resolve("dist.zip");
         when(getDistribution.execute(argThat(new GetDistributionSettingsMatcher(
             new GetDistributionSettings(usecase.getDistributionId(), PlatformFixture.LOCAL_PLATFORM, VERSION,
-                DISTRIBUTION_URL_PATTERN, null, PROXY, temporaryDirectoryPath))))).thenReturn(distributionFilePath);
+                DISTRIBUTION_URL_PATTERN, null, PROXY_SETTINGS, temporaryDirectoryPath))))).thenReturn(
+            distributionFilePath);
         final InstallSettings installSettings = new InstallSettings(PlatformFixture.LOCAL_PLATFORM, VERSION,
-            DISTRIBUTION_URL_PATTERN, null, PROXY, temporaryDirectoryPath, installDirectoryPath);
+            DISTRIBUTION_URL_PATTERN, null, PROXY_SETTINGS, temporaryDirectoryPath, installDirectoryPath);
 
         usecase.execute(installSettings);
 

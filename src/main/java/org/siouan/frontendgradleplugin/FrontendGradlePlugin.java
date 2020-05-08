@@ -239,6 +239,8 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
         task.getProxyHost().set(extension.getProxyHost());
         task.getProxyPort().set(extension.getProxyPort());
+        task.getProxyUsername().set(extension.getProxyUsername());
+        task.getProxyPassword().set(extension.getProxyPassword());
         task.setOnlyIf(t -> !extension.getNodeDistributionProvided().get());
     }
 
@@ -258,6 +260,8 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.getYarnDistributionServerPassword().set(extension.getYarnDistributionServerPassword());
         task.getProxyHost().set(extension.getProxyHost());
         task.getProxyPort().set(extension.getProxyPort());
+        task.getProxyUsername().set(extension.getProxyUsername());
+        task.getProxyPassword().set(extension.getProxyPassword());
         task.setOnlyIf(t -> extension.getYarnEnabled().get() && !extension.getYarnDistributionProvided().get());
     }
 

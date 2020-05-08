@@ -79,13 +79,14 @@ public class GetDistribution {
         final URL distributionUrl = distributionUrlResolver.execute(distributionDefinition);
 
         // Download the distribution
-        logger.info("Downloading distribution at '{}'", distributionUrl);
+        logger.info("Downloading distribution at '{}' (proxy: {})", distributionUrl,
+            getDistributionSettings.getProxySettings().getProxy());
         final Path distributionFilePath = getDistributionSettings
             .getTemporaryDirectoryPath()
             .resolve(resolveDistributionFileName(distributionUrl));
         downloadResource.execute(
             new DownloadSettings(distributionUrl, getDistributionSettings.getDistributionServerCredentials(),
-                getDistributionSettings.getProxy(), getDistributionSettings.getTemporaryDirectoryPath(),
+                getDistributionSettings.getProxySettings(), getDistributionSettings.getTemporaryDirectoryPath(),
                 distributionFilePath));
 
         final Optional<DistributionValidator> distributionValidator = getDistributionValidator.execute(
@@ -93,7 +94,7 @@ public class GetDistribution {
         if (distributionValidator.isPresent()) {
             final DistributionValidatorSettings distributionValidatorSettings = new DistributionValidatorSettings(
                 getDistributionSettings.getTemporaryDirectoryPath(), distributionUrl,
-                getDistributionSettings.getDistributionServerCredentials(), getDistributionSettings.getProxy(),
+                getDistributionSettings.getDistributionServerCredentials(), getDistributionSettings.getProxySettings(),
                 distributionFilePath);
             distributionValidator.get().execute(distributionValidatorSettings);
         }

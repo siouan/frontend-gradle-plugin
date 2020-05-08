@@ -13,6 +13,7 @@ import javax.annotation.Nonnull;
 import org.siouan.frontendgradleplugin.domain.model.Credentials;
 import org.siouan.frontendgradleplugin.domain.model.DownloadSettings;
 import org.siouan.frontendgradleplugin.domain.model.Logger;
+import org.siouan.frontendgradleplugin.domain.model.ProxySettings;
 import org.siouan.frontendgradleplugin.domain.provider.ChannelProvider;
 import org.siouan.frontendgradleplugin.domain.provider.FileManager;
 import org.siouan.frontendgradleplugin.domain.provider.URLConnectionProvider;
@@ -24,6 +25,8 @@ import org.siouan.frontendgradleplugin.domain.provider.URLConnectionProvider;
 public class DownloadResource {
 
     public static final String AUTHORIZATION_HEADER = "Authorization";
+
+    public static final String PROXY_AUTHORIZATION_HEADER = "Proxy-Authorization";
 
     public static final String TMP_EXTENSION = ".tmp";
 
@@ -61,13 +64,16 @@ public class DownloadResource {
         final Path downloadedFilePath = downloadSettings
             .getTemporaryDirectoryPath()
             .resolve(resourceName + TMP_EXTENSION);
+        final ProxySettings proxySettings = downloadSettings.getProxySettings();
         logger.debug("Downloading resource at '{}' (proxy: {})", downloadSettings.getResourceUrl(),
-            downloadSettings.getProxy());
-        final URLConnection urlConnection = urlConnectionProvider.openConnection(resourceUrl,
-            downloadSettings.getProxy());
+            proxySettings.getProxy());
+        final URLConnection urlConnection = urlConnectionProvider.openConnection(resourceUrl, proxySettings.getProxy());
         final Credentials credentials = downloadSettings.getServerCredentials();
         if (credentials != null) {
             applyAuthorization.execute(urlConnection, AUTHORIZATION_HEADER, credentials);
+        }
+        if (proxySettings.getServerCredentials() != null) {
+            applyAuthorization.execute(urlConnection, PROXY_AUTHORIZATION_HEADER, proxySettings.getServerCredentials());
         }
         try (final ReadableByteChannel resourceInputChannel = channelProvider.getReadableByteChannel(
             urlConnection.getInputStream());

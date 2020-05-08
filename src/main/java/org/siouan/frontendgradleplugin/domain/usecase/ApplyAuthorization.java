@@ -18,8 +18,8 @@ public class ApplyAuthorization {
     public static final String AUTHORIZATION_TYPE = "Basic";
 
     public static final String SECURITY_WARNING =
-        "SECURITY WARNING: using basic authentication scheme with non-secure protocols exposes credentials to the world."
-            + " Consider using HTTPS protocol if possible for URL: '{}'";
+        "SECURITY WARNING: using basic authentication scheme with non-secure protocols exposes credentials."
+            + " Consider using HTTPS protocol for URL: '{}'";
 
     private static final String HTTPS_PROTOCOL = "https";
 

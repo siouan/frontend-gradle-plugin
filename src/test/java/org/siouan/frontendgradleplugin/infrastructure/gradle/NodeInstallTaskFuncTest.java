@@ -26,10 +26,6 @@ import org.siouan.frontendgradleplugin.test.util.FrontendMapBuilder;
  */
 class NodeInstallTaskFuncTest {
 
-    private static final String PROXY_HOST = "149.43.132.89";
-
-    private static final int PROXY_PORT = 59338;
-
     @TempDir
     Path projectDirectoryPath;
 
@@ -73,21 +69,6 @@ class NodeInstallTaskFuncTest {
             FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
 
         assertTaskFailed(result, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
-    }
-
-    @Test
-    void shouldFailWhenProxyHostIsUnknown() throws IOException {
-        final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("12.16.3")
-            .proxyHost(PROXY_HOST)
-            .proxyPort(PROXY_PORT)
-            .verboseModeEnabled(true);
-        createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
-
-        final BuildResult result1 = runGradleAndExpectFailure(projectDirectoryPath,
-            FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
-
-        assertTaskFailed(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
     }
 
     @Test

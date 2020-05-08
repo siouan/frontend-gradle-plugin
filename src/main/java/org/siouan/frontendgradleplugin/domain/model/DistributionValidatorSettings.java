@@ -1,6 +1,5 @@
 package org.siouan.frontendgradleplugin.domain.model;
 
-import java.net.Proxy;
 import java.net.URL;
 import java.nio.file.Path;
 import javax.annotation.Nonnull;
@@ -19,7 +18,7 @@ public class DistributionValidatorSettings {
 
     private final Credentials distributionServerCredentials;
 
-    private final Proxy proxy;
+    private final ProxySettings proxySettings;
 
     private final Path distributionFilePath;
 
@@ -29,16 +28,16 @@ public class DistributionValidatorSettings {
      * @param temporaryDirectoryPath Path to a temporary directory.
      * @param distributionUrl URL used to download the distribution.
      * @param distributionServerCredentials Credentials to authenticate on the distribution server before download.
-     * @param proxy Proxy used for any connections.
+     * @param proxySettings Proxy settings used for downloads.
      * @param distributionFilePath Path to the distribution archive.
      */
     public DistributionValidatorSettings(@Nonnull final Path temporaryDirectoryPath, @Nonnull final URL distributionUrl,
-        @Nullable final Credentials distributionServerCredentials, @Nonnull final Proxy proxy,
+        @Nullable final Credentials distributionServerCredentials, @Nonnull final ProxySettings proxySettings,
         @Nonnull final Path distributionFilePath) {
         this.temporaryDirectoryPath = temporaryDirectoryPath;
         this.distributionUrl = distributionUrl;
         this.distributionServerCredentials = distributionServerCredentials;
-        this.proxy = proxy;
+        this.proxySettings = proxySettings;
         this.distributionFilePath = distributionFilePath;
     }
 
@@ -73,13 +72,13 @@ public class DistributionValidatorSettings {
     }
 
     /**
-     * Gets the proxy used for the connection.
+     * Gets the proxy settings used for downloads.
      *
-     * @return Proxy.
+     * @return Proxy settings.
      */
     @Nonnull
-    public Proxy getProxy() {
-        return proxy;
+    public ProxySettings getProxySettings() {
+        return proxySettings;
     }
 
     /**

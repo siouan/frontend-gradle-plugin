@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URLConnection;
@@ -32,9 +33,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.siouan.frontendgradleplugin.domain.model.Credentials;
 import org.siouan.frontendgradleplugin.domain.model.DownloadSettings;
 import org.siouan.frontendgradleplugin.domain.model.Logger;
+import org.siouan.frontendgradleplugin.domain.model.ProxySettings;
 import org.siouan.frontendgradleplugin.domain.provider.ChannelProvider;
 import org.siouan.frontendgradleplugin.domain.provider.FileManager;
 import org.siouan.frontendgradleplugin.domain.provider.URLConnectionProvider;
+import org.siouan.frontendgradleplugin.test.fixture.ProxySettingsFixture;
 
 /**
  * <b>Note on verifications</b>: exhaustive verification of interactions on the resource output channel is not possible
@@ -47,7 +50,7 @@ class DownloadResourceTest {
 
     private static final String DOWNLOAD_DIRECTORY_NAME = "download";
 
-    private static final Proxy PROXY = Proxy.NO_PROXY;
+    private static final ProxySettings PROXY_SETTINGS = ProxySettingsFixture.NO_PROXY_SETTINGS;
 
     private static final String RESOURCE_NAME = "resource.zip";
 
@@ -86,7 +89,7 @@ class DownloadResourceTest {
         final DownloadSettings downloadSettings = buildDownloadParameters(Paths.get("/y45y97@p"));
         final IOException expectedException = new IOException();
         when(urlConnectionProvider.openConnection(downloadSettings.getResourceUrl(),
-            downloadSettings.getProxy())).thenThrow(expectedException);
+            downloadSettings.getProxySettings().getProxy())).thenThrow(expectedException);
 
         assertThatThrownBy(() -> usecase.execute(downloadSettings)).isEqualTo(expectedException);
 
@@ -98,7 +101,7 @@ class DownloadResourceTest {
     void shouldFailWhenResourceCannotBeDownloaded() throws IOException {
         final DownloadSettings downloadSettings = buildDownloadParameters(Paths.get("/y45y97@p"));
         when(urlConnectionProvider.openConnection(downloadSettings.getResourceUrl(),
-            downloadSettings.getProxy())).thenReturn(urlConnection);
+            downloadSettings.getProxySettings().getProxy())).thenReturn(urlConnection);
         final IOException expectedException = new IOException();
         when(urlConnection.getInputStream()).thenThrow(expectedException);
 
@@ -117,7 +120,7 @@ class DownloadResourceTest {
     void shouldFailWhenTemporaryFileCannotBeCreated() throws IOException {
         final DownloadSettings downloadSettings = buildDownloadParameters(Paths.get("/volezp", "gixkkle"));
         when(urlConnectionProvider.openConnection(downloadSettings.getResourceUrl(),
-            downloadSettings.getProxy())).thenReturn(urlConnection);
+            downloadSettings.getProxySettings().getProxy())).thenReturn(urlConnection);
         when(urlConnection.getInputStream()).thenReturn(inputStream);
         final ReadableByteChannel resourceInputChannel = mock(ReadableByteChannel.class);
         when(channelProvider.getReadableByteChannel(inputStream)).thenReturn(resourceInputChannel);
@@ -141,7 +144,7 @@ class DownloadResourceTest {
     void shouldFailWhenDataTransferFails() throws IOException {
         final DownloadSettings downloadSettings = buildDownloadParameters(Paths.get("/volezp", "gixkkle"));
         when(urlConnectionProvider.openConnection(downloadSettings.getResourceUrl(),
-            downloadSettings.getProxy())).thenReturn(urlConnection);
+            downloadSettings.getProxySettings().getProxy())).thenReturn(urlConnection);
         when(urlConnection.getInputStream()).thenReturn(inputStream);
         final ReadableByteChannel resourceInputChannel = mock(ReadableByteChannel.class);
         when(channelProvider.getReadableByteChannel(inputStream)).thenReturn(resourceInputChannel);
@@ -167,7 +170,7 @@ class DownloadResourceTest {
     void shouldFailWhenTemporaryFileCannotBeMovedToDestinationFile() throws IOException {
         final DownloadSettings downloadSettings = buildDownloadParameters(Paths.get("/volezp", "gixkkle"));
         when(urlConnectionProvider.openConnection(downloadSettings.getResourceUrl(),
-            downloadSettings.getProxy())).thenReturn(urlConnection);
+            downloadSettings.getProxySettings().getProxy())).thenReturn(urlConnection);
         when(urlConnection.getInputStream()).thenReturn(inputStream);
         final ReadableByteChannel resourceInputChannel = mock(ReadableByteChannel.class);
         when(channelProvider.getReadableByteChannel(inputStream)).thenReturn(resourceInputChannel);
@@ -196,7 +199,7 @@ class DownloadResourceTest {
         final Path destinationFilePath = destinationDirectoryPath.resolve(RESOURCE_NAME);
         final DownloadSettings downloadSettings = buildDownloadParameters(destinationFilePath);
         when(urlConnectionProvider.openConnection(downloadSettings.getResourceUrl(),
-            downloadSettings.getProxy())).thenReturn(urlConnection);
+            downloadSettings.getProxySettings().getProxy())).thenReturn(urlConnection);
         when(urlConnection.getInputStream()).thenReturn(inputStream);
         final ReadableByteChannel resourceInputChannel = mock(ReadableByteChannel.class);
         when(channelProvider.getReadableByteChannel(inputStream)).thenReturn(resourceInputChannel);
@@ -219,13 +222,17 @@ class DownloadResourceTest {
     }
 
     @Test
-    void shouldDownloadLocalResourceWithBasicAuthentication() throws IOException {
+    void shouldDownloadLocalResourceWithBasicAuthenticationOnBothProxyServerAndDistributionServer() throws IOException {
         final Path destinationDirectoryPath = temporaryDirectoryPath.resolve("install");
         final Path destinationFilePath = destinationDirectoryPath.resolve(RESOURCE_NAME);
-        final Credentials credentials = new Credentials("username", "password");
-        final DownloadSettings downloadSettings = buildDownloadParameters(destinationFilePath, credentials);
+        final Credentials distributionServerCredentials = new Credentials("username", "password");
+        final Credentials proxyServerCredentials = new Credentials("proxyUsername", "proxyPassword");
+        final ProxySettings proxySettings = new ProxySettings(
+            new Proxy(Proxy.Type.HTTP, InetSocketAddress.createUnresolved("localhost", 0)), proxyServerCredentials);
+        final DownloadSettings downloadSettings = buildDownloadParameters(destinationFilePath,
+            distributionServerCredentials, proxySettings);
         when(urlConnectionProvider.openConnection(downloadSettings.getResourceUrl(),
-            downloadSettings.getProxy())).thenReturn(urlConnection);
+            downloadSettings.getProxySettings().getProxy())).thenReturn(urlConnection);
         when(urlConnection.getInputStream()).thenReturn(inputStream);
         final ReadableByteChannel resourceInputChannel = mock(ReadableByteChannel.class);
         when(channelProvider.getReadableByteChannel(inputStream)).thenReturn(resourceInputChannel);
@@ -239,7 +246,10 @@ class DownloadResourceTest {
 
         usecase.execute(downloadSettings);
 
-        verify(applyAuthorization).execute(urlConnection, DownloadResource.AUTHORIZATION_HEADER, credentials);
+        verify(applyAuthorization).execute(urlConnection, DownloadResource.AUTHORIZATION_HEADER,
+            distributionServerCredentials);
+        verify(applyAuthorization).execute(urlConnection, DownloadResource.PROXY_AUTHORIZATION_HEADER,
+            proxyServerCredentials);
         verify(resourceOutputChannel).transferFrom(resourceInputChannel, 0, Long.MAX_VALUE);
         verify(resourceInputChannel).close();
         verify(fileManager).move(temporaryFilePath, downloadSettings.getDestinationFilePath(),
@@ -258,12 +268,13 @@ class DownloadResourceTest {
 
     private DownloadSettings buildDownloadParameters(@Nonnull final Path destinationFilePath)
         throws MalformedURLException {
-        return buildDownloadParameters(destinationFilePath, null);
+        return buildDownloadParameters(destinationFilePath, null, PROXY_SETTINGS);
     }
 
     private DownloadSettings buildDownloadParameters(@Nonnull final Path destinationFilePath,
-        @Nullable final Credentials credentials) throws MalformedURLException {
-        return new DownloadSettings(getResourceFilePath().toUri().toURL(), credentials, PROXY,
+        @Nullable final Credentials credentials, @Nonnull final ProxySettings proxySettings)
+        throws MalformedURLException {
+        return new DownloadSettings(getResourceFilePath().toUri().toURL(), credentials, proxySettings,
             getDownloadDirectoryPath(), destinationFilePath);
     }
 }

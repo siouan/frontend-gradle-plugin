@@ -30,16 +30,22 @@ public class FrontendExtension {
 
     /**
      * URL pattern to download the Node.js distribution.
+     *
+     * @since 3.0.0
      */
     private final Property<String> nodeDistributionUrlPattern;
 
     /**
      * Username to authenticate on the server providing Node.js distributions.
+     *
+     * @since 3.0.0
      */
     private final Property<String> nodeDistributionServerUsername;
 
     /**
      * Password to authenticate on the server providing Node.js distributions.
+     *
+     * @since 3.0.0
      */
     private final Property<String> nodeDistributionServerPassword;
 
@@ -67,16 +73,22 @@ public class FrontendExtension {
 
     /**
      * URL pattern to download the Yarn distribution.
+     *
+     * @since 3.0.0
      */
     private final Property<String> yarnDistributionUrlPattern;
 
     /**
      * Username to authenticate on the server providing Yarn distributions.
+     *
+     * @since 3.0.0
      */
     private final Property<String> yarnDistributionServerUsername;
 
     /**
      * Password to authenticate on the server providing Yarn distributions.
+     *
+     * @since 3.0.0
      */
     private final Property<String> yarnDistributionServerPassword;
 
@@ -125,6 +137,20 @@ public class FrontendExtension {
     private final Property<Integer> proxyPort;
 
     /**
+     * Username to authenticate on the proxy server.
+     *
+     * @since 3.0.0
+     */
+    private final Property<String> proxyUsername;
+
+    /**
+     * Password to authenticate on the proxy server.
+     *
+     * @since 3.0.0
+     */
+    private final Property<String> proxyPassword;
+
+    /**
      * Whether verbose mode is enabled.
      *
      * @since 2.0.0
@@ -153,6 +179,8 @@ public class FrontendExtension {
         packageJsonDirectory = project.getObjects().property(File.class);
         proxyHost = project.getObjects().property(String.class);
         proxyPort = project.getObjects().property(Integer.class);
+        proxyUsername = project.getObjects().property(String.class);
+        proxyPassword = project.getObjects().property(String.class);
         verboseModeEnabled = project.getObjects().property(Boolean.class);
     }
 
@@ -238,6 +266,14 @@ public class FrontendExtension {
 
     public Property<Integer> getProxyPort() {
         return proxyPort;
+    }
+
+    public Property<String> getProxyUsername() {
+        return proxyUsername;
+    }
+
+    public Property<String> getProxyPassword() {
+        return proxyPassword;
     }
 
     public Property<Boolean> getVerboseModeEnabled() {
