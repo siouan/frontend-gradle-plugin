@@ -388,7 +388,7 @@ frontend {
     yarnEnabled = false
     yarnDistributionProvided = false
     yarnVersion = '1.22.4'
-    yarnDistributionUrl = 'https://github.com/yarnpkg/yarn/releases/download/vVERSION/yarn-vVERSION.tar.gz'
+    yarnDistributionUrlPattern = 'https://github.com/yarnpkg/yarn/releases/download/vVERSION/yarn-vVERSION.tar.gz'
     yarnInstallDirectory = file("${projectDir}/yarn")
 
     installScript = 'install'
