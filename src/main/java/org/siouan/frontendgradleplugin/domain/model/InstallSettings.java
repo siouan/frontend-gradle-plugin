@@ -3,6 +3,7 @@ package org.siouan.frontendgradleplugin.domain.model;
 import java.net.Proxy;
 import java.nio.file.Path;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Settings to install a distribution.
@@ -17,6 +18,8 @@ public class InstallSettings {
 
     private final String distributionUrlPattern;
 
+    private final Credentials distributionServerCredentials;
+
     private final Proxy proxy;
 
     private final Path temporaryDirectoryPath;
@@ -29,16 +32,19 @@ public class InstallSettings {
      * @param platform Underlying platform.
      * @param version Version of the distribution.
      * @param distributionUrlPattern URL pattern to download the distribution.
+     * @param distributionServerCredentials Credentials to authenticate on the distribution server before download.
      * @param proxy Proxy used for downloads.
      * @param temporaryDirectoryPath Path to a temporary directory.
      * @param installDirectoryPath Path to a directory where the distribution shall be installed.
      */
     public InstallSettings(@Nonnull final Platform platform, @Nonnull final String version,
-        @Nonnull final String distributionUrlPattern, @Nonnull final Proxy proxy,
-        @Nonnull final Path temporaryDirectoryPath, @Nonnull final Path installDirectoryPath) {
+        @Nonnull final String distributionUrlPattern, @Nullable final Credentials distributionServerCredentials,
+        @Nonnull final Proxy proxy, @Nonnull final Path temporaryDirectoryPath,
+        @Nonnull final Path installDirectoryPath) {
         this.platform = platform;
         this.version = version;
         this.distributionUrlPattern = distributionUrlPattern;
+        this.distributionServerCredentials = distributionServerCredentials;
         this.proxy = proxy;
         this.temporaryDirectoryPath = temporaryDirectoryPath;
         this.installDirectoryPath = installDirectoryPath;
@@ -72,6 +78,16 @@ public class InstallSettings {
     @Nonnull
     public String getDistributionUrlPattern() {
         return distributionUrlPattern;
+    }
+
+    /**
+     * Gets credentials used to authenticate on the distribution server before download.
+     *
+     * @return Credentials.
+     */
+    @Nullable
+    public Credentials getDistributionServerCredentials() {
+        return distributionServerCredentials;
     }
 
     /**

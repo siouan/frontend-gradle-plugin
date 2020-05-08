@@ -35,6 +35,7 @@ import org.siouan.frontendgradleplugin.infrastructure.gradle.adapter.GradleLogge
 import org.siouan.frontendgradleplugin.infrastructure.provider.ArchiverProviderImpl;
 import org.siouan.frontendgradleplugin.infrastructure.provider.ChannelProviderImpl;
 import org.siouan.frontendgradleplugin.infrastructure.provider.FileManagerImpl;
+import org.siouan.frontendgradleplugin.infrastructure.provider.URLConnectionProviderImpl;
 
 /**
  * Main plugin class that bootstraps the plugin by declaring its DSL and its tasks.
@@ -197,6 +198,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         Beans.registerBean(FileManagerImpl.class);
         Beans.registerBean(ChannelProviderImpl.class);
         Beans.registerBean(ArchiverProviderImpl.class);
+        Beans.registerBean(URLConnectionProviderImpl.class);
         try {
             project.getGradle().addListener(new TaskLoggerConfigurer(Beans.getBean(BeanRegistry.class), extension));
             project.getLogger().debug("Platform: {}", Beans.getBean(Platform.class));
@@ -232,6 +234,8 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.setDescription("Downloads and installs a Node distribution.");
         task.getNodeVersion().set(extension.getNodeVersion());
         task.getNodeDistributionUrlPattern().set(extension.getNodeDistributionUrlPattern());
+        task.getNodeDistributionServerUsername().set(extension.getNodeDistributionServerUsername());
+        task.getNodeDistributionServerPassword().set(extension.getNodeDistributionServerPassword());
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
         task.getProxyHost().set(extension.getProxyHost());
         task.getProxyPort().set(extension.getProxyPort());
@@ -250,6 +254,8 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.getYarnVersion().set(extension.getYarnVersion());
         task.getYarnDistributionUrlPattern().set(extension.getYarnDistributionUrlPattern());
         task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
+        task.getYarnDistributionServerUsername().set(extension.getYarnDistributionServerUsername());
+        task.getYarnDistributionServerPassword().set(extension.getYarnDistributionServerPassword());
         task.getProxyHost().set(extension.getProxyHost());
         task.getProxyPort().set(extension.getProxyPort());
         task.setOnlyIf(t -> extension.getYarnEnabled().get() && !extension.getYarnDistributionProvided().get());

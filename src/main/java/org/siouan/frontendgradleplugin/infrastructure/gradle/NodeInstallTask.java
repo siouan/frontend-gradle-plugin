@@ -18,6 +18,7 @@ import org.siouan.frontendgradleplugin.domain.exception.InvalidDistributionUrlEx
 import org.siouan.frontendgradleplugin.domain.exception.UnsupportedDistributionArchiveException;
 import org.siouan.frontendgradleplugin.domain.exception.UnsupportedDistributionIdException;
 import org.siouan.frontendgradleplugin.domain.exception.UnsupportedPlatformException;
+import org.siouan.frontendgradleplugin.domain.model.Credentials;
 import org.siouan.frontendgradleplugin.domain.model.InstallSettings;
 import org.siouan.frontendgradleplugin.domain.model.Platform;
 import org.siouan.frontendgradleplugin.domain.usecase.InstallNodeDistribution;
@@ -45,6 +46,16 @@ public class NodeInstallTask extends DefaultTask {
     private final Property<String> nodeDistributionUrlPattern;
 
     /**
+     * Username to authenticate on the server providing Node.js distributions.
+     */
+    private final Property<String> nodeDistributionServerUsername;
+
+    /**
+     * Password to authenticate on the server providing Node.js distributions.
+     */
+    private final Property<String> nodeDistributionServerPassword;
+
+    /**
      * Proxy host used to download resources.
      *
      * @since 2.1.0
@@ -62,6 +73,8 @@ public class NodeInstallTask extends DefaultTask {
         this.nodeVersion = getProject().getObjects().property(String.class);
         this.nodeInstallDirectory = getProject().getObjects().directoryProperty();
         this.nodeDistributionUrlPattern = getProject().getObjects().property(String.class);
+        this.nodeDistributionServerUsername = getProject().getObjects().property(String.class);
+        this.nodeDistributionServerPassword = getProject().getObjects().property(String.class);
         this.proxyHost = getProject().getObjects().property(String.class);
         this.proxyPort = getProject().getObjects().property(Integer.class);
     }
@@ -80,6 +93,16 @@ public class NodeInstallTask extends DefaultTask {
     @Optional
     public DirectoryProperty getNodeInstallDirectory() {
         return nodeInstallDirectory;
+    }
+
+    @Internal
+    public Property<String> getNodeDistributionServerUsername() {
+        return nodeDistributionServerUsername;
+    }
+
+    @Internal
+    public Property<String> getNodeDistributionServerPassword() {
+        return nodeDistributionServerPassword;
     }
 
     @Internal
@@ -108,6 +131,10 @@ public class NodeInstallTask extends DefaultTask {
     public void execute() throws BeanRegistryException, ArchiverException, UnsupportedDistributionArchiveException,
         UnsupportedPlatformException, UnsupportedDistributionIdException, InvalidDistributionUrlException,
         DistributionValidatorException, IOException {
+        final Credentials credentials = nodeDistributionServerUsername
+            .map(
+                username -> new Credentials(nodeDistributionServerUsername.get(), nodeDistributionServerPassword.get()))
+            .getOrNull();
         final Proxy proxy = proxyHost
             .map(host -> new Proxy(Proxy.Type.HTTP, new InetSocketAddress(host, proxyPort.get())))
             .getOrElse(Proxy.NO_PROXY);
@@ -115,6 +142,6 @@ public class NodeInstallTask extends DefaultTask {
             .getBean(InstallNodeDistribution.class)
             .execute(
                 new InstallSettings(Beans.getBean(Platform.class), nodeVersion.get(), nodeDistributionUrlPattern.get(),
-                    proxy, getTemporaryDir().toPath(), nodeInstallDirectory.getAsFile().get().toPath()));
+                    credentials, proxy, getTemporaryDir().toPath(), nodeInstallDirectory.getAsFile().get().toPath()));
     }
 }

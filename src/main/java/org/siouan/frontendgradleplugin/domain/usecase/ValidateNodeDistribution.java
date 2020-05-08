@@ -57,8 +57,10 @@ public class ValidateNodeDistribution implements DistributionValidator {
 
             // Download the shasum file
             logger.info("Downloading shasums at '{}'", shasumsFileUrl);
-            downloadResource.execute(new DownloadSettings(shasumsFileUrl, distributionValidatorSettings.getProxy(),
-                distributionValidatorSettings.getTemporaryDirectoryPath(), shasumsFilePath));
+            downloadResource.execute(
+                new DownloadSettings(shasumsFileUrl, distributionValidatorSettings.getDistributionServerCredentials(),
+                    distributionValidatorSettings.getProxy(), distributionValidatorSettings.getTemporaryDirectoryPath(),
+                    shasumsFilePath));
 
             // Verify the distribution integrity
             logger.info("Verifying distribution integrity");

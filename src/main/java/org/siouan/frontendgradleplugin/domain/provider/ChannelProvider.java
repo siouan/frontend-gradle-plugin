@@ -1,8 +1,7 @@
 package org.siouan.frontendgradleplugin.domain.provider;
 
 import java.io.IOException;
-import java.net.Proxy;
-import java.net.URL;
+import java.io.InputStream;
 import java.nio.channels.Channel;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
@@ -19,15 +18,13 @@ import javax.annotation.Nonnull;
 public interface ChannelProvider {
 
     /**
-     * Downloads the resource at the given URL.
+     * Opens a channel to read the content from an input stream. Closing the channel closes the input stream.
      *
-     * @param resourceUrl URL to download the resource.
-     * @param proxy Proxy to use for the connection.
+     * @param inputStream Input stream.
      * @return Channel to read the resource content.
-     * @throws IOException In case an I/O error occurs.
      */
     @Nonnull
-    ReadableByteChannel getReadableByteChannel(@Nonnull URL resourceUrl, @Nonnull Proxy proxy) throws IOException;
+    ReadableByteChannel getReadableByteChannel(@Nonnull InputStream inputStream);
 
     /**
      * Opens the file at the given path for reading.

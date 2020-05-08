@@ -147,8 +147,8 @@ class TaskTypesWithGlobalDistributionsFuncTest {
     @Test
     void shouldFailRunningCustomTasksWhenYarnExecutableDoesNotExist() throws IOException {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("12.16.1")
-            .nodeDistributionUrlPattern(getResourceUrl("node-v10.16.0.zip"))
+            .nodeVersion("12.16.3")
+            .nodeDistributionUrlPattern(getResourceUrl("node-v12.16.3.zip"))
             .yarnEnabled(true)
             .yarnDistributionProvided(true);
         final String runNodeTaskDefinition = buildNodeTaskDefinition(RUN_NODE_TASK_NAME,

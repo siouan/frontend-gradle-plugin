@@ -2,6 +2,7 @@ package org.siouan.frontendgradleplugin.domain.usecase;
 
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Path;
@@ -9,10 +10,12 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import javax.annotation.Nonnull;
 
+import org.siouan.frontendgradleplugin.domain.model.Credentials;
 import org.siouan.frontendgradleplugin.domain.model.DownloadSettings;
 import org.siouan.frontendgradleplugin.domain.model.Logger;
 import org.siouan.frontendgradleplugin.domain.provider.ChannelProvider;
 import org.siouan.frontendgradleplugin.domain.provider.FileManager;
+import org.siouan.frontendgradleplugin.domain.provider.URLConnectionProvider;
 
 /**
  * Downloads a resource with efficient behavior and low impact on memory. This downloader uses a temporary directory to
@@ -20,17 +23,27 @@ import org.siouan.frontendgradleplugin.domain.provider.FileManager;
  */
 public class DownloadResource {
 
+    public static final String AUTHORIZATION_HEADER = "Authorization";
+
     public static final String TMP_EXTENSION = ".tmp";
 
     private final FileManager fileManager;
 
     private final ChannelProvider channelProvider;
 
+    private final URLConnectionProvider urlConnectionProvider;
+
+    private final ApplyAuthorization applyAuthorization;
+
     private final Logger logger;
 
-    public DownloadResource(final FileManager fileManager, final ChannelProvider channelProvider, final Logger logger) {
+    public DownloadResource(final FileManager fileManager, final ChannelProvider channelProvider,
+        final URLConnectionProvider urlConnectionProvider, final ApplyAuthorization applyAuthorization,
+        final Logger logger) {
         this.fileManager = fileManager;
         this.channelProvider = channelProvider;
+        this.urlConnectionProvider = urlConnectionProvider;
+        this.applyAuthorization = applyAuthorization;
         this.logger = logger;
     }
 
@@ -50,8 +63,14 @@ public class DownloadResource {
             .resolve(resourceName + TMP_EXTENSION);
         logger.debug("Downloading resource at '{}' (proxy: {})", downloadSettings.getResourceUrl(),
             downloadSettings.getProxy());
-        try (final ReadableByteChannel resourceInputChannel = channelProvider.getReadableByteChannel(resourceUrl,
+        final URLConnection urlConnection = urlConnectionProvider.openConnection(resourceUrl,
             downloadSettings.getProxy());
+        final Credentials credentials = downloadSettings.getServerCredentials();
+        if (credentials != null) {
+            applyAuthorization.execute(urlConnection, AUTHORIZATION_HEADER, credentials);
+        }
+        try (final ReadableByteChannel resourceInputChannel = channelProvider.getReadableByteChannel(
+            urlConnection.getInputStream());
              final FileChannel resourceOutputChannel = channelProvider.getWritableFileChannelForNewFile(
                  downloadedFilePath, StandardOpenOption.WRITE, StandardOpenOption.CREATE,
                  StandardOpenOption.TRUNCATE_EXISTING)) {

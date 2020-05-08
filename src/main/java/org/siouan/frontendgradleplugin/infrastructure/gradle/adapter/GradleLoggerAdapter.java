@@ -53,6 +53,23 @@ public class GradleLoggerAdapter implements Logger {
 
     @Override
     public void info(@Nonnull final String message, @Nullable final Object... parameters) {
+        logWithDefaultLevel(LogLevel.INFO, message, parameters);
+    }
+
+    @Override
+    public void warn(@Nonnull final String message, @Nullable final Object... parameters) {
+        logWithDefaultLevel(LogLevel.WARN, message, parameters);
+    }
+
+    /**
+     * Logs a message with a default logging level if verbose mode is disabled.
+     *
+     * @param defaultLoggingLevel Default logging level.
+     * @param message message.
+     * @param parameters Message parameters.
+     */
+    private void logWithDefaultLevel(@Nonnull final LogLevel defaultLoggingLevel, @Nonnull final String message,
+        @Nullable final Object... parameters) {
         if (gradleLogger == null) {
             return;
         }
@@ -60,7 +77,7 @@ public class GradleLoggerAdapter implements Logger {
         if (verboseModeEnabled) {
             gradleLogger.log(loggingLevel, formatMessage(message), parameters);
         } else {
-            gradleLogger.info(formatMessage(message), parameters);
+            gradleLogger.log(defaultLoggingLevel, formatMessage(message), parameters);
         }
     }
 

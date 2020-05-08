@@ -34,8 +34,8 @@ class CheckTaskFuncTest {
     void shouldDoNothingWhenScriptIsNotDefined() throws IOException {
         Files.copy(getResourcePath("package-npm.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("10.16.0")
-            .nodeDistributionUrlPattern(getResourceUrl("node-v10.16.0.zip"));
+            .nodeVersion("12.16.3")
+            .nodeDistributionUrlPattern(getResourceUrl("node-v12.16.3.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result = runGradle(projectDirectoryPath, FrontendGradlePlugin.CHECK_TASK_NAME);
@@ -50,8 +50,8 @@ class CheckTaskFuncTest {
     void shouldCheckWithoutFrontendTasks() throws IOException {
         Files.copy(getResourcePath("package-npm.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("10.16.0")
-            .nodeDistributionUrlPattern(getResourceUrl("node-v10.16.0.zip"));
+            .nodeVersion("12.16.3")
+            .nodeDistributionUrlPattern(getResourceUrl("node-v12.16.3.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result = runGradle(projectDirectoryPath, FrontendGradlePlugin.GRADLE_CHECK_TASK_NAME);
@@ -67,8 +67,8 @@ class CheckTaskFuncTest {
     void shouldCheckFrontendWithNpmOrYarn() throws IOException {
         Files.copy(getResourcePath("package-npm.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("10.16.0")
-            .nodeDistributionUrlPattern(getResourceUrl("node-v10.16.0.zip"))
+            .nodeVersion("12.16.3")
+            .nodeDistributionUrlPattern(getResourceUrl("node-v12.16.3.zip"))
             .checkScript("run check");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
@@ -93,8 +93,8 @@ class CheckTaskFuncTest {
             StandardCopyOption.REPLACE_EXISTING);
         frontendMapBuilder
             .yarnEnabled(true)
-            .yarnVersion("1.16.0")
-            .yarnDistributionUrlPattern(getResourceUrl("yarn-v1.16.0.tar.gz"));
+            .yarnVersion("1.22.4")
+            .yarnDistributionUrlPattern(getResourceUrl("yarn-v1.22.4.tar.gz"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result3 = runGradle(projectDirectoryPath, FrontendGradlePlugin.GRADLE_CHECK_TASK_NAME);
