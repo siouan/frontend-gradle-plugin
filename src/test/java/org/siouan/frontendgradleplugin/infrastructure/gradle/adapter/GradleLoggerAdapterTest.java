@@ -63,7 +63,7 @@ class GradleLoggerAdapterTest {
 
         adapter.info(MESSAGE, PARAMETER_1, PARAMETER_2);
 
-        verify(logger).log(LogLevel.INFO, PREFIX + MESSAGE, new Object[] {PARAMETER_1, PARAMETER_2});
+        verify(logger).log(LogLevel.INFO, PREFIX + MESSAGE, PARAMETER_1, PARAMETER_2);
         verifyNoMoreInteractions(logger);
     }
 
@@ -90,7 +90,7 @@ class GradleLoggerAdapterTest {
 
         adapter.warn(MESSAGE, PARAMETER_1, PARAMETER_2);
 
-        verify(logger).log(LogLevel.WARN, PREFIX + MESSAGE, new Object[] {PARAMETER_1, PARAMETER_2});
+        verify(logger).log(LogLevel.WARN, PREFIX + MESSAGE, PARAMETER_1, PARAMETER_2);
         verifyNoMoreInteractions(logger);
     }
 

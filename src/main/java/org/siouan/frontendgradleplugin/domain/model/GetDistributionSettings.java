@@ -1,6 +1,5 @@
 package org.siouan.frontendgradleplugin.domain.model;
 
-import java.net.Proxy;
 import java.nio.file.Path;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -22,7 +21,7 @@ public class GetDistributionSettings {
 
     private final Credentials distributionServerCredentials;
 
-    private final Proxy proxy;
+    private final ProxySettings proxySettings;
 
     private final Path temporaryDirectoryPath;
 
@@ -34,20 +33,20 @@ public class GetDistributionSettings {
      * @param version Version.
      * @param distributionUrlPattern URL pattern to download the distribution.
      * @param distributionServerCredentials Credentials to authenticate on the distribution server before download.
-     * @param proxy Proxy used for the connection.
+     * @param proxySettings Proxy settings used for downloads.
      * @param temporaryDirectoryPath Path to a temporary directory.
      * @see DistributionId
      */
     public GetDistributionSettings(@Nonnull String distributionId, @Nonnull final Platform platform,
         @Nonnull final String version, @Nonnull final String distributionUrlPattern,
-        @Nullable final Credentials distributionServerCredentials, @Nonnull final Proxy proxy,
+        @Nullable final Credentials distributionServerCredentials, @Nonnull final ProxySettings proxySettings,
         @Nonnull final Path temporaryDirectoryPath) {
         this.distributionId = distributionId;
         this.platform = platform;
         this.version = version;
         this.distributionUrlPattern = distributionUrlPattern;
         this.distributionServerCredentials = distributionServerCredentials;
-        this.proxy = proxy;
+        this.proxySettings = proxySettings;
         this.temporaryDirectoryPath = temporaryDirectoryPath;
     }
 
@@ -102,13 +101,13 @@ public class GetDistributionSettings {
     }
 
     /**
-     * Gets the proxy used for the connection.
+     * Gets the proxy settings used for downloads.
      *
-     * @return Proxy.
+     * @return Proxy settings.
      */
     @Nonnull
-    public Proxy getProxy() {
-        return proxy;
+    public ProxySettings getProxySettings() {
+        return proxySettings;
     }
 
     /**

@@ -24,6 +24,6 @@ public class GetDistributionSettingsMatcher extends AbstractArgumentMatcher<GetD
             && actualValue.getTemporaryDirectoryPath().equals(expectedValue.getTemporaryDirectoryPath())
             && actualValue.getPlatform().equals(expectedValue.getPlatform())
             && Objects.equals(actualValue.getDistributionUrlPattern(), expectedValue.getDistributionUrlPattern())
-            && actualValue.getProxy().equals(expectedValue.getProxy());
+            && actualValue.getProxySettings().equals(expectedValue.getProxySettings());
     }
 }

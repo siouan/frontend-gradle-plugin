@@ -21,6 +21,10 @@ public final class FrontendMapBuilder {
 
     private String nodeDistributionUrlPattern;
 
+    private String nodeDistributionServerUsername;
+
+    private String nodeDistributionServerPassword;
+
     private Path nodeInstallDirectory;
 
     private Boolean yarnEnabled;
@@ -30,6 +34,10 @@ public final class FrontendMapBuilder {
     private String yarnVersion;
 
     private String yarnDistributionUrlPattern;
+
+    private String yarnDistributionServerUsername;
+
+    private String yarnDistributionServerPassword;
 
     private Path yarnInstallDirectory;
 
@@ -50,6 +58,10 @@ public final class FrontendMapBuilder {
     private String proxyHost;
 
     private Integer proxyPort;
+
+    private String proxyUsername;
+
+    private String proxyPassword;
 
     @Nonnull
     public FrontendMapBuilder nodeDistributionProvided(@Nullable final Boolean nodeDistributionProvided) {
@@ -72,6 +84,18 @@ public final class FrontendMapBuilder {
     @Nonnull
     public FrontendMapBuilder nodeDistributionUrlPattern(@Nullable final URL nodeDistributionUrlPattern) {
         return nodeDistributionUrlPattern(Objects.toString(nodeDistributionUrlPattern, null));
+    }
+
+    @Nonnull
+    public FrontendMapBuilder nodeDistributionServerUsername(@Nullable final String nodeDistributionServerUsername) {
+        this.nodeDistributionServerUsername = nodeDistributionServerUsername;
+        return this;
+    }
+
+    @Nonnull
+    public FrontendMapBuilder nodeDistributionServerPassword(@Nullable final String nodeDistributionServerPassword) {
+        this.nodeDistributionServerPassword = nodeDistributionServerPassword;
+        return this;
     }
 
     @Nonnull
@@ -107,6 +131,18 @@ public final class FrontendMapBuilder {
     @Nonnull
     public FrontendMapBuilder yarnDistributionUrlPattern(@Nullable final URL yarnDistributionUrlPattern) {
         return yarnDistributionUrlPattern(Objects.toString(yarnDistributionUrlPattern, null));
+    }
+
+    @Nonnull
+    public FrontendMapBuilder yarnDistributionServerUsername(@Nullable final String yarnDistributionServerUsername) {
+        this.yarnDistributionServerUsername = yarnDistributionServerUsername;
+        return this;
+    }
+
+    @Nonnull
+    public FrontendMapBuilder yarnDistributionServerPassword(@Nullable final String yarnDistributionServerPassword) {
+        this.yarnDistributionServerPassword = yarnDistributionServerPassword;
+        return this;
     }
 
     @Nonnull
@@ -170,6 +206,18 @@ public final class FrontendMapBuilder {
     }
 
     @Nonnull
+    public FrontendMapBuilder proxyUsername(@Nullable final String proxyUsername) {
+        this.proxyUsername = proxyUsername;
+        return this;
+    }
+
+    @Nonnull
+    public FrontendMapBuilder proxyPassword(@Nullable final String proxyPassword) {
+        this.proxyPassword = proxyPassword;
+        return this;
+    }
+
+    @Nonnull
     public Map<String, Object> toMap() {
         final Map<String, Object> properties = new HashMap<>();
         if (nodeDistributionProvided != null) {
@@ -180,6 +228,12 @@ public final class FrontendMapBuilder {
         }
         if (nodeDistributionUrlPattern != null) {
             properties.put("nodeDistributionUrlPattern", nodeDistributionUrlPattern);
+        }
+        if (nodeDistributionServerUsername != null) {
+            properties.put("nodeDistributionServerUsername", nodeDistributionServerUsername);
+        }
+        if (nodeDistributionServerPassword != null) {
+            properties.put("nodeDistributionServerPassword", nodeDistributionServerPassword);
         }
         if (nodeInstallDirectory != null) {
             properties.put("nodeInstallDirectory", nodeInstallDirectory);
@@ -195,6 +249,12 @@ public final class FrontendMapBuilder {
         }
         if (yarnDistributionUrlPattern != null) {
             properties.put("yarnDistributionUrlPattern", yarnDistributionUrlPattern);
+        }
+        if (yarnDistributionServerUsername != null) {
+            properties.put("yarnDistributionServerUsername", yarnDistributionServerUsername);
+        }
+        if (yarnDistributionServerPassword != null) {
+            properties.put("yarnDistributionServerPassword", yarnDistributionServerPassword);
         }
         if (yarnInstallDirectory != null) {
             properties.put("yarnInstallDirectory", yarnInstallDirectory);
@@ -225,6 +285,12 @@ public final class FrontendMapBuilder {
         }
         if (proxyPort != null) {
             properties.put("proxyPort", proxyPort);
+        }
+        if (proxyUsername != null) {
+            properties.put("proxyUsername", proxyUsername);
+        }
+        if (proxyPassword != null) {
+            properties.put("proxyPassword", proxyPassword);
         }
         return unmodifiableMap(properties);
     }

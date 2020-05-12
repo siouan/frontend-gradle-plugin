@@ -14,7 +14,7 @@ assembled before the backend, and generally provided in a special directory for 
 
 This example demonstrates the following features:
 - Definition of a frontend sub-project.
-- Packaging a WAR artifact containing frontend artifacts built in another sub-project.
+- Packaging a Spring Boot WAR artifact containing frontend artifacts built in another sub-project.
 
 ### Requirements
 
@@ -22,20 +22,12 @@ This example demonstrates the following features:
 
 ### Description
 
-The frontend project builds an `index.html` file in the `build/www` directory. A custom task named
-`processFrontendResources`, launched before the `processResources` task of the backend project, copies this file in the
-`${project.buildDir}/resources/main/public` directory of the backend project. The `bootWar` task in the backend project
-automatically packages files in the `${project.buildDir}/resources/main/public` directory in the WAR artifact so as they
-are publicly accessible. Finally, enter `gradlew build` on a command line to build the WAR artifact in the backend
-project.
-
-If you plan to build a [Spring Boot][spring-boot] application, the WAR artifact may be replaced with a bootable WAR
-artifact with the [Gradle Spring Boot plugin][gradle-spring-boot-plugin] instead of the
-[Gradle WAR plugin][gradle-war-plugin]. To do so, modify the [`build.gradle`](backend/build.gradle) file:
-
-```groovy
-def frontendResourcesDir = file("${project('backend').buildDir}/resources/main/public")
-```
+The frontend sub-project builds an `index.html` file in its `build/www` directory. A custom task named
+`processFrontendResources`, and defined in the backend sub-project copies the previous file in the
+`build/resources/main/public` directory of the backend sub-project. The `processResources` task of the backend
+sub-project depends on this `processFrontendResources` task, to ensure frontend artifacts are included when building
+the WAR artifact: the `bootWar` task in the backend project automatically packages files in the
+`${project.buildDir}/resources/main/public` directory into the WAR artifact so as they are publicly accessible.
 
 Finally:
 - Enter `gradlew bootRun` on a command line.

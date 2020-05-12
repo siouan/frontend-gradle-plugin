@@ -18,7 +18,8 @@ below to install/configure the plugin, and build your frontend application.
 - **Distribution management**: the plugin downloads and installs a [Node.js][nodejs] distribution and/or a
 [Yarn][classic-yarn] distribution when required. Optionally, a shared/global distribution may be used instead to avoid
 network overhead and duplication. The plugin may also use a HTTP proxy server for downloads, to take advantage of any
-caching facility, and submit to the organization's security rules.
+caching facility, and submit to the organization's security rules. Basic authentication scheme is supported for both
+distribution and proxy servers.
 - **Configurable dependencies installation**: depending on the environment, installing frontend dependencies using the
 `package.json` file may require a different command (e.g. `npm ci`).
 - **Built-in tasks**: no need to define tasks to build, clean, check, or publish the frontend application through
@@ -154,8 +155,9 @@ distribution compatible with the current platform from Node.js' website. The ver
 be the same as the one set in the <code>nodeVersion</code> property, or this may lead to unexpected results. The
 property may be set with a fixed URL (e.g. <code>https://myorganisation.com/dist/node-v12.16.3-win-x64.zip</code>), or
 take advantage of the automatic distribution resolution in the plugin, using specific tokens in the URL pattern:
-<code>VERSION</code>, <code>ARCH</code>, <code>TYPE</code>. See the <code>installNode</code> task for details about when
-and how to use these tokens.
+<code>VERSION</code>, <code>ARCH</code>, <code>TYPE</code>. See the
+<code><a href="#installnode---install-nodejs">installNode</a></code> task for details about when and how to use these
+tokens.
 </td>
 </tr>
 <tr>
@@ -164,7 +166,7 @@ and how to use these tokens.
 <b>Default value</b>: <code>null</code><br/>
 <br/>
 This property may be used to download the distribution with a given identity (BASIC scheme server-side). When not
-<code>null</code>, the <code>nodeDistributionServerPassword</code> property is required. 
+<code>null</code>, the <code>nodeDistributionServerPassword</code> property is also required. 
 </td>
 </tr>
 <tr>
@@ -232,8 +234,9 @@ Set this property to download the distribution from a custom website. By default
 distribution from Yarn website. The version of the distribution is expected to be the same as the one set in the
 <code>yarnVersion</code> property, or this may lead to unexpected results. The property may be set with a fixed URL
 (e.g. <code>https://myorganisation.com/dist/yarn-v1.22.4.tar.gz</code>), or take advantage of the automatic distribution
-resolution in the plugin, using specific token <code>VERSION</code> in the URL pattern. See the <code>installYarn</code>
-task for details about when and how to use this token.
+resolution in the plugin, using specific token <code>VERSION</code> in the URL pattern. See the
+<code><a href="#installyarn---install-yarn">installYarn</a></code> task for details about when and how to use this
+token.
     </td>
 </tr>
 <tr>
@@ -242,7 +245,7 @@ task for details about when and how to use this token.
 <b>Default value</b>: <code>null</code><br/>
 <br/>
 This property may be used to download the distribution with a given identity (BASIC scheme server-side). When not
-<code>null</code>, the <code>yarnDistributionServerPassword</code> property is required. 
+<code>null</code>, the <code>yarnDistributionServerPassword</code> property is also required. 
 </td>
 </tr>
 <tr>
@@ -270,7 +273,9 @@ Install directory where the distribution archive shall be exploded, or where a p
 Name of npm/Yarn scripts (see <code>package.json</code> file) that shall be executed depending
 on this plugin's task. The values below are passed as arguments of npm/yarn executables. Under Unix-like O/S, white
 space characters ' ' in an argument value must be escaped with a backslash character '\'. Under Windows O/S, the whole
-argument must be enclosed between double-quotes. Example: <code>assembleScript = 'run assemble single\ argument'</code>
+argument must be enclosed between double-quotes.<br/>
+<b>Example on Unix-like O/S</b>: <code>assembleScript = 'run assemble single\ argument'</code><br/>
+<b>Example on Windows O/S</b>: <code>assembleScript = 'run assemble "single argument"'</code>
     </td>
 </tr>
 <tr>
@@ -354,8 +359,27 @@ direct connections.
     <td align="left">
 <b>Default value</b>: <code>8080</code><br/>
 <br/>
-Port of the proxy server. This property is only relevant when the <code>proxyHost</code> property is set.
+Port of the proxy server. This property is ignored unless the <code>proxyHost</code> property is defined.
     </td>
+</tr>
+<tr>
+    <td align="left"><code>proxyUsername</code></td>
+    <td align="left">
+<b>Default value</b>: <code>null</code><br/>
+<br/>
+This property may be used to authenticate on the proxy server with a given identity (BASIC scheme server-side). This
+property is ignored unless the <code>proxyHost</code> property is defined. When not <code>null</code>, the
+<code>proxyPassword</code> property is also required. 
+</td>
+</tr>
+<tr>
+    <td align="left"><code>proxyPassword</code></td>
+    <td align="left">
+<b>Default value</b>: <code>null</code><br/>
+<br/>
+Set this property to authenticate the distribution download (BASIC scheme server-side). The property is ignored unless
+the <code>proxyUsername</code> property is defined.
+</td>
 </tr>
 <tr>
     <td align="left"><b><code>verboseModeEnabled</code></b></td>
@@ -383,12 +407,16 @@ frontend {
     nodeDistributionProvided = false
     nodeVersion = '12.16.3'
     nodeDistributionUrlPattern = 'https://nodejs.org/dist/vVERSION/node-vVERSION-ARCH.TYPE'
+    nodeDistributionServerUsername = 'username'
+    nodeDistributionServerPassword = 'password'
     nodeInstallDirectory = file("${projectDir}/node")
 
     yarnEnabled = false
     yarnDistributionProvided = false
     yarnVersion = '1.22.4'
     yarnDistributionUrlPattern = 'https://github.com/yarnpkg/yarn/releases/download/vVERSION/yarn-vVERSION.tar.gz'
+    yarnDistributionServerUsername = 'username'
+    yarnDistributionServerPassword = 'password'
     yarnInstallDirectory = file("${projectDir}/yarn")
 
     installScript = 'install'
@@ -400,6 +428,8 @@ frontend {
     packageJsonDirectory = projectDir
     proxyHost = '127.0.0.1'
     proxyPort = 8080
+    proxyUsername = 'username'
+    proxyPassword = 'password'
     verboseModeEnabled = false
 }
 ```
@@ -412,12 +442,16 @@ frontend {
     nodeDistributionProvided.set(false)
     nodeVersion.set("12.16.3")
     nodeDistributionUrlPattern.set("https://nodejs.org/dist/vVERSION/node-vVERSION-ARCH.TYPE")
+    nodeDistributionServerUsername.set("username")
+    nodeDistributionServerPassword.set("password")
     nodeInstallDirectory.set(project.layout.projectDirectory.dir("node"))
 
     yarnEnabled.set(false)
     yarnDistributionProvided.set(false)
     yarnVersion.set("1.22.4")
     yarnDistributionUrlPattern.set("https://github.com/yarnpkg/yarn/releases/download/vVERSION/yarn-vVERSION.tar.gz")
+    yarnDistributionServerUsername.set("username")
+    yarnDistributionServerPassword.set("password")
     yarnInstallDirectory.set(project.layout.projectDirectory.dir("yarn"))
 
     installScript.set("install")
@@ -429,6 +463,8 @@ frontend {
     packageJsonDirectory.set(project.layout.projectDirectory)
     proxyHost.set("127.0.0.1")
     proxyPort.set(8080)
+    proxyUsername.set("username")
+    proxyPassword.set("password")
     verboseModeEnabled.set(false)
 }
 ```
@@ -541,13 +577,14 @@ The plugin registers multiple tasks, that may have dependencies with each other,
 
 The `installNode` task downloads a [Node.js][nodejs] distribution and verifies its integrity. By default, the exact
 download URL is guessed using the `nodeVersion` property, the `nodeDistributionUrlPattern` property, and the current
-platform. Checking the distribution integrity consists of downloading a file providing the distribution shasum. This
-file is expected to be in the same remote web directory than the distribution. For example, if the distribution is
-located at URL `https://nodejs.org/dist/v12.16.3/node-v12.16.3-win-x64.zip`, the plugin attempts to download the shasum
-file located at URL `https://nodejs.org/dist/v12.16.3/SHASUMS256.txt`. Optionally, defining the `proxyHost` property and
-the `proxyPort` property allows to use a proxy server when downloading the distribution and the shasum. Set the location
-where the distribution shall be installed with the `nodeInstallDirectory` property, which by default is the
-`${projectDir}/node` directory.
+platform's architecture. Checking the distribution integrity consists of downloading a file providing the distribution
+shasum. This file is expected to be in the same remote web directory than the distribution. For example, if the
+distribution is located at URL `https://nodejs.org/dist/v12.16.3/node-v12.16.3-win-x64.zip`, the plugin attempts to
+download the shasum file located at URL `https://nodejs.org/dist/v12.16.3/SHASUMS256.txt`. Optionally, defining the
+`proxyHost` property and the `proxyPort` property allows to use a proxy server when downloading the distribution and the
+shasum. The `proxyUsername` and `proxyPassword` properties may also be used to authenticate on the proxy server with a
+BASIC scheme. Set the location where the distribution shall be installed with the `nodeInstallDirectory` property, which
+by default is the `${projectDir}/node` directory.
 
 If a [Node.js][nodejs] distribution is already installed in the system, and shall be used instead of a downloaded
 distribution, set the `nodeDistributionProvided` property to `true` and the location of the distribution with the
@@ -563,25 +600,27 @@ of its inputs/outputs changed. The task is _UP-TO-DATE_ during a Gradle build, a
 
 **About the distribution URL pattern**
 
-The `nodeDistributionUrlPattern` property offers a convenient way to download distributions from a custom website and
-still take advantage of the automatic resolution of the exact URL, based on the current platform. The pattern may
-contain the following tokens:
+The `nodeDistributionUrlPattern` property offers a convenient way to download distributions from a custom website -
+e.g. a website mirroring the official Node.js website to cache distributions, and still take advantage of the automatic
+resolution of the exact URL, based on the current platform's architecture. The pattern may contain the following tokens:
 - `VERSION`: automatically replaced with the version number set in the `nodeVersion` property.
 - `ARCH`: automatically replaced with the architecture ID matching the current platform. For example, if the current O/S
 is MacOS 64 bits, the plugin replaces the token with `darwin-x64`.
 - `TYPE`:  automatically replaced with the type of the distribution file expected for the current platform. For example,
 if the current O/S is Windows, the plugin replaces the token with `zip`.
 
-If the distribution needs to be upgraded, update only the `nodeVersion` property and the plugin will download the
-relevant distribution from the custom website.
+When using a custom website, the `nodeDistributionServerUsername` and `nodeDistributionServerPassword` properties may
+also be used to authenticate with a BASIC scheme. Then, if the distribution needs to be upgraded, update only the
+`nodeVersion` property and the plugin will download the relevant distribution from the custom website.
 
 ### `installYarn` - Install Yarn
 
 The `installYarn` task downloads a [Yarn][classic-yarn] distribution, if `yarnEnabled` property is `true`. By default,
 the exact download URL is guessed using the `yarnVersion` property, and the `yarnDistributionUrlPattern` property.
 Optionally, defining the `proxyHost` property and the `proxyPort` property allow to use a proxy server when downloading
-the distribution. Set the location where the distribution shall be installed with the `yarnInstallDirectory` property,
-which by default is the `${projectDir}/yarn` directory.
+the distribution. The `proxyUsername` and `proxyPassword` properties may also be used to authenticate on the proxy
+server with a BASIC scheme. Set the location where the distribution shall be installed with the `yarnInstallDirectory`
+property, which by default is the `${projectDir}/yarn` directory.
 
 If a [Yarn][classic-yarn] distribution is already installed in the system, and shall be used instead of a downloaded
 distribution, set the `yarnDistributionProvided` property to `true` and the location of the distribution with the
@@ -597,11 +636,14 @@ of its inputs/outputs changed. The task is _UP-TO-DATE_ during a Gradle build, a
 
 **About the distribution URL pattern**
 
-The `yarnDistributionUrlPattern` property offers a convenient way to download distributions from a custom website and
-still take advantage of the automatic resolution of the exact URL, based on the version number. The pattern may contain
-the `VERSION` token, automatically replaced with the version number set in the `yarnVersion` property. If the distribution
-needs to be upgraded, update only the `yarnVersion` property and the plugin will download the relevant distribution
-from the custom website.
+The `yarnDistributionUrlPattern` property offers a convenient way to download distributions from a custom website -
+e.g. a website mirroring the official Yarn website to cache distributions, and still take advantage of the automatic
+resolution of the exact URL, based on the version number. The pattern may contain the `VERSION` token, automatically
+replaced with the version number set in the `yarnVersion` property.
+
+When using a custom website, the `yarnDistributionServerUsername` and `yarnDistributionServerPassword` properties may
+also be used to authenticate with a BASIC scheme. If the distribution needs to be upgraded, update only the
+`yarnVersion` property and the plugin will download the relevant distribution from the custom website.
 
 ### `installFrontend` - Install frontend dependencies
 
@@ -795,6 +837,7 @@ With their feedback, plugin improvement is possible. Special thanks to:
 @[nuth](https://github.com/nuth),
 @[rolaca11](https://github.com/rolaca11),
 @[TapaiBalazs](https://github.com/TapaiBalazs)
+@[trohr](https://github.com/trohr)
 
 [classic-yarn]: <https://classic.yarnpkg.com/> (Yarn 1.x)
 [clean-coder]: <http://cleancoder.com/> (Clean coder)

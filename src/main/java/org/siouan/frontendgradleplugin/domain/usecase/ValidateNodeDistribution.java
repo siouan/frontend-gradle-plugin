@@ -56,18 +56,21 @@ public class ValidateNodeDistribution implements DistributionValidator {
             final URL shasumsFileUrl = new URL(distributionValidatorSettings.getDistributionUrl(), SHASUMS_FILENAME);
 
             // Download the shasum file
-            logger.info("Downloading shasums at '{}'", shasumsFileUrl);
+            logger.debug("Downloading shasums at '{}'", shasumsFileUrl);
             downloadResource.execute(
                 new DownloadSettings(shasumsFileUrl, distributionValidatorSettings.getDistributionServerCredentials(),
-                    distributionValidatorSettings.getProxy(), distributionValidatorSettings.getTemporaryDirectoryPath(),
-                    shasumsFilePath));
+                    distributionValidatorSettings.getProxySettings(),
+                    distributionValidatorSettings.getTemporaryDirectoryPath(), shasumsFilePath));
 
             // Verify the distribution integrity
             logger.info("Verifying distribution integrity");
+            final String distributionFileName = distributionValidatorSettings
+                .getDistributionFilePath()
+                .getFileName()
+                .toString();
             expectedShasum = readNodeDistributionShasum
-                .execute(shasumsFilePath,
-                    distributionValidatorSettings.getDistributionFilePath().getFileName().toString())
-                .orElseThrow(NodeDistributionShasumNotFoundException::new);
+                .execute(shasumsFilePath, distributionFileName)
+                .orElseThrow(() -> new NodeDistributionShasumNotFoundException(distributionFileName));
         } finally {
             fileManager.deleteIfExists(shasumsFilePath);
         }
