@@ -30,7 +30,7 @@ before_script:
 
 script:
   - echo SCRIPT
-  - ./gradlew test --tests org.siouan.frontendgradleplugin.infrastructure.gradle.AuthenticationAndProxyFuncTest --console=plain
+  - ./gradlew build --console=plain
 
 matrix:
   include:

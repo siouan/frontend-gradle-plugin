@@ -122,6 +122,7 @@ public abstract class AbstractDistributionInstallTask extends DefaultTask {
      *
      * @return Credentials.
      */
+    @Internal
     @Nullable
     protected abstract Credentials getDistributionServerCredentials();
 
@@ -130,6 +131,7 @@ public abstract class AbstractDistributionInstallTask extends DefaultTask {
      *
      * @return Class.
      */
+    @Internal
     @Nonnull
     protected abstract Class<? extends AbstractInstallDistribution> getInstallDistributionClass();
 
