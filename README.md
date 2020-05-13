@@ -156,7 +156,7 @@ distribution from Node.js' website.
     </td>
 </tr>
 <tr>
-    <td align="left"><code>nodeDistributionUrlPathPattern</code></td>
+    <td align="left"><b><code>nodeDistributionUrlPathPattern</code></b></td>
     <td align="left">
 <b>Default value</b>: <code>'vVERSION/node-vVERSION-ARCH.TYPE'</code><br/>
 <br/>
@@ -246,7 +246,7 @@ distribution from Yarn's website.
     </td>
 </tr>
 <tr>
-    <td align="left"><code>yarnDistributionUrlPathPattern</code></td>
+    <td align="left"><b><code>yarnDistributionUrlPathPattern</code></b></td>
     <td align="left">
 <b>Default value</b>: <code>'vVERSION/yarn-vVERSION.tar.gz'</code><br/>
 <br/>
