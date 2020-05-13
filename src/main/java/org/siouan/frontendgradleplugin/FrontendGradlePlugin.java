@@ -83,7 +83,12 @@ public class FrontendGradlePlugin implements Plugin<Project> {
     /**
      * URL pattern used to download the Node.js distribution.
      */
-    public static final String DEFAULT_NODE_DISTRIBUTION_URL_PATTERN = "https://nodejs.org/dist/vVERSION/node-vVERSION-ARCH.TYPE";
+    public static final String DEFAULT_NODE_DISTRIBUTION_URL_PATH_PATTERN = "vVERSION/node-vVERSION-ARCH.TYPE";
+
+    /**
+     * URL pattern used to download the Node.js distribution.
+     */
+    public static final String DEFAULT_NODE_DISTRIBUTION_URL_ROOT = "https://nodejs.org/dist/";
 
     /**
      * Default port for the proxy server.
@@ -93,7 +98,12 @@ public class FrontendGradlePlugin implements Plugin<Project> {
     /**
      * URL pattern used to download the Yarn distribution.
      */
-    public static final String DEFAULT_YARN_DISTRIBUTION_URL_PATTERN = "https://github.com/yarnpkg/yarn/releases/download/vVERSION/yarn-vVERSION.tar.gz";
+    public static final String DEFAULT_YARN_DISTRIBUTION_URL_PATH_PATTERN = "vVERSION/yarn-vVERSION.tar.gz";
+
+    /**
+     * URL pattern used to download the Yarn distribution.
+     */
+    public static final String DEFAULT_YARN_DISTRIBUTION_URL_ROOT = "https://github.com/yarnpkg/yarn/releases/download/";
 
     /**
      * Name of the task that installs a Yarn distribution.
@@ -151,13 +161,15 @@ public class FrontendGradlePlugin implements Plugin<Project> {
             .create(EXTENSION_NAME, FrontendExtension.class, project);
 
         extension.getNodeDistributionProvided().convention(false);
-        extension.getNodeDistributionUrlPattern().convention(DEFAULT_NODE_DISTRIBUTION_URL_PATTERN);
+        extension.getNodeDistributionUrlRoot().convention(DEFAULT_NODE_DISTRIBUTION_URL_ROOT);
+        extension.getNodeDistributionUrlPathPattern().convention(DEFAULT_NODE_DISTRIBUTION_URL_PATH_PATTERN);
         extension
             .getNodeInstallDirectory()
             .convention(project.getLayout().getProjectDirectory().dir(DEFAULT_NODE_INSTALL_DIRNAME));
         extension.getYarnEnabled().convention(false);
         extension.getYarnDistributionProvided().convention(false);
-        extension.getYarnDistributionUrlPattern().convention(DEFAULT_YARN_DISTRIBUTION_URL_PATTERN);
+        extension.getYarnDistributionUrlRoot().convention(DEFAULT_YARN_DISTRIBUTION_URL_ROOT);
+        extension.getYarnDistributionUrlPathPattern().convention(DEFAULT_YARN_DISTRIBUTION_URL_PATH_PATTERN);
         extension
             .getYarnInstallDirectory()
             .convention(project.getLayout().getProjectDirectory().dir(DEFAULT_YARN_INSTALL_DIRNAME));
@@ -233,7 +245,8 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.setGroup(TASK_GROUP);
         task.setDescription("Downloads and installs a Node distribution.");
         task.getNodeVersion().set(extension.getNodeVersion());
-        task.getNodeDistributionUrlPattern().set(extension.getNodeDistributionUrlPattern());
+        task.getNodeDistributionUrlRoot().set(extension.getNodeDistributionUrlRoot());
+        task.getNodeDistributionUrlPathPattern().set(extension.getNodeDistributionUrlPathPattern());
         task.getNodeDistributionServerUsername().set(extension.getNodeDistributionServerUsername());
         task.getNodeDistributionServerPassword().set(extension.getNodeDistributionServerPassword());
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
@@ -254,7 +267,8 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.setGroup(TASK_GROUP);
         task.setDescription("Downloads and installs a Yarn distribution.");
         task.getYarnVersion().set(extension.getYarnVersion());
-        task.getYarnDistributionUrlPattern().set(extension.getYarnDistributionUrlPattern());
+        task.getYarnDistributionUrlRoot().set(extension.getYarnDistributionUrlRoot());
+        task.getYarnDistributionUrlPathPattern().set(extension.getYarnDistributionUrlPathPattern());
         task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
         task.getYarnDistributionServerUsername().set(extension.getYarnDistributionServerUsername());
         task.getYarnDistributionServerPassword().set(extension.getYarnDistributionServerPassword());

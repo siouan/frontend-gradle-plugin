@@ -70,8 +70,8 @@ public class ResolveNodeDistributionUrl implements DistributionUrlResolver {
             throw new UnsupportedPlatformException(distributionDefinition.getPlatform());
         }
 
-        return new URL(distributionDefinition
-            .getDownloadUrlPattern()
+        return new URL(distributionDefinition.getDownloadUrlRoot() + distributionDefinition
+            .getDownloadUrlPathPattern()
             .replace(VERSION_TOKEN, distributionDefinition.getVersion())
             .replace(ARCHITECTURE_ID_TOKEN, architectureId.get())
             .replace(TYPE_TOKEN, resolveType(platform)));

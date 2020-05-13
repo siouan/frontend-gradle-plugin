@@ -14,7 +14,9 @@ import org.siouan.frontendgradleplugin.test.fixture.PlatformFixture;
 @ExtendWith(MockitoExtension.class)
 class ResolveYarnDistributionUrlTest {
 
-    private static final String URL_PATTERN = "https://foo.bar/vVERSION.tar.gz";
+    private static final String URL_ROOT = "https://foo.bar/dist/";
+
+    private static final String URL_PATH_PATTERN = "vVERSION.tar.gz";
 
     private static final String VERSION = "3.65.2";
 
@@ -22,9 +24,9 @@ class ResolveYarnDistributionUrlTest {
     private ResolveYarnDistributionUrl usecase;
 
     @Test
-    void shouldReturnDownloadUrlPatternWhenResolvingWithPattern() throws MalformedURLException {
+    void shouldReturnFullDownloadUrl() throws MalformedURLException {
         assertThat(usecase
-            .execute(new DistributionDefinition(PlatformFixture.LOCAL_PLATFORM, VERSION, URL_PATTERN))
-            .toString()).isEqualTo("https://foo.bar/v3.65.2.tar.gz");
+            .execute(new DistributionDefinition(PlatformFixture.LOCAL_PLATFORM, VERSION, URL_ROOT, URL_PATH_PATTERN))
+            .toString()).isEqualTo("https://foo.bar/dist/v3.65.2.tar.gz");
     }
 }

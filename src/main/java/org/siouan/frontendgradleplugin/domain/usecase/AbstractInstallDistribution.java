@@ -75,9 +75,9 @@ public abstract class AbstractInstallDistribution {
         fileManager.deleteFileTree(installSettings.getInstallDirectoryPath(), true);
 
         final GetDistributionSettings getDistributionSettings = new GetDistributionSettings(getDistributionId(),
-            installSettings.getPlatform(), installSettings.getVersion(), installSettings.getDistributionUrlPattern(),
-            installSettings.getDistributionServerCredentials(), installSettings.getProxySettings(),
-            installSettings.getTemporaryDirectoryPath());
+            installSettings.getPlatform(), installSettings.getVersion(), installSettings.getDistributionUrlRoot(),
+            installSettings.getDistributionUrlPathPattern(), installSettings.getDistributionServerCredentials(),
+            installSettings.getProxySettings(), installSettings.getTemporaryDirectoryPath());
         final Path distributionFilePath = getDistribution.execute(getDistributionSettings);
 
         // Deploys the distribution

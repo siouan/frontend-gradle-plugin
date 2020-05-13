@@ -17,12 +17,9 @@ public class DownloadSettingsMatcher extends AbstractArgumentMatcher<DownloadSet
             return false;
         }
 
-        return actualValue.getResourceUrl().equals(expectedValue.getResourceUrl()) && actualValue
-            .getProxySettings()
-            .equals(expectedValue.getProxySettings()) && actualValue
-            .getTemporaryDirectoryPath()
-            .equals(expectedValue.getTemporaryDirectoryPath()) && actualValue
-            .getDestinationFilePath()
-            .equals(expectedValue.getDestinationFilePath());
+        return actualValue.getResourceUrl().equals(expectedValue.getResourceUrl())
+            && actualValue.getProxySettings().equals(expectedValue.getProxySettings())
+            && actualValue.getTemporaryDirectoryPath().equals(expectedValue.getTemporaryDirectoryPath())
+            && actualValue.getDestinationFilePath().equals(expectedValue.getDestinationFilePath());
     }
 }

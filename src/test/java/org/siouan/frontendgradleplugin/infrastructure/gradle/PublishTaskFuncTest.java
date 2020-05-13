@@ -46,7 +46,7 @@ class PublishTaskFuncTest {
         Files.copy(getResourcePath("package-npm.json"), packageJsonDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
             .nodeVersion("12.16.3")
-            .nodeDistributionUrlPattern(getResourceUrl("node-v12.16.3.zip"))
+            .nodeDistributionUrl(getResourceUrl("node-v12.16.3.zip"))
             .assembleScript("run assemble");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
@@ -73,7 +73,7 @@ class PublishTaskFuncTest {
         Files.copy(getResourcePath("package-npm.json"), packageJsonDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
             .nodeVersion("12.16.3")
-            .nodeDistributionUrlPattern(getResourceUrl("node-v12.16.3.zip"))
+            .nodeDistributionUrl(getResourceUrl("node-v12.16.3.zip"))
             .publishScript("run publish");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
@@ -100,7 +100,7 @@ class PublishTaskFuncTest {
         Files.copy(getResourcePath("package-npm.json"), packageJsonDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
             .nodeVersion("12.16.3")
-            .nodeDistributionUrlPattern(getResourceUrl("node-v12.16.3.zip"))
+            .nodeDistributionUrl(getResourceUrl("node-v12.16.3.zip"))
             .assembleScript("run assemble")
             .publishScript("run publish");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
@@ -129,7 +129,7 @@ class PublishTaskFuncTest {
         frontendMapBuilder
             .yarnEnabled(true)
             .yarnVersion("1.22.4")
-            .yarnDistributionUrlPattern(getResourceUrl("yarn-v1.22.4.tar.gz"));
+            .yarnDistributionUrl(getResourceUrl("yarn-v1.22.4.tar.gz"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result3 = runGradle(projectDirectoryPath, PublishingPlugin.PUBLISH_LIFECYCLE_TASK_NAME);

@@ -19,7 +19,9 @@ public final class FrontendMapBuilder {
 
     private String nodeVersion;
 
-    private String nodeDistributionUrlPattern;
+    private String nodeDistributionUrlRoot;
+
+    private String nodeDistributionUrlPathPattern;
 
     private String nodeDistributionServerUsername;
 
@@ -33,7 +35,9 @@ public final class FrontendMapBuilder {
 
     private String yarnVersion;
 
-    private String yarnDistributionUrlPattern;
+    private String yarnDistributionUrlRoot;
+
+    private String yarnDistributionUrlPathPattern;
 
     private String yarnDistributionServerUsername;
 
@@ -76,14 +80,28 @@ public final class FrontendMapBuilder {
     }
 
     @Nonnull
-    public FrontendMapBuilder nodeDistributionUrlPattern(@Nullable final String nodeDistributionUrlPattern) {
-        this.nodeDistributionUrlPattern = nodeDistributionUrlPattern;
+    public FrontendMapBuilder nodeDistributionUrlRoot(@Nullable final String nodeDistributionUrlRoot) {
+        this.nodeDistributionUrlRoot = nodeDistributionUrlRoot;
         return this;
     }
 
     @Nonnull
-    public FrontendMapBuilder nodeDistributionUrlPattern(@Nullable final URL nodeDistributionUrlPattern) {
-        return nodeDistributionUrlPattern(Objects.toString(nodeDistributionUrlPattern, null));
+    public FrontendMapBuilder nodeDistributionUrlRoot(@Nullable final URL nodeDistributionUrlRoot) {
+        return nodeDistributionUrlRoot(Objects.toString(nodeDistributionUrlRoot, null));
+    }
+
+    @Nonnull
+    public FrontendMapBuilder nodeDistributionUrlPathPattern(@Nullable final String nodeDistributionUrlPathPattern) {
+        this.nodeDistributionUrlPathPattern = nodeDistributionUrlPathPattern;
+        return this;
+    }
+
+    @Nonnull
+    public FrontendMapBuilder nodeDistributionUrl(@Nonnull final URL nodeDistributionUrl) {
+        final String fileName = nodeDistributionUrl.getFile();
+        final String nodeDistributionUrlAsString = nodeDistributionUrl.toString();
+        return nodeDistributionUrlRoot(nodeDistributionUrlAsString.substring(0,
+            nodeDistributionUrlAsString.indexOf(fileName))).nodeDistributionUrlPathPattern(fileName);
     }
 
     @Nonnull
@@ -123,14 +141,28 @@ public final class FrontendMapBuilder {
     }
 
     @Nonnull
-    public FrontendMapBuilder yarnDistributionUrlPattern(@Nullable final String yarnDistributionUrlPattern) {
-        this.yarnDistributionUrlPattern = yarnDistributionUrlPattern;
+    public FrontendMapBuilder yarnDistributionUrlRoot(@Nullable final String yarnDistributionUrlRoot) {
+        this.yarnDistributionUrlRoot = yarnDistributionUrlRoot;
         return this;
     }
 
     @Nonnull
-    public FrontendMapBuilder yarnDistributionUrlPattern(@Nullable final URL yarnDistributionUrlPattern) {
-        return yarnDistributionUrlPattern(Objects.toString(yarnDistributionUrlPattern, null));
+    public FrontendMapBuilder yarnDistributionUrlRoot(@Nullable final URL yarnDistributionUrlRoot) {
+        return yarnDistributionUrlRoot(Objects.toString(yarnDistributionUrlRoot, null));
+    }
+
+    @Nonnull
+    public FrontendMapBuilder yarnDistributionUrlPathPattern(@Nullable final String yarnDistributionUrlPathPattern) {
+        this.yarnDistributionUrlPathPattern = yarnDistributionUrlPathPattern;
+        return this;
+    }
+
+    @Nonnull
+    public FrontendMapBuilder yarnDistributionUrl(@Nonnull final URL yarnDistributionUrl) {
+        final String fileName = yarnDistributionUrl.getFile();
+        final String yarnDistributionUrlAsString = yarnDistributionUrl.toString();
+        return yarnDistributionUrlRoot(yarnDistributionUrlAsString.substring(0,
+            yarnDistributionUrlAsString.indexOf(fileName))).yarnDistributionUrlPathPattern(fileName);
     }
 
     @Nonnull
@@ -226,8 +258,11 @@ public final class FrontendMapBuilder {
         if (nodeVersion != null) {
             properties.put("nodeVersion", nodeVersion);
         }
-        if (nodeDistributionUrlPattern != null) {
-            properties.put("nodeDistributionUrlPattern", nodeDistributionUrlPattern);
+        if (nodeDistributionUrlRoot != null) {
+            properties.put("nodeDistributionUrlRoot", nodeDistributionUrlRoot);
+        }
+        if (nodeDistributionUrlPathPattern != null) {
+            properties.put("nodeDistributionUrlPathPattern", nodeDistributionUrlPathPattern);
         }
         if (nodeDistributionServerUsername != null) {
             properties.put("nodeDistributionServerUsername", nodeDistributionServerUsername);
@@ -247,8 +282,11 @@ public final class FrontendMapBuilder {
         if (yarnVersion != null) {
             properties.put("yarnVersion", yarnVersion);
         }
-        if (yarnDistributionUrlPattern != null) {
-            properties.put("yarnDistributionUrlPattern", yarnDistributionUrlPattern);
+        if (yarnDistributionUrlRoot != null) {
+            properties.put("yarnDistributionUrlRoot", yarnDistributionUrlRoot);
+        }
+        if (yarnDistributionUrlPathPattern != null) {
+            properties.put("yarnDistributionUrlPathPattern", yarnDistributionUrlPathPattern);
         }
         if (yarnDistributionServerUsername != null) {
             properties.put("yarnDistributionServerUsername", yarnDistributionServerUsername);
