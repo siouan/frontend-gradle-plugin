@@ -1,7 +1,6 @@
 package org.siouan.frontendgradleplugin.domain.model;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * Distribution definition.
