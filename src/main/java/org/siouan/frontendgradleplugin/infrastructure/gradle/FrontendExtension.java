@@ -29,11 +29,18 @@ public class FrontendExtension {
     private final DirectoryProperty nodeInstallDirectory;
 
     /**
-     * URL pattern to download the Node.js distribution.
+     * URL root part to build the exact URL to download the Node.js distribution.
      *
      * @since 3.0.0
      */
-    private final Property<String> nodeDistributionUrlPattern;
+    private final Property<String> nodeDistributionUrlRoot;
+
+    /**
+     * Trailing path pattern to build the exact URL to download the Node.js distribution.
+     *
+     * @since 3.0.0
+     */
+    private final Property<String> nodeDistributionUrlPathPattern;
 
     /**
      * Username to authenticate on the server providing Node.js distributions.
@@ -72,11 +79,18 @@ public class FrontendExtension {
     private final DirectoryProperty yarnInstallDirectory;
 
     /**
-     * URL pattern to download the Yarn distribution.
+     * URL root part to build the exact URL to download the Yarn distribution.
      *
      * @since 3.0.0
      */
-    private final Property<String> yarnDistributionUrlPattern;
+    private final Property<String> yarnDistributionUrlRoot;
+
+    /**
+     * Trailing path pattern to build the exact URL to download the Yarn distribution.
+     *
+     * @since 3.0.0
+     */
+    private final Property<String> yarnDistributionUrlPathPattern;
 
     /**
      * Username to authenticate on the server providing Yarn distributions.
@@ -161,14 +175,16 @@ public class FrontendExtension {
         nodeDistributionProvided = project.getObjects().property(Boolean.class);
         nodeVersion = project.getObjects().property(String.class);
         nodeInstallDirectory = project.getObjects().directoryProperty();
-        nodeDistributionUrlPattern = project.getObjects().property(String.class);
+        nodeDistributionUrlRoot = project.getObjects().property(String.class);
+        nodeDistributionUrlPathPattern = project.getObjects().property(String.class);
         nodeDistributionServerUsername = project.getObjects().property(String.class);
         nodeDistributionServerPassword = project.getObjects().property(String.class);
         yarnDistributionProvided = project.getObjects().property(Boolean.class);
         yarnEnabled = project.getObjects().property(Boolean.class);
         yarnVersion = project.getObjects().property(String.class);
         yarnInstallDirectory = project.getObjects().directoryProperty();
-        yarnDistributionUrlPattern = project.getObjects().property(String.class);
+        yarnDistributionUrlRoot = project.getObjects().property(String.class);
+        yarnDistributionUrlPathPattern = project.getObjects().property(String.class);
         yarnDistributionServerUsername = project.getObjects().property(String.class);
         yarnDistributionServerPassword = project.getObjects().property(String.class);
         installScript = project.getObjects().property(String.class);
@@ -196,8 +212,12 @@ public class FrontendExtension {
         return nodeInstallDirectory;
     }
 
-    public Property<String> getNodeDistributionUrlPattern() {
-        return nodeDistributionUrlPattern;
+    public Property<String> getNodeDistributionUrlRoot() {
+        return nodeDistributionUrlRoot;
+    }
+
+    public Property<String> getNodeDistributionUrlPathPattern() {
+        return nodeDistributionUrlPathPattern;
     }
 
     public Property<String> getNodeDistributionServerUsername() {
@@ -224,8 +244,12 @@ public class FrontendExtension {
         return yarnInstallDirectory;
     }
 
-    public Property<String> getYarnDistributionUrlPattern() {
-        return yarnDistributionUrlPattern;
+    public Property<String> getYarnDistributionUrlRoot() {
+        return yarnDistributionUrlRoot;
+    }
+
+    public Property<String> getYarnDistributionUrlPathPattern() {
+        return yarnDistributionUrlPathPattern;
     }
 
     public Property<String> getYarnDistributionServerUsername() {

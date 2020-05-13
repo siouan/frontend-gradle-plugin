@@ -31,11 +31,18 @@ public class NodeInstallTask extends AbstractDistributionInstallTask {
     private final DirectoryProperty nodeInstallDirectory;
 
     /**
-     * URL pattern to download the Node.js distribution.
+     * URL root part to build the exact URL to download the Node.js distribution.
      *
      * @since 3.0.0
      */
-    private final Property<String> nodeDistributionUrlPattern;
+    private final Property<String> nodeDistributionUrlRoot;
+
+    /**
+     * Trailing path pattern to build the exact URL to download the Node.js distribution.
+     *
+     * @since 3.0.0
+     */
+    private final Property<String> nodeDistributionUrlPathPattern;
 
     /**
      * Username to authenticate on the server providing Node.js distributions.
@@ -55,7 +62,8 @@ public class NodeInstallTask extends AbstractDistributionInstallTask {
         super();
         this.nodeVersion = getProject().getObjects().property(String.class);
         this.nodeInstallDirectory = getProject().getObjects().directoryProperty();
-        this.nodeDistributionUrlPattern = getProject().getObjects().property(String.class);
+        this.nodeDistributionUrlRoot = getProject().getObjects().property(String.class);
+        this.nodeDistributionUrlPathPattern = getProject().getObjects().property(String.class);
         this.nodeDistributionServerUsername = getProject().getObjects().property(String.class);
         this.nodeDistributionServerPassword = getProject().getObjects().property(String.class);
     }
@@ -66,8 +74,13 @@ public class NodeInstallTask extends AbstractDistributionInstallTask {
     }
 
     @Input
-    public Property<String> getNodeDistributionUrlPattern() {
-        return nodeDistributionUrlPattern;
+    public Property<String> getNodeDistributionUrlRoot() {
+        return nodeDistributionUrlRoot;
+    }
+
+    @Input
+    public Property<String> getNodeDistributionUrlPathPattern() {
+        return nodeDistributionUrlPathPattern;
     }
 
     @OutputDirectory
@@ -105,8 +118,8 @@ public class NodeInstallTask extends AbstractDistributionInstallTask {
     @Nonnull
     protected InstallSettings getInstallSettings(@Nonnull final Platform platform,
         @Nullable final Credentials distributionServerCredentials, @Nonnull final ProxySettings proxySettings) {
-        return new InstallSettings(platform, nodeVersion.get(), nodeDistributionUrlPattern.get(),
-            distributionServerCredentials, proxySettings, getTemporaryDir().toPath(),
-            nodeInstallDirectory.getAsFile().get().toPath());
+        return new InstallSettings(platform, nodeVersion.get(), nodeDistributionUrlRoot.get(),
+            nodeDistributionUrlPathPattern.get(), distributionServerCredentials, proxySettings,
+            getTemporaryDir().toPath(), nodeInstallDirectory.getAsFile().get().toPath());
     }
 }

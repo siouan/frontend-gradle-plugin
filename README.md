@@ -108,7 +108,7 @@ Follow instructions provided by the Gradle Plugin Portal [here][gradle-plugin-pa
 ##### Table of properties
 
 The table below introduces each property in details. You may also take a look at [Tasks reference](#tasks-reference)
-section for further information. **Bold case** highlights required properties.
+section for further information. **Bold case** highlights required properties, whose value cannot be `null`.
 
 <table>
 <tbody>
@@ -146,19 +146,29 @@ Version number used to build the exact URL to download the distribution. The pro
     </td>
 </tr>
 <tr>
-    <td align="left"><b><code>nodeDistributionUrlPattern</code></b></td>
+    <td align="left"><b><code>nodeDistributionUrlRoot</code></b></td>
     <td align="left">
-<b>Default value</b>: <code>'https://nodejs.org/dist/vVERSION/node-vVERSION-ARCH.TYPE'</code><br/>
+<b>Default value</b>: <code>'https://nodejs.org/dist/'</code><br/>
 <br/>
-Set this property to download the distribution from a custom website. By default, the plugin attempts to download the
-distribution compatible with the current platform from Node.js' website. The version of the distribution is expected to
-be the same as the one set in the <code>nodeVersion</code> property, or this may lead to unexpected results. The
-property may be set with a fixed URL (e.g. <code>https://myorganisation.com/dist/node-v12.16.3-win-x64.zip</code>), or
-take advantage of the automatic distribution resolution in the plugin, using specific tokens in the URL pattern:
-<code>VERSION</code>, <code>ARCH</code>, <code>TYPE</code>. See the
-<code><a href="#installnode---install-nodejs">installNode</a></code> task for details about when and how to use these
-tokens.
-</td>
+This property is used to build the exact URL to download the distribution, by appending the value of the
+<code>nodeDistributionUrlPathPattern</code> property to its value. By default, the plugin attempts to download the
+distribution from Node.js' website.
+    </td>
+</tr>
+<tr>
+    <td align="left"><code>nodeDistributionUrlPathPattern</code></td>
+    <td align="left">
+<b>Default value</b>: <code>'vVERSION/node-vVERSION-ARCH.TYPE'</code><br/>
+<br/>
+This property is used to build the exact URL to download the distribution, by appending its value to the value of the
+<code>nodeDistributionUrlRoot</code> property. This property may be set with a fixed trailing path part (e.g.
+<code>dist/node-v12.16.3-win-x64.zip</code>), or take advantage of the automatic distribution resolution in the plugin, using
+specific tokens in the pattern such as <code>VERSION</code>, <code>ARCH</code>, <code>TYPE</code>. See the
+<code><a href="#installnode---install-nodejs">installNode</a></code> task for details about when and how to use this
+token.<br/>
+Then, the exact URL used by default to download the distribution is
+<code>https://nodejs.org/dist/vVERSION/node-vVERSION-ARCH.TYPE</code>.
+    </td>
 </tr>
 <tr>
     <td align="left"><code>nodeDistributionServerUsername</code></td>
@@ -226,17 +236,28 @@ Version number used to build the exact URL to download the distribution. The pro
     </td>
 </tr>
 <tr>
-    <td align="left"><b><code>yarnDistributionUrlPattern</code></b></td>
+    <td align="left"><b><code>yarnDistributionUrlRoot</code></b></td>
     <td align="left">
-<b>Default value</b>: <code>'https://github.com/yarnpkg/yarn/releases/download/vVERSION/yarn-vVERSION.tar.gz'</code><br/>
+<b>Default value</b>: <code>'https://github.com/yarnpkg/yarn/releases/download/'</code><br/>
 <br/>
-Set this property to download the distribution from a custom website. By default, the plugin attempts to download the
-distribution from Yarn website. The version of the distribution is expected to be the same as the one set in the
-<code>yarnVersion</code> property, or this may lead to unexpected results. The property may be set with a fixed URL
-(e.g. <code>https://myorganisation.com/dist/yarn-v1.22.4.tar.gz</code>), or take advantage of the automatic distribution
-resolution in the plugin, using specific token <code>VERSION</code> in the URL pattern. See the
+This property is used to build the exact URL to download the distribution, by appending the value of the
+<code>yarnDistributionUrlPathPattern</code> property to its value. By default, the plugin attempts to download the
+distribution from Yarn's website.
+    </td>
+</tr>
+<tr>
+    <td align="left"><code>yarnDistributionUrlPathPattern</code></td>
+    <td align="left">
+<b>Default value</b>: <code>'vVERSION/yarn-vVERSION.tar.gz'</code><br/>
+<br/>
+This property is used to build the exact URL to download the distribution, by appending its value to the value of the
+<code>yarnDistributionUrlRoot</code> property. This property may be set with a fixed trailing path part (e.g.
+<code>dist/yarn-v1.22.4.tar.gz</code>), or take advantage of the automatic distribution resolution in the plugin, using
+specific tokens in the pattern such as <code>VERSION</code>. See the
 <code><a href="#installyarn---install-yarn">installYarn</a></code> task for details about when and how to use this
-token.
+token.<br/>
+Then, the exact URL used by default to download the distribution is
+<code>https://github.com/yarnpkg/yarn/releases/download/vVERSION/yarn-vVERSION.tar.gz</code>.
     </td>
 </tr>
 <tr>
@@ -406,7 +427,8 @@ file, and setup the build with the plugin DSL.
 frontend {
     nodeDistributionProvided = false
     nodeVersion = '12.16.3'
-    nodeDistributionUrlPattern = 'https://nodejs.org/dist/vVERSION/node-vVERSION-ARCH.TYPE'
+    nodeDistributionUrlRoot = 'https://nodejs.org/dist/'
+    nodeDistributionUrlPathPattern = 'vVERSION/node-vVERSION-ARCH.TYPE'
     nodeDistributionServerUsername = 'username'
     nodeDistributionServerPassword = 'password'
     nodeInstallDirectory = file("${projectDir}/node")
@@ -414,7 +436,8 @@ frontend {
     yarnEnabled = false
     yarnDistributionProvided = false
     yarnVersion = '1.22.4'
-    yarnDistributionUrlPattern = 'https://github.com/yarnpkg/yarn/releases/download/vVERSION/yarn-vVERSION.tar.gz'
+    yarnDistributionUrlRoot = 'https://github.com/yarnpkg/yarn/releases/download/'
+    yarnDistributionUrlPathPattern = 'vVERSION/yarn-vVERSION.tar.gz'
     yarnDistributionServerUsername = 'username'
     yarnDistributionServerPassword = 'password'
     yarnInstallDirectory = file("${projectDir}/yarn")
@@ -441,7 +464,8 @@ frontend {
 frontend {
     nodeDistributionProvided.set(false)
     nodeVersion.set("12.16.3")
-    nodeDistributionUrlPattern.set("https://nodejs.org/dist/vVERSION/node-vVERSION-ARCH.TYPE")
+    nodeDistributionUrlRoot.set("https://nodejs.org/dist/")
+    nodeDistributionUrlPathPattern.set("vVERSION/node-vVERSION-ARCH.TYPE")
     nodeDistributionServerUsername.set("username")
     nodeDistributionServerPassword.set("password")
     nodeInstallDirectory.set(project.layout.projectDirectory.dir("node"))
@@ -449,7 +473,8 @@ frontend {
     yarnEnabled.set(false)
     yarnDistributionProvided.set(false)
     yarnVersion.set("1.22.4")
-    yarnDistributionUrlPattern.set("https://github.com/yarnpkg/yarn/releases/download/vVERSION/yarn-vVERSION.tar.gz")
+    yarnDistributionUrlRoot.set("https://github.com/yarnpkg/yarn/releases/download/")
+    yarnDistributionUrlPathPattern.set("vVERSION/yarn-vVERSION.tar.gz")
     yarnDistributionServerUsername.set("username")
     yarnDistributionServerPassword.set("password")
     yarnInstallDirectory.set(project.layout.projectDirectory.dir("yarn"))
@@ -534,17 +559,15 @@ implements. The examples below introduce the implementation expected with simple
 
 ```groovy
 // Configuring a predefined task.
-// FORMER SYNTAX: task 'installFrontend' is immediately created and configured, as well as task
+// LEGACY SYNTAX: task 'installFrontend' is immediately created and configured, as well as task
 // 'otherTask', even if both tasks are not executed.
 installFrontend {
     dependsOn 'otherTask'
-    inputs.files('package.json', 'package-lock.json')
 }
 // MODERN SYNTAX: task 'installFrontend' is created and configured only when Gradle is about to execute it.
 // Consequently, task 'otherTask' is also created and configured later.
 tasks.named('installFrontend') {
     dependsOn 'otherTask'
-    inputs.files('package.json', 'package-lock.json')
 }
 
 // Defining a new task
@@ -576,33 +599,35 @@ The plugin registers multiple tasks, that may have dependencies with each other,
 ### `installNode` - Install Node.js
 
 The `installNode` task downloads a [Node.js][nodejs] distribution and verifies its integrity. By default, the exact
-download URL is guessed using the `nodeVersion` property, the `nodeDistributionUrlPattern` property, and the current
-platform's architecture. Checking the distribution integrity consists of downloading a file providing the distribution
-shasum. This file is expected to be in the same remote web directory than the distribution. For example, if the
-distribution is located at URL `https://nodejs.org/dist/v12.16.3/node-v12.16.3-win-x64.zip`, the plugin attempts to
-download the shasum file located at URL `https://nodejs.org/dist/v12.16.3/SHASUMS256.txt`. Optionally, defining the
-`proxyHost` property and the `proxyPort` property allows to use a proxy server when downloading the distribution and the
-shasum. The `proxyUsername` and `proxyPassword` properties may also be used to authenticate on the proxy server with a
-BASIC scheme. Set the location where the distribution shall be installed with the `nodeInstallDirectory` property, which
-by default is the `${projectDir}/node` directory.
+download URL is guessed using the `nodeVersion` property, the `nodeDistributionUrlRoot` property, the
+`nodeDistributionUrlPathPattern` property, and the current platform's architecture. Checking the distribution integrity
+consists of downloading a file providing the distribution shasum. This file is expected to be in the same remote web
+directory than the distribution. For example, if the distribution is located at URL
+`https://nodejs.org/dist/v12.16.3/node-v12.16.3-win-x64.zip`, the plugin attempts to download the shasum file located at
+URL `https://nodejs.org/dist/v12.16.3/SHASUMS256.txt`. Optionally, defining the `proxyHost` property and the `proxyPort`
+property allows to use a proxy server when downloading the distribution and the shasum. The `proxyUsername` and
+`proxyPassword` properties may also be used to authenticate on the proxy server with a BASIC scheme. Set the location
+where the distribution shall be installed with the `nodeInstallDirectory` property, which by default is the
+`${projectDir}/node` directory.
 
 If a [Node.js][nodejs] distribution is already installed in the system, and shall be used instead of a downloaded
 distribution, set the `nodeDistributionProvided` property to `true` and the location of the distribution with the
 `nodeInstallDirectory` property. Alternatively, this latter property may not be set, and the plugin would locate the
 distribution using the `NODEJS_HOME` environment variable, or the `PATH` environment variable. Consequently, the
 `installNode` task is automatically _SKIPPED_ during a Gradle build. The `nodeVersion` property and the
-`nodeDistributionUrlPattern` property are useless and shall not be set for clarity. 
+`nodeDistributionUrl*` properties are useless and shall not be set for clarity. 
 
 The task takes advantage of [Gradle incremental build][gradle-incremental-build], and is not executed again unless one
 of its inputs/outputs changed. The task is _UP-TO-DATE_ during a Gradle build, and skipped.
 
 > This task should not be executed directly. Gradle executes it if the build requires it.
 
-**About the distribution URL pattern**
+**About the distribution download URL**
 
-The `nodeDistributionUrlPattern` property offers a convenient way to download distributions from a custom website -
-e.g. a website mirroring the official Node.js website to cache distributions, and still take advantage of the automatic
-resolution of the exact URL, based on the current platform's architecture. The pattern may contain the following tokens:
+The `nodeDistributionUrlRoot` property and the `nodeDistributionUrlPathPattern` property offer a convenient way to
+download distributions from a custom website - e.g. a website mirroring the official Node.js' website, and still take
+advantage of the automatic resolution of the exact URL, based on the current platform's architecture. The
+`yarnDistributionUrlPathPattern` property may contain the following tokens:
 - `VERSION`: automatically replaced with the version number set in the `nodeVersion` property.
 - `ARCH`: automatically replaced with the architecture ID matching the current platform. For example, if the current O/S
 is MacOS 64 bits, the plugin replaces the token with `darwin-x64`.
@@ -610,13 +635,15 @@ is MacOS 64 bits, the plugin replaces the token with `darwin-x64`.
 if the current O/S is Windows, the plugin replaces the token with `zip`.
 
 When using a custom website, the `nodeDistributionServerUsername` and `nodeDistributionServerPassword` properties may
-also be used to authenticate with a BASIC scheme. Then, if the distribution needs to be upgraded, update only the
-`nodeVersion` property and the plugin will download the relevant distribution from the custom website.
+also be used to authenticate with a BASIC scheme. Then, if the distribution needs to be upgraded and tokens are
+used appropriately in the `nodeDistributionUrlPathPattern` property, update only the `nodeVersion` property and the
+plugin will download the relevant distribution from the custom website.
 
 ### `installYarn` - Install Yarn
 
 The `installYarn` task downloads a [Yarn][classic-yarn] distribution, if `yarnEnabled` property is `true`. By default,
-the exact download URL is guessed using the `yarnVersion` property, and the `yarnDistributionUrlPattern` property.
+the exact download URL is guessed using the `yarnVersion` property, the `yarnDistributionUrlRoot` property, and the
+`yarnDistributionUrlPathPattern` property.
 Optionally, defining the `proxyHost` property and the `proxyPort` property allow to use a proxy server when downloading
 the distribution. The `proxyUsername` and `proxyPassword` properties may also be used to authenticate on the proxy
 server with a BASIC scheme. Set the location where the distribution shall be installed with the `yarnInstallDirectory`
@@ -627,23 +654,25 @@ distribution, set the `yarnDistributionProvided` property to `true` and the loca
 `yarnInstallDirectory` property. Alternatively, this latter property may not be set, and the plugin would locate the
 distribution using the `YARN_HOME` environment variable, or the `PATH` environment variable. Consequently, the
 `installYarn` task is automatically _SKIPPED_ during a Gradle build. The `yarnEnabled` property still must be `true`,
-the `yarnVersion` property and the `yarnDistributionUrlPattern` property are useless and shall not be set for clarity. 
+the `yarnVersion` property and the `yarnDistributionUrl*` properties are useless and shall not be set for clarity. 
 
 The task takes advantage of [Gradle incremental build][gradle-incremental-build], and is not executed again unless one
 of its inputs/outputs changed. The task is _UP-TO-DATE_ during a Gradle build, and skipped.
 
 > This task should not be executed directly. Gradle executes it if the build requires it.
 
-**About the distribution URL pattern**
+**About the distribution download URL**
 
-The `yarnDistributionUrlPattern` property offers a convenient way to download distributions from a custom website -
-e.g. a website mirroring the official Yarn website to cache distributions, and still take advantage of the automatic
-resolution of the exact URL, based on the version number. The pattern may contain the `VERSION` token, automatically
-replaced with the version number set in the `yarnVersion` property.
+The `yarnDistributionUrlRoot` property and the `yarnDistributionUrlPathPattern` property offer a convenient way to
+download distributions from a custom website - e.g. a website mirroring the official Yarn's website, and still take
+advantage of the automatic resolution of the exact URL, based on the version number. The
+`yarnDistributionUrlPathPattern` property may contain the `VERSION` token, automatically replaced with the version
+number set in the `yarnVersion` property.
 
 When using a custom website, the `yarnDistributionServerUsername` and `yarnDistributionServerPassword` properties may
-also be used to authenticate with a BASIC scheme. If the distribution needs to be upgraded, update only the
-`yarnVersion` property and the plugin will download the relevant distribution from the custom website.
+also be used to authenticate with a BASIC scheme. If the distribution needs to be upgraded and the `VERSION` token is
+used appropriately in the `yarnDistributionUrlPathPattern` property, update only the `yarnVersion` property and the
+plugin will download the relevant distribution from the custom website.
 
 ### `installFrontend` - Install frontend dependencies
 

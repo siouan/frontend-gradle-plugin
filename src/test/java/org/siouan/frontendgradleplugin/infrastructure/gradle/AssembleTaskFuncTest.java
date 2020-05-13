@@ -44,7 +44,7 @@ class AssembleTaskFuncTest {
         Files.copy(getResourcePath("package-npm.json"), packageJsonDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
             .nodeVersion("12.16.3")
-            .nodeDistributionUrlPattern(getResourceUrl("node-v12.16.3.zip"));
+            .nodeDistributionUrl(getResourceUrl("node-v12.16.3.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result = runGradle(projectDirectoryPath, FrontendGradlePlugin.ASSEMBLE_TASK_NAME);
@@ -60,7 +60,7 @@ class AssembleTaskFuncTest {
         Files.copy(getResourcePath("package-npm.json"), packageJsonDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
             .nodeVersion("12.16.3")
-            .nodeDistributionUrlPattern(getResourceUrl("node-v12.16.3.zip"));
+            .nodeDistributionUrl(getResourceUrl("node-v12.16.3.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result = runGradle(projectDirectoryPath, BasePlugin.ASSEMBLE_TASK_NAME);
@@ -77,7 +77,7 @@ class AssembleTaskFuncTest {
         Files.copy(getResourcePath("package-npm.json"), packageJsonDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
             .nodeVersion("12.16.3")
-            .nodeDistributionUrlPattern(getResourceUrl("node-v12.16.3.zip"))
+            .nodeDistributionUrl(getResourceUrl("node-v12.16.3.zip"))
             .assembleScript("run assemble");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
@@ -103,7 +103,7 @@ class AssembleTaskFuncTest {
         frontendMapBuilder
             .yarnEnabled(true)
             .yarnVersion("1.22.4")
-            .yarnDistributionUrlPattern(getResourceUrl("yarn-v1.22.4.tar.gz"));
+            .yarnDistributionUrl(getResourceUrl("yarn-v1.22.4.tar.gz"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result3 = runGradle(projectDirectoryPath, BasePlugin.ASSEMBLE_TASK_NAME);

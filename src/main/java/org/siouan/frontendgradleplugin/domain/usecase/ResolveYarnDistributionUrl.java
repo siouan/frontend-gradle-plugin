@@ -17,7 +17,8 @@ public class ResolveYarnDistributionUrl implements DistributionUrlResolver {
     @Nonnull
     @Override
     public URL execute(@Nonnull final DistributionDefinition distributionDefinition) throws MalformedURLException {
-        return new URL(
-            distributionDefinition.getDownloadUrlPattern().replace(VERSION_TOKEN, distributionDefinition.getVersion()));
+        return new URL(distributionDefinition.getDownloadUrlRoot() + distributionDefinition
+            .getDownloadUrlPathPattern()
+            .replace(VERSION_TOKEN, distributionDefinition.getVersion()));
     }
 }

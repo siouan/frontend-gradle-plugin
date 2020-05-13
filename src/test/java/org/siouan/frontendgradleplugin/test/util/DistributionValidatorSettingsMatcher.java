@@ -1,5 +1,6 @@
 package org.siouan.frontendgradleplugin.test.util;
 
+import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -17,10 +18,10 @@ public class DistributionValidatorSettingsMatcher extends AbstractArgumentMatche
             return false;
         }
 
-        return actualValue.getDistributionUrl().equals(expectedValue.getDistributionUrl()) && actualValue
-            .getTemporaryDirectoryPath()
-            .equals(expectedValue.getTemporaryDirectoryPath()) && actualValue
-            .getDistributionFilePath()
-            .equals(expectedValue.getDistributionFilePath());
+        return actualValue.getDistributionUrl().equals(expectedValue.getDistributionUrl())
+            && Objects.equals(actualValue.getDistributionServerCredentials(), expectedValue.getDistributionServerCredentials())
+            && actualValue.getTemporaryDirectoryPath().equals(expectedValue.getTemporaryDirectoryPath())
+            && actualValue.getDistributionFilePath().equals(expectedValue.getDistributionFilePath())
+            && actualValue.getProxySettings().equals(expectedValue.getProxySettings());
     }
 }

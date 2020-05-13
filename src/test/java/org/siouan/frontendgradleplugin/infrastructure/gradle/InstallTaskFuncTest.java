@@ -34,7 +34,7 @@ class InstallTaskFuncTest {
         Files.copy(getResourcePath("package-npm.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
             .nodeVersion("12.16.3")
-            .nodeDistributionUrlPattern(getResourceUrl("node-v12.16.3.zip"));
+            .nodeDistributionUrl(getResourceUrl("node-v12.16.3.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, FrontendGradlePlugin.INSTALL_TASK_NAME);
@@ -55,7 +55,7 @@ class InstallTaskFuncTest {
         frontendMapBuilder
             .yarnEnabled(true)
             .yarnVersion("1.22.4")
-            .yarnDistributionUrlPattern(getResourceUrl("yarn-v1.22.4.tar.gz"));
+            .yarnDistributionUrl(getResourceUrl("yarn-v1.22.4.tar.gz"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result3 = runGradle(projectDirectoryPath, FrontendGradlePlugin.INSTALL_TASK_NAME);
@@ -76,7 +76,7 @@ class InstallTaskFuncTest {
         Files.copy(getResourcePath("package-npm.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
             .nodeVersion("12.16.3")
-            .nodeDistributionUrlPattern(getResourceUrl("node-v12.16.3.zip"))
+            .nodeDistributionUrl(getResourceUrl("node-v12.16.3.zip"))
             .installScript("ci");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
@@ -98,7 +98,7 @@ class InstallTaskFuncTest {
         frontendMapBuilder
             .yarnEnabled(true)
             .yarnVersion("1.22.4")
-            .yarnDistributionUrlPattern(getResourceUrl("yarn-v1.22.4.tar.gz"));
+            .yarnDistributionUrl(getResourceUrl("yarn-v1.22.4.tar.gz"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result3 = runGradle(projectDirectoryPath, FrontendGradlePlugin.INSTALL_TASK_NAME);

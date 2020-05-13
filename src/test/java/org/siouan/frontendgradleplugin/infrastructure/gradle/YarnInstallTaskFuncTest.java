@@ -75,7 +75,7 @@ class YarnInstallTaskFuncTest {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
             .yarnEnabled(true)
             .yarnVersion("1.22.4")
-            .yarnDistributionUrlPattern("protocol://domain/unknown");
+            .yarnDistributionUrlRoot("protocol://domain/unknown");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result = runGradleAndExpectFailure(projectDirectoryPath,
@@ -89,7 +89,7 @@ class YarnInstallTaskFuncTest {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
             .yarnEnabled(true)
             .yarnVersion("1.22.4")
-            .yarnDistributionUrlPattern(getResourceUrl("yarn-v1.22.4.tar.gz"));
+            .yarnDistributionUrl(getResourceUrl("yarn-v1.22.4.tar.gz"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);

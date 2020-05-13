@@ -66,13 +66,13 @@ public class ProxyServerConfigurator {
         MappingBuilder mappingBuilder;
         if (nodeEnabled) {
             // The proxy server is configured to return test resources to avoid network overhead.
-            mappingBuilder = get(urlPathMatching("^/.+/node-v[^/]+$"));
+            mappingBuilder = get(urlPathMatching("^.*/node-v[^/]+$"));
             withDistributionServerAuth(mappingBuilder);
             withProxyServerAuth(mappingBuilder);
             proxyServer.stubFor(mappingBuilder.willReturn(
                 aResponse().withBody(Files.readAllBytes(getResourcePath("node-v12.16.3.zip")))));
 
-            mappingBuilder = get(urlPathMatching("^.+/SHASUMS256.txt$"));
+            mappingBuilder = get(urlPathMatching("^.*/SHASUMS256.txt$"));
             withDistributionServerAuth(mappingBuilder);
             withProxyServerAuth(mappingBuilder);
             proxyServer.stubFor(
@@ -81,7 +81,7 @@ public class ProxyServerConfigurator {
 
         if (yarnEnabled) {
             // The proxy server is configured to return test resources to avoid network overhead.
-            mappingBuilder = get(urlPathMatching("^/.+/yarn-v[^/]+$"));
+            mappingBuilder = get(urlPathMatching("^.*/yarn-v[^/]+$"));
             withDistributionServerAuth(mappingBuilder);
             withProxyServerAuth(mappingBuilder);
             proxyServer.stubFor(mappingBuilder.willReturn(

@@ -31,11 +31,18 @@ public class YarnInstallTask extends AbstractDistributionInstallTask {
     private final DirectoryProperty yarnInstallDirectory;
 
     /**
-     * URL pattern to download the distribution.
+     * URL root part to build the exact URL to download the Yarn distribution.
      *
      * @since 3.0.0
      */
-    private final Property<String> yarnDistributionUrlPattern;
+    private final Property<String> yarnDistributionUrlRoot;
+
+    /**
+     * Trailing path pattern to build the exact URL to download the Yarn distribution.
+     *
+     * @since 3.0.0
+     */
+    private final Property<String> yarnDistributionUrlPathPattern;
 
     /**
      * Username to authenticate on the server providing Yarn distributions.
@@ -54,7 +61,8 @@ public class YarnInstallTask extends AbstractDistributionInstallTask {
     public YarnInstallTask() {
         this.yarnVersion = getProject().getObjects().property(String.class);
         this.yarnInstallDirectory = getProject().getObjects().directoryProperty();
-        this.yarnDistributionUrlPattern = getProject().getObjects().property(String.class);
+        this.yarnDistributionUrlRoot = getProject().getObjects().property(String.class);
+        this.yarnDistributionUrlPathPattern = getProject().getObjects().property(String.class);
         this.yarnDistributionServerUsername = getProject().getObjects().property(String.class);
         this.yarnDistributionServerPassword = getProject().getObjects().property(String.class);
     }
@@ -65,8 +73,13 @@ public class YarnInstallTask extends AbstractDistributionInstallTask {
     }
 
     @Input
-    public Property<String> getYarnDistributionUrlPattern() {
-        return yarnDistributionUrlPattern;
+    public Property<String> getYarnDistributionUrlRoot() {
+        return yarnDistributionUrlRoot;
+    }
+
+    @Input
+    public Property<String> getYarnDistributionUrlPathPattern() {
+        return yarnDistributionUrlPathPattern;
     }
 
     @Internal
@@ -104,8 +117,8 @@ public class YarnInstallTask extends AbstractDistributionInstallTask {
     @Nonnull
     protected InstallSettings getInstallSettings(@Nonnull final Platform platform,
         @Nullable final Credentials distributionServerCredentials, @Nonnull final ProxySettings proxySettings) {
-        return new InstallSettings(platform, yarnVersion.get(), yarnDistributionUrlPattern.get(),
-            distributionServerCredentials, proxySettings, getTemporaryDir().toPath(),
-            yarnInstallDirectory.getAsFile().get().toPath());
+        return new InstallSettings(platform, yarnVersion.get(), yarnDistributionUrlRoot.get(),
+            yarnDistributionUrlPathPattern.get(), distributionServerCredentials, proxySettings,
+            getTemporaryDir().toPath(), yarnInstallDirectory.getAsFile().get().toPath());
     }
 }

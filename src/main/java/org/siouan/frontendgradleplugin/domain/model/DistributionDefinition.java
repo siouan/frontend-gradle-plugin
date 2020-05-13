@@ -1,6 +1,7 @@
 package org.siouan.frontendgradleplugin.domain.model;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Distribution definition.
@@ -9,33 +10,28 @@ import javax.annotation.Nonnull;
  */
 public class DistributionDefinition {
 
-    /**
-     * Underlying platform.
-     */
     private final Platform platform;
 
-    /**
-     * Version of distribution.
-     */
     private final String version;
 
-    /**
-     * URL pattern to download the distribution.
-     */
-    private final String downloadUrlPattern;
+    private final String downloadUrlRoot;
+
+    private final String downloadUrlPathPattern;
 
     /**
      * Builds a definition.
      *
      * @param platform Underlying platform.
      * @param version Version of distribution.
-     * @param downloadUrlPattern URL pattern to download the distribution.
+     * @param downloadUrlRoot URL root part to build the exact URL to download the distribution.
+     * @param downloadUrlPathPattern Trailing path pattern to build the exact URL to download the distribution.
      */
     public DistributionDefinition(@Nonnull final Platform platform, @Nonnull final String version,
-        @Nonnull final String downloadUrlPattern) {
+        @Nonnull final String downloadUrlRoot, @Nonnull final String downloadUrlPathPattern) {
         this.platform = platform;
         this.version = version;
-        this.downloadUrlPattern = downloadUrlPattern;
+        this.downloadUrlRoot = downloadUrlRoot;
+        this.downloadUrlPathPattern = downloadUrlPathPattern;
     }
 
     /**
@@ -59,12 +55,22 @@ public class DistributionDefinition {
     }
 
     /**
-     * Gets the URL pattern to download the distribution.
+     * Gets the URL root part to build the exact URL to download the distribution.
      *
-     * @return URL pattern.
+     * @return URL root.
      */
     @Nonnull
-    public String getDownloadUrlPattern() {
-        return downloadUrlPattern;
+    public String getDownloadUrlRoot() {
+        return downloadUrlRoot;
+    }
+
+    /**
+     * Gets the trailing path pattern to build the exact URL to download the distribution.
+     *
+     * @return Path pattern.
+     */
+    @Nonnull
+    public String getDownloadUrlPathPattern() {
+        return downloadUrlPathPattern;
     }
 }

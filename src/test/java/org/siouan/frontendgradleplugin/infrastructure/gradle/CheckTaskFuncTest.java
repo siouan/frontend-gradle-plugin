@@ -35,7 +35,7 @@ class CheckTaskFuncTest {
         Files.copy(getResourcePath("package-npm.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
             .nodeVersion("12.16.3")
-            .nodeDistributionUrlPattern(getResourceUrl("node-v12.16.3.zip"));
+            .nodeDistributionUrl(getResourceUrl("node-v12.16.3.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result = runGradle(projectDirectoryPath, FrontendGradlePlugin.CHECK_TASK_NAME);
@@ -51,7 +51,7 @@ class CheckTaskFuncTest {
         Files.copy(getResourcePath("package-npm.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
             .nodeVersion("12.16.3")
-            .nodeDistributionUrlPattern(getResourceUrl("node-v12.16.3.zip"));
+            .nodeDistributionUrl(getResourceUrl("node-v12.16.3.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result = runGradle(projectDirectoryPath, FrontendGradlePlugin.GRADLE_CHECK_TASK_NAME);
@@ -68,7 +68,7 @@ class CheckTaskFuncTest {
         Files.copy(getResourcePath("package-npm.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
             .nodeVersion("12.16.3")
-            .nodeDistributionUrlPattern(getResourceUrl("node-v12.16.3.zip"))
+            .nodeDistributionUrl(getResourceUrl("node-v12.16.3.zip"))
             .checkScript("run check");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
@@ -94,7 +94,7 @@ class CheckTaskFuncTest {
         frontendMapBuilder
             .yarnEnabled(true)
             .yarnVersion("1.22.4")
-            .yarnDistributionUrlPattern(getResourceUrl("yarn-v1.22.4.tar.gz"));
+            .yarnDistributionUrl(getResourceUrl("yarn-v1.22.4.tar.gz"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result3 = runGradle(projectDirectoryPath, FrontendGradlePlugin.GRADLE_CHECK_TASK_NAME);

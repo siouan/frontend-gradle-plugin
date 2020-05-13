@@ -31,9 +31,13 @@ import org.siouan.frontendgradleplugin.test.util.ProxyServerConfigurator;
  */
 class AuthenticationAndProxyFuncTest {
 
-    private static final String NODE_DISTRIBUTION_URL_PATTERN = "http://nodejs.org/dist/vVERSION/node-vVERSION.zip";
+    private static final String NODE_DISTRIBUTION_URL_ROOT = "http://nodejs.org/dist/";
 
-    private static final String YARN_DISTRIBUTION_URL_PATTERN = "http://github.com/yarnpkg/yarn/releases/download/vVERSION/yarn-vVERSION.tar.gz";
+    private static final String NODE_DISTRIBUTION_URL_PATH_PATTERN = "vVERSION/node-vVERSION.zip";
+
+    private static final String YARN_DISTRIBUTION_URL_ROOT = "http://github.com/yarnpkg/yarn/releases/download/";
+
+    private static final String YARN_DISTRIBUTION_URL_PATH_PATTERN = "vVERSION/yarn-vVERSION.tar.gz";
 
     private static final String SERVER_HOST = "127.0.0.1";
 
@@ -73,8 +77,7 @@ class AuthenticationAndProxyFuncTest {
         // Direct connection to the distribution server, i.e. the 'server' variable acts as the distribution server.
 
         // We use a HTTP address because proxying through HTTPS is not supported with WireMock.
-        final FrontendMapBuilder frontendMapBuilder = configureServerAndPluginWithDirectConnection(
-            new URL("http", SERVER_HOST, SERVER_PORT, "/dist/vVERSION/node-vVERSION.zip").toString(), null, "AYr2n{VF");
+        final FrontendMapBuilder frontendMapBuilder = configureNodeServerAndPluginWithDirectConnection("AYr2n{VF");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradleAndExpectFailure(projectDirectoryPath,
@@ -89,8 +92,7 @@ class AuthenticationAndProxyFuncTest {
         // Direct connection to the distribution server, i.e. the 'server' variable acts as the distribution server.
 
         // We use a HTTP address because proxying through HTTPS is not supported with WireMock.
-        final FrontendMapBuilder frontendMapBuilder = configureServerAndPluginWithDirectConnection(
-            new URL("http", SERVER_HOST, SERVER_PORT, "/dist/vVERSION/node-vVERSION.zip").toString(), null,
+        final FrontendMapBuilder frontendMapBuilder = configureNodeServerAndPluginWithDirectConnection(
             DISTRIBUTION_SERVER_PASSWORD);
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
@@ -107,8 +109,7 @@ class AuthenticationAndProxyFuncTest {
         // port of the WireMock proxy server.
         // Manual verification: when proxy server host below is null, the distribution shall be downloaded without
         // the proxy server, and the build shall succeed.
-        final FrontendMapBuilder frontendMapBuilder = configureServerAndPluginWithProxyConnection(
-            NODE_DISTRIBUTION_URL_PATTERN, null, SERVER_PORT + 1);
+        final FrontendMapBuilder frontendMapBuilder = configureNodeServerAndPluginWithProxyConnection(SERVER_PORT + 1);
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         // The build should fail with a java.net.ConnectException because the proxy server is not reachable.
@@ -124,8 +125,7 @@ class AuthenticationAndProxyFuncTest {
         // Connection through a proxy server, i.e. the 'server' variable acts as the proxy server.
 
         // We use a HTTP address because proxying through HTTPS is not supported with WireMock.
-        final FrontendMapBuilder frontendMapBuilder = configureServerAndPluginWithProxyConnection(
-            NODE_DISTRIBUTION_URL_PATTERN, null, SERVER_PORT);
+        final FrontendMapBuilder frontendMapBuilder = configureNodeServerAndPluginWithProxyConnection(SERVER_PORT);
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
@@ -138,8 +138,7 @@ class AuthenticationAndProxyFuncTest {
         // Connection through a proxy server, i.e. the 'server' variable acts as the proxy server.
 
         // We use a HTTP address because proxying through HTTPS is not supported with WireMock.
-        final FrontendMapBuilder frontendMapBuilder = configureServerAndPluginWithProxyConnection(
-            NODE_DISTRIBUTION_URL_PATTERN, null, "xE!s67O?");
+        final FrontendMapBuilder frontendMapBuilder = configureNodeServerAndPluginWithProxyConnection("xE!s67O?");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradleAndExpectFailure(projectDirectoryPath,
@@ -154,8 +153,8 @@ class AuthenticationAndProxyFuncTest {
         // Connection through a proxy server, i.e. the 'server' variable acts as the proxy server.
 
         // We use a HTTP address because proxying through HTTPS is not supported with WireMock.
-        final FrontendMapBuilder frontendMapBuilder = configureServerAndPluginWithProxyConnection(
-            NODE_DISTRIBUTION_URL_PATTERN, null, PROXY_SERVER_PASSWORD);
+        final FrontendMapBuilder frontendMapBuilder = configureNodeServerAndPluginWithProxyConnection(
+            PROXY_SERVER_PASSWORD);
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
@@ -168,9 +167,7 @@ class AuthenticationAndProxyFuncTest {
         // Direct connection to the distribution server, i.e. the 'server' variable acts as the distribution server.
 
         // We use a HTTP address because proxying through HTTPS is not supported with WireMock.
-        final FrontendMapBuilder frontendMapBuilder = configureServerAndPluginWithDirectConnection(null,
-            new URL("http", SERVER_HOST, SERVER_PORT,
-                "/yarnpkg/yarn/releases/download/vVERSION/yarn-vVERSION.tar.gz").toString(), "AYr2n{VF");
+        final FrontendMapBuilder frontendMapBuilder = configureYarnServerAndPluginWithDirectConnection("AYr2n{VF");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradleAndExpectFailure(projectDirectoryPath,
@@ -185,9 +182,7 @@ class AuthenticationAndProxyFuncTest {
         // Direct connection to the distribution server, i.e. the 'server' variable acts as the distribution server.
 
         // We use a HTTP address because proxying through HTTPS is not supported with WireMock.
-        final FrontendMapBuilder frontendMapBuilder = configureServerAndPluginWithDirectConnection(null,
-            new URL("http", SERVER_HOST, SERVER_PORT,
-                "/yarnpkg/yarn/releases/download/vVERSION/yarn-vVERSION.tar.gz").toString(),
+        final FrontendMapBuilder frontendMapBuilder = configureYarnServerAndPluginWithDirectConnection(
             DISTRIBUTION_SERVER_PASSWORD);
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
@@ -204,8 +199,7 @@ class AuthenticationAndProxyFuncTest {
         // port of the WireMock proxy server.
         // Manual verification: when proxy server host below is null, the distribution shall be downloaded without
         // the proxy server, and the build shall succeed.
-        final FrontendMapBuilder frontendMapBuilder = configureServerAndPluginWithProxyConnection(null,
-            YARN_DISTRIBUTION_URL_PATTERN, SERVER_PORT + 1);
+        final FrontendMapBuilder frontendMapBuilder = configureYarnServerAndPluginWithProxyConnection(SERVER_PORT + 1);
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         // The build should fail with a java.net.ConnectException because the proxy server is not reachable.
@@ -221,8 +215,7 @@ class AuthenticationAndProxyFuncTest {
         // Connection through a proxy server, i.e. the 'server' variable acts as the proxy server.
 
         // We use a HTTP address because proxying through HTTPS is not supported with WireMock.
-        final FrontendMapBuilder frontendMapBuilder = configureServerAndPluginWithProxyConnection(null,
-            YARN_DISTRIBUTION_URL_PATTERN, SERVER_PORT);
+        final FrontendMapBuilder frontendMapBuilder = configureYarnServerAndPluginWithProxyConnection(SERVER_PORT);
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
@@ -235,8 +228,7 @@ class AuthenticationAndProxyFuncTest {
         // Connection through a proxy server, i.e. the 'server' variable acts as the proxy server.
 
         // We use a HTTP address because proxying through HTTPS is not supported with WireMock.
-        final FrontendMapBuilder frontendMapBuilder = configureServerAndPluginWithProxyConnection(null,
-            YARN_DISTRIBUTION_URL_PATTERN, "xE!s67O?");
+        final FrontendMapBuilder frontendMapBuilder = configureYarnServerAndPluginWithProxyConnection("xE!s67O?");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradleAndExpectFailure(projectDirectoryPath,
@@ -251,8 +243,8 @@ class AuthenticationAndProxyFuncTest {
         // Connection through a proxy server, i.e. the 'server' variable acts as the proxy server.
 
         // We use a HTTP address because proxying through HTTPS is not supported with WireMock.
-        final FrontendMapBuilder frontendMapBuilder = configureServerAndPluginWithProxyConnection(null,
-            YARN_DISTRIBUTION_URL_PATTERN, PROXY_SERVER_PASSWORD);
+        final FrontendMapBuilder frontendMapBuilder = configureYarnServerAndPluginWithProxyConnection(
+            PROXY_SERVER_PASSWORD);
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
@@ -261,32 +253,53 @@ class AuthenticationAndProxyFuncTest {
     }
 
     @Nonnull
-    private FrontendMapBuilder configureServerAndPluginWithDirectConnection(
-        @Nullable final String nodeDistributionUrlPattern, @Nullable final String yarnDistributionUrlPattern,
+    private FrontendMapBuilder configureNodeServerAndPluginWithDirectConnection(
         @Nonnull final String distributionServerPassword) throws IOException {
-        return configureServerAndPlugin(nodeDistributionUrlPattern, yarnDistributionUrlPattern,
-            DISTRIBUTION_SERVER_USERNAME, distributionServerPassword, null, null, null, null);
+        return configureServerAndPlugin(new URL("http", SERVER_HOST, SERVER_PORT, "/").toString(),
+            NODE_DISTRIBUTION_URL_PATH_PATTERN, null, null, DISTRIBUTION_SERVER_USERNAME, distributionServerPassword,
+            null, null, null, null);
     }
 
     @Nonnull
-    private FrontendMapBuilder configureServerAndPluginWithProxyConnection(
-        @Nullable final String nodeDistributionUrlPattern, @Nullable final String yarnDistributionUrlPattern,
-        final int proxyServerPort) throws IOException {
-        return configureServerAndPlugin(nodeDistributionUrlPattern, yarnDistributionUrlPattern, null, null, SERVER_HOST,
-            proxyServerPort, null, null);
+    private FrontendMapBuilder configureNodeServerAndPluginWithProxyConnection(final int proxyServerPort)
+        throws IOException {
+        return configureServerAndPlugin(NODE_DISTRIBUTION_URL_ROOT, NODE_DISTRIBUTION_URL_PATH_PATTERN, null, null,
+            null, null, SERVER_HOST, proxyServerPort, null, null);
     }
 
     @Nonnull
-    private FrontendMapBuilder configureServerAndPluginWithProxyConnection(
-        @Nullable final String nodeDistributionUrlPattern, @Nullable final String yarnDistributionUrlPattern,
+    private FrontendMapBuilder configureNodeServerAndPluginWithProxyConnection(
         @Nonnull final String proxyServerPassword) throws IOException {
-        return configureServerAndPlugin(nodeDistributionUrlPattern, yarnDistributionUrlPattern, null, null, SERVER_HOST,
-            SERVER_PORT, PROXY_SERVER_USERNAME, proxyServerPassword);
+        return configureServerAndPlugin(NODE_DISTRIBUTION_URL_ROOT, NODE_DISTRIBUTION_URL_PATH_PATTERN, null, null,
+            null, null, SERVER_HOST, SERVER_PORT, PROXY_SERVER_USERNAME, proxyServerPassword);
     }
 
     @Nonnull
-    private FrontendMapBuilder configureServerAndPlugin(@Nullable final String nodeDistributionUrlPattern,
-        @Nullable final String yarnDistributionUrlPattern, @Nullable final String distributionServerUsername,
+    private FrontendMapBuilder configureYarnServerAndPluginWithDirectConnection(
+        @Nonnull final String distributionServerPassword) throws IOException {
+        return configureServerAndPlugin(null, null, new URL("http", SERVER_HOST, SERVER_PORT, "/").toString(),
+            YARN_DISTRIBUTION_URL_PATH_PATTERN, DISTRIBUTION_SERVER_USERNAME, distributionServerPassword, null, null,
+            null, null);
+    }
+
+    @Nonnull
+    private FrontendMapBuilder configureYarnServerAndPluginWithProxyConnection(final int proxyServerPort)
+        throws IOException {
+        return configureServerAndPlugin(null, null, YARN_DISTRIBUTION_URL_ROOT, YARN_DISTRIBUTION_URL_PATH_PATTERN,
+            null, null, SERVER_HOST, proxyServerPort, null, null);
+    }
+
+    @Nonnull
+    private FrontendMapBuilder configureYarnServerAndPluginWithProxyConnection(
+        @Nonnull final String proxyServerPassword) throws IOException {
+        return configureServerAndPlugin(null, null, YARN_DISTRIBUTION_URL_ROOT, YARN_DISTRIBUTION_URL_PATH_PATTERN,
+            null, null, SERVER_HOST, SERVER_PORT, PROXY_SERVER_USERNAME, proxyServerPassword);
+    }
+
+    @Nonnull
+    private FrontendMapBuilder configureServerAndPlugin(@Nullable final String nodeDistributionUrlRoot,
+        @Nullable final String nodeDistributionUrlPathPattern, @Nullable final String yarnDistributionUrlRoot,
+        @Nullable final String yarnDistributionUrlPathPattern, @Nullable final String distributionServerUsername,
         @Nullable final String distributionServerPassword, @Nullable final String proxyServerHost,
         @Nullable final Integer proxyServerPort, @Nullable final String proxyServerUsername,
         @Nullable final String proxyServerPassword) throws IOException {
@@ -295,8 +308,11 @@ class AuthenticationAndProxyFuncTest {
         // Try to download the distribution through a proxy server, but the port used is not the same port than the
         // port of the WireMock proxy server.
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder().verboseModeEnabled(true);
-        if (nodeDistributionUrlPattern != null) {
-            frontendMapBuilder.nodeVersion("12.16.3").nodeDistributionUrlPattern(nodeDistributionUrlPattern);
+        if (nodeDistributionUrlRoot != null) {
+            frontendMapBuilder
+                .nodeVersion("12.16.3")
+                .nodeDistributionUrlRoot(nodeDistributionUrlRoot)
+                .nodeDistributionUrlPathPattern(nodeDistributionUrlPathPattern);
             proxyServerConfigurator.withNodeDistribution();
             if (distributionServerUsername != null) {
                 frontendMapBuilder
@@ -306,11 +322,12 @@ class AuthenticationAndProxyFuncTest {
                     DISTRIBUTION_SERVER_PASSWORD);
             }
         }
-        if (yarnDistributionUrlPattern != null) {
+        if (yarnDistributionUrlRoot != null) {
             frontendMapBuilder
                 .yarnEnabled(true)
                 .yarnVersion("1.22.4")
-                .yarnDistributionUrlPattern(yarnDistributionUrlPattern);
+                .yarnDistributionUrlRoot(yarnDistributionUrlRoot)
+                .yarnDistributionUrlPathPattern(yarnDistributionUrlPathPattern);
             proxyServerConfigurator.withYarnDistribution();
             if (distributionServerUsername != null) {
                 frontendMapBuilder

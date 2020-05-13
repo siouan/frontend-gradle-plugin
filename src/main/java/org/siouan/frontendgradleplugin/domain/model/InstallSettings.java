@@ -15,7 +15,9 @@ public class InstallSettings {
 
     private final String version;
 
-    private final String distributionUrlPattern;
+    private final String distributionUrlRoot;
+
+    private final String distributionUrlPathPattern;
 
     private final Credentials distributionServerCredentials;
 
@@ -30,19 +32,21 @@ public class InstallSettings {
      *
      * @param platform Underlying platform.
      * @param version Version of the distribution.
-     * @param distributionUrlPattern URL pattern to download the distribution.
+     * @param distributionUrlRoot URL root part to build the exact URL to download the distribution.
+     * @param distributionUrlPathPattern Trailing path pattern to build the exact URL to download the distribution.
      * @param distributionServerCredentials Credentials to authenticate on the distribution server before download.
      * @param proxySettings Proxy settings used for downloads.
      * @param temporaryDirectoryPath Path to a temporary directory.
      * @param installDirectoryPath Path to a directory where the distribution shall be installed.
      */
     public InstallSettings(@Nonnull final Platform platform, @Nonnull final String version,
-        @Nonnull final String distributionUrlPattern, @Nullable final Credentials distributionServerCredentials,
-        @Nonnull final ProxySettings proxySettings, @Nonnull final Path temporaryDirectoryPath,
-        @Nonnull final Path installDirectoryPath) {
+        @Nonnull final String distributionUrlRoot, @Nonnull final String distributionUrlPathPattern,
+        @Nullable final Credentials distributionServerCredentials, @Nonnull final ProxySettings proxySettings,
+        @Nonnull final Path temporaryDirectoryPath, @Nonnull final Path installDirectoryPath) {
         this.platform = platform;
         this.version = version;
-        this.distributionUrlPattern = distributionUrlPattern;
+        this.distributionUrlRoot = distributionUrlRoot;
+        this.distributionUrlPathPattern = distributionUrlPathPattern;
         this.distributionServerCredentials = distributionServerCredentials;
         this.proxySettings = proxySettings;
         this.temporaryDirectoryPath = temporaryDirectoryPath;
@@ -70,13 +74,23 @@ public class InstallSettings {
     }
 
     /**
-     * Gets the URL pattern to download the distribution.
+     * Gets the URL root part to build the exact URL to download the distribution.
      *
-     * @return URL pattern.
+     * @return URL root.
      */
     @Nonnull
-    public String getDistributionUrlPattern() {
-        return distributionUrlPattern;
+    public String getDistributionUrlRoot() {
+        return distributionUrlRoot;
+    }
+
+    /**
+     * Gets the trailing path pattern to build the exact URL to download the distribution.
+     *
+     * @return Path pattern.
+     */
+    @Nonnull
+    public String getDistributionUrlPathPattern() {
+        return distributionUrlPathPattern;
     }
 
     /**
