@@ -1,0 +1,34 @@
+{
+  "name": "frontend-gradle-plugin-site",
+  "description": "Frontend Gradle plugin's official site",
+  "license": "Apache-2.0",
+  "version": "3.0.0",
+  "scripts": {
+    "build": "vue-cli-service build",
+    "clean": "rimraf -fr dist",
+    "deploy": "rimraf -fr ../docs && ncp dist ../docs",
+    "lint": "vue-cli-service lint",
+    "serve": "vue-cli-service serve"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.13.0",
+    "bootstrap": "^4.5.0",
+    "core-js": "^3.6.4",
+    "vue": "^2.6.11",
+    "vue-i18n": "^8.17.6",
+    "vue-router": "^3.1.6"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.3.0",
+    "@vue/cli-plugin-eslint": "~4.3.0",
+    "@vue/cli-service": "~4.3.0",
+    "@vue/eslint-config-prettier": "^6.0.0",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^6.7.2",
+    "eslint-plugin-prettier": "^3.1.1",
+    "eslint-plugin-vue": "^6.2.2",
+    "ncp": "^2.0.0",
+    "prettier": "^1.19.1",
+    "vue-template-compiler": "^2.6.11"
+  }
+}
