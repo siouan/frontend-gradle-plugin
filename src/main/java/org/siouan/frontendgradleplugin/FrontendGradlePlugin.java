@@ -156,8 +156,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         project.getPluginManager().apply(BasePlugin.class);
         project.getPluginManager().apply(PublishingPlugin.class);
 
-        final FrontendExtension extension = project
-            .getExtensions()
+        final FrontendExtension extension = project.getExtensions()
             .create(EXTENSION_NAME, FrontendExtension.class, project);
 
         extension.getNodeDistributionProvided().convention(false);
@@ -179,16 +178,16 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         extension.getVerboseModeEnabled().convention(false);
 
         final TaskContainer taskContainer = project.getTasks();
-        taskContainer.register(NODE_INSTALL_TASK_NAME, NodeInstallTask.class,
-            task -> configureNodeInstallTask(task, extension));
-        taskContainer.register(YARN_INSTALL_TASK_NAME, YarnInstallTask.class,
-            task -> configureYarnInstallTask(task, extension));
+        taskContainer
+            .register(NODE_INSTALL_TASK_NAME, NodeInstallTask.class, task -> configureNodeInstallTask(task, extension));
+        taskContainer
+            .register(YARN_INSTALL_TASK_NAME, YarnInstallTask.class, task -> configureYarnInstallTask(task, extension));
         taskContainer.register(INSTALL_TASK_NAME, InstallTask.class,
             task -> configureInstallTask(taskContainer, task, extension));
-        taskContainer.register(CLEAN_TASK_NAME, CleanTask.class,
-            task -> configureCleanTask(taskContainer, task, extension));
-        taskContainer.register(CHECK_TASK_NAME, CheckTask.class,
-            task -> configureCheckTask(taskContainer, task, extension));
+        taskContainer
+            .register(CLEAN_TASK_NAME, CleanTask.class, task -> configureCleanTask(taskContainer, task, extension));
+        taskContainer
+            .register(CHECK_TASK_NAME, CheckTask.class, task -> configureCheckTask(taskContainer, task, extension));
         taskContainer.register(ASSEMBLE_TASK_NAME, AssembleTask.class,
             task -> configureAssembleTask(taskContainer, task, extension));
         taskContainer.register(PUBLISH_TASK_NAME, PublishTask.class,
@@ -292,9 +291,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.getPackageJsonDirectory().set(extension.getPackageJsonDirectory());
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
         task.getYarnEnabled().set(extension.getYarnEnabled());
-        if (task.getYarnEnabled().get()) {
-            task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
-        }
+        task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
         task.getInstallScript().set(extension.getInstallScript());
         configureDependency(taskContainer, task, NODE_INSTALL_TASK_NAME, NodeInstallTask.class);
         configureDependency(taskContainer, task, YARN_INSTALL_TASK_NAME, YarnInstallTask.class);
@@ -313,9 +310,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.getPackageJsonDirectory().set(extension.getPackageJsonDirectory());
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
         task.getYarnEnabled().set(extension.getYarnEnabled());
-        if (task.getYarnEnabled().get()) {
-            task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
-        }
+        task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
         task.getCleanScript().set(extension.getCleanScript());
         task.setOnlyIf(t -> extension.getCleanScript().isPresent());
         configureDependency(taskContainer, task, INSTALL_TASK_NAME, InstallTask.class,
@@ -335,9 +330,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.getPackageJsonDirectory().set(extension.getPackageJsonDirectory());
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
         task.getYarnEnabled().set(extension.getYarnEnabled());
-        if (task.getYarnEnabled().get()) {
-            task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
-        }
+        task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
         task.getCheckScript().set(extension.getCheckScript());
         task.setOnlyIf(t -> extension.getCheckScript().isPresent());
         configureDependency(taskContainer, task, INSTALL_TASK_NAME, InstallTask.class,
@@ -357,9 +350,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.getPackageJsonDirectory().set(extension.getPackageJsonDirectory());
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
         task.getYarnEnabled().set(extension.getYarnEnabled());
-        if (task.getYarnEnabled().get()) {
-            task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
-        }
+        task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
         task.getAssembleScript().set(extension.getAssembleScript());
         task.setOnlyIf(t -> extension.getAssembleScript().isPresent());
         configureDependency(taskContainer, task, INSTALL_TASK_NAME, InstallTask.class,
@@ -379,9 +370,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.getPackageJsonDirectory().set(extension.getPackageJsonDirectory());
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
         task.getYarnEnabled().set(extension.getYarnEnabled());
-        if (task.getYarnEnabled().get()) {
-            task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
-        }
+        task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
         task.getPublishScript().set(extension.getPublishScript());
         task.setOnlyIf(t -> extension.getAssembleScript().isPresent() && extension.getPublishScript().isPresent());
         configureDependency(taskContainer, task, ASSEMBLE_TASK_NAME, AssembleTask.class,

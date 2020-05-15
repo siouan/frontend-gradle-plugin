@@ -62,14 +62,12 @@ public abstract class AbstractRunCommandTask extends DefaultTask {
         return packageJsonDirectory;
     }
 
-    @InputDirectory
-    @Optional
+    @Internal
     public DirectoryProperty getNodeInstallDirectory() {
         return nodeInstallDirectory;
     }
 
-    @InputDirectory
-    @Optional
+    @Internal
     public DirectoryProperty getYarnInstallDirectory() {
         return yarnInstallDirectory;
     }
