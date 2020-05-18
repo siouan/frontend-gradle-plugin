@@ -226,6 +226,8 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      * @param extension Extension.
      */
     private void finalizeExtension(@Nonnull final FrontendExtension extension) {
+        // When a distribution is provided, the install directory is optional. The plugin may use environment variables
+        // to locate the executables required.
         if (extension.getNodeDistributionProvided().get()) {
             extension.getNodeInstallDirectory().convention((Directory) null);
         }

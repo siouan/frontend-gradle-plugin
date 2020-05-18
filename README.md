@@ -9,9 +9,9 @@
     <a href="https://sonarcloud.io/dashboard?id=siouan_frontend-gradle-plugin"><img src="https://sonarcloud.io/api/project_badges/measure?project=siouan_frontend-gradle-plugin&metric=reliability_rating" alt="Reliability"/></a>
 </p>
 
-This plugin allows to integrate a [Node.js][nodejs]/[npm][npm]/[Yarn][classic-yarn] build into Gradle. It is inspired by
-the philosophy of the [frontend-maven-plugin][frontend-maven-plugin]. See the [quick start guide](#quick-start-guide)
-below to install/configure the plugin, and build your frontend application.
+This plugin allows to integrate a [Node.js][nodejs]/[npm][npm]/[Yarn][classic-yarn] build into [Gradle][gradle]. It is
+inspired by the philosophy of the [frontend-maven-plugin][frontend-maven-plugin]. See the
+[quick start guide](#quick-start-guide) below to install/configure the plugin, and build your frontend application.
 
 #### Key features
 
