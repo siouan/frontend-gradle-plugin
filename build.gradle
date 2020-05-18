@@ -43,7 +43,7 @@ dependencies {
 
 group 'org.siouan'
 version '3.0.0'
-description 'Build Node.js, npm, Yarn applications with Gradle.'
+description 'Build Javascript-based applications with node, npm, yarn.'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -66,7 +66,7 @@ pluginBundle {
     plugins {
         frontend {
             displayName = 'Frontend Gradle plugin'
-            description = 'Build Node.js, npm, Yarn applications with Gradle.'
+            description = 'Build Javascript-based applications with node, npm, yarn.'
             tags = ['node', 'nodejs', 'npm', 'npx', 'yarn', 'frontend']
         }
     }

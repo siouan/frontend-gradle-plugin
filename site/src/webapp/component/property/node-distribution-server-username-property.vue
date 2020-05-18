@@ -1,0 +1,23 @@
+<template>
+    <fgp-property
+        name="nodeDistributionServerUsername"
+        type="java.lang.String"
+        :required="false"
+        :tasks="['installNode']"
+    >
+        This property may be used to download the distribution with a given identity (BASIC scheme server-side). When
+        not <fgp-code>null</fgp-code>, the <fgp-property-link name="nodeDistributionServerPassword" /> property is also
+        required.
+    </fgp-property>
+</template>
+
+<script>
+import Vue from "vue";
+import fgpCode from "../layout/code";
+import fgpProperty from "../layout/property";
+import fgpPropertyLink from "../link/property-link";
+
+export default Vue.component("fgp-node-distribution-server-username-property", {
+    components: { fgpCode, fgpProperty, fgpPropertyLink }
+});
+</script>
