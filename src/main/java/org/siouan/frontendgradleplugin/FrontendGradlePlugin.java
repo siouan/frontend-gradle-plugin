@@ -1,16 +1,22 @@
 package org.siouan.frontendgradleplugin;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Optional;
 import java.util.function.BiPredicate;
+import javax.annotation.Nonnull;
 
 import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
+import org.gradle.api.file.Directory;
 import org.gradle.api.plugins.BasePlugin;
 import org.gradle.api.publish.plugins.PublishingPlugin;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.language.base.plugins.LifecycleBasePlugin;
+import org.siouan.frontendgradleplugin.domain.model.Environment;
 import org.siouan.frontendgradleplugin.domain.model.Platform;
 import org.siouan.frontendgradleplugin.domain.util.SystemUtils;
 import org.siouan.frontendgradleplugin.infrastructure.BeanRegistry;
@@ -29,6 +35,7 @@ import org.siouan.frontendgradleplugin.infrastructure.gradle.adapter.GradleLogge
 import org.siouan.frontendgradleplugin.infrastructure.provider.ArchiverProviderImpl;
 import org.siouan.frontendgradleplugin.infrastructure.provider.ChannelProviderImpl;
 import org.siouan.frontendgradleplugin.infrastructure.provider.FileManagerImpl;
+import org.siouan.frontendgradleplugin.infrastructure.provider.URLConnectionProviderImpl;
 
 /**
  * Main plugin class that bootstraps the plugin by declaring its DSL and its tasks.
@@ -69,14 +76,34 @@ public class FrontendGradlePlugin implements Plugin<Project> {
     public static final String PUBLISH_TASK_NAME = "publishFrontend";
 
     /**
-     * Name of the task that installs a Node distribution.
+     * Name of the task that installs a Node.js distribution.
      */
     public static final String DEFAULT_NODE_INSTALL_DIRNAME = "node";
+
+    /**
+     * URL pattern used to download the Node.js distribution.
+     */
+    public static final String DEFAULT_NODE_DISTRIBUTION_URL_PATH_PATTERN = "vVERSION/node-vVERSION-ARCH.TYPE";
+
+    /**
+     * URL pattern used to download the Node.js distribution.
+     */
+    public static final String DEFAULT_NODE_DISTRIBUTION_URL_ROOT = "https://nodejs.org/dist/";
 
     /**
      * Default port for the proxy server.
      */
     public static final int DEFAULT_PROXY_PORT = 8080;
+
+    /**
+     * URL pattern used to download the Yarn distribution.
+     */
+    public static final String DEFAULT_YARN_DISTRIBUTION_URL_PATH_PATTERN = "vVERSION/yarn-vVERSION.tar.gz";
+
+    /**
+     * URL pattern used to download the Yarn distribution.
+     */
+    public static final String DEFAULT_YARN_DISTRIBUTION_URL_ROOT = "https://github.com/yarnpkg/yarn/releases/download/";
 
     /**
      * Name of the task that installs a Yarn distribution.
@@ -92,6 +119,16 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      * Name of the task that installs a Node distribution.
      */
     public static final String NODE_INSTALL_TASK_NAME = "installNode";
+
+    /**
+     * Name of the environment variable providing the path to a global Node.js installation.
+     */
+    public static final String NODEJS_HOME_ENV_VAR = "NODEJS_HOME";
+
+    /**
+     * Name of the environment variable providing the path to a global Yarn installation.
+     */
+    public static final String YARN_HOME_ENV_VAR = "YARN_HOME";
 
     /**
      * Name of the task that installs a Yarn distribution.
@@ -119,15 +156,19 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         project.getPluginManager().apply(BasePlugin.class);
         project.getPluginManager().apply(PublishingPlugin.class);
 
-        final FrontendExtension extension = project
-            .getExtensions()
+        final FrontendExtension extension = project.getExtensions()
             .create(EXTENSION_NAME, FrontendExtension.class, project);
+
         extension.getNodeDistributionProvided().convention(false);
+        extension.getNodeDistributionUrlRoot().convention(DEFAULT_NODE_DISTRIBUTION_URL_ROOT);
+        extension.getNodeDistributionUrlPathPattern().convention(DEFAULT_NODE_DISTRIBUTION_URL_PATH_PATTERN);
         extension
             .getNodeInstallDirectory()
             .convention(project.getLayout().getProjectDirectory().dir(DEFAULT_NODE_INSTALL_DIRNAME));
         extension.getYarnEnabled().convention(false);
         extension.getYarnDistributionProvided().convention(false);
+        extension.getYarnDistributionUrlRoot().convention(DEFAULT_YARN_DISTRIBUTION_URL_ROOT);
+        extension.getYarnDistributionUrlPathPattern().convention(DEFAULT_YARN_DISTRIBUTION_URL_PATH_PATTERN);
         extension
             .getYarnInstallDirectory()
             .convention(project.getLayout().getProjectDirectory().dir(DEFAULT_YARN_INSTALL_DIRNAME));
@@ -137,16 +178,16 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         extension.getVerboseModeEnabled().convention(false);
 
         final TaskContainer taskContainer = project.getTasks();
-        taskContainer.register(NODE_INSTALL_TASK_NAME, NodeInstallTask.class,
-            task -> configureNodeInstallTask(task, extension));
-        taskContainer.register(YARN_INSTALL_TASK_NAME, YarnInstallTask.class,
-            task -> configureYarnInstallTask(task, extension));
+        taskContainer
+            .register(NODE_INSTALL_TASK_NAME, NodeInstallTask.class, task -> configureNodeInstallTask(task, extension));
+        taskContainer
+            .register(YARN_INSTALL_TASK_NAME, YarnInstallTask.class, task -> configureYarnInstallTask(task, extension));
         taskContainer.register(INSTALL_TASK_NAME, InstallTask.class,
             task -> configureInstallTask(taskContainer, task, extension));
-        taskContainer.register(CLEAN_TASK_NAME, CleanTask.class,
-            task -> configureCleanTask(taskContainer, task, extension));
-        taskContainer.register(CHECK_TASK_NAME, CheckTask.class,
-            task -> configureCheckTask(taskContainer, task, extension));
+        taskContainer
+            .register(CLEAN_TASK_NAME, CleanTask.class, task -> configureCleanTask(taskContainer, task, extension));
+        taskContainer
+            .register(CHECK_TASK_NAME, CheckTask.class, task -> configureCheckTask(taskContainer, task, extension));
         taskContainer.register(ASSEMBLE_TASK_NAME, AssembleTask.class,
             task -> configureAssembleTask(taskContainer, task, extension));
         taskContainer.register(PUBLISH_TASK_NAME, PublishTask.class,
@@ -158,15 +199,40 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         configureDependency(taskContainer, PublishingPlugin.PUBLISH_LIFECYCLE_TASK_NAME, PUBLISH_TASK_NAME,
             PublishTask.class);
 
-        Beans.registerBean(new Platform(SystemUtils.getSystemJvmArch(), SystemUtils.getSystemOsName()));
+        final Path nodejsHomePath = getEnvironmentVariable(NODEJS_HOME_ENV_VAR).map(Paths::get).orElse(null);
+        final Path yarnHomePath = getEnvironmentVariable(YARN_HOME_ENV_VAR).map(Paths::get).orElse(null);
+
+        Beans.init();
+        Beans.registerBean(new Platform(SystemUtils.getSystemJvmArch(), SystemUtils.getSystemOsName(),
+            new Environment(nodejsHomePath, yarnHomePath)));
         Beans.registerBean(GradleLoggerAdapter.class);
         Beans.registerBean(FileManagerImpl.class);
         Beans.registerBean(ChannelProviderImpl.class);
         Beans.registerBean(ArchiverProviderImpl.class);
+        Beans.registerBean(URLConnectionProviderImpl.class);
         try {
             project.getGradle().addListener(new TaskLoggerConfigurer(Beans.getBean(BeanRegistry.class), extension));
+            project.getLogger().debug("Platform: {}", Beans.getBean(Platform.class));
         } catch (final BeanRegistryException e) {
             throw new GradleException("Cannot get instance of bean registry", e);
+        }
+
+        project.afterEvaluate(p -> finalizeExtension(extension));
+    }
+
+    /**
+     * Finalizes configuration by applying additional conventions based on an evaluated extension.
+     *
+     * @param extension Extension.
+     */
+    private void finalizeExtension(@Nonnull final FrontendExtension extension) {
+        // When a distribution is provided, the install directory is optional. The plugin may use environment variables
+        // to locate the executables required.
+        if (extension.getNodeDistributionProvided().get()) {
+            extension.getNodeInstallDirectory().convention((Directory) null);
+        }
+        if (extension.getYarnDistributionProvided().get()) {
+            extension.getYarnInstallDirectory().convention((Directory) null);
         }
     }
 
@@ -180,10 +246,15 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.setGroup(TASK_GROUP);
         task.setDescription("Downloads and installs a Node distribution.");
         task.getNodeVersion().set(extension.getNodeVersion());
-        task.getNodeDistributionUrl().set(extension.getNodeDistributionUrl());
+        task.getNodeDistributionUrlRoot().set(extension.getNodeDistributionUrlRoot());
+        task.getNodeDistributionUrlPathPattern().set(extension.getNodeDistributionUrlPathPattern());
+        task.getNodeDistributionServerUsername().set(extension.getNodeDistributionServerUsername());
+        task.getNodeDistributionServerPassword().set(extension.getNodeDistributionServerPassword());
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
         task.getProxyHost().set(extension.getProxyHost());
         task.getProxyPort().set(extension.getProxyPort());
+        task.getProxyUsername().set(extension.getProxyUsername());
+        task.getProxyPassword().set(extension.getProxyPassword());
         task.setOnlyIf(t -> !extension.getNodeDistributionProvided().get());
     }
 
@@ -197,10 +268,15 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.setGroup(TASK_GROUP);
         task.setDescription("Downloads and installs a Yarn distribution.");
         task.getYarnVersion().set(extension.getYarnVersion());
-        task.getYarnDistributionUrl().set(extension.getYarnDistributionUrl());
+        task.getYarnDistributionUrlRoot().set(extension.getYarnDistributionUrlRoot());
+        task.getYarnDistributionUrlPathPattern().set(extension.getYarnDistributionUrlPathPattern());
         task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
+        task.getYarnDistributionServerUsername().set(extension.getYarnDistributionServerUsername());
+        task.getYarnDistributionServerPassword().set(extension.getYarnDistributionServerPassword());
         task.getProxyHost().set(extension.getProxyHost());
         task.getProxyPort().set(extension.getProxyPort());
+        task.getProxyUsername().set(extension.getProxyUsername());
+        task.getProxyPassword().set(extension.getProxyPassword());
         task.setOnlyIf(t -> extension.getYarnEnabled().get() && !extension.getYarnDistributionProvided().get());
     }
 
@@ -217,9 +293,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.getPackageJsonDirectory().set(extension.getPackageJsonDirectory());
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
         task.getYarnEnabled().set(extension.getYarnEnabled());
-        if (task.getYarnEnabled().get()) {
-            task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
-        }
+        task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
         task.getInstallScript().set(extension.getInstallScript());
         configureDependency(taskContainer, task, NODE_INSTALL_TASK_NAME, NodeInstallTask.class);
         configureDependency(taskContainer, task, YARN_INSTALL_TASK_NAME, YarnInstallTask.class);
@@ -238,9 +312,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.getPackageJsonDirectory().set(extension.getPackageJsonDirectory());
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
         task.getYarnEnabled().set(extension.getYarnEnabled());
-        if (task.getYarnEnabled().get()) {
-            task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
-        }
+        task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
         task.getCleanScript().set(extension.getCleanScript());
         task.setOnlyIf(t -> extension.getCleanScript().isPresent());
         configureDependency(taskContainer, task, INSTALL_TASK_NAME, InstallTask.class,
@@ -260,9 +332,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.getPackageJsonDirectory().set(extension.getPackageJsonDirectory());
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
         task.getYarnEnabled().set(extension.getYarnEnabled());
-        if (task.getYarnEnabled().get()) {
-            task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
-        }
+        task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
         task.getCheckScript().set(extension.getCheckScript());
         task.setOnlyIf(t -> extension.getCheckScript().isPresent());
         configureDependency(taskContainer, task, INSTALL_TASK_NAME, InstallTask.class,
@@ -282,9 +352,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.getPackageJsonDirectory().set(extension.getPackageJsonDirectory());
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
         task.getYarnEnabled().set(extension.getYarnEnabled());
-        if (task.getYarnEnabled().get()) {
-            task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
-        }
+        task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
         task.getAssembleScript().set(extension.getAssembleScript());
         task.setOnlyIf(t -> extension.getAssembleScript().isPresent());
         configureDependency(taskContainer, task, INSTALL_TASK_NAME, InstallTask.class,
@@ -304,9 +372,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.getPackageJsonDirectory().set(extension.getPackageJsonDirectory());
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
         task.getYarnEnabled().set(extension.getYarnEnabled());
-        if (task.getYarnEnabled().get()) {
-            task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
-        }
+        task.getYarnInstallDirectory().set(extension.getYarnInstallDirectory());
         task.getPublishScript().set(extension.getPublishScript());
         task.setOnlyIf(t -> extension.getAssembleScript().isPresent() && extension.getPublishScript().isPresent());
         configureDependency(taskContainer, task, ASSEMBLE_TASK_NAME, AssembleTask.class,
@@ -378,5 +444,16 @@ public class FrontendGradlePlugin implements Plugin<Project> {
     private <T extends Task, D extends Task> boolean canDependOn(final T task,
         final TaskProvider<D> dependsOnTaskProvider, final BiPredicate<T, D> condition) {
         return dependsOnTaskProvider.isPresent() && condition.test(task, dependsOnTaskProvider.get());
+    }
+
+    /**
+     * Gets the value of an environment variable.
+     *
+     * @param variableName Variable name.
+     * @return Variable value.
+     */
+    @Nonnull
+    private Optional<String> getEnvironmentVariable(@Nonnull final String variableName) {
+        return Optional.ofNullable(System.getenv(variableName)).filter(value -> !value.trim().isEmpty());
     }
 }

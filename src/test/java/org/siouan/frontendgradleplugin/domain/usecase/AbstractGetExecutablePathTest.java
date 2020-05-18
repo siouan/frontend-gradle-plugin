@@ -1,17 +1,24 @@
 package org.siouan.frontendgradleplugin.domain.usecase;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.Optional;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.siouan.frontendgradleplugin.domain.exception.ExecutableNotFoundException;
+import org.siouan.frontendgradleplugin.domain.model.Logger;
+import org.siouan.frontendgradleplugin.domain.model.Platform;
 import org.siouan.frontendgradleplugin.domain.provider.FileManager;
 import org.siouan.frontendgradleplugin.test.fixture.PathFixture;
 import org.siouan.frontendgradleplugin.test.fixture.PlatformFixture;
@@ -19,55 +26,133 @@ import org.siouan.frontendgradleplugin.test.fixture.PlatformFixture;
 @ExtendWith(MockitoExtension.class)
 class AbstractGetExecutablePathTest {
 
-    private static final Path WINDOWS_PATH = Paths.get("windows-path");
+    private static final Path WINDOWS_EXECUTABLE_FILE_PATH = PathFixture.ANY_PATH.resolve("windows-path");
 
-    private static final Path NON_WINDOWS_PATH = Paths.get("non-windows-path");
+    private static final Path NON_WINDOWS_EXECUTABLE_FILE_PATH = PathFixture.ANY_PATH.resolve("non-windows-path");
+
+    private static final Path ENVIRONMENT_INSTALL_DIRECTORY_PATH = PathFixture.ANY_PATH.resolve("install");
 
     private static final Path INSTALL_DIRECTORY_PATH = PathFixture.ANY_PATH;
 
     @Mock
     private FileManager fileManager;
 
-    private AbstractGetExecutablePath usecase;
+    private GetExecutablePathImpl usecase;
+
+    @BeforeEach
+    void setUp() {
+        usecase = new GetExecutablePathImpl(fileManager, mock(Logger.class), WINDOWS_EXECUTABLE_FILE_PATH,
+            NON_WINDOWS_EXECUTABLE_FILE_PATH);
+    }
 
     @Test
-    void shouldReturnNoExecutableWhenOsIsWindowsAndExecutableDoesNotExist() {
-        usecase = new GetExecutablePathImpl(fileManager, WINDOWS_PATH, NON_WINDOWS_PATH);
-        when(fileManager.exists(INSTALL_DIRECTORY_PATH.resolve(WINDOWS_PATH))).thenReturn(false);
+    void shouldReturnNoExecutablePathWhenOsIsWindowsAndExecutableDoesNotExistInInstallDirectory() {
+        when(fileManager.exists(INSTALL_DIRECTORY_PATH.resolve(WINDOWS_EXECUTABLE_FILE_PATH))).thenReturn(false);
 
-        assertThat(usecase.execute(INSTALL_DIRECTORY_PATH, PlatformFixture.ANY_WINDOWS_PLATFORM)).isEmpty();
+        assertThatThrownBy(
+            () -> usecase.execute(INSTALL_DIRECTORY_PATH, PlatformFixture.ANY_WINDOWS_PLATFORM)).isInstanceOf(
+            ExecutableNotFoundException.class);
 
         verifyNoMoreInteractions(fileManager);
     }
 
     @Test
-    void shouldReturnNoExecutableWhenOsIsNotWindowsAndExecutableDoesNotExist() {
-        usecase = new GetExecutablePathImpl(fileManager, WINDOWS_PATH, NON_WINDOWS_PATH);
-        when(fileManager.exists(INSTALL_DIRECTORY_PATH.resolve(NON_WINDOWS_PATH))).thenReturn(false);
+    void shouldReturnNoExecutablePathWhenOsIsWindowsAndExecutableDoesNotExistInEnvironmentInstallDirectory() {
+        usecase.init(ENVIRONMENT_INSTALL_DIRECTORY_PATH);
+        when(fileManager.exists(ENVIRONMENT_INSTALL_DIRECTORY_PATH.resolve(WINDOWS_EXECUTABLE_FILE_PATH))).thenReturn(
+            false);
 
-        assertThat(usecase.execute(INSTALL_DIRECTORY_PATH, PlatformFixture.ANY_NON_WINDOWS_PLATFORM)).isEmpty();
-
-        verifyNoMoreInteractions(fileManager);
-    }
-
-    @Test
-    void shouldReturnExecutableWhenOsIsWindowsAndFileExists() {
-        usecase = new GetExecutablePathImpl(fileManager, WINDOWS_PATH, NON_WINDOWS_PATH);
-        when(fileManager.exists(INSTALL_DIRECTORY_PATH.resolve(WINDOWS_PATH))).thenReturn(true);
-
-        assertThat(usecase.execute(INSTALL_DIRECTORY_PATH, PlatformFixture.ANY_WINDOWS_PLATFORM)).contains(
-            INSTALL_DIRECTORY_PATH.resolve(WINDOWS_PATH));
+        assertThatThrownBy(() -> usecase.execute(null, PlatformFixture.ANY_WINDOWS_PLATFORM)).isInstanceOf(
+            ExecutableNotFoundException.class);
 
         verifyNoMoreInteractions(fileManager);
     }
 
     @Test
-    void shouldReturnExecutableWhenOsIsNotWindowsAndFileExists() {
-        usecase = new GetExecutablePathImpl(fileManager, WINDOWS_PATH, NON_WINDOWS_PATH);
-        when(fileManager.exists(INSTALL_DIRECTORY_PATH.resolve(NON_WINDOWS_PATH))).thenReturn(true);
+    void shouldReturnExecutableFileNameWhenOsIsWindowsAndNoInstallDirectoryIsProvided()
+        throws ExecutableNotFoundException {
+        assertThat(usecase.execute(null, PlatformFixture.ANY_WINDOWS_PLATFORM)).isEqualTo(
+            WINDOWS_EXECUTABLE_FILE_PATH.getFileName());
 
-        assertThat(usecase.execute(INSTALL_DIRECTORY_PATH, PlatformFixture.ANY_NON_WINDOWS_PLATFORM)).contains(
-            INSTALL_DIRECTORY_PATH.resolve(NON_WINDOWS_PATH));
+        verifyNoMoreInteractions(fileManager);
+    }
+
+    @Test
+    void shouldReturnExecutablePathWhenOsIsWindowsAndExecutableExistsInInstallDirectory()
+        throws ExecutableNotFoundException {
+        final Path executablePath = INSTALL_DIRECTORY_PATH.resolve(WINDOWS_EXECUTABLE_FILE_PATH);
+        when(fileManager.exists(executablePath)).thenReturn(true);
+
+        assertThat(usecase.execute(INSTALL_DIRECTORY_PATH, PlatformFixture.ANY_WINDOWS_PLATFORM)).isEqualTo(
+            executablePath);
+
+        verifyNoMoreInteractions(fileManager);
+    }
+
+    @Test
+    void shouldReturnExecutablePathWhenOsIsWindowsAndExecutableExistsInEnvironmentInstallDirectory()
+        throws ExecutableNotFoundException {
+        usecase.init(ENVIRONMENT_INSTALL_DIRECTORY_PATH);
+        final Path executablePath = ENVIRONMENT_INSTALL_DIRECTORY_PATH.resolve(WINDOWS_EXECUTABLE_FILE_PATH);
+        when(fileManager.exists(executablePath)).thenReturn(true);
+
+        assertThat(usecase.execute(null, PlatformFixture.ANY_WINDOWS_PLATFORM)).isEqualTo(executablePath);
+
+        verifyNoMoreInteractions(fileManager);
+    }
+
+    @Test
+    void shouldReturnNoExecutablePathWhenOsIsNotWindowsAndExecutableDoesNotExistInInstallDirectory() {
+        when(fileManager.exists(INSTALL_DIRECTORY_PATH.resolve(NON_WINDOWS_EXECUTABLE_FILE_PATH))).thenReturn(false);
+
+        assertThatThrownBy(
+            () -> usecase.execute(INSTALL_DIRECTORY_PATH, PlatformFixture.ANY_NON_WINDOWS_PLATFORM)).isInstanceOf(
+            ExecutableNotFoundException.class);
+
+        verifyNoMoreInteractions(fileManager);
+    }
+
+    @Test
+    void shouldReturnNoExecutablePathWhenOsIsNotWindowsAndExecutableDoesNotExistInEnvironmentInstallDirectory() {
+        usecase.init(ENVIRONMENT_INSTALL_DIRECTORY_PATH);
+        when(fileManager.exists(
+            ENVIRONMENT_INSTALL_DIRECTORY_PATH.resolve(NON_WINDOWS_EXECUTABLE_FILE_PATH))).thenReturn(false);
+
+        assertThatThrownBy(() -> usecase.execute(null, PlatformFixture.ANY_NON_WINDOWS_PLATFORM)).isInstanceOf(
+            ExecutableNotFoundException.class);
+
+        verifyNoMoreInteractions(fileManager);
+    }
+
+    @Test
+    void shouldReturnExecutableFileNameWhenOsIsNotWindowsAndNoInstallDirectoryIsProvided()
+        throws ExecutableNotFoundException {
+        assertThat(usecase.execute(null, PlatformFixture.ANY_NON_WINDOWS_PLATFORM)).isEqualTo(
+            NON_WINDOWS_EXECUTABLE_FILE_PATH.getFileName());
+
+        verifyNoMoreInteractions(fileManager);
+    }
+
+    @Test
+    void shouldReturnExecutablePathWhenOsIsNotWindowsAndExecutableExistsInInstallDirectory()
+        throws ExecutableNotFoundException {
+        final Path executablePath = INSTALL_DIRECTORY_PATH.resolve(NON_WINDOWS_EXECUTABLE_FILE_PATH);
+        when(fileManager.exists(executablePath)).thenReturn(true);
+
+        assertThat(usecase.execute(INSTALL_DIRECTORY_PATH, PlatformFixture.ANY_NON_WINDOWS_PLATFORM)).isEqualTo(
+            executablePath);
+
+        verifyNoMoreInteractions(fileManager);
+    }
+
+    @Test
+    void shouldReturnExecutablePathWhenOsIsNotWindowsAndExecutableExistsInEnvironmentInstallDirectory()
+        throws ExecutableNotFoundException {
+        usecase.init(ENVIRONMENT_INSTALL_DIRECTORY_PATH);
+        final Path executablePath = ENVIRONMENT_INSTALL_DIRECTORY_PATH.resolve(NON_WINDOWS_EXECUTABLE_FILE_PATH);
+        when(fileManager.exists(executablePath)).thenReturn(true);
+
+        assertThat(usecase.execute(null, PlatformFixture.ANY_NON_WINDOWS_PLATFORM)).isEqualTo(executablePath);
 
         verifyNoMoreInteractions(fileManager);
     }
@@ -78,11 +163,17 @@ class AbstractGetExecutablePathTest {
 
         private final Path nonWindowsExecutablePath;
 
-        GetExecutablePathImpl(final FileManager fileManager, final Path windowsExecutablePath,
+        private Path executablePathFromEnvironment;
+
+        GetExecutablePathImpl(final FileManager fileManager, final Logger logger, final Path windowsExecutablePath,
             final Path nonWindowsExecutablePath) {
-            super(fileManager);
+            super(fileManager, logger);
             this.windowsExecutablePath = windowsExecutablePath;
             this.nonWindowsExecutablePath = nonWindowsExecutablePath;
+        }
+
+        public void init(@Nullable final Path executablePathFromEnvironment) {
+            this.executablePathFromEnvironment = executablePathFromEnvironment;
         }
 
         @Override
@@ -95,6 +186,24 @@ class AbstractGetExecutablePathTest {
         @Nonnull
         protected Path getNonWindowsRelativeExecutablePath() {
             return nonWindowsExecutablePath;
+        }
+
+        @Nonnull
+        @Override
+        protected Path getWindowsExecutableFileName() {
+            return windowsExecutablePath.getFileName();
+        }
+
+        @Nonnull
+        @Override
+        protected Path getNonWindowsExecutableFileName() {
+            return nonWindowsExecutablePath.getFileName();
+        }
+
+        @Nonnull
+        @Override
+        protected Optional<Path> getInstallDirectoryFromEnvironment(@Nonnull Platform platform) {
+            return Optional.ofNullable(executablePathFromEnvironment);
         }
     }
 }

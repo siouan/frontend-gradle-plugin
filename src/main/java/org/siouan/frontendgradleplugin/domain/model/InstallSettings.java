@@ -1,7 +1,5 @@
 package org.siouan.frontendgradleplugin.domain.model;
 
-import java.net.Proxy;
-import java.net.URL;
 import java.nio.file.Path;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -17,9 +15,13 @@ public class InstallSettings {
 
     private final String version;
 
-    private final URL downloadUrl;
+    private final String distributionUrlRoot;
 
-    private final Proxy proxy;
+    private final String distributionUrlPathPattern;
+
+    private final Credentials distributionServerCredentials;
+
+    private final ProxySettings proxySettings;
 
     private final Path temporaryDirectoryPath;
 
@@ -30,18 +32,23 @@ public class InstallSettings {
      *
      * @param platform Underlying platform.
      * @param version Version of the distribution.
-     * @param downloadUrl URL to download the distribution.
-     * @param proxy Proxy used for downloads.
+     * @param distributionUrlRoot URL root part to build the exact URL to download the distribution.
+     * @param distributionUrlPathPattern Trailing path pattern to build the exact URL to download the distribution.
+     * @param distributionServerCredentials Credentials to authenticate on the distribution server before download.
+     * @param proxySettings Proxy settings used for downloads.
      * @param temporaryDirectoryPath Path to a temporary directory.
      * @param installDirectoryPath Path to a directory where the distribution shall be installed.
      */
     public InstallSettings(@Nonnull final Platform platform, @Nonnull final String version,
-        @Nullable final URL downloadUrl, @Nullable final Proxy proxy, @Nonnull final Path temporaryDirectoryPath,
-        @Nonnull final Path installDirectoryPath) {
+        @Nonnull final String distributionUrlRoot, @Nonnull final String distributionUrlPathPattern,
+        @Nullable final Credentials distributionServerCredentials, @Nonnull final ProxySettings proxySettings,
+        @Nonnull final Path temporaryDirectoryPath, @Nonnull final Path installDirectoryPath) {
         this.platform = platform;
         this.version = version;
-        this.downloadUrl = downloadUrl;
-        this.proxy = proxy;
+        this.distributionUrlRoot = distributionUrlRoot;
+        this.distributionUrlPathPattern = distributionUrlPathPattern;
+        this.distributionServerCredentials = distributionServerCredentials;
+        this.proxySettings = proxySettings;
         this.temporaryDirectoryPath = temporaryDirectoryPath;
         this.installDirectoryPath = installDirectoryPath;
     }
@@ -67,23 +74,43 @@ public class InstallSettings {
     }
 
     /**
-     * Gets the URL to download the distribution.
+     * Gets the URL root part to build the exact URL to download the distribution.
      *
-     * @return URL.
+     * @return URL root.
      */
-    @Nullable
-    public URL getDownloadUrl() {
-        return downloadUrl;
+    @Nonnull
+    public String getDistributionUrlRoot() {
+        return distributionUrlRoot;
     }
 
     /**
-     * Gets the proxy used for the connection.
+     * Gets the trailing path pattern to build the exact URL to download the distribution.
      *
-     * @return Proxy.
+     * @return Path pattern.
      */
     @Nonnull
-    public Proxy getProxy() {
-        return proxy;
+    public String getDistributionUrlPathPattern() {
+        return distributionUrlPathPattern;
+    }
+
+    /**
+     * Gets credentials used to authenticate on the distribution server before download.
+     *
+     * @return Credentials.
+     */
+    @Nullable
+    public Credentials getDistributionServerCredentials() {
+        return distributionServerCredentials;
+    }
+
+    /**
+     * Gets the proxy settings used for downloads.
+     *
+     * @return Proxy settings.
+     */
+    @Nonnull
+    public ProxySettings getProxySettings() {
+        return proxySettings;
     }
 
     /**

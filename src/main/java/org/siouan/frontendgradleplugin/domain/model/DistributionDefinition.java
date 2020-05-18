@@ -1,8 +1,6 @@
 package org.siouan.frontendgradleplugin.domain.model;
 
-import java.net.URL;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * Distribution definition.
@@ -11,33 +9,28 @@ import javax.annotation.Nullable;
  */
 public class DistributionDefinition {
 
-    /**
-     * Underlying platform.
-     */
     private final Platform platform;
 
-    /**
-     * Version of distribution.
-     */
     private final String version;
 
-    /**
-     * URL to download the distribution.
-     */
-    private final URL downloadUrl;
+    private final String downloadUrlRoot;
+
+    private final String downloadUrlPathPattern;
 
     /**
      * Builds a definition.
      *
      * @param platform Underlying platform.
      * @param version Version of distribution.
-     * @param downloadUrl URL to download the distribution.
+     * @param downloadUrlRoot URL root part to build the exact URL to download the distribution.
+     * @param downloadUrlPathPattern Trailing path pattern to build the exact URL to download the distribution.
      */
     public DistributionDefinition(@Nonnull final Platform platform, @Nonnull final String version,
-        @Nullable final URL downloadUrl) {
+        @Nonnull final String downloadUrlRoot, @Nonnull final String downloadUrlPathPattern) {
         this.platform = platform;
         this.version = version;
-        this.downloadUrl = downloadUrl;
+        this.downloadUrlRoot = downloadUrlRoot;
+        this.downloadUrlPathPattern = downloadUrlPathPattern;
     }
 
     /**
@@ -61,12 +54,22 @@ public class DistributionDefinition {
     }
 
     /**
-     * Gets the URL to download the distribution.
+     * Gets the URL root part to build the exact URL to download the distribution.
      *
-     * @return URL.
+     * @return URL root.
      */
-    @Nullable
-    public URL getDownloadUrl() {
-        return downloadUrl;
+    @Nonnull
+    public String getDownloadUrlRoot() {
+        return downloadUrlRoot;
+    }
+
+    /**
+     * Gets the trailing path pattern to build the exact URL to download the distribution.
+     *
+     * @return Path pattern.
+     */
+    @Nonnull
+    public String getDownloadUrlPathPattern() {
+        return downloadUrlPathPattern;
     }
 }

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="64" height="64" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <rect id="transparent-background" width="200" height="200" fill="none"/>
+        <circle id="background-circle" r="100" fill="#3f497f"/>
+        <circle id="medicine-circle" r="90" fill="none" stroke="#dfdfdf" stroke-width="10"/>
+        <g id="arrow">
+            <path fill="none" stroke="white" stroke-width="8" stroke-miterlimit="100"
+                d="M 23,8
+                    h -15 l -8,-8 h 15 l 8,8 h 47 l -3,-4 l 12,5
+                    l -12,5 l 3,-4 h -47 l -8,8 h -15 l 8,-8 h 15"/>
+            <path fill="none" stroke="white" stroke-width="2" stroke-miterlimit="100"
+                d="M 4,0 l 4,4 M 7,0 l 5,5 M 12,0 l 4,4
+                    M 5,18 l 6,-6 M 9,18 l 2,-2 M 11,18 l 3,-3"/>
+            <path fill="none" stroke="white" stroke-miterlimit="100" d="M 78,8 l 5,1 l -5,1"/>
+        </g>
+        <g id="old-arrow">
+            <polyline fill="none" stroke="#ffffff"
+                points="5,5 5,4 4,4 0,0 10,0 14,4 37,4 34,1 42,4 42,5 34,8 37,5 14,5 10,9 0,9 4,5 33,5 33,4 4,4"/>
+        </g>
+    </defs>
+
+    <use x="0" y="0" xlink:href="#transparent-background"/>
+    <use x="100" y="100" xlink:href="#background-circle"/>
+    <use x="100" y="100" xlink:href="#medicine-circle"/>
+    <use x="10" y="91" xlink:href="#arrow"/>
+    <use x="10" y="91" xlink:href="#arrow" transform="rotate(90,100,100)"/>
+    <use x="10" y="91" xlink:href="#arrow" transform="rotate(180,100,100)"/>
+    <use x="10" y="91" xlink:href="#arrow" transform="rotate(270,100,100)"/>
+</svg>

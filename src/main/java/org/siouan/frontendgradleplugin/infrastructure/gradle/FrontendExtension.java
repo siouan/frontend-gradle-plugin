@@ -29,9 +29,32 @@ public class FrontendExtension {
     private final DirectoryProperty nodeInstallDirectory;
 
     /**
-     * URL to download the Node distribution.
+     * URL root part to build the exact URL to download the Node.js distribution.
+     *
+     * @since 3.0.0
      */
-    private final Property<String> nodeDistributionUrl;
+    private final Property<String> nodeDistributionUrlRoot;
+
+    /**
+     * Trailing path pattern to build the exact URL to download the Node.js distribution.
+     *
+     * @since 3.0.0
+     */
+    private final Property<String> nodeDistributionUrlPathPattern;
+
+    /**
+     * Username to authenticate on the server providing Node.js distributions.
+     *
+     * @since 3.0.0
+     */
+    private final Property<String> nodeDistributionServerUsername;
+
+    /**
+     * Password to authenticate on the server providing Node.js distributions.
+     *
+     * @since 3.0.0
+     */
+    private final Property<String> nodeDistributionServerPassword;
 
     /**
      * Whether a Yarn distribution shall be downloaded and installed.
@@ -56,9 +79,32 @@ public class FrontendExtension {
     private final DirectoryProperty yarnInstallDirectory;
 
     /**
-     * URL to download the distribution.
+     * URL root part to build the exact URL to download the Yarn distribution.
+     *
+     * @since 3.0.0
      */
-    private final Property<String> yarnDistributionUrl;
+    private final Property<String> yarnDistributionUrlRoot;
+
+    /**
+     * Trailing path pattern to build the exact URL to download the Yarn distribution.
+     *
+     * @since 3.0.0
+     */
+    private final Property<String> yarnDistributionUrlPathPattern;
+
+    /**
+     * Username to authenticate on the server providing Yarn distributions.
+     *
+     * @since 3.0.0
+     */
+    private final Property<String> yarnDistributionServerUsername;
+
+    /**
+     * Password to authenticate on the server providing Yarn distributions.
+     *
+     * @since 3.0.0
+     */
+    private final Property<String> yarnDistributionServerPassword;
 
     /**
      * The npm/Yarn script installing frontend dependencies.
@@ -105,6 +151,20 @@ public class FrontendExtension {
     private final Property<Integer> proxyPort;
 
     /**
+     * Username to authenticate on the proxy server.
+     *
+     * @since 3.0.0
+     */
+    private final Property<String> proxyUsername;
+
+    /**
+     * Password to authenticate on the proxy server.
+     *
+     * @since 3.0.0
+     */
+    private final Property<String> proxyPassword;
+
+    /**
      * Whether verbose mode is enabled.
      *
      * @since 2.0.0
@@ -115,12 +175,18 @@ public class FrontendExtension {
         nodeDistributionProvided = project.getObjects().property(Boolean.class);
         nodeVersion = project.getObjects().property(String.class);
         nodeInstallDirectory = project.getObjects().directoryProperty();
-        nodeDistributionUrl = project.getObjects().property(String.class);
+        nodeDistributionUrlRoot = project.getObjects().property(String.class);
+        nodeDistributionUrlPathPattern = project.getObjects().property(String.class);
+        nodeDistributionServerUsername = project.getObjects().property(String.class);
+        nodeDistributionServerPassword = project.getObjects().property(String.class);
         yarnDistributionProvided = project.getObjects().property(Boolean.class);
         yarnEnabled = project.getObjects().property(Boolean.class);
         yarnVersion = project.getObjects().property(String.class);
         yarnInstallDirectory = project.getObjects().directoryProperty();
-        yarnDistributionUrl = project.getObjects().property(String.class);
+        yarnDistributionUrlRoot = project.getObjects().property(String.class);
+        yarnDistributionUrlPathPattern = project.getObjects().property(String.class);
+        yarnDistributionServerUsername = project.getObjects().property(String.class);
+        yarnDistributionServerPassword = project.getObjects().property(String.class);
         installScript = project.getObjects().property(String.class);
         cleanScript = project.getObjects().property(String.class);
         assembleScript = project.getObjects().property(String.class);
@@ -129,6 +195,8 @@ public class FrontendExtension {
         packageJsonDirectory = project.getObjects().property(File.class);
         proxyHost = project.getObjects().property(String.class);
         proxyPort = project.getObjects().property(Integer.class);
+        proxyUsername = project.getObjects().property(String.class);
+        proxyPassword = project.getObjects().property(String.class);
         verboseModeEnabled = project.getObjects().property(Boolean.class);
     }
 
@@ -144,8 +212,20 @@ public class FrontendExtension {
         return nodeInstallDirectory;
     }
 
-    public Property<String> getNodeDistributionUrl() {
-        return nodeDistributionUrl;
+    public Property<String> getNodeDistributionUrlRoot() {
+        return nodeDistributionUrlRoot;
+    }
+
+    public Property<String> getNodeDistributionUrlPathPattern() {
+        return nodeDistributionUrlPathPattern;
+    }
+
+    public Property<String> getNodeDistributionServerUsername() {
+        return nodeDistributionServerUsername;
+    }
+
+    public Property<String> getNodeDistributionServerPassword() {
+        return nodeDistributionServerPassword;
     }
 
     public Property<Boolean> getYarnEnabled() {
@@ -164,8 +244,20 @@ public class FrontendExtension {
         return yarnInstallDirectory;
     }
 
-    public Property<String> getYarnDistributionUrl() {
-        return yarnDistributionUrl;
+    public Property<String> getYarnDistributionUrlRoot() {
+        return yarnDistributionUrlRoot;
+    }
+
+    public Property<String> getYarnDistributionUrlPathPattern() {
+        return yarnDistributionUrlPathPattern;
+    }
+
+    public Property<String> getYarnDistributionServerUsername() {
+        return yarnDistributionServerUsername;
+    }
+
+    public Property<String> getYarnDistributionServerPassword() {
+        return yarnDistributionServerPassword;
     }
 
     public Property<String> getInstallScript() {
@@ -198,6 +290,14 @@ public class FrontendExtension {
 
     public Property<Integer> getProxyPort() {
         return proxyPort;
+    }
+
+    public Property<String> getProxyUsername() {
+        return proxyUsername;
+    }
+
+    public Property<String> getProxyPassword() {
+        return proxyPassword;
     }
 
     public Property<Boolean> getVerboseModeEnabled() {

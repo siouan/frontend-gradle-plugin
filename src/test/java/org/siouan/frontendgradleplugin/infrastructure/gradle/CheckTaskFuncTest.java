@@ -1,26 +1,24 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.assertTaskIgnored;
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.assertTaskSkipped;
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.assertTaskSuccess;
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.assertTaskUpToDate;
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.createBuildFile;
+import static org.siouan.frontendgradleplugin.test.util.GradleBuildAssertions.assertTaskIgnored;
+import static org.siouan.frontendgradleplugin.test.util.GradleBuildAssertions.assertTaskSkipped;
+import static org.siouan.frontendgradleplugin.test.util.GradleBuildAssertions.assertTaskSuccess;
+import static org.siouan.frontendgradleplugin.test.util.GradleBuildAssertions.assertTaskUpToDate;
+import static org.siouan.frontendgradleplugin.test.util.GradleBuildFiles.createBuildFile;
 import static org.siouan.frontendgradleplugin.test.util.GradleHelper.runGradle;
+import static org.siouan.frontendgradleplugin.test.util.Resources.getResourcePath;
+import static org.siouan.frontendgradleplugin.test.util.Resources.getResourceUrl;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.gradle.testkit.runner.BuildResult;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
+import org.siouan.frontendgradleplugin.test.util.FrontendMapBuilder;
 
 /**
  * Functional tests to verify the {@link CheckTask} integration in a Gradle build. Test cases uses fake Node/Yarn
@@ -33,13 +31,12 @@ class CheckTaskFuncTest {
     Path projectDirectoryPath;
 
     @Test
-    void shouldDoNothingWhenScriptIsNotDefined() throws IOException, URISyntaxException {
-        Files.copy(Paths.get(getClass().getClassLoader().getResource("package-npm.json").toURI()),
-            projectDirectoryPath.resolve("package.json"));
-        final Map<String, Object> properties = new HashMap<>();
-        properties.put("nodeVersion", "10.16.0");
-        properties.put("nodeDistributionUrl", getClass().getClassLoader().getResource("node-v10.16.0.zip"));
-        createBuildFile(projectDirectoryPath, properties);
+    void shouldDoNothingWhenScriptIsNotDefined() throws IOException {
+        Files.copy(getResourcePath("package-npm.json"), projectDirectoryPath.resolve("package.json"));
+        final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
+            .nodeVersion("12.16.3")
+            .nodeDistributionUrl(getResourceUrl("node-v12.16.3.zip"));
+        createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result = runGradle(projectDirectoryPath, FrontendGradlePlugin.CHECK_TASK_NAME);
 
@@ -50,13 +47,12 @@ class CheckTaskFuncTest {
     }
 
     @Test
-    void shouldCheckWithoutFrontendTasks() throws IOException, URISyntaxException {
-        Files.copy(Paths.get(getClass().getClassLoader().getResource("package-npm.json").toURI()),
-            projectDirectoryPath.resolve("package.json"));
-        final Map<String, Object> properties = new HashMap<>();
-        properties.put("nodeVersion", "10.16.0");
-        properties.put("nodeDistributionUrl", getClass().getClassLoader().getResource("node-v10.16.0.zip"));
-        createBuildFile(projectDirectoryPath, properties);
+    void shouldCheckWithoutFrontendTasks() throws IOException {
+        Files.copy(getResourcePath("package-npm.json"), projectDirectoryPath.resolve("package.json"));
+        final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
+            .nodeVersion("12.16.3")
+            .nodeDistributionUrl(getResourceUrl("node-v12.16.3.zip"));
+        createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result = runGradle(projectDirectoryPath, FrontendGradlePlugin.GRADLE_CHECK_TASK_NAME);
 
@@ -68,14 +64,13 @@ class CheckTaskFuncTest {
     }
 
     @Test
-    void shouldCheckFrontendWithNpmOrYarn() throws IOException, URISyntaxException {
-        Files.copy(Paths.get(getClass().getClassLoader().getResource("package-npm.json").toURI()),
-            projectDirectoryPath.resolve("package.json"));
-        final Map<String, Object> properties = new HashMap<>();
-        properties.put("nodeVersion", "10.16.0");
-        properties.put("nodeDistributionUrl", getClass().getClassLoader().getResource("node-v10.16.0.zip"));
-        properties.put("checkScript", "run check");
-        createBuildFile(projectDirectoryPath, properties);
+    void shouldCheckFrontendWithNpmOrYarn() throws IOException {
+        Files.copy(getResourcePath("package-npm.json"), projectDirectoryPath.resolve("package.json"));
+        final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
+            .nodeVersion("12.16.3")
+            .nodeDistributionUrl(getResourceUrl("node-v12.16.3.zip"))
+            .checkScript("run check");
+        createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, FrontendGradlePlugin.GRADLE_CHECK_TASK_NAME);
 
@@ -94,12 +89,13 @@ class CheckTaskFuncTest {
         assertTaskSuccess(result2, FrontendGradlePlugin.GRADLE_CHECK_TASK_NAME);
 
         Files.deleteIfExists(projectDirectoryPath.resolve("package-lock.json"));
-        Files.copy(new File(getClass().getClassLoader().getResource("package-yarn.json").toURI()).toPath(),
-            projectDirectoryPath.resolve("package.json"), StandardCopyOption.REPLACE_EXISTING);
-        properties.put("yarnEnabled", true);
-        properties.put("yarnVersion", "1.16.0");
-        properties.put("yarnDistributionUrl", getClass().getClassLoader().getResource("yarn-v1.16.0.tar.gz"));
-        createBuildFile(projectDirectoryPath, properties);
+        Files.copy(getResourcePath("package-yarn.json"), projectDirectoryPath.resolve("package.json"),
+            StandardCopyOption.REPLACE_EXISTING);
+        frontendMapBuilder
+            .yarnEnabled(true)
+            .yarnVersion("1.22.4")
+            .yarnDistributionUrl(getResourceUrl("yarn-v1.22.4.tar.gz"));
+        createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result3 = runGradle(projectDirectoryPath, FrontendGradlePlugin.GRADLE_CHECK_TASK_NAME);
 

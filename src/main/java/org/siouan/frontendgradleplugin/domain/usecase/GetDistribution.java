@@ -75,23 +75,27 @@ public class GetDistribution {
             .orElseThrow(() -> new UnsupportedDistributionIdException(getDistributionSettings.getDistributionId()));
         final DistributionDefinition distributionDefinition = new DistributionDefinition(
             getDistributionSettings.getPlatform(), getDistributionSettings.getVersion(),
-            getDistributionSettings.getDistributionUrl());
+            getDistributionSettings.getDistributionUrlRoot(), getDistributionSettings.getDistributionUrlPathPattern());
         final URL distributionUrl = distributionUrlResolver.execute(distributionDefinition);
 
         // Download the distribution
-        logger.info("Downloading distribution at '{}'", distributionUrl);
+        logger.info("Downloading distribution at '{}' (proxy: {})", distributionUrl,
+            getDistributionSettings.getProxySettings().getProxy());
         final Path distributionFilePath = getDistributionSettings
             .getTemporaryDirectoryPath()
             .resolve(resolveDistributionFileName(distributionUrl));
-        downloadResource.execute(new DownloadSettings(distributionUrl, getDistributionSettings.getProxy(),
-            getDistributionSettings.getTemporaryDirectoryPath(), distributionFilePath));
+        downloadResource.execute(
+            new DownloadSettings(distributionUrl, getDistributionSettings.getDistributionServerCredentials(),
+                getDistributionSettings.getProxySettings(), getDistributionSettings.getTemporaryDirectoryPath(),
+                distributionFilePath));
 
         final Optional<DistributionValidator> distributionValidator = getDistributionValidator.execute(
             getDistributionSettings.getDistributionId());
         if (distributionValidator.isPresent()) {
             final DistributionValidatorSettings distributionValidatorSettings = new DistributionValidatorSettings(
-                getDistributionSettings.getTemporaryDirectoryPath(), distributionUrl, distributionFilePath,
-                getDistributionSettings.getProxy());
+                getDistributionSettings.getTemporaryDirectoryPath(), distributionUrl,
+                getDistributionSettings.getDistributionServerCredentials(), getDistributionSettings.getProxySettings(),
+                distributionFilePath);
             distributionValidator.get().execute(distributionValidatorSettings);
         }
         return distributionFilePath;

@@ -1,7 +1,5 @@
 package org.siouan.frontendgradleplugin.domain.model;
 
-import java.net.Proxy;
-import java.net.URL;
 import java.nio.file.Path;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -19,11 +17,15 @@ public class GetDistributionSettings {
 
     private final Platform platform;
 
+    private final String distributionUrlRoot;
+
+    private final String distributionUrlPathPattern;
+
+    private final Credentials distributionServerCredentials;
+
+    private final ProxySettings proxySettings;
+
     private final Path temporaryDirectoryPath;
-
-    private final URL distributionUrl;
-
-    private final Proxy proxy;
 
     /**
      * Builds settings to get a distribution.
@@ -31,20 +33,25 @@ public class GetDistributionSettings {
      * @param distributionId Distribution ID.
      * @param platform Underlying platform.
      * @param version Version.
-     * @param distributionUrl URL to download the distribution.
+     * @param distributionUrlRoot URL root part to build the exact URL to download the distribution.
+     * @param distributionUrlPathPattern Trailing path pattern to build the exact URL to download the distribution.
+     * @param distributionServerCredentials Credentials to authenticate on the distribution server before download.
+     * @param proxySettings Proxy settings used for downloads.
      * @param temporaryDirectoryPath Path to a temporary directory.
-     * @param proxy Proxy used for the connection.
      * @see DistributionId
      */
     public GetDistributionSettings(@Nonnull String distributionId, @Nonnull final Platform platform,
-        @Nonnull final String version, @Nullable final URL distributionUrl, @Nonnull final Path temporaryDirectoryPath,
-        @Nonnull final Proxy proxy) {
+        @Nonnull final String version, @Nonnull final String distributionUrlRoot,
+        @Nonnull final String distributionUrlPathPattern, @Nullable final Credentials distributionServerCredentials,
+        @Nonnull final ProxySettings proxySettings, @Nonnull final Path temporaryDirectoryPath) {
         this.distributionId = distributionId;
         this.platform = platform;
         this.version = version;
-        this.distributionUrl = distributionUrl;
+        this.distributionUrlRoot = distributionUrlRoot;
+        this.distributionUrlPathPattern = distributionUrlPathPattern;
+        this.distributionServerCredentials = distributionServerCredentials;
+        this.proxySettings = proxySettings;
         this.temporaryDirectoryPath = temporaryDirectoryPath;
-        this.proxy = proxy;
     }
 
     /**
@@ -78,13 +85,43 @@ public class GetDistributionSettings {
     }
 
     /**
-     * Gets the URL to download the distribution.
+     * Gets the URL root part to build the exact URL to download the distribution.
      *
-     * @return URL, may be {@code null} if the URL must be resolved automatically or with another method.
+     * @return URL root.
+     */
+    @Nonnull
+    public String getDistributionUrlRoot() {
+        return distributionUrlRoot;
+    }
+
+    /**
+     * Gets the trailing path pattern to build the exact URL to download the distribution.
+     *
+     * @return Path pattern.
+     */
+    @Nonnull
+    public String getDistributionUrlPathPattern() {
+        return distributionUrlPathPattern;
+    }
+
+    /**
+     * Gets credentials used to authenticate on the distribution server before download.
+     *
+     * @return Credentials.
      */
     @Nullable
-    public URL getDistributionUrl() {
-        return distributionUrl;
+    public Credentials getDistributionServerCredentials() {
+        return distributionServerCredentials;
+    }
+
+    /**
+     * Gets the proxy settings used for downloads.
+     *
+     * @return Proxy settings.
+     */
+    @Nonnull
+    public ProxySettings getProxySettings() {
+        return proxySettings;
     }
 
     /**
@@ -95,15 +132,5 @@ public class GetDistributionSettings {
     @Nonnull
     public Path getTemporaryDirectoryPath() {
         return temporaryDirectoryPath;
-    }
-
-    /**
-     * Gets the proxy used for the connection.
-     *
-     * @return Proxy.
-     */
-    @Nonnull
-    public Proxy getProxy() {
-        return proxy;
     }
 }

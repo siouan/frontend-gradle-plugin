@@ -1,0 +1,6 @@
+#!/bin/sh
+
+echo "$0: PATH=$PATH"
+parent_dirname=$(/usr/bin/dirname "$0")
+echo $0 $*
+$parent_dirname/npm $*

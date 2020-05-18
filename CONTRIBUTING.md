@@ -75,9 +75,9 @@ gradlew pluginUnderTestMetadata
 The project relies on [Travis CI Open Source][travis] to integrate continuously every change, pull request, in the
 repository. The configuration actually allows to build and test the plugin on the environments below:
 
-- Linux Ubuntu Bionic 18.04.3 LTS / OpenJDK 11.0.2 64 bits
-- Mac OS X 10.13.3 / OpenJDK 11.0.2 64 bits
-- Windows Server 2016 version 1803 / AdoptOpenJDK OpenJ9 1.8.0-232 64 bits
+- Linux Ubuntu Bionic 18.04.3 LTS / AdoptOpenJDK 1.8+ 64 bits
+- Mac OS X 10.13.3 / AdoptOpenJDK 1.8+ 64 bits
+- Windows Server 2016 version 1803 / AdoptOpenJDK 1.8+ 64 bits
 
 Ubuntu Bionic is the reference environment, used to analyze the source code with SonarCloud. By now, the plugin has been
 developed on Windows 10 Home with OracleJDK 1.8.0_202 64 bits and [JetBrains IntelliJ IDEA][intellij-idea].

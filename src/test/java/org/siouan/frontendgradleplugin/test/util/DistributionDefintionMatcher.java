@@ -18,9 +18,8 @@ public class DistributionDefintionMatcher extends AbstractArgumentMatcher<Distri
             return false;
         }
 
-        return actualValue.getPlatform().equals(expectedValue.getPlatform()) && actualValue
-            .getVersion()
-            .equals(expectedValue.getVersion()) && Objects.equals(actualValue.getDownloadUrl(),
-            expectedValue.getDownloadUrl());
+        return actualValue.getPlatform().equals(expectedValue.getPlatform())
+            && actualValue.getVersion().equals(expectedValue.getVersion())
+            && Objects.equals(actualValue.getDownloadUrlRoot(), expectedValue.getDownloadUrlRoot());
     }
 }

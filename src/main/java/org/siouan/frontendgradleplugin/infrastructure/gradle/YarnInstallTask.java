@@ -1,34 +1,24 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.net.URL;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-import org.gradle.api.DefaultTask;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputDirectory;
-import org.gradle.api.tasks.TaskAction;
-import org.siouan.frontendgradleplugin.domain.exception.ArchiverException;
-import org.siouan.frontendgradleplugin.domain.exception.DistributionValidatorException;
-import org.siouan.frontendgradleplugin.domain.exception.InvalidDistributionUrlException;
-import org.siouan.frontendgradleplugin.domain.exception.UnsupportedDistributionArchiveException;
-import org.siouan.frontendgradleplugin.domain.exception.UnsupportedDistributionIdException;
-import org.siouan.frontendgradleplugin.domain.exception.UnsupportedPlatformException;
+import org.siouan.frontendgradleplugin.domain.model.Credentials;
 import org.siouan.frontendgradleplugin.domain.model.InstallSettings;
 import org.siouan.frontendgradleplugin.domain.model.Platform;
+import org.siouan.frontendgradleplugin.domain.model.ProxySettings;
 import org.siouan.frontendgradleplugin.domain.usecase.InstallYarnDistribution;
-import org.siouan.frontendgradleplugin.infrastructure.BeanRegistryException;
-import org.siouan.frontendgradleplugin.infrastructure.Beans;
 
 /**
  * Task that downloads and installs a Yarn distribution.
  */
-public class YarnInstallTask extends DefaultTask {
+public class YarnInstallTask extends AbstractDistributionInstallTask {
 
     /**
      * Version of the distribution to download.
@@ -41,30 +31,40 @@ public class YarnInstallTask extends DefaultTask {
     private final DirectoryProperty yarnInstallDirectory;
 
     /**
-     * URL to download the distribution.
+     * URL root part to build the exact URL to download the Yarn distribution.
+     *
+     * @since 3.0.0
      */
-    private final Property<String> yarnDistributionUrl;
+    private final Property<String> yarnDistributionUrlRoot;
 
     /**
-     * Proxy host used to download resources.
+     * Trailing path pattern to build the exact URL to download the Yarn distribution.
      *
-     * @since 2.1.0
+     * @since 3.0.0
      */
-    private final Property<String> proxyHost;
+    private final Property<String> yarnDistributionUrlPathPattern;
 
     /**
-     * Proxy port used to download resources.
+     * Username to authenticate on the server providing Yarn distributions.
      *
-     * @since 2.1.0
+     * @since 3.0.0
      */
-    private final Property<Integer> proxyPort;
+    private final Property<String> yarnDistributionServerUsername;
+
+    /**
+     * Password to authenticate on the server providing Yarn distributions.
+     *
+     * @since 3.0.0
+     */
+    private final Property<String> yarnDistributionServerPassword;
 
     public YarnInstallTask() {
         this.yarnVersion = getProject().getObjects().property(String.class);
         this.yarnInstallDirectory = getProject().getObjects().directoryProperty();
-        this.yarnDistributionUrl = getProject().getObjects().property(String.class);
-        this.proxyHost = getProject().getObjects().property(String.class);
-        this.proxyPort = getProject().getObjects().property(Integer.class);
+        this.yarnDistributionUrlRoot = getProject().getObjects().property(String.class);
+        this.yarnDistributionUrlPathPattern = getProject().getObjects().property(String.class);
+        this.yarnDistributionServerUsername = getProject().getObjects().property(String.class);
+        this.yarnDistributionServerPassword = getProject().getObjects().property(String.class);
     }
 
     @Input
@@ -73,9 +73,23 @@ public class YarnInstallTask extends DefaultTask {
     }
 
     @Input
-    @Optional
-    public Property<String> getYarnDistributionUrl() {
-        return yarnDistributionUrl;
+    public Property<String> getYarnDistributionUrlRoot() {
+        return yarnDistributionUrlRoot;
+    }
+
+    @Input
+    public Property<String> getYarnDistributionUrlPathPattern() {
+        return yarnDistributionUrlPathPattern;
+    }
+
+    @Internal
+    public Property<String> getYarnDistributionServerUsername() {
+        return yarnDistributionServerUsername;
+    }
+
+    @Internal
+    public Property<String> getYarnDistributionServerPassword() {
+        return yarnDistributionServerPassword;
     }
 
     @OutputDirectory
@@ -84,39 +98,27 @@ public class YarnInstallTask extends DefaultTask {
         return yarnInstallDirectory;
     }
 
-    @Internal
-    public Property<String> getProxyHost() {
-        return proxyHost;
+    @Override
+    @Nullable
+    protected Credentials getDistributionServerCredentials() {
+        return yarnDistributionServerUsername
+            .map(
+                username -> new Credentials(yarnDistributionServerUsername.get(), yarnDistributionServerPassword.get()))
+            .getOrNull();
     }
 
-    @Internal
-    public Property<Integer> getProxyPort() {
-        return proxyPort;
+    @Override
+    @Nonnull
+    protected Class<InstallYarnDistribution> getInstallDistributionClass() {
+        return InstallYarnDistribution.class;
     }
 
-    /**
-     * Installs a Yarn distribution.
-     *
-     * @throws BeanRegistryException If a component cannot be instanciated.
-     * @throws UnsupportedDistributionIdException If the type of distribution to install is not supported.
-     * @throws UnsupportedDistributionArchiveException If the distribution file type is not supported.
-     * @throws UnsupportedPlatformException If the underlying platform is not supported.
-     * @throws InvalidDistributionUrlException If the URL to download the distribution is not valid.
-     * @throws DistributionValidatorException If the downloaded distribution file is not valid.
-     * @throws ArchiverException If an error occurs in the archiver exploding the distribution.
-     * @throws IOException If an I/O error occurs.
-     */
-    @TaskAction
-    public void execute() throws BeanRegistryException, ArchiverException, UnsupportedDistributionArchiveException,
-        UnsupportedPlatformException, UnsupportedDistributionIdException, InvalidDistributionUrlException,
-        DistributionValidatorException, IOException {
-        final URL distributionUrl = yarnDistributionUrl.isPresent() ? new URL(yarnDistributionUrl.get()) : null;
-        final Proxy proxy = proxyHost
-            .map(host -> new Proxy(Proxy.Type.HTTP, new InetSocketAddress(host, proxyPort.get())))
-            .getOrElse(Proxy.NO_PROXY);
-        Beans
-            .getBean(InstallYarnDistribution.class)
-            .execute(new InstallSettings(Beans.getBean(Platform.class), yarnVersion.get(), distributionUrl, proxy,
-                getTemporaryDir().toPath(), yarnInstallDirectory.getAsFile().get().toPath()));
+    @Override
+    @Nonnull
+    protected InstallSettings getInstallSettings(@Nonnull final Platform platform,
+        @Nullable final Credentials distributionServerCredentials, @Nonnull final ProxySettings proxySettings) {
+        return new InstallSettings(platform, yarnVersion.get(), yarnDistributionUrlRoot.get(),
+            yarnDistributionUrlPathPattern.get(), distributionServerCredentials, proxySettings,
+            getTemporaryDir().toPath(), yarnInstallDirectory.getAsFile().get().toPath());
     }
 }

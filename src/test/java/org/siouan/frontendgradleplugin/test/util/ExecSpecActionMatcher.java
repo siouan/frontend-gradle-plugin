@@ -17,7 +17,7 @@ public class ExecSpecActionMatcher extends AbstractArgumentMatcher<ExecSpecActio
         final ExecutionSettings actualExecutionSettings = actualValue.getExecutionSettings();
         return actualExecutionSettings.getWorkingDirectoryPath().equals(expectedExecutionSettings.getWorkingDirectoryPath())
             && actualExecutionSettings.getAdditionalExecutablePaths().equals(expectedExecutionSettings.getAdditionalExecutablePaths())
-            && actualExecutionSettings.getExecutablePath().equals(expectedExecutionSettings.getExecutablePath()) && (
-            actualValue.getAfterConfiguredConsumer() != null);
+            && actualExecutionSettings.getExecutablePath().equals(expectedExecutionSettings.getExecutablePath())
+            && (actualValue.getAfterConfiguredConsumer() != null);
     }
 }

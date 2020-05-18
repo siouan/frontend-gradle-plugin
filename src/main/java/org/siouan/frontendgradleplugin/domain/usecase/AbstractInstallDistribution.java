@@ -71,13 +71,13 @@ public abstract class AbstractInstallDistribution {
         throws UnsupportedDistributionArchiveException, ArchiverException, UnsupportedPlatformException,
         UnsupportedDistributionIdException, InvalidDistributionUrlException, DistributionValidatorException,
         IOException {
-        logger.info(getClass().getSimpleName() + " Removing install directory '{}'",
-            installSettings.getInstallDirectoryPath());
+        logger.info("Removing install directory '{}'", installSettings.getInstallDirectoryPath());
         fileManager.deleteFileTree(installSettings.getInstallDirectoryPath(), true);
 
         final GetDistributionSettings getDistributionSettings = new GetDistributionSettings(getDistributionId(),
-            installSettings.getPlatform(), installSettings.getVersion(), installSettings.getDownloadUrl(),
-            installSettings.getTemporaryDirectoryPath(), installSettings.getProxy());
+            installSettings.getPlatform(), installSettings.getVersion(), installSettings.getDistributionUrlRoot(),
+            installSettings.getDistributionUrlPathPattern(), installSettings.getDistributionServerCredentials(),
+            installSettings.getProxySettings(), installSettings.getTemporaryDirectoryPath());
         final Path distributionFilePath = getDistribution.execute(getDistributionSettings);
 
         // Deploys the distribution

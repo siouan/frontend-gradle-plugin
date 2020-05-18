@@ -1,4 +1,11 @@
+.idea/
 /.gradle
-/.idea
-/build
+/build/
+/buildSrc/.gradle
+/buildSrc/build
 /out
+/site/build/
+/site/dist/
+/site/node/
+/site/node_modules/
+/site/yarn/

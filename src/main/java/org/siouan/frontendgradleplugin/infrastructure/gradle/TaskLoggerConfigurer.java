@@ -32,7 +32,7 @@ public class TaskLoggerConfigurer implements TaskExecutionListener {
     public void beforeExecute(@Nonnull final Task task) {
         task
             .getLogger()
-            .debug("Configuring logger for task '{}', verboseModeEnabled: {}", task.getName(),
+            .debug("Configuring logger for task '{}': verboseModeEnabled={}", task.getName(),
                 extension.getVerboseModeEnabled().get());
         try {
             beanRegistry

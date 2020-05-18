@@ -31,8 +31,19 @@ public class BeanRegistry {
      */
     private final Map<Class<?>, Object> singletons;
 
+    /**
+     * Builds an initializes the registry with {@link #init()}.
+     */
     public BeanRegistry() {
         this.singletons = new HashMap<>();
+        init();
+    }
+
+    /**
+     * Initializes the registry by removing all registered beans, and registering the registry itself.
+     */
+    public void init() {
+        singletons.clear();
         // The registry itself is available for injection.
         registerBean(BeanRegistry.class, this);
     }
@@ -87,7 +98,7 @@ public class BeanRegistry {
     }
 
     /**
-     * Registers the given bean instance. If an instance of the same class is already registered, this method has no
+     * Registers the given bean instances. If an instance of the same class is already registered, this method has no
      * effect. For security reasons, trying to register an instance of a {@link BeanRegistry} has no effect.
      *
      * @param bean Bean.

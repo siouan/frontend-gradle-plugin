@@ -1,20 +1,18 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.assertTaskIgnored;
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.assertTaskSkipped;
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.assertTaskSuccess;
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.assertTaskUpToDate;
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.createBuildFile;
+import static org.siouan.frontendgradleplugin.test.util.GradleBuildAssertions.assertTaskIgnored;
+import static org.siouan.frontendgradleplugin.test.util.GradleBuildAssertions.assertTaskSkipped;
+import static org.siouan.frontendgradleplugin.test.util.GradleBuildAssertions.assertTaskSuccess;
+import static org.siouan.frontendgradleplugin.test.util.GradleBuildAssertions.assertTaskUpToDate;
+import static org.siouan.frontendgradleplugin.test.util.GradleBuildFiles.createBuildFile;
 import static org.siouan.frontendgradleplugin.test.util.GradleHelper.runGradle;
+import static org.siouan.frontendgradleplugin.test.util.Resources.getResourcePath;
+import static org.siouan.frontendgradleplugin.test.util.Resources.getResourceUrl;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.gradle.api.publish.plugins.PublishingPlugin;
 import org.gradle.testkit.runner.BuildResult;
@@ -22,6 +20,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
+import org.siouan.frontendgradleplugin.test.util.FrontendMapBuilder;
 
 /**
  * Functional tests to verify the {@link PublishTask} integration in a Gradle build. Test cases uses fake Node/Yarn
@@ -43,14 +42,13 @@ class PublishTaskFuncTest {
     }
 
     @Test
-    void shouldBeSkippedWhenPublishScriptIsNotDefined() throws IOException, URISyntaxException {
-        Files.copy(Paths.get(getClass().getClassLoader().getResource("package-npm.json").toURI()),
-            packageJsonDirectoryPath.resolve("package.json"));
-        final Map<String, Object> properties = new HashMap<>();
-        properties.put("nodeVersion", "10.16.0");
-        properties.put("nodeDistributionUrl", getClass().getClassLoader().getResource("node-v10.16.0.zip"));
-        properties.put("assembleScript", "run assemble");
-        createBuildFile(projectDirectoryPath, properties);
+    void shouldBeSkippedWhenPublishScriptIsNotDefined() throws IOException {
+        Files.copy(getResourcePath("package-npm.json"), packageJsonDirectoryPath.resolve("package.json"));
+        final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
+            .nodeVersion("12.16.3")
+            .nodeDistributionUrl(getResourceUrl("node-v12.16.3.zip"))
+            .assembleScript("run assemble");
+        createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, FrontendGradlePlugin.PUBLISH_TASK_NAME);
 
@@ -71,14 +69,13 @@ class PublishTaskFuncTest {
     }
 
     @Test
-    void shouldBeSkippedWhenAssembleScriptIsNotDefined() throws IOException, URISyntaxException {
-        Files.copy(Paths.get(getClass().getClassLoader().getResource("package-npm.json").toURI()),
-            packageJsonDirectoryPath.resolve("package.json"));
-        final Map<String, Object> properties = new HashMap<>();
-        properties.put("nodeVersion", "10.16.0");
-        properties.put("nodeDistributionUrl", getClass().getClassLoader().getResource("node-v10.16.0.zip"));
-        properties.put("publishScript", "run publish");
-        createBuildFile(projectDirectoryPath, properties);
+    void shouldBeSkippedWhenAssembleScriptIsNotDefined() throws IOException {
+        Files.copy(getResourcePath("package-npm.json"), packageJsonDirectoryPath.resolve("package.json"));
+        final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
+            .nodeVersion("12.16.3")
+            .nodeDistributionUrl(getResourceUrl("node-v12.16.3.zip"))
+            .publishScript("run publish");
+        createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, FrontendGradlePlugin.PUBLISH_TASK_NAME);
 
@@ -99,15 +96,14 @@ class PublishTaskFuncTest {
     }
 
     @Test
-    void shouldPublishFrontendWithNpmOrYarn() throws IOException, URISyntaxException {
-        Files.copy(Paths.get(getClass().getClassLoader().getResource("package-npm.json").toURI()),
-            packageJsonDirectoryPath.resolve("package.json"));
-        final Map<String, Object> properties = new HashMap<>();
-        properties.put("nodeVersion", "10.16.0");
-        properties.put("nodeDistributionUrl", getClass().getClassLoader().getResource("node-v10.16.0.zip"));
-        properties.put("assembleScript", "run assemble");
-        properties.put("publishScript", "run publish");
-        createBuildFile(projectDirectoryPath, properties);
+    void shouldPublishFrontendWithNpmOrYarn() throws IOException {
+        Files.copy(getResourcePath("package-npm.json"), packageJsonDirectoryPath.resolve("package.json"));
+        final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
+            .nodeVersion("12.16.3")
+            .nodeDistributionUrl(getResourceUrl("node-v12.16.3.zip"))
+            .assembleScript("run assemble")
+            .publishScript("run publish");
+        createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, PublishingPlugin.PUBLISH_LIFECYCLE_TASK_NAME);
 
@@ -128,12 +124,13 @@ class PublishTaskFuncTest {
         assertTaskSuccess(result2, PublishingPlugin.PUBLISH_LIFECYCLE_TASK_NAME);
 
         Files.deleteIfExists(projectDirectoryPath.resolve("package-lock.json"));
-        Files.copy(Paths.get(getClass().getClassLoader().getResource("package-yarn.json").toURI()),
-            packageJsonDirectoryPath.resolve("package.json"), StandardCopyOption.REPLACE_EXISTING);
-        properties.put("yarnEnabled", true);
-        properties.put("yarnVersion", "1.16.0");
-        properties.put("yarnDistributionUrl", getClass().getClassLoader().getResource("yarn-v1.16.0.tar.gz"));
-        createBuildFile(projectDirectoryPath, properties);
+        Files.copy(getResourcePath("package-yarn.json"), packageJsonDirectoryPath.resolve("package.json"),
+            StandardCopyOption.REPLACE_EXISTING);
+        frontendMapBuilder
+            .yarnEnabled(true)
+            .yarnVersion("1.22.4")
+            .yarnDistributionUrl(getResourceUrl("yarn-v1.22.4.tar.gz"));
+        createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result3 = runGradle(projectDirectoryPath, PublishingPlugin.PUBLISH_LIFECYCLE_TASK_NAME);
 

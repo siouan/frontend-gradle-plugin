@@ -30,14 +30,22 @@ public class Platform {
     private final String osName;
 
     /**
-     * Builds a platform with custom architecture.
+     * Environment.
+     */
+    private final Environment environment;
+
+    /**
+     * Builds a platform with the given architecture.
      *
      * @param jvmArch JVM architecture.
      * @param osName Underlying O/S name.
+     * @param environment Environment.
      */
-    public Platform(@Nonnull final String jvmArch, @Nonnull final String osName) {
+    public Platform(@Nonnull final String jvmArch, @Nonnull final String osName,
+        @Nonnull final Environment environment) {
         this.jvmArch = jvmArch;
         this.osName = osName;
+        this.environment = environment;
     }
 
     /**
@@ -76,9 +84,20 @@ public class Platform {
         return matchesAnyIdPart(osName, SUPPORTED_WINDOWS_OS_IDS);
     }
 
+    /**
+     * Gets the environment.
+     *
+     * @return Environment.
+     */
+    @Nonnull
+    public Environment getEnvironment() {
+        return environment;
+    }
+
     @Override
     public String toString() {
-        return Platform.class.getSimpleName() + " {jvmArch=" + jvmArch + ", osName=" + osName + '}';
+        return Platform.class.getSimpleName() + " {jvmArch=" + jvmArch + ", osName=" + osName + ", environment="
+            + environment + '}';
     }
 
     /**

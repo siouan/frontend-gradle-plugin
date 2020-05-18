@@ -2,7 +2,6 @@ package org.siouan.frontendgradleplugin.infrastructure.archiver;
 
 import java.io.IOException;
 import java.util.Enumeration;
-
 import javax.annotation.Nonnull;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;

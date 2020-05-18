@@ -1,9 +1,9 @@
 package org.siouan.frontendgradleplugin.domain.model;
 
-import java.net.Proxy;
 import java.net.URL;
 import java.nio.file.Path;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Settings to download a resource.
@@ -14,7 +14,9 @@ public class DownloadSettings {
 
     private final URL resourceUrl;
 
-    private final Proxy proxy;
+    private final Credentials serverCredentials;
+
+    private final ProxySettings proxySettings;
 
     private final Path temporaryDirectoryPath;
 
@@ -24,14 +26,17 @@ public class DownloadSettings {
      * Builds download settings.
      *
      * @param resourceUrl URL to download the resource.
-     * @param proxy Proxy used for the connection.
+     * @param serverCredentials Credentials to authenticate on the server before download.
+     * @param proxySettings Proxy settings used for the connection.
      * @param temporaryDirectoryPath Path to a temporary directory.
      * @param destinationFilePath Path to a destination file.
      */
-    public DownloadSettings(@Nonnull final URL resourceUrl, @Nonnull final Proxy proxy,
-        @Nonnull final Path temporaryDirectoryPath, @Nonnull final Path destinationFilePath) {
+    public DownloadSettings(@Nonnull final URL resourceUrl, @Nullable final Credentials serverCredentials,
+        @Nonnull final ProxySettings proxySettings, @Nonnull final Path temporaryDirectoryPath,
+        @Nonnull final Path destinationFilePath) {
         this.resourceUrl = resourceUrl;
-        this.proxy = proxy;
+        this.serverCredentials = serverCredentials;
+        this.proxySettings = proxySettings;
         this.temporaryDirectoryPath = temporaryDirectoryPath;
         this.destinationFilePath = destinationFilePath;
     }
@@ -47,13 +52,23 @@ public class DownloadSettings {
     }
 
     /**
-     * Gets the proxy used for the connection.
+     * Gets credentials used to authenticate on the server before download.
      *
-     * @return Proxy.
+     * @return Credentials.
+     */
+    @Nullable
+    public Credentials getServerCredentials() {
+        return serverCredentials;
+    }
+
+    /**
+     * Gets the proxy settings used for the connection.
+     *
+     * @return Proxy settings.
      */
     @Nonnull
-    public Proxy getProxy() {
-        return proxy;
+    public ProxySettings getProxySettings() {
+        return proxySettings;
     }
 
     /**

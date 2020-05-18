@@ -151,7 +151,7 @@ public class FileManagerImpl implements FileManager {
      *
      * @param path Path.
      * @param originalPermissions Original file permissions.
-     * @param platform Execution platform.
+     * @param platform Underlying platform.
      * @return {@code true} if the file permissions were touched, i.e. under a Non-Windows O/S, the file exists and has
      * not the executable permission yet.
      * @throws IOException If an I/O error occurs.
@@ -174,7 +174,7 @@ public class FileManagerImpl implements FileManager {
     /**
      * A visitor of paths that deletes the corresponding file and/or directory after all child files are deleted.
      */
-    private static class FileDeleteVisitor extends SimpleFileVisitor<Path> {
+    public static class FileDeleteVisitor extends SimpleFileVisitor<Path> {
 
         private final Path rootPath;
 
@@ -207,7 +207,7 @@ public class FileManagerImpl implements FileManager {
     /**
      * A visitor of paths that copies the corresponding file and/or directory before all child files are copied.
      */
-    private static class FileCopyVisitor extends SimpleFileVisitor<Path> {
+    public static class FileCopyVisitor extends SimpleFileVisitor<Path> {
 
         private final Path rootPath;
 

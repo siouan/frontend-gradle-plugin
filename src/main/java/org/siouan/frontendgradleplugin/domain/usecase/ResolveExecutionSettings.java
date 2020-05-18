@@ -5,7 +5,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,14 +33,24 @@ public class ResolveExecutionSettings {
     public static final String WINDOWS_EXECUTABLE_AUTOEXIT_FLAG = "/c";
 
     /**
-     * Character used on unix-like O/S to separate arguments.
+     * Path to the wrapper Windows executable to launch the script executable.
      */
-    public static final char LINUX_SCRIPT_ARG_SEPARATOR_CHAR = ' ';
+    public static final Path UNIX_EXECUTABLE_PATH = Paths.get("sh");
+
+    /**
+     * Flag to terminate the Windows executable when the script executable completes.
+     */
+    public static final String UNIX_EXECUTABLE_AUTOEXIT_FLAG = "-c";
+
+    /**
+     * Character used on Unix-like O/S to separate arguments.
+     */
+    public static final char UNIX_SCRIPT_ARG_SEPARATOR_CHAR = ' ';
 
     /**
      * Character used by the plugin to escape an unrelevant argument separator.
      */
-    public static final char LINUX_SCRIPT_ARG_ESCAPE_CHAR = '\\';
+    public static final char UNIX_SCRIPT_ARG_ESCAPE_CHAR = '\\';
 
     private final GetNodeExecutablePath getNodeExecutablePath;
 
@@ -75,30 +84,22 @@ public class ResolveExecutionSettings {
      */
     @Nonnull
     public ExecutionSettings execute(@Nonnull final Path packageJsonDirectoryPath, @Nonnull final String executableType,
-        @Nonnull final Path nodeInstallDirectoryPath, @Nullable final Path yarnInstallDirectoryPath,
+        @Nullable final Path nodeInstallDirectoryPath, @Nullable final Path yarnInstallDirectoryPath,
         @Nonnull final Platform platform, @Nonnull final String script) throws ExecutableNotFoundException {
-        final Path nodeExecutablePath = getNodeExecutablePath
-            .execute(nodeInstallDirectoryPath, platform)
-            .orElseThrow(ExecutableNotFoundException::newNodeExecutableNotFoundException);
+        final Path nodeExecutablePath = getNodeExecutablePath.execute(nodeInstallDirectoryPath, platform);
         final Path scriptExecutablePath;
         switch (executableType) {
         case ExecutableType.NODE:
             scriptExecutablePath = nodeExecutablePath;
             break;
         case ExecutableType.NPM:
-            scriptExecutablePath = getNpmExecutablePath
-                .execute(nodeInstallDirectoryPath, platform)
-                .orElseThrow(ExecutableNotFoundException::newNpmExecutableNotFoundException);
+            scriptExecutablePath = getNpmExecutablePath.execute(nodeInstallDirectoryPath, platform);
             break;
         case ExecutableType.NPX:
-            scriptExecutablePath = getNpxExecutablePath
-                .execute(nodeInstallDirectoryPath, platform)
-                .orElseThrow(ExecutableNotFoundException::newNpxExecutableNotFoundException);
+            scriptExecutablePath = getNpxExecutablePath.execute(nodeInstallDirectoryPath, platform);
             break;
         case ExecutableType.YARN:
-            scriptExecutablePath = getYarnExecutablePath
-                .execute(Objects.requireNonNull(yarnInstallDirectoryPath), platform)
-                .orElseThrow(ExecutableNotFoundException::newYarnExecutableNotFoundException);
+            scriptExecutablePath = getYarnExecutablePath.execute(yarnInstallDirectoryPath, platform);
             break;
         default:
             throw new IllegalArgumentException("Unsupported type of execution: " + executableType);
@@ -111,17 +112,29 @@ public class ResolveExecutionSettings {
             args.add(WINDOWS_EXECUTABLE_AUTOEXIT_FLAG);
             // The command that must be executed in the terminal must be a single argument on itself (like if it was
             // quoted).
-            args.add('"' + scriptExecutablePath.toString() + "\" " + script.trim());
+            if (scriptExecutablePath.getParent() == null) {
+                // The path to the executable is only the executable name, which means we rely on the PATH environment
+                // variable.
+                args.add(scriptExecutablePath.toString() + ' ' + script.trim());
+            } else {
+                // Enclose the executable path between double-quotes in case of the path contains whitespaces.
+                args.add('"' + scriptExecutablePath.toString() + "\" " + script.trim());
+            }
         } else {
-            executable = scriptExecutablePath;
-            args.addAll(new StringSplitter(LINUX_SCRIPT_ARG_SEPARATOR_CHAR, LINUX_SCRIPT_ARG_ESCAPE_CHAR).execute(
-                script.trim()));
+            executable = UNIX_EXECUTABLE_PATH;
+            args.add(UNIX_EXECUTABLE_AUTOEXIT_FLAG);
+            args.add(scriptExecutablePath.toString() + UNIX_SCRIPT_ARG_SEPARATOR_CHAR + String.join(
+                Character.toString(UNIX_SCRIPT_ARG_SEPARATOR_CHAR),
+                new StringSplitter(UNIX_SCRIPT_ARG_SEPARATOR_CHAR, UNIX_SCRIPT_ARG_ESCAPE_CHAR).execute(
+                    script.trim())));
         }
 
         final Set<Path> executablePaths = new HashSet<>();
-        executablePaths.add(nodeExecutablePath.getParent());
-        if (executableType.equals(ExecutableType.YARN)) {
-            executablePaths.add(scriptExecutablePath.getParent());
+        if (!executableType.equals(ExecutableType.NODE)) {
+            final Path nodeExecutableParentPath = nodeExecutablePath.getParent();
+            if (nodeExecutableParentPath != null) {
+                executablePaths.add(nodeExecutableParentPath);
+            }
         }
 
         return new ExecutionSettings(packageJsonDirectoryPath, executablePaths, executable, args);

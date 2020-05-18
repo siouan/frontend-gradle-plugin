@@ -17,10 +17,8 @@ public class ExplodeSettingsMatcher extends AbstractArgumentMatcher<ExplodeSetti
             return false;
         }
 
-        return actualValue.getPlatform().equals(expectedValue.getPlatform()) && actualValue
-            .getArchiveFilePath()
-            .equals(expectedValue.getArchiveFilePath()) && actualValue
-            .getTargetDirectoryPath()
-            .equals(expectedValue.getTargetDirectoryPath());
+        return actualValue.getPlatform().equals(expectedValue.getPlatform())
+            && actualValue.getArchiveFilePath().equals(expectedValue.getArchiveFilePath())
+            && actualValue.getTargetDirectoryPath().equals(expectedValue.getTargetDirectoryPath());
     }
 }

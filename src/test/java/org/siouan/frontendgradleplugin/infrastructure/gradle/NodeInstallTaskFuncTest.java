@@ -2,23 +2,23 @@ package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.assertTaskFailed;
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.assertTaskSkipped;
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.assertTaskSuccess;
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.assertTaskUpToDate;
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.createBuildFile;
+import static org.siouan.frontendgradleplugin.test.util.GradleBuildAssertions.assertTaskFailed;
+import static org.siouan.frontendgradleplugin.test.util.GradleBuildAssertions.assertTaskSkipped;
+import static org.siouan.frontendgradleplugin.test.util.GradleBuildAssertions.assertTaskSuccess;
+import static org.siouan.frontendgradleplugin.test.util.GradleBuildAssertions.assertTaskUpToDate;
+import static org.siouan.frontendgradleplugin.test.util.GradleBuildFiles.createBuildFile;
 import static org.siouan.frontendgradleplugin.test.util.GradleHelper.runGradle;
 import static org.siouan.frontendgradleplugin.test.util.GradleHelper.runGradleAndExpectFailure;
+import static org.siouan.frontendgradleplugin.test.util.Resources.getResourceUrl;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.gradle.testkit.runner.BuildResult;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
+import org.siouan.frontendgradleplugin.test.util.FrontendMapBuilder;
 
 /**
  * Functional tests to verify the {@link NodeInstallTask} integration in a Gradle build. Test cases uses a fake Node
@@ -26,16 +26,12 @@ import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
  */
 class NodeInstallTaskFuncTest {
 
-    private static final String PROXY_HOST = "149.43.132.89";
-
-    private static final int PROXY_PORT = 59338;
-
     @TempDir
     Path projectDirectoryPath;
 
     @Test
     void shouldBeSkippedWhenDistributionIsProvided() throws IOException {
-        createBuildFile(projectDirectoryPath, singletonMap("nodeDistributionProvided", true));
+        createBuildFile(projectDirectoryPath, new FrontendMapBuilder().nodeDistributionProvided(true).toMap());
 
         final BuildResult result = runGradle(projectDirectoryPath, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
 
@@ -64,10 +60,10 @@ class NodeInstallTaskFuncTest {
 
     @Test
     void shouldFailWhenDistributionCannotBeDownloadedWithInvalidUrl() throws IOException {
-        final Map<String, Object> properties = new HashMap<>();
-        properties.put("nodeVersion", "10.16.0");
-        properties.put("nodeDistributionUrl", "protocol://domain/unknown");
-        createBuildFile(projectDirectoryPath, properties);
+        final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
+            .nodeVersion("12.16.3")
+            .nodeDistributionUrlRoot("protocol://domain/unknown");
+        createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result = runGradleAndExpectFailure(projectDirectoryPath,
             FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
@@ -76,26 +72,11 @@ class NodeInstallTaskFuncTest {
     }
 
     @Test
-    void shouldFailWhenProxyHostIsUnknown() throws IOException {
-        final Map<String, Object> properties = new HashMap<>();
-        properties.put("nodeVersion", "10.16.0");
-        properties.put("proxyHost", PROXY_HOST);
-        properties.put("proxyPort", PROXY_PORT);
-        properties.put("verboseModeEnabled", true);
-        createBuildFile(projectDirectoryPath, properties);
-
-        final BuildResult result1 = runGradleAndExpectFailure(projectDirectoryPath,
-            FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
-
-        assertTaskFailed(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
-    }
-
-    @Test
     void shouldSucceedFirstTimeAndBeUpToDateSecondTime() throws IOException {
-        final Map<String, Object> properties = new HashMap<>();
-        properties.put("nodeVersion", "10.16.0");
-        properties.put("nodeDistributionUrl", getClass().getClassLoader().getResource("node-v10.16.0.zip"));
-        createBuildFile(projectDirectoryPath, properties);
+        final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
+            .nodeVersion("12.16.3")
+            .nodeDistributionUrl(getResourceUrl("node-v12.16.3.zip"));
+        createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
 

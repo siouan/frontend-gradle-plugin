@@ -1,9 +1,9 @@
 package org.siouan.frontendgradleplugin.domain.model;
 
-import java.net.Proxy;
 import java.net.URL;
 import java.nio.file.Path;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Settings for distribution validation.
@@ -16,24 +16,29 @@ public class DistributionValidatorSettings {
 
     private final URL distributionUrl;
 
-    private final Path distributionFilePath;
+    private final Credentials distributionServerCredentials;
 
-    private final Proxy proxy;
+    private final ProxySettings proxySettings;
+
+    private final Path distributionFilePath;
 
     /**
      * Builds validator settings.
      *
      * @param temporaryDirectoryPath Path to a temporary directory.
      * @param distributionUrl URL used to download the distribution.
+     * @param distributionServerCredentials Credentials to authenticate on the distribution server before download.
+     * @param proxySettings Proxy settings used for downloads.
      * @param distributionFilePath Path to the distribution archive.
-     * @param proxy Proxy used for any connections.
      */
     public DistributionValidatorSettings(@Nonnull final Path temporaryDirectoryPath, @Nonnull final URL distributionUrl,
-        @Nonnull final Path distributionFilePath, @Nonnull final Proxy proxy) {
+        @Nullable final Credentials distributionServerCredentials, @Nonnull final ProxySettings proxySettings,
+        @Nonnull final Path distributionFilePath) {
         this.temporaryDirectoryPath = temporaryDirectoryPath;
         this.distributionUrl = distributionUrl;
+        this.distributionServerCredentials = distributionServerCredentials;
+        this.proxySettings = proxySettings;
         this.distributionFilePath = distributionFilePath;
-        this.proxy = proxy;
     }
 
     /**
@@ -57,6 +62,26 @@ public class DistributionValidatorSettings {
     }
 
     /**
+     * Gets credentials used to authenticate on the distribution server before download.
+     *
+     * @return Credentials.
+     */
+    @Nullable
+    public Credentials getDistributionServerCredentials() {
+        return distributionServerCredentials;
+    }
+
+    /**
+     * Gets the proxy settings used for downloads.
+     *
+     * @return Proxy settings.
+     */
+    @Nonnull
+    public ProxySettings getProxySettings() {
+        return proxySettings;
+    }
+
+    /**
      * Gets the path to the distribution archive.
      *
      * @return Path;
@@ -64,15 +89,5 @@ public class DistributionValidatorSettings {
     @Nonnull
     public Path getDistributionFilePath() {
         return distributionFilePath;
-    }
-
-    /**
-     * Gets the proxy used for the connection.
-     *
-     * @return Proxy.
-     */
-    @Nonnull
-    public Proxy getProxy() {
-        return proxy;
     }
 }

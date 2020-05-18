@@ -1,20 +1,19 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.assertTaskIgnored;
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.assertTaskSkipped;
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.assertTaskSuccess;
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.assertTaskUpToDate;
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.createBuildFile;
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.createSettingsFile;
+import static org.siouan.frontendgradleplugin.test.util.GradleBuildAssertions.assertTaskIgnored;
+import static org.siouan.frontendgradleplugin.test.util.GradleBuildAssertions.assertTaskSkipped;
+import static org.siouan.frontendgradleplugin.test.util.GradleBuildAssertions.assertTaskSuccess;
+import static org.siouan.frontendgradleplugin.test.util.GradleBuildAssertions.assertTaskUpToDate;
+import static org.siouan.frontendgradleplugin.test.util.GradleBuildFiles.createBuildFile;
 import static org.siouan.frontendgradleplugin.test.util.GradleHelper.runGradle;
+import static org.siouan.frontendgradleplugin.test.util.GradleSettingsFiles.createSettingsFile;
+import static org.siouan.frontendgradleplugin.test.util.Resources.getResourcePath;
+import static org.siouan.frontendgradleplugin.test.util.Resources.getResourceUrl;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.gradle.api.logging.LogLevel;
 import org.gradle.api.plugins.BasePlugin;
@@ -24,6 +23,7 @@ import org.gradle.testkit.runner.BuildResult;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
+import org.siouan.frontendgradleplugin.test.util.FrontendMapBuilder;
 
 /**
  * This test suite verifies task execution in a multi-projects build, where Node and Yarn distributions are downloaded
@@ -49,47 +49,46 @@ class MultiProjectsFuncTest {
     Path temporaryDirectorypath;
 
     @Test
-    void shouldRunTasksInSubProjects() throws IOException, URISyntaxException {
+    void shouldRunTasksInSubProjects() throws IOException {
         // Root project
         final Path projectDirectoryPath = temporaryDirectorypath;
         createSettingsFile(projectDirectoryPath, "multi-projects-test", SUB_PROJECT_1_NAME, SUB_PROJECT_2_NAME);
         createBuildFile(projectDirectoryPath, true, false);
-        final Path packageJsonFilePath = Paths.get(
-            getClass().getClassLoader().getResource("package-yarn.json").toURI());
+        final Path packageJsonFilePath = getResourcePath("package-yarn.json");
 
         // Sub-project 1
         final Path nodeInstallDirectory = Paths.get("${rootProject.projectDir}/node");
-        final Map<String, Object> properties = new HashMap<>();
-        properties.put("nodeVersion", "10.16.0");
-        properties.put("nodeInstallDirectory", nodeInstallDirectory);
-        properties.put("nodeDistributionUrl", getClass().getClassLoader().getResource("node-v10.16.0.zip"));
-        properties.put("yarnEnabled", true);
-        properties.put("yarnVersion", "1.16.0");
-        properties.put("yarnDistributionUrl", getClass().getClassLoader().getResource("yarn-v1.16.0.tar.gz"));
-        properties.put("installScript", "run install1");
-        properties.put("cleanScript", "run clean1");
-        properties.put("assembleScript", "run assemble1");
-        properties.put("checkScript", "run check1");
-        properties.put("publishScript", "run publish1");
+        final FrontendMapBuilder frontendMapBuilder1 = new FrontendMapBuilder()
+            .nodeVersion("12.16.3")
+            .nodeInstallDirectory(nodeInstallDirectory)
+            .nodeDistributionUrl(getResourceUrl("node-v12.16.3.zip"))
+            .yarnEnabled(true)
+            .yarnVersion("1.22.4")
+            .yarnDistributionUrl(getResourceUrl("yarn-v1.22.4.tar.gz"))
+            .installScript("run install1")
+            .cleanScript("run clean1")
+            .assembleScript("run assemble1")
+            .checkScript("run check1")
+            .publishScript("run publish1");
         final Path subProject1Path = Files.createDirectory(projectDirectoryPath.resolve(SUB_PROJECT_1_NAME));
         Files.copy(packageJsonFilePath, subProject1Path.resolve("package.json"));
-        createBuildFile(subProject1Path, properties);
+        createBuildFile(subProject1Path, frontendMapBuilder1.toMap());
 
         // Sub-project 2
         final Path subProject2Path = Files.createDirectory(projectDirectoryPath.resolve(SUB_PROJECT_2_NAME));
-        properties.clear();
-        properties.put("nodeDistributionProvided", true);
-        properties.put("nodeInstallDirectory", nodeInstallDirectory);
-        properties.put("yarnEnabled", true);
-        properties.put("yarnDistributionProvided", true);
-        properties.put("yarnInstallDirectory", subProject1Path.resolve("yarn"));
-        properties.put("installScript", "run install2");
-        properties.put("cleanScript", "run clean2");
-        properties.put("assembleScript", "run assemble2");
-        properties.put("checkScript", "run check2");
-        properties.put("publishScript", "run publish2");
+        final FrontendMapBuilder frontendMapBuilder2 = new FrontendMapBuilder()
+            .nodeDistributionProvided(true)
+            .nodeInstallDirectory(nodeInstallDirectory)
+            .yarnEnabled(true)
+            .yarnDistributionProvided(true)
+            .yarnInstallDirectory(subProject1Path.resolve("yarn"))
+            .installScript("run install2")
+            .cleanScript("run clean2")
+            .assembleScript("run assemble2")
+            .checkScript("run check2")
+            .publishScript("run publish2");
         Files.copy(packageJsonFilePath, subProject2Path.resolve("package.json"));
-        createBuildFile(subProject2Path, properties,
+        createBuildFile(subProject2Path, frontendMapBuilder2.toMap(),
             "tasks.named('installFrontend').configure {" + "dependsOn project(':" + SUB_PROJECT_1_NAME
                 + "').installNode\ndependsOn project(':" + SUB_PROJECT_1_NAME + "').installYarn\n}");
 

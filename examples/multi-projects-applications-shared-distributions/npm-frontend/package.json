@@ -1,6 +1,6 @@
 {
   "name": "multi-projects-example",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "devDependencies": {
     "mkdirp": "1.0.4"
   },
