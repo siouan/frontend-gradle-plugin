@@ -863,6 +863,7 @@ With their feedback, plugin improvement is possible. Special thanks to:
 @[ludik0](https://github.com/ludik0),
 @[mike-howell](https://github.com/mike-howell),
 @[napstr](https://github.com/napstr),
+@[nitzan-n](https://github.com/nitzan-n),
 @[nuth](https://github.com/nuth),
 @[rolaca11](https://github.com/rolaca11),
 @[TapaiBalazs](https://github.com/TapaiBalazs)
