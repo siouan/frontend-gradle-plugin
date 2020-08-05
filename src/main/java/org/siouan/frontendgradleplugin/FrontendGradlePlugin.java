@@ -289,7 +289,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
     private void configureInstallTask(final TaskContainer taskContainer, final InstallTask task,
         final FrontendExtension extension) {
         task.setGroup(TASK_GROUP);
-        task.setDescription("Installs/updates frontend dependencies.");
+        task.setDescription("Installs frontend dependencies.");
         task.getPackageJsonDirectory().set(extension.getPackageJsonDirectory());
         task.getNodeInstallDirectory().set(extension.getNodeInstallDirectory());
         task.getYarnEnabled().set(extension.getYarnEnabled());

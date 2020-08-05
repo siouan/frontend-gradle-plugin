@@ -1,0 +1,27 @@
+@import "variables";
+@import "~bootstrap/scss/bootstrap";
+
+@font-face {
+    font-family: EtelkaTextPro;
+    src: url($etelkaTextProFontFile) format("opentype");
+}
+
+@font-face {
+    font-family: SegoeUI;
+    src: url($segoeUiFontFile) format("woff");
+}
+
+* {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+    overflow-y: scroll;
+}
+
+@include media-breakpoint-up(md) {
+    .fgp-feature-icon {
+        font-size: 4rem;
+    }
+}

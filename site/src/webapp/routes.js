@@ -1,29 +1,35 @@
-import FgpConfiguration from "./components/configuration.vue";
-import FgpHome from "./components/home.vue";
-import FgpInstallation from "./components/installation.vue";
-import FgpTasks from "./components/tasks.vue";
-import FgpNotFound from "./components/not-found.vue";
+import fgpConfiguration from "./component/configuration.vue";
+import fgpFaqs from "./component/faqs.vue";
+import fgpInstallation from "./component/installation.vue";
+import fgpNotFound from "./component/not-found.vue";
+import fgpOverview from "./component/overview.vue";
+import fgpPaths from "./paths";
+import fgpTasks from "./component/tasks.vue";
 
 const FGP_ROUTES = [
     {
-        path: "/",
-        component: FgpHome
+        path: fgpPaths.configuration,
+        component: fgpConfiguration
     },
     {
-        path: "/configuration",
-        component: FgpConfiguration
+        path: fgpPaths.faqs,
+        component: fgpFaqs
     },
     {
-        path: "/installation",
-        component: FgpInstallation
+        path: fgpPaths.installation,
+        component: fgpInstallation
     },
     {
-        path: "/tasks",
-        component: FgpTasks
+        path: fgpPaths.overview,
+        component: fgpOverview
+    },
+    {
+        path: fgpPaths.tasks,
+        component: fgpTasks
     },
     {
         path: "*",
-        component: FgpNotFound
+        component: fgpNotFound
     }
 ];
 
