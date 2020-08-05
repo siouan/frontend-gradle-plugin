@@ -35,7 +35,7 @@ public class ResolveExecutionSettings {
     /**
      * Path to the wrapper Unix executable to launch the script executable.
      */
-    public static final Path UNIX_EXECUTABLE_PATH = Paths.get("sh");
+    public static final Path UNIX_EXECUTABLE_PATH = Paths.get("/bin", "sh");
 
     /**
      * Flag to terminate the Unix executable when the script executable completes.

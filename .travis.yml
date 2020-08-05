@@ -30,7 +30,7 @@ before_script:
 
 script:
   - echo SCRIPT
-  - ./gradlew build --console=plain
+  - ./gradlew :build --console=plain
 
 matrix:
   include:
