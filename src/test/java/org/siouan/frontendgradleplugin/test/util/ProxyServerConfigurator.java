@@ -70,7 +70,7 @@ public class ProxyServerConfigurator {
             withDistributionServerAuth(mappingBuilder);
             withProxyServerAuth(mappingBuilder);
             proxyServer.stubFor(mappingBuilder.willReturn(
-                aResponse().withBody(Files.readAllBytes(getResourcePath("node-v12.16.3.zip")))));
+                aResponse().withBody(Files.readAllBytes(getResourcePath("node-v12.18.3.zip")))));
 
             mappingBuilder = get(urlPathMatching("^.*/SHASUMS256.txt$"));
             withDistributionServerAuth(mappingBuilder);

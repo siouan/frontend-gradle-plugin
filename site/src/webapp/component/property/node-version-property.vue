@@ -4,7 +4,7 @@
         type="java.lang.String"
         :required="false"
         :default-value="null"
-        example="12.16.3"
+        example="12.18.3"
         :tasks="['installNode']"
     >
         The version number is used to build the exact URL to download the distribution, as long as the

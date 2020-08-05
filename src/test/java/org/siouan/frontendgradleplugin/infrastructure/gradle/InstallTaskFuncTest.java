@@ -33,8 +33,8 @@ class InstallTaskFuncTest {
     void shouldInstallFrontendWithNpmOrYarnAndDefaultScript() throws IOException {
         Files.copy(getResourcePath("package-npm.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("12.16.3")
-            .nodeDistributionUrl(getResourceUrl("node-v12.16.3.zip"));
+            .nodeVersion("12.18.3")
+            .nodeDistributionUrl(getResourceUrl("node-v12.18.3.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, FrontendGradlePlugin.INSTALL_TASK_NAME);
@@ -75,8 +75,8 @@ class InstallTaskFuncTest {
     void shouldInstallFrontendWithNpmOrYarnAndCustomScript() throws IOException {
         Files.copy(getResourcePath("package-npm.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("12.16.3")
-            .nodeDistributionUrl(getResourceUrl("node-v12.16.3.zip"))
+            .nodeVersion("12.18.3")
+            .nodeDistributionUrl(getResourceUrl("node-v12.18.3.zip"))
             .installScript("ci");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 

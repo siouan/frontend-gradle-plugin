@@ -3,7 +3,7 @@ plugins {
 }
 
 frontend {
-    nodeVersion = '12.16.3'
+    nodeVersion = '12.18.3'
     yarnEnabled = true
     yarnVersion = '1.22.4'
     assembleScript = 'run build'

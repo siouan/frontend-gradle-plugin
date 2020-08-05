@@ -59,9 +59,9 @@ class MultiProjectsFuncTest {
         // Sub-project 1
         final Path nodeInstallDirectory = Paths.get("${rootProject.projectDir}/node");
         final FrontendMapBuilder frontendMapBuilder1 = new FrontendMapBuilder()
-            .nodeVersion("12.16.3")
+            .nodeVersion("12.18.3")
             .nodeInstallDirectory(nodeInstallDirectory)
-            .nodeDistributionUrl(getResourceUrl("node-v12.16.3.zip"))
+            .nodeDistributionUrl(getResourceUrl("node-v12.18.3.zip"))
             .yarnEnabled(true)
             .yarnVersion("1.22.4")
             .yarnDistributionUrl(getResourceUrl("yarn-v1.22.4.tar.gz"))
