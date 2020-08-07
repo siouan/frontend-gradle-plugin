@@ -1,9 +1,9 @@
 plugins {
-    id 'java-gradle-plugin'
+    id("java-gradle-plugin")
 }
 
 dependencies {
-    implementation gradleApi()
+    implementation(gradleApi())
 }
 
 java {
