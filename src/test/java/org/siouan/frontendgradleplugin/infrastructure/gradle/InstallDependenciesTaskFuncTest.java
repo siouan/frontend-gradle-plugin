@@ -20,11 +20,11 @@ import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
 import org.siouan.frontendgradleplugin.test.util.FrontendMapBuilder;
 
 /**
- * Functional tests to verify the {@link InstallTask} integration in a Gradle build. Test cases uses fake Node/Yarn
+ * Functional tests to verify the {@link InstallDependenciesTask} integration in a Gradle build. Test cases uses fake Node/Yarn
  * distributions, to avoid the download overhead. The 'yarn' and 'npm' executables in these distributions simply call
  * the 'node' executable with the same arguments.
  */
-class InstallTaskFuncTest {
+class InstallDependenciesTaskFuncTest {
 
     @TempDir
     Path projectDirectoryPath;

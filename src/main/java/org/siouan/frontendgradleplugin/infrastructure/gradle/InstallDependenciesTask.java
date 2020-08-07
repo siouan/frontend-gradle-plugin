@@ -4,10 +4,10 @@ import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 
 /**
- * This task installs frontend environment (by executing a {@code npm/yarn} command). Optionally, the command may be
+ * This task installs frontend dependencies (by executing a {@code npm/yarn} command). Optionally, the command may be
  * customized to pass other parameter (e.g. {@code npm ci} command).
  */
-public class InstallTask extends AbstractRunPredefinedCommandTask {
+public class InstallDependenciesTask extends AbstractRunPredefinedCommandTask {
 
     @Input
     public Property<String> getInstallScript() {
