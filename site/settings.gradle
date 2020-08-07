@@ -1,9 +1,0 @@
-pluginManagement {
-    plugins {
-        id 'org.siouan.frontend' version '3.0.0'
-    }
-    repositories {
-        mavenLocal()
-        gradlePluginPortal()
-    }
-}
