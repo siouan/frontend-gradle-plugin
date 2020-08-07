@@ -10,6 +10,10 @@
             When not <fgp-code>null</fgp-code>, the <fgp-property-link name="nodeDistributionServerPassword" />
             property is also required.
         </p>
+        <fgp-warning>
+            SECURITY: do not to store a plain text username in the build script. Store it in an environment variable or
+            an external user property, and use one or the other as the value of this property.
+        </fgp-warning>
     </fgp-property>
 </template>
 
@@ -18,8 +22,9 @@ import Vue from "vue";
 import fgpCode from "../code";
 import fgpProperty from "./property";
 import fgpPropertyLink from "../link/property-link";
+import fgpWarning from "../warning";
 
 export default Vue.component("fgp-node-distribution-server-username-property", {
-    components: { fgpCode, fgpProperty, fgpPropertyLink }
+    components: { fgpCode, fgpProperty, fgpPropertyLink, fgpWarning }
 });
 </script>
