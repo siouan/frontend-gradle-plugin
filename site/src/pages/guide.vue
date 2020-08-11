@@ -19,6 +19,13 @@
         </ul>
 
         <fgp-sub-title>Steps</fgp-sub-title>
+        <fgp-info>
+            Starting from release <fgp-repo-link path="/releases/tag/v3.0.1">3.0.1</fgp-repo-link>, ID
+            <fgp-code>org.siouan.frontend</fgp-code> and classpath
+            <fgp-code>org.siouan:frontend-gradle-plugin:&lt;version></fgp-code> are deprecated. If you are already using
+            the plugin, we recommend <fgp-repo-link path="/releases/tag/v3.0.1">upgrading</fgp-repo-link> to the latest
+            release as soon as possible.
+        </fgp-info>
         <ol>
             <li>
                 Install the plugin.
@@ -33,12 +40,12 @@
                         <fgp-gradle-scripts>
                             <template v-slot:groovy>
 <pre><fgp-code>plugins {
-    id 'org.siouan.frontend' version '3.1.0'
+    id 'org.siouan.frontend-jdk8' version '3.0.1'
 }</fgp-code></pre>
                             </template>
                             <template v-slot:kotlin>
 <pre><fgp-code>plugins {
-    id("org.siouan.frontend") version "3.1.0"
+    id("org.siouan.frontend-jdk8") version "3.0.1"
 }</fgp-code></pre>
                             </template>
                         </fgp-gradle-scripts>
@@ -56,11 +63,11 @@
         url 'https://plugins.gradle.org/m2/'
     }
     dependencies {
-        classpath 'org.siouan:frontend-gradle-plugin:3.1.0'
+        classpath 'org.siouan:frontend-gradle-plugin-jdk8:3.0.1'
     }
 }
 
-apply plugin: 'org.siouan.frontend'</fgp-code></pre>
+apply plugin: 'org.siouan.frontend-jdk8'</fgp-code></pre>
                             </template>
                             <template v-slot:kotlin>
 <pre><fgp-code>buildscript {
@@ -68,13 +75,13 @@ apply plugin: 'org.siouan.frontend'</fgp-code></pre>
         url = uri("https://plugins.gradle.org/m2/")
     }
     dependencies {
-        classpath("org.siouan:frontend-gradle-plugin:3.1.0")
+        classpath("org.siouan:frontend-gradle-plugin-jdk8:3.0.1")
     }
 }
 
-apply(plugin = "org.siouan.frontend")</fgp-code></pre>
-                        </template>
-                    </fgp-gradle-scripts>
+apply(plugin = "org.siouan.frontend-jdk8")</fgp-code></pre>
+                            </template>
+                        </fgp-gradle-scripts>
                     </li>
                 </ul>
             </li>
@@ -103,6 +110,7 @@ import fgpCode from "../components/code";
 import fgpGradleDocsLink from "../components/link/gradle-docs-link";
 import fgpGradleLink from "../components/link/gradle-link";
 import fgpGradleScripts from "../components/gradle-scripts";
+import fgpInfo from "../components/info";
 import fgpMainTitle from "../components/main-title";
 import fgpNodejsLink from "../components/link/nodejs-link";
 import fgpPageMeta from "../mixin/page-meta";
@@ -117,6 +125,7 @@ export default Vue.component("fgp-guide", {
         fgpGradleDocsLink,
         fgpGradleLink,
         fgpGradleScripts,
+        fgpInfo,
         fgpMainTitle,
         fgpNodejsLink,
         fgpRepoLink,
@@ -127,15 +136,9 @@ export default Vue.component("fgp-guide", {
     mixins: [fgpAppConfig, fgpPageMeta],
     data() {
         return {
-            htmlTitle: "Getting started: building a frontend application with Gradle",
+            htmlTitle: "Getting started: building a JS application with Gradle and NodeJS",
             metaDescription: "Guide to get started with the plugin: requirements, supported Node.js and Yarn distributions, installation steps."
         }
     }
 });
 </script>
-
-<style scoped>
-ul.fgp-install-list {
-    list-style-type: "\2192";
-}
-</style>

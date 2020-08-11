@@ -250,7 +250,7 @@ export default Vue.component("fgp-configuration", {
     data() {
         return {
             htmlTitle: "Configuring Gradle to integrate a build with node, npm, yarn",
-            metaDescription: "Choose pre-installed packages or request Node.js/Yarn distributions download, plug JS scripts to build, test, publish frontend artifacts with Gradle."
+            metaDescription: "Choose pre-installed packages or request Node.js/Yarn distributions download, plug scripts from a package.json file to build/test/publish frontend artifacts with Gradle."
         }
     }
 });
