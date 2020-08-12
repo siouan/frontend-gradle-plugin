@@ -122,7 +122,7 @@
             <g id="frontendGradlePlugin">
                 <rect x="0" y="80" width="510" height="240" fill="none" stroke="grey" />
                 <text text-anchor="end" x="500" y="238" font-size="0.5rem" fill="grey">Frontend Gradle plugin</text>
-                <fgp-site-link :path="`${fgp.paths.tasks}#cleanFrontend`">
+                <fgp-site-link path="#cleanFrontend">
                     <use x="10" y="90" xlink:href="#cleanFrontendTask" />
                 </fgp-site-link>
                 <fgp-site-link path="#assembleFrontend">

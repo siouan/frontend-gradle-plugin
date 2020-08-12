@@ -1,5 +1,5 @@
 plugins {
-    id 'org.siouan.frontend'
+    id 'org.siouan.frontend-jdk8'
 }
 
 //def preinstalledNodeDistributionDirectory = file('<path-to-node-distribution-install-directory>');

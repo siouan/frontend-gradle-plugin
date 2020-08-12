@@ -23,7 +23,7 @@
             Starting from release <fgp-repo-link path="/releases/tag/v3.0.1">3.0.1</fgp-repo-link>, ID
             <fgp-code>org.siouan.frontend</fgp-code> and classpath
             <fgp-code>org.siouan:frontend-gradle-plugin:&lt;version></fgp-code> are deprecated. If you are already using
-            the plugin, we recommend <fgp-repo-link path="/releases/tag/v3.0.1">upgrading</fgp-repo-link> to the latest
+            the plugin, we recommend <fgp-repo-link path="/releases">upgrading</fgp-repo-link> to the latest
             release as soon as possible.
         </fgp-info>
         <ol>
@@ -37,15 +37,15 @@
                             <span class="text-muted">(recommended)</span>
                         </p>
 
-                        <fgp-gradle-scripts>
+                        <fgp-gradle-scripts id="install-gradle-dsl">
                             <template v-slot:groovy>
 <pre><fgp-code>plugins {
-    id 'org.siouan.frontend-jdk8' version '3.0.1'
+    id 'org.siouan.frontend-jdk8' version '3.0.2'
 }</fgp-code></pre>
                             </template>
                             <template v-slot:kotlin>
 <pre><fgp-code>plugins {
-    id("org.siouan.frontend-jdk8") version "3.0.1"
+    id("org.siouan.frontend-jdk8") version "3.0.2"
 }</fgp-code></pre>
                             </template>
                         </fgp-gradle-scripts>
@@ -56,14 +56,14 @@
                             <fgp-gradle-docs-link path="/current/userguide/plugins.html#sec:applying_plugins_buildscript">Gradle build script block</fgp-gradle-docs-link>
                         </p>
 
-                        <fgp-gradle-scripts>
+                        <fgp-gradle-scripts id="install-build-script-block">
                             <template v-slot:groovy>
 <pre><fgp-code>buildscript {
     repositories {
         url 'https://plugins.gradle.org/m2/'
     }
     dependencies {
-        classpath 'org.siouan:frontend-gradle-plugin-jdk8:3.0.1'
+        classpath 'org.siouan:frontend-gradle-plugin-jdk8:3.0.2'
     }
 }
 
@@ -75,7 +75,7 @@ apply plugin: 'org.siouan.frontend-jdk8'</fgp-code></pre>
         url = uri("https://plugins.gradle.org/m2/")
     }
     dependencies {
-        classpath("org.siouan:frontend-gradle-plugin-jdk8:3.0.1")
+        classpath("org.siouan:frontend-gradle-plugin-jdk8:3.0.2")
     }
 }
 

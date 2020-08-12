@@ -1,11 +1,27 @@
 <template>
     <div class="mb-2">
         <ul class="nav nav-tabs">
-            <li class="nav-item" @click="setGroovyTabVisible()">
-                <a class="nav-link" :class="groovyTabClass" href="#" @click.prevent>Groovy</a>
+            <li class="nav-item">
+                <nuxt-link
+                    class="nav-link"
+                    :class="groovyTabClass"
+                    to="#"
+                    append
+                    :event="''"
+                    @click.native.prevent="setGroovyTabVisible"
+                    >Groovy</nuxt-link
+                >
             </li>
-            <li class="nav-item" @click="setKotlinTabVisible()">
-                <a class="nav-link" :class="kotlinTabClass" href="#" @click.prevent>Kotlin</a>
+            <li class="nav-item">
+                <nuxt-link
+                    class="nav-link"
+                    :class="kotlinTabClass"
+                    to="#"
+                    append
+                    :event="''"
+                    @click.native.prevent="setKotlinTabVisible"
+                    >Kotlin</nuxt-link
+                >
             </li>
         </ul>
         <div class="pt-3 pb-1 pl-3 bg-light">
@@ -34,7 +50,7 @@ export default Vue.component("fgp-gradle-scripts", {
         ...mapGetters("gradle-scripts", ["groovyTabVisible", "kotlinTabVisible"]),
     },
     methods: {
-        ...mapMutations("gradle-scripts", ["setGroovyTabVisible", "setKotlinTabVisible"]),
-    },
+        ...mapMutations("gradle-scripts", ["setGroovyTabVisible", "setKotlinTabVisible"])
+    }
 });
 </script>
