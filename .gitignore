@@ -2,9 +2,9 @@
 /buildSrc/build
 /out
 /site/dist/
+/site/node_modules/
 .idea/
 .gradle/
 build/
 node/
-node_modules/
 yarn/
