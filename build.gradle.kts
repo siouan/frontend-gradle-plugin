@@ -1,5 +1,17 @@
 import org.siouan.frontendgradleplugin.GradleTestListener
 
+val fgpGroup: String by extra
+val fgpVersion: String by extra
+val fgpDisplayName: String by extra
+val fgpDescription: String by extra
+val fgpLegacyDescription: String by extra
+val fgpLegacyPluginId: String by extra
+val fgpJdk8PluginId: String by extra
+val fgpImplementationClass: String by extra
+val fgpWebsiteUrl: String by extra
+val fgpVcsUrl: String by extra
+val fgpGradlePluginPortalTags: String by extra
+
 plugins {
     id("java-gradle-plugin")
     id("jacoco")
@@ -9,14 +21,14 @@ plugins {
 
 repositories {
     jcenter()
-    mavenCentral()
 }
 
-group = "org.siouan"
-version = "3.0.1-SNAPSHOT"
-description = "Build Javascript-based applications with node, npm, yarn."
+group = fgpGroup
+version = fgpVersion
+description = fgpDescription
 
 java {
+
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
     withJavadocJar()
@@ -54,22 +66,31 @@ tasks.named<JacocoReport>("jacocoTestReport") {
 
 gradlePlugin {
     plugins {
-        create("frontend") {
-            id = "org.siouan.frontend"
-            implementationClass = "org.siouan.frontendgradleplugin.FrontendGradlePlugin"
+        create("frontendLegacyPlugin") {
+            id = fgpLegacyPluginId
+            implementationClass = fgpImplementationClass
+        }
+        create("frontendJdk8Plugin") {
+            id = fgpJdk8PluginId
+            implementationClass = fgpImplementationClass
         }
     }
 }
 
 pluginBundle {
-    website = "https://github.com/siouan/frontend-gradle-plugin"
-    vcsUrl = "https://github.com/siouan/frontend-gradle-plugin.git"
+    website = fgpWebsiteUrl
+    vcsUrl = fgpVcsUrl
 
     (plugins) {
-        "frontend" {
-            displayName = "Frontend Gradle plugin"
-            description = "Build Javascript-based applications with node, npm, yarn."
-            tags = listOf("node", "nodejs", "npm", "npx", "yarn", "frontend")
+        "frontendLegacyPlugin" {
+            displayName = fgpDisplayName
+            description = fgpLegacyDescription
+            tags = emptyList()
+        }
+        "frontendJdk8Plugin" {
+            displayName = fgpDisplayName
+            description = fgpDescription
+            tags = fgpGradlePluginPortalTags.split(",")
         }
     }
 }

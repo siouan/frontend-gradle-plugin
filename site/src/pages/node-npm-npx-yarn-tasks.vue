@@ -169,8 +169,8 @@ export default Vue.component("fgp-node-npm-npx-yarn-tasks", {
     mixins: [fgpPageMeta],
     data() {
         return {
-            htmlTitle: "Understanding the built-in tasks",
-            metaDescription: "Tasks provided by the plugin: integration with Gradle, dependencies, additional types, tweaking recommendations."
+            htmlTitle: "Understanding the tasks based on NodeJS, NPM, NPX, Yarn",
+            metaDescription: "Gradle tasks and types provided by the plugin to run node/npm/npx/yarn: integration, dependencies, customization, recommendations."
         }
     }
 });

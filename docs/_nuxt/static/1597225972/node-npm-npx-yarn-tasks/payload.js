@@ -1,0 +1,1 @@
+__NUXT_JSONP__("/node-npm-npx-yarn-tasks", {data:[{}],fetch:[],mutations:[]});
