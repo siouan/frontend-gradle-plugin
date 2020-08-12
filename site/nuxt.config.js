@@ -64,7 +64,7 @@ export default {
      */
     build: {},
     router: {
-        base: "/frontend-gradle-plugin/",
+        base: "/frontend-gradle-plugin",
         mode: "history",
         linkExactActiveClass: "active",
         extendRoutes(routes, resolve) {
