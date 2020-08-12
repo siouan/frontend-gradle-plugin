@@ -61,7 +61,7 @@ tasks.named<Test>("test") {
 tasks.named<JacocoReport>("jacocoTestReport") {
     reports {
         xml.setEnabled(true)
-        xml.setDestination(file("${projectDir}/reports/jacoco/report.xml"))
+        xml.setDestination(file("${buildDir}/reports/jacoco/report.xml"))
     }
 }
 
