@@ -45,8 +45,8 @@ class PublishTaskFuncTest {
     void shouldBeSkippedWhenPublishScriptIsNotDefined() throws IOException {
         Files.copy(getResourcePath("package-npm.json"), packageJsonDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("12.16.3")
-            .nodeDistributionUrl(getResourceUrl("node-v12.16.3.zip"))
+            .nodeVersion("12.18.3")
+            .nodeDistributionUrl(getResourceUrl("node-v12.18.3.zip"))
             .assembleScript("run assemble");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
@@ -72,8 +72,8 @@ class PublishTaskFuncTest {
     void shouldBeSkippedWhenAssembleScriptIsNotDefined() throws IOException {
         Files.copy(getResourcePath("package-npm.json"), packageJsonDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("12.16.3")
-            .nodeDistributionUrl(getResourceUrl("node-v12.16.3.zip"))
+            .nodeVersion("12.18.3")
+            .nodeDistributionUrl(getResourceUrl("node-v12.18.3.zip"))
             .publishScript("run publish");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
@@ -99,8 +99,8 @@ class PublishTaskFuncTest {
     void shouldPublishFrontendWithNpmOrYarn() throws IOException {
         Files.copy(getResourcePath("package-npm.json"), packageJsonDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("12.16.3")
-            .nodeDistributionUrl(getResourceUrl("node-v12.16.3.zip"))
+            .nodeVersion("12.18.3")
+            .nodeDistributionUrl(getResourceUrl("node-v12.18.3.zip"))
             .assembleScript("run assemble")
             .publishScript("run publish");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());

@@ -33,12 +33,12 @@ public class ResolveExecutionSettings {
     public static final String WINDOWS_EXECUTABLE_AUTOEXIT_FLAG = "/c";
 
     /**
-     * Path to the wrapper Windows executable to launch the script executable.
+     * Path to the wrapper Unix executable to launch the script executable.
      */
-    public static final Path UNIX_EXECUTABLE_PATH = Paths.get("sh");
+    public static final Path UNIX_EXECUTABLE_PATH = Paths.get("/bin", "sh");
 
     /**
-     * Flag to terminate the Windows executable when the script executable completes.
+     * Flag to terminate the Unix executable when the script executable completes.
      */
     public static final String UNIX_EXECUTABLE_AUTOEXIT_FLAG = "-c";
 

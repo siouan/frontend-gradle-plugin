@@ -146,8 +146,8 @@ class TaskTypesWithProvidedDistributionsFuncTest {
     @Test
     void shouldFailRunningCustomTasksWhenYarnExecutableDoesNotExist() throws IOException {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("12.16.3")
-            .nodeDistributionUrl(getResourceUrl("node-v12.16.3.zip"))
+            .nodeVersion("12.18.3")
+            .nodeDistributionUrl(getResourceUrl("node-v12.18.3.zip"))
             .yarnEnabled(true)
             .yarnDistributionProvided(true)
             .yarnInstallDirectory(Files.createDirectory(projectDirectoryPath.resolve("yarn-dist-provided")));
