@@ -136,7 +136,7 @@ export default Vue.component("fgp-guide", {
     mixins: [fgpAppConfig, fgpPageMeta],
     data() {
         return {
-            htmlTitle: "Getting started: building a JS application with Gradle and NodeJS",
+            htmlTitle: "Getting started: building a JS application with Gradle and Node.js",
             metaDescription: "Guide to get started with the plugin: requirements, supported Node.js and Yarn distributions, installation steps."
         }
     }
