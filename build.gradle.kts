@@ -10,7 +10,8 @@ val fgpJdk8PluginId: String by extra
 val fgpImplementationClass: String by extra
 val fgpWebsiteUrl: String by extra
 val fgpVcsUrl: String by extra
-val fgpGradlePluginPortalTags: String by extra
+val fgpGradleLegacyPluginPortalTags: String by extra
+val fgpGradleJdk8PluginPortalTags: String by extra
 
 plugins {
     id("java-gradle-plugin")
@@ -85,12 +86,12 @@ pluginBundle {
         "frontendLegacyPlugin" {
             displayName = fgpDisplayName
             description = fgpLegacyDescription
-            tags = emptyList()
+            tags = fgpGradleLegacyPluginPortalTags.split(",")
         }
         "frontendJdk8Plugin" {
             displayName = fgpDisplayName
             description = fgpDescription
-            tags = fgpGradlePluginPortalTags.split(",")
+            tags = fgpGradleJdk8PluginPortalTags.split(",")
         }
     }
 }
