@@ -3,7 +3,7 @@
     <a href="https://github.com/siouan/frontend-gradle-plugin/releases/tag/v4.0.0"><img src="https://img.shields.io/badge/Latest%20release-4.0.0-blue.svg" alt="Latest release 4.0.0"/></a>
     <a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-green.svg" alt="License Apache 2.0"/></a>
     <br/>
-    <a href="https://travis-ci.com/siouan/frontend-gradle-plugin"><img src="https://travis-ci.com/siouan/frontend-gradle-plugin.svg?branch=4.0-jdk8" alt="Build status"/></a>
+    <a href="https://travis-ci.com/siouan/frontend-gradle-plugin"><img src="https://travis-ci.com/siouan/frontend-gradle-plugin.svg?branch=4.0-jdk11" alt="Build status"/></a>
     <a href="https://sonarcloud.io/dashboard?id=siouan_frontend-gradle-plugin"><img src="https://sonarcloud.io/api/project_badges/measure?project=siouan_frontend-gradle-plugin&metric=alert_status" alt="Quality gate status"/></a>
     <a href="https://sonarcloud.io/dashboard?id=siouan_frontend-gradle-plugin"><img src="https://sonarcloud.io/api/project_badges/measure?project=siouan_frontend-gradle-plugin&metric=coverage" alt="Code coverage"/></a>
     <a href="https://sonarcloud.io/dashboard?id=siouan_frontend-gradle-plugin"><img src="https://sonarcloud.io/api/project_badges/measure?project=siouan_frontend-gradle-plugin&metric=reliability_rating" alt="Reliability"/></a>

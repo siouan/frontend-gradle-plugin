@@ -26,9 +26,8 @@ version = fgpVersion
 description = fgpDescription
 
 java {
-
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
     withJavadocJar()
     withSourcesJar()
 }
@@ -42,7 +41,7 @@ dependencies {
     testImplementation("org.mockito:mockito-core:3.4.6")
     testImplementation("org.mockito:mockito-junit-jupiter:3.4.6")
     testImplementation("org.assertj:assertj-core:3.16.1")
-    testImplementation("com.github.tomakehurst:wiremock-jre8:2.27.1")
+    testImplementation("com.github.tomakehurst:wiremock:2.27.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.2")
 }
 

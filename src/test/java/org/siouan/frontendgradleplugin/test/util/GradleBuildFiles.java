@@ -120,7 +120,7 @@ public final class GradleBuildFiles {
         @Nullable final String additionalContent) throws IOException {
         final Set<String> pluginsWithFrontend = new HashSet<>(plugins);
         if (pluginEnabled) {
-            pluginsWithFrontend.add("id 'org.siouan.frontend-jdk8' apply " + pluginApplied);
+            pluginsWithFrontend.add("id 'org.siouan.frontend-jdk11' apply " + pluginApplied);
         }
         createBuildFile(projectDirectory, pluginsWithFrontend, properties, additionalContent);
     }
