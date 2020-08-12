@@ -2,10 +2,10 @@
     <div class="mb-2">
         <ul class="nav nav-tabs">
             <li class="nav-item" @click="setGroovyTabVisible()">
-                <a class="nav-link" :class="groovyTabClass" :href="`#${id}`" @click.prevent>Groovy</a>
+                <a class="nav-link" :class="groovyTabClass" :href="`#${id}`" onclick="event.preventDefault()">Groovy</a>
             </li>
             <li class="nav-item" @click="setKotlinTabVisible()">
-                <a class="nav-link" :class="kotlinTabClass" :href="`#${id}`" @click.prevent>Kotlin</a>
+                <a class="nav-link" :class="kotlinTabClass" :href="`#${id}`" onclick="event.preventDefault()">Kotlin</a>
             </li>
         </ul>
         <div class="pt-3 pb-1 pl-3 bg-light">
