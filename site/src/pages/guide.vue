@@ -40,12 +40,12 @@
                         <fgp-gradle-scripts id="install-gradle-dsl">
                             <template v-slot:groovy>
 <pre><fgp-code>plugins {
-    id 'org.siouan.frontend-jdk8' version '3.0.2'
+    id 'org.siouan.frontend-jdk8' version '4.0.0'
 }</fgp-code></pre>
                             </template>
                             <template v-slot:kotlin>
 <pre><fgp-code>plugins {
-    id("org.siouan.frontend-jdk8") version "3.0.2"
+    id("org.siouan.frontend-jdk8") version "4.0.0"
 }</fgp-code></pre>
                             </template>
                         </fgp-gradle-scripts>
@@ -63,7 +63,7 @@
         url 'https://plugins.gradle.org/m2/'
     }
     dependencies {
-        classpath 'org.siouan:frontend-gradle-plugin-jdk8:3.0.2'
+        classpath 'org.siouan:frontend-gradle-plugin-jdk8:4.0.0'
     }
 }
 
@@ -75,7 +75,7 @@ apply plugin: 'org.siouan.frontend-jdk8'</fgp-code></pre>
         url = uri("https://plugins.gradle.org/m2/")
     }
     dependencies {
-        classpath("org.siouan:frontend-gradle-plugin-jdk8:3.0.2")
+        classpath("org.siouan:frontend-gradle-plugin-jdk8:4.0.0")
     }
 }
 
