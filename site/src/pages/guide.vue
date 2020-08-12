@@ -37,7 +37,7 @@
                             <span class="text-muted">(recommended)</span>
                         </p>
 
-                        <fgp-gradle-scripts>
+                        <fgp-gradle-scripts id="install-gradle-dsl">
                             <template v-slot:groovy>
 <pre><fgp-code>plugins {
     id 'org.siouan.frontend-jdk8' version '3.0.1'
@@ -56,7 +56,7 @@
                             <fgp-gradle-docs-link path="/current/userguide/plugins.html#sec:applying_plugins_buildscript">Gradle build script block</fgp-gradle-docs-link>
                         </p>
 
-                        <fgp-gradle-scripts>
+                        <fgp-gradle-scripts id="install-build-script-block">
                             <template v-slot:groovy>
 <pre><fgp-code>buildscript {
     repositories {
