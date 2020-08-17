@@ -119,7 +119,7 @@ import fgpSiteLink from "../components/link/site-link";
 import fgpSubTitle from "../components/sub-title";
 import fgpYarnLink from "../components/link/yarn-link";
 
-export default Vue.component("fgp-guide", {
+export default Vue.component("fgp-getting-started", {
     components: {
         fgpCode,
         fgpGradleDocsLink,
@@ -137,7 +137,8 @@ export default Vue.component("fgp-guide", {
     data() {
         return {
             htmlTitle: "Getting started: building a JS application with Gradle and Node.js",
-            metaDescription: "Guide to get started with the plugin: requirements, supported Node.js and Yarn distributions, installation steps."
+            metaDescription: "Guide to get started with the plugin: requirements, supported Node.js and Yarn distributions, installation steps.",
+            linkCanonicalHref: process.env.FGP_WEBSITE_URL + 'getting-started/'
         }
     }
 });

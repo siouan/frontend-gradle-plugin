@@ -21,16 +21,16 @@
                 <template v-slot:groovy>
                     <pre><fgp-code>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpx
 tasks.register('npxVersion', RunNpx) {
-    dependsOn tasks.named('installNode')
-    dependsOn tasks.named('installFrontend')
+    <fgp-code-comment>// dependsOn tasks.named('installNode')
+    // dependsOn tasks.named('installFrontend')</fgp-code-comment>
     script = '--version'
 }</fgp-code></pre>
                 </template>
                 <template v-slot:kotlin>
                     <pre><fgp-code>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpx
 tasks.register&lt;RunNpx&gt;("npxVersion") {
-    dependsOn(tasks.named("installNode"))
-    dependsOn(tasks.named("installFrontend"))
+    <fgp-code-comment>// dependsOn(tasks.named("installNode"))
+    // dependsOn(tasks.named("installFrontend"))</fgp-code-comment>
     script.set("--version")
 }</fgp-code></pre>
                 </template>

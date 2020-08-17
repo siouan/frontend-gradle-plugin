@@ -19,7 +19,7 @@
             <fgp-link href="https://github.com/eirslett/frontend-maven-plugin">Frontend Maven plugin</fgp-link>, an
             equivalent plugin for
             <fgp-link href="https://maven.apache.org" title="Apache Maven Project">Maven</fgp-link>. Follow the
-            <fgp-site-link :path="fgp.paths.guide">quick start guide</fgp-site-link>, and build your frontend
+            <fgp-site-link :path="fgp.paths.gettingStarted">quick start guide</fgp-site-link>, and build your frontend
             application. Take a look at the
             <fgp-repo-link path="/releases" class="text-lowercase">{{
                 $t("navigation.repository.releases.label")

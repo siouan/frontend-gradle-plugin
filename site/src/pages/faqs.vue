@@ -45,7 +45,8 @@ export default Vue.component("fgp-faqs", {
     data() {
         return {
             htmlTitle: "Frequently asked questions",
-            metaDescription: "Direct use of node, npm, npx, yarn executables provided in downloaded distributions."
+            metaDescription: "Direct use of node, npm, npx, yarn executables provided in downloaded distributions.",
+            linkCanonicalHref: process.env.FGP_WEBSITE_URL + 'faqs/'
         }
     }
 });
