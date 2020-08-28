@@ -65,6 +65,7 @@ export default {
     build: {},
     router: {
         base: "/frontend-gradle-plugin/",
+        //trailingSlash: false,
         mode: "history",
         linkExactActiveClass: "active",
         extendRoutes(routes, resolve) {
@@ -79,7 +80,7 @@ export default {
         port: 10000
     },
     env: {
-        FGP_WEBSITE_DESCRIPTION: "Build frontend applications with Node.js/NPM/Yarn: distribution management, configurable tasks (build, test, publish), support of NPX",
+        FGP_WEBSITE_DESCRIPTION: "Gradle plugin to build frontend applications with Node.js/NPM/Yarn: distribution management, configurable tasks (build, test, publish), NPX support",
         FGP_WEBSITE_NAME: "Frontend Gradle plugin",
         FGP_WEBSITE_TITLE: "Gradle Node plugin to build JS applications with NPM or Yarn",
         FGP_WEBSITE_URL: "https://siouan.github.io/frontend-gradle-plugin/",

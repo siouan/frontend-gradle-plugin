@@ -19,16 +19,16 @@
                 <template v-slot:groovy>
                     <pre><fgp-code>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpmYarn
 tasks.register('e2e', RunNpmYarn) {
-    // dependsOn tasks.named('installNode')
-    // dependsOn tasks.named('installFrontend')
+    <fgp-code-comment>// dependsOn tasks.named('installNode')
+    // dependsOn tasks.named('installFrontend')</fgp-code-comment>
     script = 'run e2e'
 }</fgp-code></pre>
                 </template>
                 <template v-slot:kotlin>
                     <pre><fgp-code>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpmYarn
 tasks.register&lt;RunNpmYarn&gt;("e2e") {
-    // dependsOn(tasks.named("installNode"))
-    // dependsOn(tasks.named("installFrontend"))
+    <fgp-code-comment>// dependsOn(tasks.named("installNode"))
+    // dependsOn(tasks.named("installFrontend"))</fgp-code-comment>
     script.set("run e2e")
 }</fgp-code></pre>
                 </template>

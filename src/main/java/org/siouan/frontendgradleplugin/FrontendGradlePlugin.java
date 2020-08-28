@@ -155,6 +155,8 @@ public class FrontendGradlePlugin implements Plugin<Project> {
     public void apply(final Project project) {
         project.getPluginManager().apply(BasePlugin.class);
         project.getPluginManager().apply(PublishingPlugin.class);
+        project.getLogger().lifecycle("Plugin ID 'org.siouan.frontend' is now deprecated. We encourage upgrading to release 4.0.0+,"
+            + " and replace ID with 'org.siouan.frontend-jdk11' or 'org.siouan.frontend-jdk8'.");
 
         final FrontendExtension extension = project
             .getExtensions()

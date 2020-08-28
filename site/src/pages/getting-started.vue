@@ -23,7 +23,7 @@
             Starting from release <fgp-repo-link path="/releases/tag/v3.0.1">3.0.1</fgp-repo-link>, ID
             <fgp-code>org.siouan.frontend</fgp-code> and classpath
             <fgp-code>org.siouan:frontend-gradle-plugin:&lt;version></fgp-code> are deprecated. If you are already using
-            the plugin, we recommend <fgp-repo-link path="/releases">upgrading</fgp-repo-link> to the latest
+            the plugin, we recommend <fgp-repo-link path="/releases/tag/v3.0.2">upgrading</fgp-repo-link> to the latest
             release as soon as possible.
         </fgp-info>
         <ol>
@@ -119,7 +119,7 @@ import fgpSiteLink from "../components/link/site-link";
 import fgpSubTitle from "../components/sub-title";
 import fgpYarnLink from "../components/link/yarn-link";
 
-export default Vue.component("fgp-guide", {
+export default Vue.component("fgp-getting-started", {
     components: {
         fgpCode,
         fgpGradleDocsLink,
@@ -137,7 +137,8 @@ export default Vue.component("fgp-guide", {
     data() {
         return {
             htmlTitle: "Getting started: building a JS application with Gradle and Node.js",
-            metaDescription: "Guide to get started with the plugin: requirements, supported Node.js and Yarn distributions, installation steps."
+            metaDescription: "Guide to get started with the plugin: requirements, supported Node.js and Yarn distributions, installation steps.",
+            linkCanonicalHref: process.env.FGP_WEBSITE_URL + 'getting-started/'
         }
     }
 });

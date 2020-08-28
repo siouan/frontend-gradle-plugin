@@ -1,5 +1,4 @@
 export default function(to) {
-    console.log("Scroll behavior works!");
     if (to.hash) {
         return { selector: to.hash };
     } else {

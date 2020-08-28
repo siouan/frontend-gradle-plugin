@@ -37,7 +37,7 @@
                     </li>
                     <li class="nav-item">
                         <fgp-site-link
-                            :path="fgp.paths.guide"
+                            :path="fgp.paths.gettingStarted"
                             class="nav-link fgp-menu-item"
                             @click.native="hideMenu()"
                         >
