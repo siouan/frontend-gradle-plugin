@@ -23,7 +23,7 @@
             Starting from release <fgp-repo-link path="/releases/tag/v3.0.1">3.0.1</fgp-repo-link>, ID
             <fgp-code>org.siouan.frontend</fgp-code> and classpath
             <fgp-code>org.siouan:frontend-gradle-plugin:&lt;version></fgp-code> are deprecated. If you are already using
-            the plugin, we recommend <fgp-repo-link path="/releases">upgrading</fgp-repo-link> to the latest
+            the plugin, we recommend <fgp-repo-link path="/releases/tag/v4.0.0-jdk11">upgrading</fgp-repo-link> to the latest
             release as soon as possible.
         </fgp-info>
         <ol>
@@ -40,12 +40,18 @@
                         <fgp-gradle-scripts id="install-gradle-dsl">
                             <template v-slot:groovy>
 <pre><fgp-code>plugins {
+    <fgp-code-comment>// For JDK 11+</fgp-code-comment>
     id 'org.siouan.frontend-jdk11' version '4.0.0'
+    <fgp-code-comment>// For JDK 8+</fgp-code-comment>
+    id 'org.siouan.frontend-jdk8' version '4.0.0'
 }</fgp-code></pre>
                             </template>
                             <template v-slot:kotlin>
 <pre><fgp-code>plugins {
+    <fgp-code-comment>// For JDK 11+</fgp-code-comment>
     id("org.siouan.frontend-jdk11") version "4.0.0"
+    <fgp-code-comment>// For JDK 8+</fgp-code-comment>
+    id("org.siouan.frontend-jdk8") version "4.0.0"
 }</fgp-code></pre>
                             </template>
                         </fgp-gradle-scripts>
@@ -63,11 +69,17 @@
         url 'https://plugins.gradle.org/m2/'
     }
     dependencies {
+        <fgp-code-comment>// For JDK 11+</fgp-code-comment>
         classpath 'org.siouan:frontend-gradle-plugin-jdk11:4.0.0'
+        <fgp-code-comment>// For JDK 8+</fgp-code-comment>
+        classpath 'org.siouan:frontend-gradle-plugin-jdk8:4.0.0'
     }
 }
 
-apply plugin: 'org.siouan.frontend-jdk11'</fgp-code></pre>
+<fgp-code-comment>// For JDK 11+</fgp-code-comment>
+apply plugin: 'org.siouan.frontend-jdk11'
+<fgp-code-comment>// For JDK 8+</fgp-code-comment>
+apply plugin: 'org.siouan.frontend-jdk8'</fgp-code></pre>
                             </template>
                             <template v-slot:kotlin>
 <pre><fgp-code>buildscript {
@@ -75,11 +87,17 @@ apply plugin: 'org.siouan.frontend-jdk11'</fgp-code></pre>
         url = uri("https://plugins.gradle.org/m2/")
     }
     dependencies {
+        <fgp-code-comment>// For JDK 11+</fgp-code-comment>
         classpath("org.siouan:frontend-gradle-plugin-jdk11:4.0.0")
+        <fgp-code-comment>// For JDK 8+</fgp-code-comment>
+        classpath("org.siouan:frontend-gradle-plugin-jdk8:4.0.0")
     }
 }
 
-apply(plugin = "org.siouan.frontend-jdk11")</fgp-code></pre>
+<fgp-code-comment>// For JDK 11+</fgp-code-comment>
+apply(plugin = "org.siouan.frontend-jdk11")
+<fgp-code-comment>// For JDK 8+</fgp-code-comment>
+apply(plugin = "org.siouan.frontend-jdk8")</fgp-code></pre>
                             </template>
                         </fgp-gradle-scripts>
                     </li>
@@ -107,6 +125,7 @@ apply(plugin = "org.siouan.frontend-jdk11")</fgp-code></pre>
 import Vue from "vue";
 import fgpAppConfig from "../mixin/app-config";
 import fgpCode from "../components/code";
+import fgpCodeComment from "../components/code-comment";
 import fgpGradleDocsLink from "../components/link/gradle-docs-link";
 import fgpGradleLink from "../components/link/gradle-link";
 import fgpGradleScripts from "../components/gradle-scripts";
@@ -119,9 +138,10 @@ import fgpSiteLink from "../components/link/site-link";
 import fgpSubTitle from "../components/sub-title";
 import fgpYarnLink from "../components/link/yarn-link";
 
-export default Vue.component("fgp-guide", {
+export default Vue.component("fgp-getting-started", {
     components: {
         fgpCode,
+        fgpCodeComment,
         fgpGradleDocsLink,
         fgpGradleLink,
         fgpGradleScripts,
