@@ -17,16 +17,16 @@
                 <template v-slot:groovy>
                     <pre><fgp-code>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNode
 tasks.register('myScript', RunNode) {
-    // dependsOn tasks.named('installNode')
-    // dependsOn tasks.named('installFrontend')
+    <fgp-code-comment>// dependsOn tasks.named('installNode')
+    // dependsOn tasks.named('installFrontend')</fgp-code-comment>
     script = 'my-script.js'
 }</fgp-code></pre>
                 </template>
                 <template v-slot:kotlin>
                     <pre><fgp-code>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNode
 tasks.register&lt;RunNode&gt;("myScript") {
-    // dependsOn(tasks.named("installNode"))
-    // dependsOn(tasks.named("installFrontend"))
+    <fgp-code-comment>// dependsOn(tasks.named("installNode"))
+    // dependsOn(tasks.named("installFrontend"))</fgp-code-comment>
     script.set("my-script.js")
 }</fgp-code></pre>
                 </template>

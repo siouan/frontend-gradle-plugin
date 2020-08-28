@@ -6,7 +6,7 @@
                 - Integrated <fgp-nodejs-link />, <fgp-npm-link />, <fgp-yarn-link /> builds
             </small>
             <fgp-image-link
-                href="https://github.com/siouan/frontend-gradle-plugin/releases/tag/v4.0.0"
+                href="https://github.com/siouan/frontend-gradle-plugin/releases/tag/v4.0.0-jdk11"
                 src="https://img.shields.io/badge/Latest%20release-4.0.0-blue.svg"
                 alt="Latest release 4.0.0"
                 class="ml-1"
@@ -19,7 +19,7 @@
             <fgp-link href="https://github.com/eirslett/frontend-maven-plugin">Frontend Maven plugin</fgp-link>, an
             equivalent plugin for
             <fgp-link href="https://maven.apache.org" title="Apache Maven Project">Maven</fgp-link>. Follow the
-            <fgp-site-link :path="fgp.paths.guide">quick start guide</fgp-site-link>, and build your frontend
+            <fgp-site-link :path="fgp.paths.gettingStarted">quick start guide</fgp-site-link>, and build your frontend
             application. Take a look at the
             <fgp-repo-link path="/releases" class="text-lowercase">{{
                 $t("navigation.repository.releases.label")

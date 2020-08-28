@@ -8,22 +8,22 @@
         <changefreq>weekly</changefreq>
     </url>
     <url>
-        <loc>https://siouan.github.io/frontend-gradle-plugin/guide</loc>
+        <loc>https://siouan.github.io/frontend-gradle-plugin/getting-started/</loc>
         <lastmod>2020-08-10</lastmod>
         <changefreq>weekly</changefreq>
     </url>
     <url>
-        <loc>https://siouan.github.io/frontend-gradle-plugin/configuration</loc>
+        <loc>https://siouan.github.io/frontend-gradle-plugin/configuration/</loc>
         <lastmod>2020-08-10</lastmod>
         <changefreq>weekly</changefreq>
     </url>
     <url>
-        <loc>https://siouan.github.io/frontend-gradle-plugin/node-npm-npx-yarn-tasks</loc>
+        <loc>https://siouan.github.io/frontend-gradle-plugin/node-npm-npx-yarn-tasks/</loc>
         <lastmod>2020-08-10</lastmod>
         <changefreq>weekly</changefreq>
     </url>
     <url>
-        <loc>https://siouan.github.io/frontend-gradle-plugin/faqs</loc>
+        <loc>https://siouan.github.io/frontend-gradle-plugin/faqs/</loc>
         <lastmod>2020-08-10</lastmod>
         <changefreq>weekly</changefreq>
     </url>

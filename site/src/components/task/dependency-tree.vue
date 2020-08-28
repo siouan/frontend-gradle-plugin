@@ -15,13 +15,13 @@
                 <use xlink:href="#gradleTask" />
                 <text x="50" y="16" dominant-baseline="middle" text-anchor="middle" font-size="0.7rem">clean</text>
             </g>
-            <g id="assembleTask">
-                <use xlink:href="#gradleTask" />
-                <text x="50" y="16" dominant-baseline="middle" text-anchor="middle" font-size="0.7rem">assemble</text>
-            </g>
             <g id="checkTask">
                 <use xlink:href="#gradleTask" />
                 <text x="50" y="16" dominant-baseline="middle" text-anchor="middle" font-size="0.7rem">check</text>
+            </g>
+            <g id="assembleTask">
+                <use xlink:href="#gradleTask" />
+                <text x="50" y="16" dominant-baseline="middle" text-anchor="middle" font-size="0.7rem">assemble</text>
             </g>
             <g id="publishTask">
                 <use xlink:href="#gradleTask" />
@@ -51,16 +51,16 @@
                     cleanFrontend
                 </text>
             </g>
-            <g id="assembleFrontendTask">
-                <use xlink:href="#frontendTask" />
-                <text x="50" y="16" dominant-baseline="middle" text-anchor="middle" font-size="0.7rem">
-                    assembleFrontend
-                </text>
-            </g>
             <g id="checkFrontendTask">
                 <use xlink:href="#frontendTask" />
                 <text x="50" y="16" dominant-baseline="middle" text-anchor="middle" font-size="0.7rem">
                     checkFrontend
+                </text>
+            </g>
+            <g id="assembleFrontendTask">
+                <use xlink:href="#frontendTask" />
+                <text x="50" y="16" dominant-baseline="middle" text-anchor="middle" font-size="0.7rem">
+                    assembleFrontend
                 </text>
             </g>
             <g id="publishFrontendTask">
@@ -106,10 +106,10 @@
                     <use x="10" y="30" xlink:href="#cleanTask" />
                 </fgp-gradle-docs-link>
                 <fgp-gradle-docs-link path="/current/userguide/base_plugin.html#sec:base_tasks">
-                    <use x="140" y="30" xlink:href="#assembleTask" />
+                    <use x="140" y="30" xlink:href="#checkTask" />
                 </fgp-gradle-docs-link>
                 <fgp-gradle-docs-link path="/current/userguide/base_plugin.html#sec:base_tasks">
-                    <use x="270" y="30" xlink:href="#checkTask" />
+                    <use x="270" y="30" xlink:href="#assembleTask" />
                 </fgp-gradle-docs-link>
             </g>
 
@@ -125,11 +125,11 @@
                 <fgp-site-link path="#cleanFrontend">
                     <use x="10" y="90" xlink:href="#cleanFrontendTask" />
                 </fgp-site-link>
-                <fgp-site-link path="#assembleFrontend">
-                    <use x="140" y="90" xlink:href="#assembleFrontendTask" />
-                </fgp-site-link>
                 <fgp-site-link path="#checkFrontend">
-                    <use x="270" y="90" xlink:href="#checkFrontendTask" />
+                    <use x="140" y="90" xlink:href="#checkFrontendTask" />
+                </fgp-site-link>
+                <fgp-site-link path="#assembleFrontend">
+                    <use x="270" y="90" xlink:href="#assembleFrontendTask" />
                 </fgp-site-link>
                 <fgp-site-link path="#publishFrontend">
                     <use x="400" y="90" xlink:href="#publishFrontendTask" />
