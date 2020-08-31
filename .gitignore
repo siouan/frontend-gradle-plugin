@@ -1,6 +1,7 @@
-/buildSrc/.gradle
-/buildSrc/build
-/out
+/buildSrc/.gradle/
+/buildSrc/build/
+/docs/
+/out/
 /site/dist/
 /site/node_modules/
 .idea/

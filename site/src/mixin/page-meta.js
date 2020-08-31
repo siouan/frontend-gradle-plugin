@@ -4,12 +4,14 @@ export default {
             meta: [],
             link: []
         };
-        headTags.title = this.htmlTitle ? this.htmlTitle : process.env.FGP_WEBSITE_TITLE;
-        headTags.meta.push({
-            hid: "description",
-            name: "description",
-            content: this.metaDescription ? this.metaDescription : process.env.FGP_WEBSITE_DESCRIPTION
-        });
+        headTags.title = this.htmlTitle ? this.htmlTitle : "Frontend Gradle plugin";
+        if (this.metaDescription) {
+            headTags.meta.push({
+                hid: "description",
+                name: "description",
+                content: this.metaDescription
+            });
+        }
         headTags.meta.push({ name: "og:title", content: headTags.title });
         headTags.meta.push({ name: "og:description", content: headTags.meta.find(meta => meta.name === "description").content });
         if (this.linkCanonicalHref) {

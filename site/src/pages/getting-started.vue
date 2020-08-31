@@ -76,6 +76,9 @@
     }
 }
 
+<fgp-code-comment>// For JDK 11+</fgp-code-comment>
+apply plugin: 'org.siouan.frontend-jdk11'
+<fgp-code-comment>// For JDK 8+</fgp-code-comment>
 apply plugin: 'org.siouan.frontend-jdk8'</fgp-code></pre>
                             </template>
                             <template v-slot:kotlin>
@@ -153,7 +156,8 @@ export default Vue.component("fgp-getting-started", {
     mixins: [fgpAppConfig, fgpPageMeta],
     data() {
         return {
-            htmlTitle: "Getting started: building a JS application with Gradle and Node.js",
+            htmlTitle: "Getting started: building a Javascript application with Gradle and Node.js",
+            linkCanonicalHref: process.env.FGP_WEBSITE_URL + 'getting-started/',
             metaDescription: "Guide to get started with the plugin: requirements, supported Node.js and Yarn distributions, installation steps."
         }
     }

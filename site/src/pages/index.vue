@@ -117,7 +117,9 @@ export default Vue.component("fgp-index", {
     mixins: [fgpAppConfig, fgpPageMeta],
     data() {
         return {
-            linkCanonicalHref: process.env.FGP_WEBSITE_URL
+            htmlTitle: "Gradle plugin to build frontend applications with node, npm, yarn",
+            linkCanonicalHref: process.env.FGP_WEBSITE_URL,
+            metaDescription: "Gradle plugin to build frontend applications with node/npm/yarn: distribution management, configurable tasks (build, test, publish), NPX support"
         }
     }
 });
