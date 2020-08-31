@@ -25,15 +25,17 @@ public class GradleTestListener implements TestListener, TestOutputListener {
 
     @Override
     public void beforeTest(TestDescriptor testDescriptor) {
-        logger.lifecycle("\n========== TEST {}.{} STARTED ==========",
-            testDescriptor.getClassName().substring(testDescriptor.getClassName().lastIndexOf('.') + 1),
+        final String className = testDescriptor.getClassName();
+        logger.lifecycle("\n========== TEST {}.{} STARTED ==========", (className == null) ? "UNKNOWN TEST"
+                : testDescriptor.getClassName().substring(testDescriptor.getClassName().lastIndexOf('.') + 1),
             testDescriptor.getDisplayName());
     }
 
     @Override
     public void afterTest(TestDescriptor testDescriptor, TestResult result) {
-        logger.lifecycle("========== TEST {}.{} {} ==========",
-            testDescriptor.getClassName().substring(testDescriptor.getClassName().lastIndexOf('.') + 1),
+        final String className = testDescriptor.getClassName();
+        logger.lifecycle("========== TEST {}.{} {} ==========", (className == null) ? "UNKNOWN TEST"
+                : testDescriptor.getClassName().substring(testDescriptor.getClassName().lastIndexOf('.') + 1),
             testDescriptor.getDisplayName(), result.getResultType());
     }
 
