@@ -24,9 +24,6 @@ public final class Resources {
     @Nonnull
     public static Path getResourcePath(@Nonnull final String resourceName) {
         final URL resourceUrl = getResourceUrl(resourceName);
-        if (resourceUrl == null) {
-            throw new IllegalArgumentException("Resource not found: " + resourceName);
-        }
         try {
             return Paths.get(resourceUrl.toURI());
         } catch (final URISyntaxException e) {

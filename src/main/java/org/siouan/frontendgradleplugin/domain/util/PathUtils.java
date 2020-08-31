@@ -16,7 +16,7 @@ import javax.annotation.Nonnull;
  */
 public final class PathUtils {
 
-    private static final Set<String> GZIP_EXTENSIONS = unmodifiableSet(new HashSet<>(asList(".gz", ".gzip")));
+    private static final Set<String> GZIP_EXTENSIONS = Set.of(".gz", ".gzip");
 
     private PathUtils() {
     }

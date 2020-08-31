@@ -66,7 +66,7 @@ public class ResolveNodeDistributionUrl implements DistributionUrlResolver {
         throws UnsupportedPlatformException, MalformedURLException {
         final Platform platform = distributionDefinition.getPlatform();
         final Optional<String> architectureId = resolveArchitectureId(platform);
-        if (!architectureId.isPresent()) {
+        if (architectureId.isEmpty()) {
             throw new UnsupportedPlatformException(distributionDefinition.getPlatform());
         }
 
