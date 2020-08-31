@@ -6,9 +6,9 @@
                 - Integrated <fgp-nodejs-link />, <fgp-npm-link />, <fgp-yarn-link /> builds
             </small>
             <fgp-image-link
-                href="https://github.com/siouan/frontend-gradle-plugin/releases/tag/v3.0.1"
-                src="https://img.shields.io/badge/Latest%20release-3.0.1-blue.svg"
-                alt="Latest release 3.0.1"
+                href="https://github.com/siouan/frontend-gradle-plugin/releases/tag/v4.0.0-jdk11"
+                src="https://img.shields.io/badge/Latest%20release-4.0.0-blue.svg"
+                alt="Latest release 4.0.0"
                 class="ml-1"
             />
         </fgp-main-title>
@@ -117,7 +117,9 @@ export default Vue.component("fgp-index", {
     mixins: [fgpAppConfig, fgpPageMeta],
     data() {
         return {
-            linkCanonicalHref: process.env.FGP_WEBSITE_URL
+            htmlTitle: "Gradle plugin to build frontend applications with node, npm, yarn",
+            linkCanonicalHref: process.env.FGP_WEBSITE_URL,
+            metaDescription: "Gradle plugin to build frontend applications with node/npm/yarn: distribution management, configurable tasks (build, test, publish), NPX support"
         }
     }
 });

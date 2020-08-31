@@ -4,14 +4,11 @@ val fgpGroup: String by extra
 val fgpVersion: String by extra
 val fgpDisplayName: String by extra
 val fgpDescription: String by extra
-val fgpLegacyDescription: String by extra
-val fgpLegacyPluginId: String by extra
-val fgpJdk8PluginId: String by extra
+val fgpPluginId: String by extra
 val fgpImplementationClass: String by extra
 val fgpWebsiteUrl: String by extra
 val fgpVcsUrl: String by extra
-val fgpGradleLegacyPluginPortalTags: String by extra
-val fgpGradleJdk8PluginPortalTags: String by extra
+val fgpGradlePluginPortalTags: String by extra
 
 plugins {
     id("java-gradle-plugin")
@@ -29,9 +26,8 @@ version = fgpVersion
 description = fgpDescription
 
 java {
-
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
     withJavadocJar()
     withSourcesJar()
 }
@@ -45,7 +41,7 @@ dependencies {
     testImplementation("org.mockito:mockito-core:3.4.6")
     testImplementation("org.mockito:mockito-junit-jupiter:3.4.6")
     testImplementation("org.assertj:assertj-core:3.16.1")
-    testImplementation("com.github.tomakehurst:wiremock-jre8:2.27.1")
+    testImplementation("com.github.tomakehurst:wiremock:2.27.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.2")
 }
 
@@ -67,12 +63,8 @@ tasks.named<JacocoReport>("jacocoTestReport") {
 
 gradlePlugin {
     plugins {
-        create("frontendLegacyPlugin") {
-            id = fgpLegacyPluginId
-            implementationClass = fgpImplementationClass
-        }
-        create("frontendJdk8Plugin") {
-            id = fgpJdk8PluginId
+        create("frontendPlugin") {
+            id = fgpPluginId
             implementationClass = fgpImplementationClass
         }
     }
@@ -83,15 +75,10 @@ pluginBundle {
     vcsUrl = fgpVcsUrl
 
     (plugins) {
-        "frontendLegacyPlugin" {
-            displayName = fgpDisplayName
-            description = fgpLegacyDescription
-            tags = fgpGradleLegacyPluginPortalTags.split(",")
-        }
-        "frontendJdk8Plugin" {
+        "frontendPlugin" {
             displayName = fgpDisplayName
             description = fgpDescription
-            tags = fgpGradleJdk8PluginPortalTags.split(",")
+            tags = fgpGradlePluginPortalTags.split(",")
         }
     }
 }

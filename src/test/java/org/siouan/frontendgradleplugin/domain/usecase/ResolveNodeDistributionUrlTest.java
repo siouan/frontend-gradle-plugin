@@ -31,14 +31,14 @@ class ResolveNodeDistributionUrlTest {
     void shouldFailWhenResolvingUrlWithLinuxOsAndJreArchEqualToI386() {
         assertThatThrownBy(() -> usecase.execute(
             new DistributionDefinition(new Platform("i386", "Linux", new Environment(null, null)), VERSION, URL_ROOT,
-                null))).isInstanceOf(UnsupportedPlatformException.class);
+                URL_PATH_PATTERN))).isInstanceOf(UnsupportedPlatformException.class);
     }
 
     @Test
     void shouldFailWhenResolvingUrlWithSolarisOsAndJreArchEqualToSparc() {
         assertThatThrownBy(() -> usecase.execute(
             new DistributionDefinition(new Platform("sparc", "Solaris", new Environment(null, null)), VERSION, URL_ROOT,
-                null))).isInstanceOf(UnsupportedPlatformException.class);
+                URL_PATH_PATTERN))).isInstanceOf(UnsupportedPlatformException.class);
     }
 
     @Test

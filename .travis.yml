@@ -7,7 +7,7 @@ env:
   global:
     - GRAVIS_REPOSITORY="https://github.com/DanySK/Gravis-CI.git"
     - GRAVIS_HOME="$HOME/gravis"
-    - JDK="adopt@1.8"
+    - JDK="adopt@1.11"
 
 cache:
   directories:
