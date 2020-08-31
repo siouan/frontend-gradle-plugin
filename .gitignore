@@ -6,5 +6,6 @@
 .idea/
 .gradle/
 build/
+docs/
 node/
 yarn/
