@@ -1,7 +1,6 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.net.Proxy;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -12,7 +11,9 @@ import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.TaskAction;
 import org.siouan.frontendgradleplugin.domain.exception.ArchiverException;
 import org.siouan.frontendgradleplugin.domain.exception.DistributionValidatorException;
+import org.siouan.frontendgradleplugin.domain.exception.FrontendException;
 import org.siouan.frontendgradleplugin.domain.exception.InvalidDistributionUrlException;
+import org.siouan.frontendgradleplugin.domain.exception.ResourceDownloadException;
 import org.siouan.frontendgradleplugin.domain.exception.UnsupportedDistributionArchiveException;
 import org.siouan.frontendgradleplugin.domain.exception.UnsupportedDistributionIdException;
 import org.siouan.frontendgradleplugin.domain.exception.UnsupportedPlatformException;
@@ -57,7 +58,7 @@ public abstract class AbstractDistributionInstallTask extends DefaultTask {
      */
     private final Property<String> proxyPassword;
 
-    public AbstractDistributionInstallTask() {
+    protected AbstractDistributionInstallTask() {
         this.proxyHost = getProject().getObjects().property(String.class);
         this.proxyPort = getProject().getObjects().property(Integer.class);
         this.proxyUsername = getProject().getObjects().property(String.class);
@@ -95,26 +96,24 @@ public abstract class AbstractDistributionInstallTask extends DefaultTask {
      * @throws DistributionValidatorException If the downloaded distribution file is not valid.
      * @throws ArchiverException If an error occurs in the archiver exploding the distribution.
      * @throws IOException If an I/O error occurs.
+     * @throws ResourceDownloadException If the distribution download failed.
      */
     @TaskAction
-    public void execute() throws BeanRegistryException, ArchiverException, UnsupportedDistributionArchiveException,
-        UnsupportedPlatformException, UnsupportedDistributionIdException, InvalidDistributionUrlException,
-        DistributionValidatorException, IOException {
+    public void execute() throws BeanRegistryException, FrontendException, IOException {
         final Credentials distributionServerCredentials = getDistributionServerCredentials();
-        final Proxy proxy;
+        final ProxySettings proxySettings;
         final Credentials proxyServerCredentials;
         if (proxyHost.isPresent()) {
-            proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost.get(), proxyPort.get()));
             proxyServerCredentials =
                 proxyUsername.isPresent() ? new Credentials(proxyUsername.get(), proxyPassword.get()) : null;
+            proxySettings = new ProxySettings(Proxy.Type.HTTP, proxyHost.get(), proxyPort.get(),
+                proxyServerCredentials);
         } else {
-            proxy = Proxy.NO_PROXY;
-            proxyServerCredentials = null;
+            proxySettings = null;
         }
         Beans
             .getBean(getInstallDistributionClass())
-            .execute(getInstallSettings(Beans.getBean(Platform.class), distributionServerCredentials,
-                new ProxySettings(proxy, proxyServerCredentials)));
+            .execute(getInstallSettings(Beans.getBean(Platform.class), distributionServerCredentials, proxySettings));
     }
 
     /**
@@ -145,5 +144,5 @@ public abstract class AbstractDistributionInstallTask extends DefaultTask {
      */
     @Nonnull
     protected abstract InstallSettings getInstallSettings(@Nonnull Platform platform,
-        @Nullable Credentials distributionServerCredentials, @Nonnull ProxySettings proxySettings);
+        @Nullable Credentials distributionServerCredentials, @Nullable ProxySettings proxySettings);
 }

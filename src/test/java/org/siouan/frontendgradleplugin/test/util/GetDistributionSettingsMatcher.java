@@ -1,5 +1,6 @@
 package org.siouan.frontendgradleplugin.test.util;
 
+import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -17,13 +18,13 @@ public class GetDistributionSettingsMatcher extends AbstractArgumentMatcher<GetD
             return false;
         }
 
-        return (actualValue.getDistributionId().equals(expectedValue.getDistributionId()))
+        return actualValue.getDistributionId().equals(expectedValue.getDistributionId())
             && actualValue.getVersion().equals(expectedValue.getVersion())
             && actualValue.getPlatform().equals(expectedValue.getPlatform())
             && actualValue.getTemporaryDirectoryPath().equals(expectedValue.getTemporaryDirectoryPath())
-            && actualValue.getPlatform().equals(expectedValue.getPlatform())
+            && Objects.equals(actualValue.getProxySettings(), expectedValue.getProxySettings())
             && actualValue.getDistributionUrlRoot().equals(expectedValue.getDistributionUrlRoot())
             && actualValue.getDistributionUrlPathPattern().equals(expectedValue.getDistributionUrlPathPattern())
-            && actualValue.getProxySettings().equals(expectedValue.getProxySettings());
+            && Objects.equals(actualValue.getDistributionServerCredentials(), expectedValue.getDistributionServerCredentials());
     }
 }

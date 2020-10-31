@@ -43,7 +43,7 @@ public class GetDistributionSettings {
     public GetDistributionSettings(@Nonnull String distributionId, @Nonnull final Platform platform,
         @Nonnull final String version, @Nonnull final String distributionUrlRoot,
         @Nonnull final String distributionUrlPathPattern, @Nullable final Credentials distributionServerCredentials,
-        @Nonnull final ProxySettings proxySettings, @Nonnull final Path temporaryDirectoryPath) {
+        @Nullable final ProxySettings proxySettings, @Nonnull final Path temporaryDirectoryPath) {
         this.distributionId = distributionId;
         this.platform = platform;
         this.version = version;
@@ -119,7 +119,7 @@ public class GetDistributionSettings {
      *
      * @return Proxy settings.
      */
-    @Nonnull
+    @Nullable
     public ProxySettings getProxySettings() {
         return proxySettings;
     }

@@ -22,6 +22,6 @@ public class DistributionValidatorSettingsMatcher extends AbstractArgumentMatche
             && Objects.equals(actualValue.getDistributionServerCredentials(), expectedValue.getDistributionServerCredentials())
             && actualValue.getTemporaryDirectoryPath().equals(expectedValue.getTemporaryDirectoryPath())
             && actualValue.getDistributionFilePath().equals(expectedValue.getDistributionFilePath())
-            && actualValue.getProxySettings().equals(expectedValue.getProxySettings());
+            && Objects.equals(actualValue.getProxySettings(), expectedValue.getProxySettings());
     }
 }
