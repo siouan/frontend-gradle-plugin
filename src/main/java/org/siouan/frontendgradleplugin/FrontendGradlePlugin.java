@@ -35,7 +35,7 @@ import org.siouan.frontendgradleplugin.infrastructure.gradle.adapter.GradleLogge
 import org.siouan.frontendgradleplugin.infrastructure.provider.ArchiverProviderImpl;
 import org.siouan.frontendgradleplugin.infrastructure.provider.ChannelProviderImpl;
 import org.siouan.frontendgradleplugin.infrastructure.provider.FileManagerImpl;
-import org.siouan.frontendgradleplugin.infrastructure.provider.URLConnectionProviderImpl;
+import org.siouan.frontendgradleplugin.infrastructure.provider.HttpClientProviderImpl;
 
 /**
  * Main plugin class that bootstraps the plugin by declaring its DSL and its tasks.
@@ -210,7 +210,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         Beans.registerBean(FileManagerImpl.class);
         Beans.registerBean(ChannelProviderImpl.class);
         Beans.registerBean(ArchiverProviderImpl.class);
-        Beans.registerBean(URLConnectionProviderImpl.class);
+        Beans.registerBean(HttpClientProviderImpl.class);
         try {
             project.getGradle().addListener(new TaskLoggerConfigurer(Beans.getBean(BeanRegistry.class), extension));
             project.getLogger().debug("Platform: {}", Beans.getBean(Platform.class));

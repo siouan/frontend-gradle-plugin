@@ -117,7 +117,7 @@ public class NodeInstallTask extends AbstractDistributionInstallTask {
     @Override
     @Nonnull
     protected InstallSettings getInstallSettings(@Nonnull final Platform platform,
-        @Nullable final Credentials distributionServerCredentials, @Nonnull final ProxySettings proxySettings) {
+        @Nullable final Credentials distributionServerCredentials, @Nullable final ProxySettings proxySettings) {
         return new InstallSettings(platform, nodeVersion.get(), nodeDistributionUrlRoot.get(),
             nodeDistributionUrlPathPattern.get(), distributionServerCredentials, proxySettings,
             getTemporaryDir().toPath(), nodeInstallDirectory.getAsFile().get().toPath());

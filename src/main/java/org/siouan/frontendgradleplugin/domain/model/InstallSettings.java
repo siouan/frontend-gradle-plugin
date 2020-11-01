@@ -41,7 +41,7 @@ public class InstallSettings {
      */
     public InstallSettings(@Nonnull final Platform platform, @Nonnull final String version,
         @Nonnull final String distributionUrlRoot, @Nonnull final String distributionUrlPathPattern,
-        @Nullable final Credentials distributionServerCredentials, @Nonnull final ProxySettings proxySettings,
+        @Nullable final Credentials distributionServerCredentials, @Nullable final ProxySettings proxySettings,
         @Nonnull final Path temporaryDirectoryPath, @Nonnull final Path installDirectoryPath) {
         this.platform = platform;
         this.version = version;
@@ -108,7 +108,7 @@ public class InstallSettings {
      *
      * @return Proxy settings.
      */
-    @Nonnull
+    @Nullable
     public ProxySettings getProxySettings() {
         return proxySettings;
     }

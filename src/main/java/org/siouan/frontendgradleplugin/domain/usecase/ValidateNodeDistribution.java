@@ -7,6 +7,7 @@ import javax.annotation.Nonnull;
 
 import org.siouan.frontendgradleplugin.domain.exception.InvalidNodeDistributionException;
 import org.siouan.frontendgradleplugin.domain.exception.NodeDistributionShasumNotFoundException;
+import org.siouan.frontendgradleplugin.domain.exception.ResourceDownloadException;
 import org.siouan.frontendgradleplugin.domain.model.DistributionValidator;
 import org.siouan.frontendgradleplugin.domain.model.DistributionValidatorSettings;
 import org.siouan.frontendgradleplugin.domain.model.DownloadSettings;
@@ -22,6 +23,8 @@ public class ValidateNodeDistribution implements DistributionValidator {
 
     private final FileManager fileManager;
 
+    private final BuildTemporaryFileName buildTemporaryFileName;
+
     private final DownloadResource downloadResource;
 
     private final ReadNodeDistributionShasum readNodeDistributionShasum;
@@ -30,9 +33,11 @@ public class ValidateNodeDistribution implements DistributionValidator {
 
     private final Logger logger;
 
-    public ValidateNodeDistribution(final FileManager fileManager, final DownloadResource downloadResource,
-        final ReadNodeDistributionShasum readNodeDistributionShasum, final HashFile hashFile, final Logger logger) {
+    public ValidateNodeDistribution(final FileManager fileManager, final BuildTemporaryFileName buildTemporaryFileName,
+        final DownloadResource downloadResource, final ReadNodeDistributionShasum readNodeDistributionShasum,
+        final HashFile hashFile, final Logger logger) {
         this.fileManager = fileManager;
+        this.buildTemporaryFileName = buildTemporaryFileName;
         this.downloadResource = downloadResource;
         this.readNodeDistributionShasum = readNodeDistributionShasum;
         this.hashFile = hashFile;
@@ -46,7 +51,8 @@ public class ValidateNodeDistribution implements DistributionValidator {
      */
     @Override
     public void execute(@Nonnull final DistributionValidatorSettings distributionValidatorSettings)
-        throws InvalidNodeDistributionException, IOException, NodeDistributionShasumNotFoundException {
+        throws InvalidNodeDistributionException, IOException, NodeDistributionShasumNotFoundException,
+        ResourceDownloadException {
         // Resolve the URL to download the shasum file
         final Path shasumsFilePath = distributionValidatorSettings
             .getTemporaryDirectoryPath()
@@ -57,10 +63,12 @@ public class ValidateNodeDistribution implements DistributionValidator {
 
             // Download the shasum file
             logger.debug("Downloading shasums at '{}'", shasumsFileUrl);
+            final Path temporaryFilePath = distributionValidatorSettings
+                .getTemporaryDirectoryPath()
+                .resolve(buildTemporaryFileName.execute(shasumsFilePath.getFileName().toString()));
             downloadResource.execute(
                 new DownloadSettings(shasumsFileUrl, distributionValidatorSettings.getDistributionServerCredentials(),
-                    distributionValidatorSettings.getProxySettings(),
-                    distributionValidatorSettings.getTemporaryDirectoryPath(), shasumsFilePath));
+                    distributionValidatorSettings.getProxySettings(), temporaryFilePath, shasumsFilePath));
 
             // Verify the distribution integrity
             logger.info("Verifying distribution integrity");

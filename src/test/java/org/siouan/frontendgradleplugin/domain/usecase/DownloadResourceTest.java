@@ -9,10 +9,8 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.Proxy;
-import java.net.URLConnection;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Path;
@@ -30,14 +28,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.exceptions.verification.NoInteractionsWanted;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.siouan.frontendgradleplugin.domain.model.Credentials;
+import org.siouan.frontendgradleplugin.domain.exception.HttpClientException;
+import org.siouan.frontendgradleplugin.domain.exception.ResourceDownloadException;
 import org.siouan.frontendgradleplugin.domain.model.DownloadSettings;
+import org.siouan.frontendgradleplugin.domain.model.HttpClient;
+import org.siouan.frontendgradleplugin.domain.model.HttpResponse;
 import org.siouan.frontendgradleplugin.domain.model.Logger;
 import org.siouan.frontendgradleplugin.domain.model.ProxySettings;
 import org.siouan.frontendgradleplugin.domain.provider.ChannelProvider;
 import org.siouan.frontendgradleplugin.domain.provider.FileManager;
-import org.siouan.frontendgradleplugin.domain.provider.URLConnectionProvider;
-import org.siouan.frontendgradleplugin.test.fixture.ProxySettingsFixture;
+import org.siouan.frontendgradleplugin.domain.provider.HttpClientProvider;
 
 /**
  * <b>Note on verifications</b>: exhaustive verification of interactions on the resource output channel is not possible
@@ -50,12 +50,13 @@ class DownloadResourceTest {
 
     private static final String DOWNLOAD_DIRECTORY_NAME = "download";
 
-    private static final ProxySettings PROXY_SETTINGS = ProxySettingsFixture.NO_PROXY_SETTINGS;
-
     private static final String RESOURCE_NAME = "resource.zip";
 
     @TempDir
     Path temporaryDirectoryPath;
+
+    @Mock
+    private HttpResponse httpResponse;
 
     @Mock
     private FileManager fileManager;
@@ -64,13 +65,10 @@ class DownloadResourceTest {
     private ChannelProvider channelProvider;
 
     @Mock
-    private ApplyAuthorization applyAuthorization;
+    private HttpClientProvider httpClientProvider;
 
     @Mock
-    private URLConnectionProvider urlConnectionProvider;
-
-    @Mock
-    private URLConnection urlConnection;
+    private HttpClient httpClient;
 
     @Mock
     private InputStream inputStream;
@@ -80,185 +78,173 @@ class DownloadResourceTest {
 
     @BeforeEach
     void setUp() {
-        usecase = new DownloadResource(fileManager, channelProvider, urlConnectionProvider, applyAuthorization,
-            mock(Logger.class));
+        when(httpClientProvider.getInstance()).thenReturn(httpClient);
+        usecase = new DownloadResource(fileManager, channelProvider, httpClientProvider, mock(Logger.class));
     }
 
     @Test
-    void shouldFailWhenConnectionCannotBeCreated() throws IOException {
+    void shouldFailWhenHttpClientFails() throws IOException, HttpClientException {
+        final DownloadSettings downloadSettings = buildDownloadParameters(Paths.get("/y45y97@p"));
+        final HttpClientException expectedException = mock(HttpClientException.class);
+        when(httpClient.sendGetRequest(downloadSettings.getResourceUrl(), downloadSettings.getServerCredentials(),
+            downloadSettings.getProxySettings())).thenThrow(expectedException);
+
+        assertThatThrownBy(() -> usecase.execute(downloadSettings))
+            .isInstanceOf(ResourceDownloadException.class)
+            .hasCause(expectedException);
+
+        verify(fileManager).deleteIfExists(downloadSettings.getTemporaryFilePath());
+        verifyNoMoreInteractions(fileManager, channelProvider, httpClientProvider, httpClient);
+    }
+
+    @Test
+    void shouldFailWhenHttpRequestFails() throws IOException, HttpClientException {
         final DownloadSettings downloadSettings = buildDownloadParameters(Paths.get("/y45y97@p"));
         final IOException expectedException = new IOException();
-        when(urlConnectionProvider.openConnection(downloadSettings.getResourceUrl(),
-            downloadSettings.getProxySettings().getProxy())).thenThrow(expectedException);
+        when(httpClient.sendGetRequest(downloadSettings.getResourceUrl(), downloadSettings.getServerCredentials(),
+            downloadSettings.getProxySettings())).thenThrow(expectedException);
 
         assertThatThrownBy(() -> usecase.execute(downloadSettings)).isEqualTo(expectedException);
 
-        verifyNoMoreInteractions(fileManager, channelProvider, urlConnectionProvider, urlConnection, inputStream,
-            applyAuthorization);
+        verify(fileManager).deleteIfExists(downloadSettings.getTemporaryFilePath());
+        verifyNoMoreInteractions(fileManager, channelProvider, httpClientProvider, httpClient);
     }
 
     @Test
-    void shouldFailWhenResourceCannotBeDownloaded() throws IOException {
-        final DownloadSettings downloadSettings = buildDownloadParameters(Paths.get("/y45y97@p"));
-        when(urlConnectionProvider.openConnection(downloadSettings.getResourceUrl(),
-            downloadSettings.getProxySettings().getProxy())).thenReturn(urlConnection);
+    void shouldFailWhenResourceCannotBeDownloaded() throws IOException, HttpClientException {
+        final DownloadSettings downloadSettings = buildDownloadParameters(Paths.get("/,èjtt(é"));
+        when(httpClient.sendGetRequest(downloadSettings.getResourceUrl(), downloadSettings.getServerCredentials(),
+            downloadSettings.getProxySettings())).thenReturn(httpResponse);
         final IOException expectedException = new IOException();
-        when(urlConnection.getInputStream()).thenThrow(expectedException);
+        when(httpResponse.getInputStream()).thenThrow(expectedException);
 
         assertThatThrownBy(() -> usecase.execute(downloadSettings)).isEqualTo(expectedException);
 
-        final Path temporaryFilePath = downloadSettings
-            .getTemporaryDirectoryPath()
-            .resolve(
-                downloadSettings.getDestinationFilePath().getFileName().toString() + DownloadResource.TMP_EXTENSION);
-        verify(fileManager).deleteIfExists(temporaryFilePath);
-        verifyNoMoreInteractions(fileManager, channelProvider, urlConnectionProvider, urlConnection, inputStream,
-            applyAuthorization);
+        verify(httpResponse).close();
+        verify(fileManager).deleteIfExists(downloadSettings.getTemporaryFilePath());
+        verifyNoMoreInteractions(fileManager, channelProvider, httpClientProvider, httpClient);
     }
 
     @Test
-    void shouldFailWhenTemporaryFileCannotBeCreated() throws IOException {
+    void shouldFailWhenTemporaryFileCannotBeCreated() throws IOException, HttpClientException {
         final DownloadSettings downloadSettings = buildDownloadParameters(Paths.get("/volezp", "gixkkle"));
-        when(urlConnectionProvider.openConnection(downloadSettings.getResourceUrl(),
-            downloadSettings.getProxySettings().getProxy())).thenReturn(urlConnection);
-        when(urlConnection.getInputStream()).thenReturn(inputStream);
+        when(httpClient.sendGetRequest(downloadSettings.getResourceUrl(), downloadSettings.getServerCredentials(),
+            downloadSettings.getProxySettings())).thenReturn(httpResponse);
+        when(httpResponse.getInputStream()).thenReturn(inputStream);
         final ReadableByteChannel resourceInputChannel = mock(ReadableByteChannel.class);
         when(channelProvider.getReadableByteChannel(inputStream)).thenReturn(resourceInputChannel);
-        final Path temporaryFilePath = downloadSettings
-            .getTemporaryDirectoryPath()
-            .resolve(
-                downloadSettings.getDestinationFilePath().getFileName().toString() + DownloadResource.TMP_EXTENSION);
         final IOException expectedException = new IOException();
-        when(channelProvider.getWritableFileChannelForNewFile(temporaryFilePath, StandardOpenOption.WRITE,
-            StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)).thenThrow(expectedException);
+        when(channelProvider.getWritableFileChannelForNewFile(downloadSettings.getTemporaryFilePath(),
+            StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)).thenThrow(
+            expectedException);
 
         assertThatThrownBy(() -> usecase.execute(downloadSettings)).isEqualTo(expectedException);
 
         verify(resourceInputChannel).close();
-        verify(fileManager).deleteIfExists(temporaryFilePath);
-        verifyNoMoreInteractions(fileManager, channelProvider, urlConnectionProvider, urlConnection, inputStream,
-            applyAuthorization, resourceInputChannel);
+        verify(httpResponse).close();
+        verify(fileManager).deleteIfExists(downloadSettings.getTemporaryFilePath());
+        verifyNoMoreInteractions(fileManager, channelProvider, httpClientProvider, httpClient);
     }
 
     @Test
-    void shouldFailWhenDataTransferFails() throws IOException {
-        final DownloadSettings downloadSettings = buildDownloadParameters(Paths.get("/volezp", "gixkkle"));
-        when(urlConnectionProvider.openConnection(downloadSettings.getResourceUrl(),
-            downloadSettings.getProxySettings().getProxy())).thenReturn(urlConnection);
-        when(urlConnection.getInputStream()).thenReturn(inputStream);
+    void shouldFailWhenHttpResponseIsNotOk() throws IOException, HttpClientException {
+        final DownloadSettings downloadSettings = buildDownloadParameters(Paths.get("/htrsgvrqehjynjt"));
+        when(httpClient.sendGetRequest(downloadSettings.getResourceUrl(), downloadSettings.getServerCredentials(),
+            downloadSettings.getProxySettings())).thenReturn(httpResponse);
+        when(httpResponse.getInputStream()).thenReturn(inputStream);
         final ReadableByteChannel resourceInputChannel = mock(ReadableByteChannel.class);
         when(channelProvider.getReadableByteChannel(inputStream)).thenReturn(resourceInputChannel);
-        final Path temporaryFilePath = downloadSettings
-            .getTemporaryDirectoryPath()
-            .resolve(
-                downloadSettings.getDestinationFilePath().getFileName().toString() + DownloadResource.TMP_EXTENSION);
         final FileChannel resourceOutputChannel = spy(FileChannel.class);
-        when(channelProvider.getWritableFileChannelForNewFile(temporaryFilePath, StandardOpenOption.WRITE,
-            StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)).thenReturn(resourceOutputChannel);
+        when(channelProvider.getWritableFileChannelForNewFile(downloadSettings.getTemporaryFilePath(),
+            StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)).thenReturn(
+            resourceOutputChannel);
+        when(httpResponse.getStatusCode()).thenReturn(404);
+
+        assertThatThrownBy(() -> usecase.execute(downloadSettings)).isInstanceOf(ResourceDownloadException.class);
+
+        verify(resourceInputChannel).close();
+        verify(httpResponse).close();
+        verify(fileManager).deleteIfExists(downloadSettings.getTemporaryFilePath());
+        verifyNoMoreInteractions(fileManager, channelProvider, httpClientProvider, httpClient);
+    }
+
+    @Test
+    void shouldFailWhenDataTransferFails() throws IOException, HttpClientException {
+        final DownloadSettings downloadSettings = buildDownloadParameters(Paths.get("/volezp", "gixkkle"));
+        when(httpClient.sendGetRequest(downloadSettings.getResourceUrl(), downloadSettings.getServerCredentials(),
+            downloadSettings.getProxySettings())).thenReturn(httpResponse);
+        when(httpResponse.getInputStream()).thenReturn(inputStream);
+        final ReadableByteChannel resourceInputChannel = mock(ReadableByteChannel.class);
+        when(channelProvider.getReadableByteChannel(inputStream)).thenReturn(resourceInputChannel);
+        final FileChannel resourceOutputChannel = spy(FileChannel.class);
+        when(channelProvider.getWritableFileChannelForNewFile(downloadSettings.getTemporaryFilePath(),
+            StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)).thenReturn(
+            resourceOutputChannel);
+        when(httpResponse.getStatusCode()).thenReturn(200);
         final IOException expectedException = new IOException();
         when(resourceOutputChannel.transferFrom(resourceInputChannel, 0, Long.MAX_VALUE)).thenThrow(expectedException);
 
         assertThatThrownBy(() -> usecase.execute(downloadSettings)).isEqualTo(expectedException);
 
         verify(resourceInputChannel).close();
-        verify(fileManager).deleteIfExists(temporaryFilePath);
-        verifyNoMoreInteractions(fileManager, channelProvider, urlConnectionProvider, urlConnection, inputStream,
-            applyAuthorization, resourceInputChannel);
+        verify(httpResponse).close();
+        verify(fileManager).deleteIfExists(downloadSettings.getTemporaryFilePath());
+        verifyNoMoreInteractions(fileManager, channelProvider, httpClientProvider, httpClient);
     }
 
     @Test
-    void shouldFailWhenTemporaryFileCannotBeMovedToDestinationFile() throws IOException {
-        final DownloadSettings downloadSettings = buildDownloadParameters(Paths.get("/volezp", "gixkkle"));
-        when(urlConnectionProvider.openConnection(downloadSettings.getResourceUrl(),
-            downloadSettings.getProxySettings().getProxy())).thenReturn(urlConnection);
-        when(urlConnection.getInputStream()).thenReturn(inputStream);
+    void shouldFailWhenTemporaryFileCannotBeMovedToDestinationFile() throws IOException, HttpClientException {
+        final DownloadSettings downloadSettings = buildDownloadParameters(Paths.get("/volhrts '4"));
+        when(httpClient.sendGetRequest(downloadSettings.getResourceUrl(), downloadSettings.getServerCredentials(),
+            downloadSettings.getProxySettings())).thenReturn(httpResponse);
+        when(httpResponse.getInputStream()).thenReturn(inputStream);
         final ReadableByteChannel resourceInputChannel = mock(ReadableByteChannel.class);
         when(channelProvider.getReadableByteChannel(inputStream)).thenReturn(resourceInputChannel);
-        final Path temporaryFilePath = downloadSettings
-            .getTemporaryDirectoryPath()
-            .resolve(
-                downloadSettings.getDestinationFilePath().getFileName().toString() + DownloadResource.TMP_EXTENSION);
         final FileChannel resourceOutputChannel = spy(FileChannel.class);
-        when(channelProvider.getWritableFileChannelForNewFile(temporaryFilePath, StandardOpenOption.WRITE,
-            StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)).thenReturn(resourceOutputChannel);
+        when(channelProvider.getWritableFileChannelForNewFile(downloadSettings.getTemporaryFilePath(),
+            StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)).thenReturn(
+            resourceOutputChannel);
+        when(httpResponse.getStatusCode()).thenReturn(200);
         final Exception expectedException = new IOException();
-        when(fileManager.move(temporaryFilePath, downloadSettings.getDestinationFilePath(),
+        when(fileManager.move(downloadSettings.getTemporaryFilePath(), downloadSettings.getDestinationFilePath(),
             StandardCopyOption.REPLACE_EXISTING)).thenThrow(expectedException);
 
         assertThatThrownBy(() -> usecase.execute(downloadSettings)).isEqualTo(expectedException);
 
         verify(resourceOutputChannel).transferFrom(resourceInputChannel, 0, Long.MAX_VALUE);
         verify(resourceInputChannel).close();
-        verifyNoMoreInteractions(fileManager, channelProvider, urlConnectionProvider, urlConnection, inputStream,
-            applyAuthorization, resourceInputChannel);
+        verify(httpResponse).close();
+        verifyNoMoreInteractions(fileManager, channelProvider, httpClientProvider, httpClient);
     }
 
     @Test
-    void shouldDownloadLocalResourceWithoutBasicAuthentication() throws IOException {
+    void shouldDownloadResource() throws IOException, ResourceDownloadException, HttpClientException {
         final Path destinationDirectoryPath = temporaryDirectoryPath.resolve("install");
         final Path destinationFilePath = destinationDirectoryPath.resolve(RESOURCE_NAME);
-        final DownloadSettings downloadSettings = buildDownloadParameters(destinationFilePath);
-        when(urlConnectionProvider.openConnection(downloadSettings.getResourceUrl(),
-            downloadSettings.getProxySettings().getProxy())).thenReturn(urlConnection);
-        when(urlConnection.getInputStream()).thenReturn(inputStream);
-        final ReadableByteChannel resourceInputChannel = mock(ReadableByteChannel.class);
-        when(channelProvider.getReadableByteChannel(inputStream)).thenReturn(resourceInputChannel);
-        final Path temporaryFilePath = downloadSettings
-            .getTemporaryDirectoryPath()
-            .resolve(
-                downloadSettings.getDestinationFilePath().getFileName().toString() + DownloadResource.TMP_EXTENSION);
-        final FileChannel resourceOutputChannel = spy(FileChannel.class);
-        when(channelProvider.getWritableFileChannelForNewFile(temporaryFilePath, StandardOpenOption.WRITE,
-            StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)).thenReturn(resourceOutputChannel);
-
-        usecase.execute(downloadSettings);
-
-        verify(resourceOutputChannel).transferFrom(resourceInputChannel, 0, Long.MAX_VALUE);
-        verify(resourceInputChannel).close();
-        verify(fileManager).move(temporaryFilePath, downloadSettings.getDestinationFilePath(),
-            StandardCopyOption.REPLACE_EXISTING);
-        verifyNoMoreInteractions(fileManager, channelProvider, urlConnectionProvider, urlConnection, inputStream,
-            applyAuthorization, resourceInputChannel);
-    }
-
-    @Test
-    void shouldDownloadLocalResourceWithBasicAuthenticationOnBothProxyServerAndDistributionServer() throws IOException {
-        final Path destinationDirectoryPath = temporaryDirectoryPath.resolve("install");
-        final Path destinationFilePath = destinationDirectoryPath.resolve(RESOURCE_NAME);
-        final Credentials distributionServerCredentials = new Credentials("username", "password");
-        final Credentials proxyServerCredentials = new Credentials("proxyUsername", "proxyPassword");
-        final ProxySettings proxySettings = new ProxySettings(
-            new Proxy(Proxy.Type.HTTP, InetSocketAddress.createUnresolved("localhost", 0)), proxyServerCredentials);
         final DownloadSettings downloadSettings = buildDownloadParameters(destinationFilePath,
-            distributionServerCredentials, proxySettings);
-        when(urlConnectionProvider.openConnection(downloadSettings.getResourceUrl(),
-            downloadSettings.getProxySettings().getProxy())).thenReturn(urlConnection);
-        when(urlConnection.getInputStream()).thenReturn(inputStream);
+            new ProxySettings(Proxy.Type.HTTP, "localhost", 8080, null));
+        when(httpClient.sendGetRequest(downloadSettings.getResourceUrl(), downloadSettings.getServerCredentials(),
+            downloadSettings.getProxySettings())).thenReturn(httpResponse);
+        when(httpResponse.getInputStream()).thenReturn(inputStream);
         final ReadableByteChannel resourceInputChannel = mock(ReadableByteChannel.class);
         when(channelProvider.getReadableByteChannel(inputStream)).thenReturn(resourceInputChannel);
-        final Path temporaryFilePath = downloadSettings
-            .getTemporaryDirectoryPath()
-            .resolve(
-                downloadSettings.getDestinationFilePath().getFileName().toString() + DownloadResource.TMP_EXTENSION);
         final FileChannel resourceOutputChannel = spy(FileChannel.class);
-        when(channelProvider.getWritableFileChannelForNewFile(temporaryFilePath, StandardOpenOption.WRITE,
-            StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)).thenReturn(resourceOutputChannel);
+        when(channelProvider.getWritableFileChannelForNewFile(downloadSettings.getTemporaryFilePath(),
+            StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)).thenReturn(
+            resourceOutputChannel);
+        when(httpResponse.getStatusCode()).thenReturn(200);
 
         usecase.execute(downloadSettings);
 
-        verify(applyAuthorization).execute(urlConnection, DownloadResource.AUTHORIZATION_HEADER,
-            distributionServerCredentials);
-        verify(applyAuthorization).execute(urlConnection, DownloadResource.PROXY_AUTHORIZATION_HEADER,
-            proxyServerCredentials);
         verify(resourceOutputChannel).transferFrom(resourceInputChannel, 0, Long.MAX_VALUE);
         verify(resourceInputChannel).close();
-        verify(fileManager).move(temporaryFilePath, downloadSettings.getDestinationFilePath(),
+        verify(httpResponse).close();
+        verify(fileManager).move(downloadSettings.getTemporaryFilePath(), downloadSettings.getDestinationFilePath(),
             StandardCopyOption.REPLACE_EXISTING);
-        verifyNoMoreInteractions(fileManager, channelProvider, urlConnectionProvider, urlConnection, inputStream,
-            applyAuthorization, resourceInputChannel);
+        verifyNoMoreInteractions(fileManager, channelProvider, httpClientProvider, httpClient);
     }
 
-    private Path getDownloadDirectoryPath() {
+    private Path getTemporaryFilePath() {
         return temporaryDirectoryPath.resolve(DOWNLOAD_DIRECTORY_NAME);
     }
 
@@ -268,13 +254,12 @@ class DownloadResourceTest {
 
     private DownloadSettings buildDownloadParameters(@Nonnull final Path destinationFilePath)
         throws MalformedURLException {
-        return buildDownloadParameters(destinationFilePath, null, PROXY_SETTINGS);
+        return buildDownloadParameters(destinationFilePath, null);
     }
 
     private DownloadSettings buildDownloadParameters(@Nonnull final Path destinationFilePath,
-        @Nullable final Credentials credentials, @Nonnull final ProxySettings proxySettings)
-        throws MalformedURLException {
-        return new DownloadSettings(getResourceFilePath().toUri().toURL(), credentials, proxySettings,
-            getDownloadDirectoryPath(), destinationFilePath);
+        @Nullable final ProxySettings proxySettings) throws MalformedURLException {
+        return new DownloadSettings(getResourceFilePath().toUri().toURL(), null, proxySettings, getTemporaryFilePath(),
+            destinationFilePath);
     }
 }
