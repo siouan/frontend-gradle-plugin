@@ -6,9 +6,9 @@
                 - Integrated <fgp-nodejs-link />, <fgp-npm-link />, <fgp-yarn-link /> builds
             </small>
             <fgp-image-link
-                href="https://github.com/siouan/frontend-gradle-plugin/releases/tag/v4.0.1-jdk11"
-                src="https://img.shields.io/badge/Latest%20release-4.0.1-blue.svg"
-                alt="Latest release 4.0.1"
+                href="https://github.com/siouan/frontend-gradle-plugin/releases/tag/v4.0.2"
+                src="https://img.shields.io/badge/Latest%20release-4.0.2-blue.svg"
+                alt="Latest release 4.0.2"
                 class="ml-1"
             />
         </fgp-main-title>
