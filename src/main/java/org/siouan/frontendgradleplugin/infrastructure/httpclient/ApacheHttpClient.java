@@ -13,6 +13,7 @@ import org.apache.http.auth.MalformedChallengeException;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.AuthCache;
 import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.protocol.HttpClientContext;
@@ -41,7 +42,7 @@ public class ApacheHttpClient extends AbstractHttpClient {
     protected HttpResponse getRemoteResource(@Nonnull final URL resourceUrl, @Nullable final Credentials credentials,
         @Nullable final ProxySettings proxySettings) throws IOException, HttpClientException {
         final BasicScheme basicScheme = new BasicScheme();
-        final RequestConfig.Builder requestConfigBuilder = RequestConfig.custom();
+        final RequestConfig.Builder requestConfigBuilder = RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD);
         final AuthCache authCache = new BasicAuthCache();
         final HttpClientContext httpClientContext = HttpClientContext.create();
         httpClientContext.setAuthCache(authCache);
