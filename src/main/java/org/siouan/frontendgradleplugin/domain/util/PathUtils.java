@@ -1,10 +1,6 @@
 package org.siouan.frontendgradleplugin.domain.util;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableSet;
-
 import java.nio.file.Path;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nonnull;

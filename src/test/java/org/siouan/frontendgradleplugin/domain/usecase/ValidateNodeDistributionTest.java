@@ -1,6 +1,7 @@
 package org.siouan.frontendgradleplugin.domain.usecase;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -22,13 +23,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.siouan.frontendgradleplugin.domain.exception.InvalidNodeDistributionException;
 import org.siouan.frontendgradleplugin.domain.exception.NodeDistributionShasumNotFoundException;
+import org.siouan.frontendgradleplugin.domain.exception.ResourceDownloadException;
 import org.siouan.frontendgradleplugin.domain.model.DistributionValidatorSettings;
 import org.siouan.frontendgradleplugin.domain.model.DownloadSettings;
 import org.siouan.frontendgradleplugin.domain.model.Logger;
-import org.siouan.frontendgradleplugin.domain.model.ProxySettings;
 import org.siouan.frontendgradleplugin.domain.provider.FileManager;
 import org.siouan.frontendgradleplugin.test.fixture.PathFixture;
-import org.siouan.frontendgradleplugin.test.fixture.ProxySettingsFixture;
 import org.siouan.frontendgradleplugin.test.util.DownloadSettingsMatcher;
 
 @ExtendWith(MockitoExtension.class)
@@ -44,7 +44,7 @@ class ValidateNodeDistributionTest {
 
     private static final Path DISTRIBUTION_FILE_PATH = PathFixture.ANY_PATH.resolve(DISTRIBUTION_FILENAME);
 
-    private static final ProxySettings PROXY_SETTINGS = ProxySettingsFixture.NO_PROXY_SETTINGS;
+    private static final String TMP_SHASUM_FILENAME = ValidateNodeDistribution.SHASUMS_FILENAME + ".tmp";
 
     static {
         try {
@@ -57,6 +57,9 @@ class ValidateNodeDistributionTest {
 
     @Mock
     private FileManager fileManager;
+
+    @Mock
+    private BuildTemporaryFileName buildTemporaryFileName;
 
     @Mock
     private DownloadResource downloadResource;
@@ -75,21 +78,22 @@ class ValidateNodeDistributionTest {
     @BeforeEach
     void setUp() {
         temporaryDirectoryPath = PathFixture.TMP_PATH;
-        usecase = new ValidateNodeDistribution(fileManager, downloadResource, readNodeDistributionShasum, hashFile,
-            mock(Logger.class));
+        usecase = new ValidateNodeDistribution(fileManager, buildTemporaryFileName, downloadResource,
+            readNodeDistributionShasum, hashFile, mock(Logger.class));
     }
 
     @Test
-    void shouldFailWhenShasumsCannotBeDownloaded() throws IOException {
+    void shouldFailWhenShasumsCannotBeDownloaded() throws IOException, ResourceDownloadException {
         final Path downloadedShasumFilepath = temporaryDirectoryPath.resolve(ValidateNodeDistribution.SHASUMS_FILENAME);
+        when(buildTemporaryFileName.execute(anyString())).thenReturn(TMP_SHASUM_FILENAME);
         final Exception expectedException = new IOException();
         doThrow(expectedException)
             .when(downloadResource)
             .execute(argThat(new DownloadSettingsMatcher(
-                new DownloadSettings(CHECKSUM_URL, null, PROXY_SETTINGS, temporaryDirectoryPath,
+                new DownloadSettings(CHECKSUM_URL, null, null, temporaryDirectoryPath.resolve(TMP_SHASUM_FILENAME),
                     downloadedShasumFilepath))));
         final DistributionValidatorSettings distributionValidatorSettings = new DistributionValidatorSettings(
-            temporaryDirectoryPath, DISTRIBUTION_URL, null, PROXY_SETTINGS, DISTRIBUTION_FILE_PATH);
+            temporaryDirectoryPath, DISTRIBUTION_URL, null, null, DISTRIBUTION_FILE_PATH);
 
         assertThatThrownBy(() -> usecase.execute(distributionValidatorSettings)).isEqualTo(expectedException);
 
@@ -98,75 +102,79 @@ class ValidateNodeDistributionTest {
     }
 
     @Test
-    void shouldFailWhenShasumsCannotBeRead() throws IOException {
+    void shouldFailWhenShasumsCannotBeRead() throws IOException, ResourceDownloadException {
+        when(buildTemporaryFileName.execute(anyString())).thenReturn(TMP_SHASUM_FILENAME);
         final Path downloadedShasumFilepath = temporaryDirectoryPath.resolve(ValidateNodeDistribution.SHASUMS_FILENAME);
         final Exception expectedException = new IOException();
         when(readNodeDistributionShasum.execute(downloadedShasumFilepath, DISTRIBUTION_FILENAME)).thenThrow(
             expectedException);
         final DistributionValidatorSettings distributionValidatorSettings = new DistributionValidatorSettings(
-            temporaryDirectoryPath, DISTRIBUTION_URL, null, PROXY_SETTINGS, DISTRIBUTION_FILE_PATH);
+            temporaryDirectoryPath, DISTRIBUTION_URL, null, null, DISTRIBUTION_FILE_PATH);
 
         assertThatThrownBy(() -> usecase.execute(distributionValidatorSettings)).isEqualTo(expectedException);
 
         verify(downloadResource).execute(argThat(new DownloadSettingsMatcher(
-            new DownloadSettings(CHECKSUM_URL, null, PROXY_SETTINGS, temporaryDirectoryPath,
+            new DownloadSettings(CHECKSUM_URL, null, null, temporaryDirectoryPath.resolve(TMP_SHASUM_FILENAME),
                 downloadedShasumFilepath))));
         verify(fileManager).deleteIfExists(downloadedShasumFilepath);
         verifyNoMoreInteractions(fileManager, downloadResource, readNodeDistributionShasum, hashFile);
     }
 
     @Test
-    void shouldFailWhenShasumIsNotFound() throws IOException {
+    void shouldFailWhenShasumIsNotFound() throws IOException, ResourceDownloadException {
+        when(buildTemporaryFileName.execute(anyString())).thenReturn(TMP_SHASUM_FILENAME);
         final Path downloadedShasumFilepath = temporaryDirectoryPath.resolve(ValidateNodeDistribution.SHASUMS_FILENAME);
         when(readNodeDistributionShasum.execute(downloadedShasumFilepath, DISTRIBUTION_FILENAME)).thenReturn(
             Optional.empty());
         final DistributionValidatorSettings distributionValidatorSettings = new DistributionValidatorSettings(
-            temporaryDirectoryPath, DISTRIBUTION_URL, null, PROXY_SETTINGS, DISTRIBUTION_FILE_PATH);
+            temporaryDirectoryPath, DISTRIBUTION_URL, null, null, DISTRIBUTION_FILE_PATH);
 
         assertThatThrownBy(() -> usecase.execute(distributionValidatorSettings)).isInstanceOf(
             NodeDistributionShasumNotFoundException.class);
 
         verify(downloadResource).execute(argThat(new DownloadSettingsMatcher(
-            new DownloadSettings(CHECKSUM_URL, null, PROXY_SETTINGS, temporaryDirectoryPath,
+            new DownloadSettings(CHECKSUM_URL, null, null, temporaryDirectoryPath.resolve(TMP_SHASUM_FILENAME),
                 downloadedShasumFilepath))));
         verify(fileManager).deleteIfExists(downloadedShasumFilepath);
         verifyNoMoreInteractions(fileManager, downloadResource, readNodeDistributionShasum, hashFile);
     }
 
     @Test
-    void shouldFailWhenDistributionFileCannotBeHashed() throws IOException {
+    void shouldFailWhenDistributionFileCannotBeHashed() throws IOException, ResourceDownloadException {
+        when(buildTemporaryFileName.execute(anyString())).thenReturn(TMP_SHASUM_FILENAME);
         final Path downloadedShasumFilepath = temporaryDirectoryPath.resolve(ValidateNodeDistribution.SHASUMS_FILENAME);
         when(readNodeDistributionShasum.execute(downloadedShasumFilepath, DISTRIBUTION_FILENAME)).thenReturn(
             Optional.of("0123456789abcdef"));
         final Exception expectedException = new IOException();
         when(hashFile.execute(DISTRIBUTION_FILE_PATH)).thenThrow(expectedException);
         final DistributionValidatorSettings distributionValidatorSettings = new DistributionValidatorSettings(
-            temporaryDirectoryPath, DISTRIBUTION_URL, null, PROXY_SETTINGS, DISTRIBUTION_FILE_PATH);
+            temporaryDirectoryPath, DISTRIBUTION_URL, null, null, DISTRIBUTION_FILE_PATH);
 
         assertThatThrownBy(() -> usecase.execute(distributionValidatorSettings)).isEqualTo(expectedException);
 
         verify(downloadResource).execute(argThat(new DownloadSettingsMatcher(
-            new DownloadSettings(CHECKSUM_URL, null, PROXY_SETTINGS, temporaryDirectoryPath,
+            new DownloadSettings(CHECKSUM_URL, null, null, temporaryDirectoryPath.resolve(TMP_SHASUM_FILENAME),
                 downloadedShasumFilepath))));
         verify(fileManager).deleteIfExists(downloadedShasumFilepath);
         verifyNoMoreInteractions(fileManager, downloadResource, readNodeDistributionShasum, hashFile);
     }
 
     @Test
-    void shouldFailWhenDistributionFileHashIsIncorrect() throws IOException {
+    void shouldFailWhenDistributionFileHashIsIncorrect() throws IOException, ResourceDownloadException {
+        when(buildTemporaryFileName.execute(anyString())).thenReturn(TMP_SHASUM_FILENAME);
         final Path downloadedShasumFilepath = temporaryDirectoryPath.resolve(ValidateNodeDistribution.SHASUMS_FILENAME);
         final String expectedHash = "0123456789abcdef";
         when(readNodeDistributionShasum.execute(downloadedShasumFilepath, DISTRIBUTION_FILENAME)).thenReturn(
             Optional.of(expectedHash));
         when(hashFile.execute(DISTRIBUTION_FILE_PATH)).thenReturn("fedcba98765543210");
         final DistributionValidatorSettings distributionValidatorSettings = new DistributionValidatorSettings(
-            temporaryDirectoryPath, DISTRIBUTION_URL, null, PROXY_SETTINGS, DISTRIBUTION_FILE_PATH);
+            temporaryDirectoryPath, DISTRIBUTION_URL, null, null, DISTRIBUTION_FILE_PATH);
 
         assertThatThrownBy(() -> usecase.execute(distributionValidatorSettings)).isInstanceOf(
             InvalidNodeDistributionException.class);
 
         verify(downloadResource).execute(argThat(new DownloadSettingsMatcher(
-            new DownloadSettings(CHECKSUM_URL, null, PROXY_SETTINGS, temporaryDirectoryPath,
+            new DownloadSettings(CHECKSUM_URL, null, null, temporaryDirectoryPath.resolve(TMP_SHASUM_FILENAME),
                 downloadedShasumFilepath))));
         verify(fileManager).deleteIfExists(downloadedShasumFilepath);
         verifyNoMoreInteractions(fileManager, downloadResource, readNodeDistributionShasum, hashFile);
@@ -174,19 +182,21 @@ class ValidateNodeDistributionTest {
 
     @Test
     void shouldReturnWhenDistributionFileIsValid()
-        throws IOException, NodeDistributionShasumNotFoundException, InvalidNodeDistributionException {
+        throws IOException, NodeDistributionShasumNotFoundException, InvalidNodeDistributionException,
+        ResourceDownloadException {
+        when(buildTemporaryFileName.execute(anyString())).thenReturn(TMP_SHASUM_FILENAME);
         final Path downloadedShasumFilepath = temporaryDirectoryPath.resolve(ValidateNodeDistribution.SHASUMS_FILENAME);
         final String expectedHash = "0123456789abcdef";
         when(readNodeDistributionShasum.execute(downloadedShasumFilepath, DISTRIBUTION_FILENAME)).thenReturn(
             Optional.of(expectedHash));
         when(hashFile.execute(DISTRIBUTION_FILE_PATH)).thenReturn(expectedHash);
         final DistributionValidatorSettings distributionValidatorSettings = new DistributionValidatorSettings(
-            temporaryDirectoryPath, DISTRIBUTION_URL, null, PROXY_SETTINGS, DISTRIBUTION_FILE_PATH);
+            temporaryDirectoryPath, DISTRIBUTION_URL, null, null, DISTRIBUTION_FILE_PATH);
 
         usecase.execute(distributionValidatorSettings);
 
         verify(downloadResource).execute(argThat(new DownloadSettingsMatcher(
-            new DownloadSettings(CHECKSUM_URL, null, PROXY_SETTINGS, temporaryDirectoryPath,
+            new DownloadSettings(CHECKSUM_URL, null, null, temporaryDirectoryPath.resolve(TMP_SHASUM_FILENAME),
                 downloadedShasumFilepath))));
         verify(fileManager).deleteIfExists(downloadedShasumFilepath);
         verifyNoMoreInteractions(fileManager, downloadResource, readNodeDistributionShasum, hashFile);

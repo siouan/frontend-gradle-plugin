@@ -17,6 +17,8 @@ public class GetDistributionValidator {
 
     private final FileManager fileManager;
 
+    private final BuildTemporaryFileName buildTemporaryFileName;
+
     private final DownloadResource downloadResource;
 
     private final ReadNodeDistributionShasum readNodeDistributionShasum;
@@ -25,9 +27,11 @@ public class GetDistributionValidator {
 
     private final Logger logger;
 
-    public GetDistributionValidator(final FileManager fileManager, final DownloadResource downloadResource,
-        final ReadNodeDistributionShasum readNodeDistributionShasum, final HashFile hashFile, final Logger logger) {
+    public GetDistributionValidator(final FileManager fileManager, final BuildTemporaryFileName buildTemporaryFileName,
+        final DownloadResource downloadResource, final ReadNodeDistributionShasum readNodeDistributionShasum,
+        final HashFile hashFile, final Logger logger) {
         this.fileManager = fileManager;
+        this.buildTemporaryFileName = buildTemporaryFileName;
         this.downloadResource = downloadResource;
         this.readNodeDistributionShasum = readNodeDistributionShasum;
         this.hashFile = hashFile;
@@ -45,9 +49,8 @@ public class GetDistributionValidator {
     public Optional<DistributionValidator> execute(@Nonnull String distributionId) {
         switch (distributionId) {
         case DistributionId.NODE:
-            return Optional.of(
-                new ValidateNodeDistribution(fileManager, downloadResource, readNodeDistributionShasum, hashFile,
-                    logger));
+            return Optional.of(new ValidateNodeDistribution(fileManager, buildTemporaryFileName, downloadResource,
+                readNodeDistributionShasum, hashFile, logger));
         case DistributionId.YARN:
         default:
             return Optional.empty();

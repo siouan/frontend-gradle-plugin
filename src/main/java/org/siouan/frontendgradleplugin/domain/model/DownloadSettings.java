@@ -18,7 +18,7 @@ public class DownloadSettings {
 
     private final ProxySettings proxySettings;
 
-    private final Path temporaryDirectoryPath;
+    private final Path temporaryFilePath;
 
     private final Path destinationFilePath;
 
@@ -28,16 +28,16 @@ public class DownloadSettings {
      * @param resourceUrl URL to download the resource.
      * @param serverCredentials Credentials to authenticate on the server before download.
      * @param proxySettings Proxy settings used for the connection.
-     * @param temporaryDirectoryPath Path to a temporary directory.
+     * @param temporaryFilePath Path to a temporary file.
      * @param destinationFilePath Path to a destination file.
      */
     public DownloadSettings(@Nonnull final URL resourceUrl, @Nullable final Credentials serverCredentials,
-        @Nonnull final ProxySettings proxySettings, @Nonnull final Path temporaryDirectoryPath,
+        @Nullable final ProxySettings proxySettings, @Nonnull final Path temporaryFilePath,
         @Nonnull final Path destinationFilePath) {
         this.resourceUrl = resourceUrl;
         this.serverCredentials = serverCredentials;
         this.proxySettings = proxySettings;
-        this.temporaryDirectoryPath = temporaryDirectoryPath;
+        this.temporaryFilePath = temporaryFilePath;
         this.destinationFilePath = destinationFilePath;
     }
 
@@ -66,19 +66,19 @@ public class DownloadSettings {
      *
      * @return Proxy settings.
      */
-    @Nonnull
+    @Nullable
     public ProxySettings getProxySettings() {
         return proxySettings;
     }
 
     /**
-     * Gets the path to a temporary directory.
+     * Gets the path to a temporary file.
      *
      * @return Path.
      */
     @Nonnull
-    public Path getTemporaryDirectoryPath() {
-        return temporaryDirectoryPath;
+    public Path getTemporaryFilePath() {
+        return temporaryFilePath;
     }
 
     /**

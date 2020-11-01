@@ -32,7 +32,7 @@ public class DistributionValidatorSettings {
      * @param distributionFilePath Path to the distribution archive.
      */
     public DistributionValidatorSettings(@Nonnull final Path temporaryDirectoryPath, @Nonnull final URL distributionUrl,
-        @Nullable final Credentials distributionServerCredentials, @Nonnull final ProxySettings proxySettings,
+        @Nullable final Credentials distributionServerCredentials, @Nullable final ProxySettings proxySettings,
         @Nonnull final Path distributionFilePath) {
         this.temporaryDirectoryPath = temporaryDirectoryPath;
         this.distributionUrl = distributionUrl;
@@ -76,7 +76,7 @@ public class DistributionValidatorSettings {
      *
      * @return Proxy settings.
      */
-    @Nonnull
+    @Nullable
     public ProxySettings getProxySettings() {
         return proxySettings;
     }

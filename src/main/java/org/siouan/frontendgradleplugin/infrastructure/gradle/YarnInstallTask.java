@@ -116,7 +116,7 @@ public class YarnInstallTask extends AbstractDistributionInstallTask {
     @Override
     @Nonnull
     protected InstallSettings getInstallSettings(@Nonnull final Platform platform,
-        @Nullable final Credentials distributionServerCredentials, @Nonnull final ProxySettings proxySettings) {
+        @Nullable final Credentials distributionServerCredentials, @Nullable final ProxySettings proxySettings) {
         return new InstallSettings(platform, yarnVersion.get(), yarnDistributionUrlRoot.get(),
             yarnDistributionUrlPathPattern.get(), distributionServerCredentials, proxySettings,
             getTemporaryDir().toPath(), yarnInstallDirectory.getAsFile().get().toPath());

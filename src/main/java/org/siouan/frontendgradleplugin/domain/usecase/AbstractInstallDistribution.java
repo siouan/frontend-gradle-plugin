@@ -6,7 +6,9 @@ import javax.annotation.Nonnull;
 
 import org.siouan.frontendgradleplugin.domain.exception.ArchiverException;
 import org.siouan.frontendgradleplugin.domain.exception.DistributionValidatorException;
+import org.siouan.frontendgradleplugin.domain.exception.FrontendException;
 import org.siouan.frontendgradleplugin.domain.exception.InvalidDistributionUrlException;
+import org.siouan.frontendgradleplugin.domain.exception.ResourceDownloadException;
 import org.siouan.frontendgradleplugin.domain.exception.UnsupportedDistributionArchiveException;
 import org.siouan.frontendgradleplugin.domain.exception.UnsupportedDistributionIdException;
 import org.siouan.frontendgradleplugin.domain.exception.UnsupportedPlatformException;
@@ -66,11 +68,9 @@ public abstract class AbstractInstallDistribution {
      * @throws DistributionValidatorException If the downloaded distribution file is not valid.
      * @throws ArchiverException If an error occurs in the archiver exploding the distribution.
      * @throws IOException If an I/O error occurs.
+     * @throws ResourceDownloadException If the distribution download failed.
      */
-    public void execute(@Nonnull final InstallSettings installSettings)
-        throws UnsupportedDistributionArchiveException, ArchiverException, UnsupportedPlatformException,
-        UnsupportedDistributionIdException, InvalidDistributionUrlException, DistributionValidatorException,
-        IOException {
+    public void execute(@Nonnull final InstallSettings installSettings) throws FrontendException, IOException {
         logger.info("Removing install directory '{}'", installSettings.getInstallDirectoryPath());
         fileManager.deleteFileTree(installSettings.getInstallDirectoryPath(), true);
 
