@@ -6,7 +6,7 @@ frontend {
     nodeDistributionProvided = true
     nodeInstallDirectory = project.nodeInstallDirectory
     yarnEnabled = true
-    yarnVersion = '1.22.4'
+    yarnVersion = '1.22.10'
     yarnInstallDirectory = file("${rootProject.projectDir}/yarn")
     assembleScript = 'run build'
     cleanScript = 'run clean'
