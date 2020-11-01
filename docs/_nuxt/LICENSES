@@ -1,12 +1,12 @@
 /*!
-  * vue-router v3.4.1
+  * vue-router v3.4.8
   * (c) 2020 Evan You
   * @license MIT
   */
 
 /*!
- * Vue.js v2.6.11
- * (c) 2014-2019 Evan You
+ * Vue.js v2.6.12
+ * (c) 2014-2020 Evan You
  * Released under the MIT License.
  */
 
@@ -17,7 +17,7 @@
  */
 
 /*!
- * vue-i18n v8.20.0 
+ * vue-i18n v8.22.1 
  * (c) 2020 kazuya kawaguchi
  * Released under the MIT License.
  */
