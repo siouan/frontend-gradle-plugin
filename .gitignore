@@ -1,11 +1,11 @@
 /buildSrc/.gradle/
 /buildSrc/build/
-/docs/
 /out/
 /site/dist/
 /site/node_modules/
 .idea/
 .gradle/
 build/
+docs/
 node/
 yarn/

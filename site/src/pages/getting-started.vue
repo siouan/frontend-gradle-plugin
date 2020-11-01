@@ -23,7 +23,7 @@
             Starting from release <fgp-repo-link path="/releases/tag/v3.0.1">3.0.1</fgp-repo-link>, ID
             <fgp-code>org.siouan.frontend</fgp-code> and classpath
             <fgp-code>org.siouan:frontend-gradle-plugin:&lt;version></fgp-code> are deprecated. If you are already using
-            the plugin, we recommend <fgp-repo-link path="/releases/tag/v4.0.0-jdk11">upgrading</fgp-repo-link> to the latest
+            the plugin, we recommend <fgp-repo-link path="/releases/tag/v4.0.0-jdk8">upgrading</fgp-repo-link> to the latest
             release as soon as possible.
         </fgp-info>
         <ol>
