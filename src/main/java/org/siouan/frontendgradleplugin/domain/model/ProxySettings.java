@@ -11,29 +11,57 @@ import javax.annotation.Nullable;
  */
 public class ProxySettings {
 
-    private final Proxy proxy;
+    private final String proxyHost;
 
-    private final Credentials serverCredentials;
+    private final int proxyPort;
+
+    private final Proxy.Type proxyType;
+
+    private final Credentials credentials;
 
     /**
      * Builds proxy settings.
      *
-     * @param proxy Proxy details.
-     * @param serverCredentials Credentials to authenticate on the proxy server.
+     * @param proxyType Proxy type.
+     * @param proxyHost Proxy host.
+     * @param proxyPort Proxy port.
+     * @param credentials Credentials to authenticate on the proxy server.
      */
-    public ProxySettings(@Nonnull final Proxy proxy, @Nullable final Credentials serverCredentials) {
-        this.proxy = proxy;
-        this.serverCredentials = serverCredentials;
+    public ProxySettings(@Nonnull final Proxy.Type proxyType, @Nonnull final String proxyHost, final int proxyPort,
+        @Nullable final Credentials credentials) {
+        this.proxyType = proxyType;
+        this.proxyHost = proxyHost;
+        this.proxyPort = proxyPort;
+        this.credentials = credentials;
     }
 
     /**
-     * Gets the proxy details.
+     * Gets the type of proxy.
      *
-     * @return Proxy details.
+     * @return Proxy type.
      */
     @Nonnull
-    public Proxy getProxy() {
-        return proxy;
+    public Proxy.Type getProxyType() {
+        return proxyType;
+    }
+
+    /**
+     * Gets the proxy host.
+     *
+     * @return Proxy host.
+     */
+    @Nonnull
+    public String getProxyHost() {
+        return proxyHost;
+    }
+
+    /**
+     * Gets the proxy port.
+     *
+     * @return Proxy port.
+     */
+    public int getProxyPort() {
+        return proxyPort;
     }
 
     /**
@@ -42,7 +70,7 @@ public class ProxySettings {
      * @return Credentials.
      */
     @Nullable
-    public Credentials getServerCredentials() {
-        return serverCredentials;
+    public Credentials getCredentials() {
+        return credentials;
     }
 }

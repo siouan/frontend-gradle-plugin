@@ -9,7 +9,9 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 
 import org.siouan.frontendgradleplugin.domain.exception.DistributionValidatorException;
+import org.siouan.frontendgradleplugin.domain.exception.FrontendException;
 import org.siouan.frontendgradleplugin.domain.exception.InvalidDistributionUrlException;
+import org.siouan.frontendgradleplugin.domain.exception.ResourceDownloadException;
 import org.siouan.frontendgradleplugin.domain.exception.UnsupportedDistributionIdException;
 import org.siouan.frontendgradleplugin.domain.exception.UnsupportedPlatformException;
 import org.siouan.frontendgradleplugin.domain.model.DistributionDefinition;
@@ -34,6 +36,8 @@ public class GetDistribution {
 
     private final GetDistributionUrlResolver getDistributionUrlResolver;
 
+    private final BuildTemporaryFileName buildTemporaryFileName;
+
     private final DownloadResource downloadResource;
 
     private final GetDistributionValidator getDistributionValidator;
@@ -41,9 +45,10 @@ public class GetDistribution {
     private final Logger logger;
 
     public GetDistribution(final GetDistributionUrlResolver getDistributionUrlResolver,
-        final DownloadResource downloadResource, final GetDistributionValidator getDistributionValidator,
-        final Logger logger) {
+        final BuildTemporaryFileName buildTemporaryFileName, final DownloadResource downloadResource,
+        final GetDistributionValidator getDistributionValidator, final Logger logger) {
         this.getDistributionUrlResolver = getDistributionUrlResolver;
+        this.buildTemporaryFileName = buildTemporaryFileName;
         this.downloadResource = downloadResource;
         this.getDistributionValidator = getDistributionValidator;
         this.logger = logger;
@@ -64,11 +69,11 @@ public class GetDistribution {
      * @throws InvalidDistributionUrlException If the URL to download the distribution is invalid.
      * @throws DistributionValidatorException If the downloaded distribution file is invalid.
      * @throws IOException If an I/O error occurs.
+     * @throws ResourceDownloadException If the distribution download failed.
      */
     @Nonnull
     public Path execute(@Nonnull final GetDistributionSettings getDistributionSettings)
-        throws UnsupportedDistributionIdException, UnsupportedPlatformException, InvalidDistributionUrlException,
-        DistributionValidatorException, IOException {
+        throws FrontendException, IOException {
         // Resolve the URL to download the distribution
         final DistributionUrlResolver distributionUrlResolver = getDistributionUrlResolver
             .execute(getDistributionSettings.getDistributionId())
@@ -79,15 +84,16 @@ public class GetDistribution {
         final URL distributionUrl = distributionUrlResolver.execute(distributionDefinition);
 
         // Download the distribution
-        logger.info("Downloading distribution at '{}' (proxy: {})", distributionUrl,
-            getDistributionSettings.getProxySettings().getProxy());
+        logger.info("Downloading distribution at '{}'", distributionUrl);
         final Path distributionFilePath = getDistributionSettings
             .getTemporaryDirectoryPath()
             .resolve(resolveDistributionFileName(distributionUrl));
+        final Path temporaryFilePath = getDistributionSettings
+            .getTemporaryDirectoryPath()
+            .resolve(buildTemporaryFileName.execute(distributionFilePath.getFileName().toString()));
         downloadResource.execute(
             new DownloadSettings(distributionUrl, getDistributionSettings.getDistributionServerCredentials(),
-                getDistributionSettings.getProxySettings(), getDistributionSettings.getTemporaryDirectoryPath(),
-                distributionFilePath));
+                getDistributionSettings.getProxySettings(), temporaryFilePath, distributionFilePath));
 
         final Optional<DistributionValidator> distributionValidator = getDistributionValidator.execute(
             getDistributionSettings.getDistributionId());

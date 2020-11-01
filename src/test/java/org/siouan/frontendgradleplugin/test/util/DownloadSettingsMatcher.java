@@ -1,5 +1,6 @@
 package org.siouan.frontendgradleplugin.test.util;
 
+import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -18,8 +19,8 @@ public class DownloadSettingsMatcher extends AbstractArgumentMatcher<DownloadSet
         }
 
         return actualValue.getResourceUrl().equals(expectedValue.getResourceUrl())
-            && actualValue.getProxySettings().equals(expectedValue.getProxySettings())
-            && actualValue.getTemporaryDirectoryPath().equals(expectedValue.getTemporaryDirectoryPath())
+            && Objects.equals(actualValue.getProxySettings(), expectedValue.getProxySettings())
+            && actualValue.getTemporaryFilePath().equals(expectedValue.getTemporaryFilePath())
             && actualValue.getDestinationFilePath().equals(expectedValue.getDestinationFilePath());
     }
 }
