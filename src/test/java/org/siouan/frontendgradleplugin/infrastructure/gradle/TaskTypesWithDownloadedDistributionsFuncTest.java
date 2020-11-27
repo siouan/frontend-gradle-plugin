@@ -147,13 +147,14 @@ class TaskTypesWithDownloadedDistributionsFuncTest {
         assertTaskSuccess(result6, FrontendGradlePlugin.INSTALL_TASK_NAME);
         assertTaskSuccess(result6, RUN_NPM_YARN_TASK_NAME);
 
-        Files.deleteIfExists(projectDirectoryPath.resolve("package-lock.json"));
-        Files.copy(getResourcePath("package-yarn.json"), projectDirectoryPath.resolve("package.json"),
+        Files.deleteIfExists(packageJsonDirectoryPath.resolve("package-lock.json"));
+        Files.copy(getResourcePath("package-yarn.json"), packageJsonDirectoryPath.resolve("package.json"),
             StandardCopyOption.REPLACE_EXISTING);
         frontendMapBuilder
             .yarnEnabled(true)
             .yarnVersion("1.22.4")
-            .yarnInstallDirectory(projectDirectoryPath.resolve("yarn-dist"));
+            .yarnInstallDirectory(projectDirectoryPath.resolve("yarn-dist"))
+            .verboseModeEnabled(true);
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap(),
             String.join("\n", runNodeTaskDefinition, runNpxTaskDefinition, runNpmYarnTaskDefinition));
 

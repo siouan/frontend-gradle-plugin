@@ -4,7 +4,7 @@
         <template v-slot:description>
             <p>
                 Depending on the value of the <fgp-property-link name="yarnEnabled" /> property, this task issues either
-                a<fgp-code>npm install</fgp-code> command or a <fgp-code>yarn install</fgp-code> command, by default.
+                a <fgp-code>npm install</fgp-code> command or a <fgp-code>yarn install</fgp-code> command, by default.
                 Consequently, the command shall install/update dependencies, and perform any additional actions as
                 described in the <fgp-code>package.json</fgp-code> file located in the directory pointed by the
                 <fgp-property-link name="packageJsonDirectory" /> property. Optionally, this command may be customized
