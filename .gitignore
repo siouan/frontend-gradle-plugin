@@ -3,6 +3,7 @@
 /out/
 /site/dist/
 /site/node_modules/
+/site/.yarn/
 .idea/
 .gradle/
 build/

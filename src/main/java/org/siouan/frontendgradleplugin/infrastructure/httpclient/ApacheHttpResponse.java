@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import javax.annotation.Nonnull;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.core5.http.HttpEntity;
 import org.siouan.frontendgradleplugin.domain.model.HttpResponse;
 
 /**
@@ -27,27 +27,24 @@ public class ApacheHttpResponse implements HttpResponse {
     @Override
     @Nonnull
     public String getProtocol() {
-        return httpResponse.getStatusLine().getProtocolVersion().getProtocol();
+        return httpResponse.getVersion().getProtocol();
     }
 
     @Override
     @Nonnull
     public String getVersion() {
-        return httpResponse.getStatusLine().getProtocolVersion().getMajor() + "." + httpResponse
-            .getStatusLine()
-            .getProtocolVersion()
-            .getMinor();
+        return httpResponse.getVersion().getMajor() + "." + httpResponse.getVersion().getMinor();
     }
 
     @Override
     public int getStatusCode() {
-        return httpResponse.getStatusLine().getStatusCode();
+        return httpResponse.getCode();
     }
 
     @Override
     @Nonnull
     public String getReasonPhrase() {
-        return httpResponse.getStatusLine().getReasonPhrase();
+        return httpResponse.getReasonPhrase();
     }
 
     @Override
