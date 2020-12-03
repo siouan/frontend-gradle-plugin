@@ -35,10 +35,14 @@
     <fgp-property-link name="publishScript" /> = 'run publish'
 
     <fgp-property-link name="packageJsonDirectory" /> = projectDir
-    <fgp-property-link name="proxyHost" /> = '127.0.0.1'
-    <fgp-property-link name="proxyPort" /> = 8080
-    <fgp-property-link name="proxyUsername" /> = 'username'
-    <fgp-property-link name="proxyPassword" /> = 'password'
+    <fgp-property-link name="httpsProxyHost" /> = '127.0.0.1'
+    <fgp-property-link name="httpsProxyPort" /> = 443
+    <fgp-property-link name="httpsProxyUsername" /> = 'username'
+    <fgp-property-link name="httpsProxyPassword" /> = 'password'
+    <fgp-property-link name="httpProxyHost" /> = '127.0.0.1'
+    <fgp-property-link name="httpProxyPort" /> = 80
+    <fgp-property-link name="httpProxyUsername" /> = 'username'
+    <fgp-property-link name="httpProxyPassword" /> = 'password'
     <fgp-property-link name="verboseModeEnabled" /> = false
 }</fgp-code></pre>
             </template>
@@ -68,10 +72,14 @@
     <fgp-property-link name="publishScript" />.set("run publish")
 
     <fgp-property-link name="packageJsonDirectory" />.set(project.layout.projectDirectory)
-    <fgp-property-link name="proxyHost" />.set("127.0.0.1")
-    <fgp-property-link name="proxyPort" />.set(8080)
-    <fgp-property-link name="proxyUsername" />.set("username")
-    <fgp-property-link name="proxyPassword" />.set("password")
+    <fgp-property-link name="httpsProxyHost" />.set("127.0.0.1")
+    <fgp-property-link name="httpsProxyPort" />.set(443)
+    <fgp-property-link name="httpsProxyUsername" />.set("username")
+    <fgp-property-link name="httpsProxyPassword" />.set("password")
+    <fgp-property-link name="httpProxyHost" />.set("127.0.0.1")
+    <fgp-property-link name="httpProxyPort" />.set(80)
+    <fgp-property-link name="httpProxyUsername" />.set("username")
+    <fgp-property-link name="httpProxyPassword" />.set("password")
     <fgp-property-link name="verboseModeEnabled" />.set(false)
 }</fgp-code></pre>
             </template>
@@ -164,11 +172,70 @@ assembleScript.set("run build")
             <fgp-sub-sub-title>Other settings</fgp-sub-sub-title>
 
             <fgp-package-json-directory-property />
-            <fgp-proxy-host-property />
-            <fgp-proxy-port-property />
-            <fgp-proxy-username-property />
-            <fgp-proxy-password-property />
+            <fgp-https-proxy-host-property />
+            <fgp-https-proxy-port-property />
+            <fgp-https-proxy-username-property />
+            <fgp-https-proxy-password-property />
+            <fgp-http-proxy-host-property />
+            <fgp-http-proxy-port-property />
+            <fgp-http-proxy-username-property />
+            <fgp-http-proxy-password-property />
             <fgp-verbose-mode-enabled-property />
+        </section>
+
+        <section>
+            <fgp-sub-sub-title id="proxy-resolution-process">
+                About proxy resolution
+                <fgp-site-link path="#app" class="small text-info">&uparrow;</fgp-site-link>
+            </fgp-sub-sub-title>
+
+            <p>
+                As a prerequisite, the distribution server's IP address or domain name must not match an entry specified
+                in the VM
+                <fgp-java-network-properties-link><fgp-code>http.nonProxyHosts</fgp-code></fgp-java-network-properties-link>
+                network property, otherwise the plugin uses a direct connection. Then, the plugin relies on its own
+                settings in priority, and finally on the VM
+                <fgp-java-network-properties-link><fgp-code>network properties</fgp-code></fgp-java-network-properties-link>.
+                The exact behaviour at runtime is introduced below:
+            </p>
+            <ul>
+                <li>
+                    The distribution download URL uses the <fgp-code>https</fgp-code> protocol:
+                    <ol>
+                        <li>
+                            If the <fgp-property-link name="httpsProxyHost" /> property is not
+                            <fgp-code>null</fgp-code>, the plugin uses the IP address or domain name defined with this
+                            property and the port defined with the <fgp-property-link name="httpsProxyPort" /> property.
+                        </li>
+                        <li>
+                            If the VM
+                            <fgp-java-network-properties-link><fgp-code>https.proxyHost</fgp-code></fgp-java-network-properties-link>
+                            network property is not <fgp-code>null</fgp-code>, the plugin uses the IP address or domain
+                            name defined with this property and the port defined with the VM
+                            <fgp-java-network-properties-link><fgp-code>https.proxyPort</fgp-code></fgp-java-network-properties-link>
+                            network property.
+                        </li>
+                    </ol>
+                </li>
+                <li>
+                    The distribution download URL uses the <fgp-code>http</fgp-code> protocol:
+                    <ol>
+                        <li>
+                            If the <fgp-property-link name="httpProxyHost" /> property is not <fgp-code>null</fgp-code>,
+                            the plugin uses the IP address or domain name defined with this property and the port
+                            defined with the <fgp-property-link name="httpProxyPort" /> property.
+                        </li>
+                        <li>
+                            If the VM
+                            <fgp-java-network-properties-link><fgp-code>http.proxyHost</fgp-code></fgp-java-network-properties-link>
+                            network property is not <fgp-code>null</fgp-code>, the plugin uses the IP address or domain
+                            name defined with this property and the port defined with the VM
+                            <fgp-java-network-properties-link><fgp-code>http.proxyPort</fgp-code></fgp-java-network-properties-link>
+                            network property.
+                        </li>
+                    </ol>
+                </li>
+            </ul>
         </section>
     </section>
 </template>
@@ -182,6 +249,7 @@ import fgpCode from "../components/code";
 import fgpCodeComment from "../components/code-comment";
 import fgpGradleScripts from "../components/gradle-scripts";
 import fgpInstallScriptProperty from "../components/property/install-script-property";
+import fgpJavaNetworkPropertiesLink from "../components/link/java-network-properties-link";
 import fgpMainTitle from "../components/main-title";
 import fgpNodeDistributionProvidedProperty from "../components/property/node-distribution-provided-property";
 import fgpNodeVersionProperty from "../components/property/node-version-property";
@@ -193,10 +261,14 @@ import fgpNodeInstallDirectoryProperty from "../components/property/node-install
 import fgpPageMeta from "../mixin/page-meta";
 import fgpPackageJsonDirectoryProperty from "../components/property/package-json-directory-property";
 import fgpPropertyLink from "../components/link/property-link";
-import fgpProxyHostProperty from "../components/property/proxy-host-property";
-import fgpProxyPasswordProperty from "../components/property/proxy-password-property";
-import fgpProxyPortProperty from "../components/property/proxy-port-property";
-import fgpProxyUsernameProperty from "../components/property/proxy-username-property";
+import fgpHttpProxyHostProperty from "../components/property/http-proxy-host-property";
+import fgpHttpProxyPasswordProperty from "../components/property/http-proxy-password-property";
+import fgpHttpProxyPortProperty from "../components/property/http-proxy-port-property";
+import fgpHttpProxyUsernameProperty from "../components/property/http-proxy-username-property";
+import fgpHttpsProxyHostProperty from "../components/property/https-proxy-host-property";
+import fgpHttpsProxyPasswordProperty from "../components/property/https-proxy-password-property";
+import fgpHttpsProxyPortProperty from "../components/property/https-proxy-port-property";
+import fgpHttpsProxyUsernameProperty from "../components/property/https-proxy-username-property";
 import fgpPublishScriptProperty from "../components/property/publish-script-property";
 import fgpSubSubTitle from "../components/sub-sub-title";
 import fgpSubTitle from "../components/sub-title";
@@ -219,6 +291,7 @@ export default Vue.component("fgp-configuration", {
         fgpCodeComment,
         fgpGradleScripts,
         fgpInstallScriptProperty,
+        fgpJavaNetworkPropertiesLink,
         fgpMainTitle,
         fgpNodeDistributionProvidedProperty,
         fgpNodeVersionProperty,
@@ -229,10 +302,14 @@ export default Vue.component("fgp-configuration", {
         fgpNodeInstallDirectoryProperty,
         fgpPackageJsonDirectoryProperty,
         fgpPropertyLink,
-        fgpProxyHostProperty,
-        fgpProxyPasswordProperty,
-        fgpProxyPortProperty,
-        fgpProxyUsernameProperty,
+        fgpHttpProxyHostProperty,
+        fgpHttpProxyPasswordProperty,
+        fgpHttpProxyPortProperty,
+        fgpHttpProxyUsernameProperty,
+        fgpHttpsProxyHostProperty,
+        fgpHttpsProxyPasswordProperty,
+        fgpHttpsProxyPortProperty,
+        fgpHttpsProxyUsernameProperty,
         fgpPublishScriptProperty,
         fgpSubSubTitle,
         fgpSubTitle,

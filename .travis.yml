@@ -26,7 +26,7 @@ before_cache:
 before_script:
   - echo BEFORE SCRIPT
   - chmod u+x gradlew
-  - chmod u+x src/test/resources/*/bin/*
+  - chmod u+x src/intTest/resources/*/bin/*
 
 script:
   - echo SCRIPT

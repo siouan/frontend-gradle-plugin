@@ -1,15 +1,15 @@
 <template>
     <fgp-property
-        name="proxyUsername"
+        name="httpProxyUsername"
         type="java.lang.String"
         :required="false"
         :tasks="['installNode', 'installYarn']"
     >
         <p>
             This property may be used to download distributions through the proxy server with a given identity (BASIC
-            scheme server-side). This property is ignored unless the <fgp-property-link name="proxyHost" /> property is
-            not <fgp-code>null</fgp-code>. In this case, the <fgp-property-link name="proxyPassword" /> property is also
-            required.
+            scheme server-side). This property is ignored when no proxy server is used (see the
+            <fgp-property-link name="httpProxyHost" /> property). Otherwise, the
+            <fgp-property-link name="httpProxyPassword" /> property is also required.
         </p>
         <fgp-warning>
             SECURITY: do not to store a plain text username in the build script. Store it in an environment variable or
@@ -20,12 +20,11 @@
 
 <script>
 import Vue from "vue";
-import fgpCode from "../code";
 import fgpProperty from "./property";
 import fgpPropertyLink from "../link/property-link";
 import fgpWarning from "../warning";
 
-export default Vue.component("fgp-proxy-username-property", {
-    components: { fgpCode, fgpProperty, fgpPropertyLink, fgpWarning }
+export default Vue.component("fgp-http-proxy-username-property", {
+    components: { fgpProperty, fgpPropertyLink, fgpWarning }
 });
 </script>

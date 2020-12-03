@@ -58,7 +58,7 @@ class ZipArchiverTest {
 
     @Test
     void shouldFailInitializingContextWhenZipArchiveIsInvalid() {
-        final Path archiveFile =getResourcePath("invalid-archive.unknown");
+        final Path archiveFile = getResourcePath("invalid-archive.unknown");
         final ExplodeSettings settings = new ExplodeSettings(PlatformFixture.LOCAL_PLATFORM, archiveFile,
             temporaryDirectoryPath);
 
@@ -69,7 +69,7 @@ class ZipArchiverTest {
 
     @Test
     void shouldFailReadingSymbolicLinkTarget() throws IOException {
-        final Path archiveFile =getResourcePath("archive-linux.zip");
+        final Path archiveFile = getResourcePath("archive-linux.zip");
         final ExplodeSettings settings = new ExplodeSettings(PlatformFixture.LOCAL_PLATFORM, archiveFile,
             temporaryDirectoryPath);
 
@@ -107,7 +107,7 @@ class ZipArchiverTest {
             archiveFileName = "archive-linux.zip";
             expectedCount = 2;
         }
-        final Path archiveFilePath =getResourcePath(archiveFileName);
+        final Path archiveFilePath = getResourcePath(archiveFileName);
         when(fileManager.copy(any(InputStream.class), eq(targetFilePath))).thenCallRealMethod();
         final ExplodeSettings settings = new ExplodeSettings(platform, archiveFilePath, temporaryDirectoryPath);
 

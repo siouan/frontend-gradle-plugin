@@ -11,8 +11,6 @@ import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.siouan.frontendgradleplugin.domain.exception.UnsupportedPlatformException;
 import org.siouan.frontendgradleplugin.domain.model.DistributionDefinition;
-import org.siouan.frontendgradleplugin.domain.model.Environment;
-import org.siouan.frontendgradleplugin.domain.model.Platform;
 import org.siouan.frontendgradleplugin.test.fixture.PlatformFixture;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,14 +28,14 @@ class ResolveNodeDistributionUrlTest {
     @Test
     void shouldFailWhenResolvingUrlWithLinuxOsAndJreArchEqualToI386() {
         assertThatThrownBy(() -> usecase.execute(
-            new DistributionDefinition(new Platform("i386", "Linux", new Environment(null, null)), VERSION, URL_ROOT,
+            new DistributionDefinition(PlatformFixture.aDefaultPlatform("i386", "Linux"), VERSION, URL_ROOT,
                 URL_PATH_PATTERN))).isInstanceOf(UnsupportedPlatformException.class);
     }
 
     @Test
     void shouldFailWhenResolvingUrlWithSolarisOsAndJreArchEqualToSparc() {
         assertThatThrownBy(() -> usecase.execute(
-            new DistributionDefinition(new Platform("sparc", "Solaris", new Environment(null, null)), VERSION, URL_ROOT,
+            new DistributionDefinition(PlatformFixture.aDefaultPlatform("sparc", "Solaris"), VERSION, URL_ROOT,
                 URL_PATH_PATTERN))).isInstanceOf(UnsupportedPlatformException.class);
     }
 
@@ -54,8 +52,9 @@ class ResolveNodeDistributionUrlTest {
     void shouldReturnFullDownloadUrlWhenResolvingUrlWithWindowsNTOsAndJreArchEqualToX86()
         throws UnsupportedPlatformException, MalformedURLException {
         assertThat(usecase
-            .execute(new DistributionDefinition(new Platform("x86", "Windows NT", new Environment(null, null)), VERSION,
-                URL_ROOT, URL_PATH_PATTERN))
+            .execute(
+                new DistributionDefinition(PlatformFixture.aDefaultPlatform("x86", "Windows NT"), VERSION, URL_ROOT,
+                    URL_PATH_PATTERN))
             .toString()).isEqualTo("https://foo.bar/dist/v3.5.2-win-x86.zip");
     }
 
@@ -63,8 +62,9 @@ class ResolveNodeDistributionUrlTest {
     void shouldReturnFullDownloadUrlWhenResolvingUrlWithWindowsNTOsAndJreArchEqualToX64()
         throws UnsupportedPlatformException, MalformedURLException {
         assertThat(usecase
-            .execute(new DistributionDefinition(new Platform("x64", "Windows NT", new Environment(null, null)), VERSION,
-                URL_ROOT, URL_PATH_PATTERN))
+            .execute(
+                new DistributionDefinition(PlatformFixture.aDefaultPlatform("x64", "Windows NT"), VERSION, URL_ROOT,
+                    URL_PATH_PATTERN))
             .toString()).isEqualTo("https://foo.bar/dist/v3.5.2-win-x64.zip");
     }
 
@@ -72,8 +72,8 @@ class ResolveNodeDistributionUrlTest {
     void shouldReturnFullDownloadUrlWhenResolvingUrlWithLinuxOsAndJreArchEqualToAmd64()
         throws UnsupportedPlatformException, MalformedURLException {
         assertThat(usecase
-            .execute(new DistributionDefinition(new Platform("amd64", "Linux", new Environment(null, null)), VERSION,
-                URL_ROOT, URL_PATH_PATTERN))
+            .execute(new DistributionDefinition(PlatformFixture.aDefaultPlatform("amd64", "Linux"), VERSION, URL_ROOT,
+                URL_PATH_PATTERN))
             .toString()).isEqualTo("https://foo.bar/dist/v3.5.2-linux-x64.tar.gz");
     }
 
@@ -81,8 +81,8 @@ class ResolveNodeDistributionUrlTest {
     void shouldReturnFullDownloadUrlWhenResolvingUrlWithMacOsAndJreArchEqualToPPC()
         throws UnsupportedPlatformException, MalformedURLException {
         assertThat(usecase
-            .execute(new DistributionDefinition(new Platform("ppc", "Mac OS X", new Environment(null, null)), VERSION,
-                URL_ROOT, URL_PATH_PATTERN))
+            .execute(new DistributionDefinition(PlatformFixture.aDefaultPlatform("ppc", "Mac OS X"), VERSION, URL_ROOT,
+                URL_PATH_PATTERN))
             .toString()).isEqualTo("https://foo.bar/dist/v3.5.2-darwin-x64.tar.gz");
     }
 }

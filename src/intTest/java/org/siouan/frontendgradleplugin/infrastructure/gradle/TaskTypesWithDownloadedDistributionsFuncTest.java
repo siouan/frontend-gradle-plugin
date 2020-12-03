@@ -101,7 +101,7 @@ class TaskTypesWithDownloadedDistributionsFuncTest {
         Files.copy(getResourcePath("package-npm.json"), packageJsonDirectoryPath.resolve("package.json"));
         final Path temporaryScriptPath = createJavascriptFile(temporaryDirectoryPath.resolve("script.js"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("12.18.3")
+            .nodeVersion("14.15.1")
             .nodeInstallDirectory(projectDirectoryPath.resolve("node-dist"))
             .packageJsonDirectory(packageJsonDirectoryPath);
         final String runNodeTaskDefinition = buildNodeTaskDefinition(RUN_NODE_TASK_NAME,
