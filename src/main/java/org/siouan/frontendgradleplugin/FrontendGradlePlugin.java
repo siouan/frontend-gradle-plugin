@@ -203,17 +203,20 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         final Path nodejsHomePath = getEnvironmentVariable(NODEJS_HOME_ENV_VAR).map(Paths::get).orElse(null);
         final Path yarnHomePath = getEnvironmentVariable(YARN_HOME_ENV_VAR).map(Paths::get).orElse(null);
 
-        Beans.init();
-        Beans.registerBean(new Platform(SystemUtils.getSystemJvmArch(), SystemUtils.getSystemOsName(),
+        final String beanRegistryId = project.getPath();
+        Beans.initBeanRegistry(beanRegistryId);
+        Beans.registerBean(beanRegistryId, new Platform(SystemUtils.getSystemJvmArch(), SystemUtils.getSystemOsName(),
             new Environment(nodejsHomePath, yarnHomePath)));
-        Beans.registerBean(GradleLoggerAdapter.class);
-        Beans.registerBean(FileManagerImpl.class);
-        Beans.registerBean(ChannelProviderImpl.class);
-        Beans.registerBean(ArchiverProviderImpl.class);
-        Beans.registerBean(HttpClientProviderImpl.class);
+        Beans.registerBean(beanRegistryId, GradleLoggerAdapter.class);
+        Beans.registerBean(beanRegistryId, FileManagerImpl.class);
+        Beans.registerBean(beanRegistryId, ChannelProviderImpl.class);
+        Beans.registerBean(beanRegistryId, ArchiverProviderImpl.class);
+        Beans.registerBean(beanRegistryId, HttpClientProviderImpl.class);
         try {
-            project.getGradle().addListener(new TaskLoggerConfigurer(Beans.getBean(BeanRegistry.class), extension));
-            project.getLogger().debug("Platform: {}", Beans.getBean(Platform.class));
+            project
+                .getGradle()
+                .addListener(new TaskLoggerConfigurer(Beans.getBean(beanRegistryId, BeanRegistry.class), extension));
+            project.getLogger().info("Platform: {}", Beans.getBean(beanRegistryId, Platform.class));
         } catch (final BeanRegistryException e) {
             throw new GradleException("Cannot get instance of bean registry", e);
         }

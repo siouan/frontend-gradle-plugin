@@ -111,9 +111,11 @@ public abstract class AbstractDistributionInstallTask extends DefaultTask {
         } else {
             proxySettings = null;
         }
+        final String beanRegistryId = getProject().getPath();
         Beans
-            .getBean(getInstallDistributionClass())
-            .execute(getInstallSettings(Beans.getBean(Platform.class), distributionServerCredentials, proxySettings));
+            .getBean(beanRegistryId, getInstallDistributionClass())
+            .execute(getInstallSettings(Beans.getBean(beanRegistryId, Platform.class), distributionServerCredentials,
+                proxySettings));
     }
 
     /**
