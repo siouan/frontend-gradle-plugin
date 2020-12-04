@@ -53,7 +53,8 @@ With their feedback, plugin improvement is possible. Special thanks to:
 @[nitzan-n](https://github.com/nitzan-n),
 @[nuth](https://github.com/nuth),
 @[rolaca11](https://github.com/rolaca11),
-@[TapaiBalazs](https://github.com/TapaiBalazs)
+@[stephanebastian](https://github.com/stephanebastian),
+@[TapaiBalazs](https://github.com/TapaiBalazs),
 @[trohr](https://github.com/trohr)
 
 [contributing]: <CONTRIBUTING.md> (Contributing to this project)

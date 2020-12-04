@@ -84,12 +84,13 @@ public abstract class AbstractRunCommandTask extends DefaultTask {
     @TaskAction
     public void execute() throws ExecutableNotFoundException, BeanRegistryException {
         if (script.isPresent()) {
+            final String beanRegistryId = getProject().getPath();
             Beans
-                .getBean(GradleScriptRunnerAdapter.class)
+                .getBean(beanRegistryId, GradleScriptRunnerAdapter.class)
                 .execute(new ScriptProperties(getProject(), packageJsonDirectory.map(File::toPath).get(),
                     getExecutableType(), nodeInstallDirectory.getAsFile().map(File::toPath).getOrNull(),
                     yarnInstallDirectory.getAsFile().map(File::toPath).getOrNull(), script.get(),
-                    Beans.getBean(Platform.class)));
+                    Beans.getBean(beanRegistryId, Platform.class)));
         }
     }
 }
