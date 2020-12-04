@@ -49,11 +49,6 @@ public final class Beans {
         beanRegistryByIds.put(registryId, beanRegistry);
     }
 
-    public void close() {
-        beanRegistryByIds.values().forEach(BeanRegistry::clear);
-        beanRegistryByIds.clear();
-    }
-
     @Nonnull
     public BeanRegistry findBeanRegistryByIdOrFail(@Nonnull final String registryId) {
         return findBeanRegistryById(registryId).orElseThrow(

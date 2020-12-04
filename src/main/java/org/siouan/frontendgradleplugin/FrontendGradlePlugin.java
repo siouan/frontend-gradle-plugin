@@ -216,7 +216,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
             project
                 .getGradle()
                 .addListener(new TaskLoggerConfigurer(Beans.getBean(beanRegistryId, BeanRegistry.class), extension));
-            project.getLogger().info("Platform: {}", Beans.getBean(beanRegistryId, Platform.class));
+            project.getLogger().debug("Platform: {}", Beans.getBean(beanRegistryId, Platform.class));
         } catch (final BeanRegistryException e) {
             throw new GradleException("Cannot get instance of bean registry", e);
         }
