@@ -35,8 +35,8 @@ class CleanTaskFuncTest {
     void shouldDoNothingWhenScriptIsNotDefined() throws IOException {
         Files.copy(getResourcePath("package-npm.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("12.18.3")
-            .nodeDistributionUrl(getResourceUrl("node-v12.18.3.zip"));
+            .nodeVersion("14.15.4")
+            .nodeDistributionUrl(getResourceUrl("node-v14.15.4.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result = runGradle(projectDirectoryPath, FrontendGradlePlugin.CLEAN_TASK_NAME);
@@ -51,8 +51,8 @@ class CleanTaskFuncTest {
     void shouldCleanWithoutFrontendTasks() throws IOException {
         Files.copy(getResourcePath("package-npm.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("12.18.3")
-            .nodeDistributionUrl(getResourceUrl("node-v12.18.3.zip"));
+            .nodeVersion("14.15.4")
+            .nodeDistributionUrl(getResourceUrl("node-v14.15.4.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result = runGradle(projectDirectoryPath, BasePlugin.CLEAN_TASK_NAME);
@@ -68,8 +68,8 @@ class CleanTaskFuncTest {
     void shouldCleanFrontendWithNpmOrYarn() throws IOException {
         Files.copy(getResourcePath("package-npm.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("12.18.3")
-            .nodeDistributionUrl(getResourceUrl("node-v12.18.3.zip"))
+            .nodeVersion("14.15.4")
+            .nodeDistributionUrl(getResourceUrl("node-v14.15.4.zip"))
             .cleanScript("run clean");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
@@ -94,8 +94,8 @@ class CleanTaskFuncTest {
             StandardCopyOption.REPLACE_EXISTING);
         frontendMapBuilder
             .yarnEnabled(true)
-            .yarnVersion("1.22.4")
-            .yarnDistributionUrl(getResourceUrl("yarn-v1.22.4.tar.gz"));
+            .yarnVersion("1.22.10")
+            .yarnDistributionUrl(getResourceUrl("yarn-v1.22.10.tar.gz"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result3 = runGradle(projectDirectoryPath, BasePlugin.CLEAN_TASK_NAME);

@@ -8,7 +8,7 @@
         <p>
             This property is used to build the exact URL to download the distribution, by appending its value to the
             value of the <fgp-property-link name="yarnDistributionUrlRoot" /> property. This property may be set with a
-            fixed trailing path part (e.g. <fgp-code>dist/yarn-v1.22.4.tar.gz</fgp-code>), or take advantage of the
+            fixed trailing path part (e.g. <fgp-code>dist/yarn-v1.22.10.tar.gz</fgp-code>), or take advantage of the
             automatic distribution resolution in the plugin, using specific token in the pattern such as
             <fgp-code>VERSION</fgp-code> (see the <fgp-task-link name="installYarn" /> task).
         </p>

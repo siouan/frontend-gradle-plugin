@@ -336,7 +336,7 @@ class AuthenticationAndProxyFuncTest {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder().verboseModeEnabled(true);
         if (nodeDistributionUrlRoot != null) {
             frontendMapBuilder
-                .nodeVersion("12.18.3")
+                .nodeVersion("14.15.4")
                 .nodeDistributionUrlRoot(nodeDistributionUrlRoot)
                 .nodeDistributionUrlPathPattern(nodeDistributionUrlPathPattern);
             distributionServerConfigurator.withNodeDistribution();
@@ -350,7 +350,7 @@ class AuthenticationAndProxyFuncTest {
         if (yarnDistributionUrlRoot != null) {
             frontendMapBuilder
                 .yarnEnabled(true)
-                .yarnVersion("1.22.4")
+                .yarnVersion("1.22.10")
                 .yarnDistributionUrlRoot(yarnDistributionUrlRoot)
                 .yarnDistributionUrlPathPattern(yarnDistributionUrlPathPattern);
             distributionServerConfigurator.withYarnDistribution();

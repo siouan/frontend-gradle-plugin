@@ -35,7 +35,7 @@ Replace `npm` executable with `yarn` executable in the `scripts` section.
 Finally, enter `gradlew build` on a command line.
 
 [classic-yarn]: <https://classic.yarnpkg.com/> (Yarn 1.x)
-[dsl-reference]: <../../README.md#dsl-reference> (DSL reference)
+[dsl-reference]: <https://siouan.github.io/frontend-gradle-plugin/configuration> (DSL reference)
 [gradle-wrapper]: <https://docs.gradle.org/current/userguide/gradle_wrapper.html> (Gradle Wrapper)
 [nodejs]: <https://nodejs.org/> (Node.js)
 [npm]: <https://www.npmjs.com/> (npm)

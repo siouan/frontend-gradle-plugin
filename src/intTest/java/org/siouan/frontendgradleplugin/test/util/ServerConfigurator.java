@@ -61,7 +61,7 @@ public class ServerConfigurator {
                 mappingBuilder = get(urlPathMatching("^.*/node-v[^/]+$"));
                 withAuth(mappingBuilder);
                 server.stubFor(mappingBuilder.willReturn(
-                    aResponse().withBody(Files.readAllBytes(getResourcePath("node-v12.18.3.zip")))));
+                    aResponse().withBody(Files.readAllBytes(getResourcePath("node-v14.15.4.zip")))));
 
                 mappingBuilder = get(urlPathMatching("^.*/SHASUMS256.txt$"));
                 withAuth(mappingBuilder);
@@ -74,7 +74,7 @@ public class ServerConfigurator {
                 mappingBuilder = get(urlPathMatching("^.*/yarn-v[^/]+$"));
                 withAuth(mappingBuilder);
                 server.stubFor(mappingBuilder.willReturn(
-                    aResponse().withBody(Files.readAllBytes(getResourcePath("yarn-v1.22.4.tar.gz")))));
+                    aResponse().withBody(Files.readAllBytes(getResourcePath("yarn-v1.22.10.tar.gz")))));
             }
         } else {
             // The proxy server is configured to forward requests to the distribution server.

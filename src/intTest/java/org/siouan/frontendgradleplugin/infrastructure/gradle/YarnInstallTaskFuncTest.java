@@ -74,7 +74,7 @@ class YarnInstallTaskFuncTest {
     void shouldFailWhenDistributionCannotBeDownloadedWithInvalidUrl() throws IOException {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
             .yarnEnabled(true)
-            .yarnVersion("1.22.4")
+            .yarnVersion("1.22.10")
             .yarnDistributionUrlRoot("protocol://domain/unknown");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
@@ -88,8 +88,8 @@ class YarnInstallTaskFuncTest {
     void shouldSucceedFirstTimeAndBeUpToDateSecondTime() throws IOException {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
             .yarnEnabled(true)
-            .yarnVersion("1.22.4")
-            .yarnDistributionUrl(getResourceUrl("yarn-v1.22.4.tar.gz"));
+            .yarnVersion("1.22.10")
+            .yarnDistributionUrl(getResourceUrl("yarn-v1.22.10.tar.gz"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
