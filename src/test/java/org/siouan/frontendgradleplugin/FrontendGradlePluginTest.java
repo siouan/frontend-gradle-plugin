@@ -66,8 +66,10 @@ class FrontendGradlePluginTest {
         assertThat(extension.getYarnInstallDirectory().getAsFile().get()).isEqualTo(
             project.file(FrontendGradlePlugin.DEFAULT_YARN_INSTALL_DIRNAME));
         assertThat(extension.getPackageJsonDirectory().get()).isEqualTo(project.getProjectDir());
-        assertThat(extension.getProxyHost().isPresent()).isFalse();
-        assertThat(extension.getProxyPort().get()).isEqualTo(FrontendGradlePlugin.DEFAULT_PROXY_PORT);
+        assertThat(extension.getHttpsProxyHost().isPresent()).isFalse();
+        assertThat(extension.getHttpsProxyPort().get()).isEqualTo(FrontendGradlePlugin.DEFAULT_HTTPS_PROXY_PORT);
+        assertThat(extension.getHttpsProxyUsername().isPresent()).isFalse();
+        assertThat(extension.getHttpsProxyPassword().isPresent()).isFalse();
         assertThat(extension.getVerboseModeEnabled().get()).isFalse();
 
         assertThatTasksAreConfigured(project, extension);
@@ -96,8 +98,10 @@ class FrontendGradlePluginTest {
         extension.getCheckScript().set("run test");
         extension.getPublishScript().set("run publish");
         extension.getPackageJsonDirectory().set(project.file("frontend"));
-        extension.getProxyHost().set("63.72.84.102");
-        extension.getProxyPort().set(8443);
+        extension.getHttpsProxyHost().set("63.72.84.102");
+        extension.getHttpsProxyPort().set(8443);
+        extension.getHttpsProxyUsername().set("htrshPDA2v6ESar");
+        extension.getHttpsProxyPassword().set("hts`{(gK65geR5=a");
         extension.getVerboseModeEnabled().set(true);
 
         assertThatTasksAreConfigured(project, extension);
@@ -117,8 +121,13 @@ class FrontendGradlePluginTest {
             extension.getNodeDistributionUrlPathPattern().get());
         assertThat(nodeInstallTask.getNodeInstallDirectory().get()).isEqualTo(
             extension.getNodeInstallDirectory().get());
-        assertThat(nodeInstallTask.getProxyHost().getOrNull()).isEqualTo(extension.getProxyHost().getOrNull());
-        assertThat(nodeInstallTask.getProxyPort().get()).isEqualTo(extension.getProxyPort().get());
+        assertThat(nodeInstallTask.getHttpsProxyHost().getOrNull()).isEqualTo(
+            extension.getHttpsProxyHost().getOrNull());
+        assertThat(nodeInstallTask.getHttpsProxyPort().get()).isEqualTo(extension.getHttpsProxyPort().get());
+        assertThat(nodeInstallTask.getHttpsProxyUsername().getOrNull()).isEqualTo(
+            extension.getHttpsProxyUsername().getOrNull());
+        assertThat(nodeInstallTask.getHttpsProxyPassword().getOrNull()).isEqualTo(
+            extension.getHttpsProxyPassword().getOrNull());
         assertThat(nodeInstallTask.getDependsOn()).isEmpty();
 
         final YarnInstallTask yarnInstallTask = project
@@ -133,8 +142,13 @@ class FrontendGradlePluginTest {
             extension.getYarnDistributionUrlPathPattern().get());
         assertThat(yarnInstallTask.getYarnInstallDirectory().get()).isEqualTo(
             extension.getYarnInstallDirectory().get());
-        assertThat(yarnInstallTask.getProxyHost().getOrNull()).isEqualTo(extension.getProxyHost().getOrNull());
-        assertThat(yarnInstallTask.getProxyPort().get()).isEqualTo(extension.getProxyPort().get());
+        assertThat(yarnInstallTask.getHttpsProxyHost().getOrNull()).isEqualTo(
+            extension.getHttpsProxyHost().getOrNull());
+        assertThat(yarnInstallTask.getHttpsProxyPort().get()).isEqualTo(extension.getHttpsProxyPort().get());
+        assertThat(yarnInstallTask.getHttpsProxyUsername().getOrNull()).isEqualTo(
+            extension.getHttpsProxyUsername().getOrNull());
+        assertThat(yarnInstallTask.getHttpsProxyPassword().getOrNull()).isEqualTo(
+            extension.getHttpsProxyPassword().getOrNull());
         assertThat(yarnInstallTask.getDependsOn()).isEmpty();
 
         final InstallDependenciesTask installDependenciesTask = project

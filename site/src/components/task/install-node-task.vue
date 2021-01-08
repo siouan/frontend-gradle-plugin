@@ -12,9 +12,13 @@
                 in the same remote web directory than the distribution. For example, if the distribution is located at
                 <fgp-code>https://nodejs.org/dist/vX.Y.Z/node-vX.Y.Z-win-x64.zip</fgp-code>, the plugin attempts to
                 download the shasum file located at <fgp-code>https://nodejs.org/dist/vX.Y.Z/SHASUMS256.txt</fgp-code>.
-                Optionally, defining the <fgp-property-link name="proxyHost" /> property and the
-                <fgp-property-link name="proxyPort" /> property allows to use a proxy server when downloading the
-                distribution and the shasum.
+                By default, the plugin relies on the VM
+                <fgp-java-network-properties-link>network properties</fgp-java-network-properties-link> to know if a
+                proxy server shall be used when downloading the distribution and the shasum. A custom proxy server may
+                also be used by defining the <fgp-property-link name="httpsProxyHost" /> property (respectively the
+                <fgp-property-link name="httpProxyHost" /> property) if the
+                <fgp-property-link name="nodeDistributionUrlRoot" /> property uses the <fgp-code>https</fgp-code>
+                protocol (resp. uses the <fgp-code>http</fgp-code> protocol).
             </p>
             <p>
                 If a <fgp-nodejs-link /> distribution is already installed in the local platform - either as a global

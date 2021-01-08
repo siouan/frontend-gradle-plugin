@@ -59,13 +59,21 @@ public final class FrontendMapBuilder {
 
     private Boolean verboseModeEnabled;
 
-    private String proxyHost;
+    private String httpProxyHost;
 
-    private Integer proxyPort;
+    private Integer httpProxyPort;
 
-    private String proxyUsername;
+    private String httpProxyUsername;
 
-    private String proxyPassword;
+    private String httpProxyPassword;
+
+    private String httpsProxyHost;
+
+    private Integer httpsProxyPort;
+
+    private String httpsProxyUsername;
+
+    private String httpsProxyPassword;
 
     @Nonnull
     public FrontendMapBuilder nodeDistributionProvided(@Nullable final Boolean nodeDistributionProvided) {
@@ -226,26 +234,50 @@ public final class FrontendMapBuilder {
     }
 
     @Nonnull
-    public FrontendMapBuilder proxyHost(@Nullable final String proxyHost) {
-        this.proxyHost = proxyHost;
+    public FrontendMapBuilder httpProxyHost(@Nullable final String httpProxyHost) {
+        this.httpProxyHost = httpProxyHost;
         return this;
     }
 
     @Nonnull
-    public FrontendMapBuilder proxyPort(@Nullable final Integer proxyPort) {
-        this.proxyPort = proxyPort;
+    public FrontendMapBuilder httpProxyPort(@Nullable final Integer httpProxyPort) {
+        this.httpProxyPort = httpProxyPort;
         return this;
     }
 
     @Nonnull
-    public FrontendMapBuilder proxyUsername(@Nullable final String proxyUsername) {
-        this.proxyUsername = proxyUsername;
+    public FrontendMapBuilder httpProxyUsername(@Nullable final String httpProxyUsername) {
+        this.httpProxyUsername = httpProxyUsername;
         return this;
     }
 
     @Nonnull
-    public FrontendMapBuilder proxyPassword(@Nullable final String proxyPassword) {
-        this.proxyPassword = proxyPassword;
+    public FrontendMapBuilder httpProxyPassword(@Nullable final String httpProxyPassword) {
+        this.httpProxyPassword = httpProxyPassword;
+        return this;
+    }
+
+    @Nonnull
+    public FrontendMapBuilder httpsProxyHost(@Nullable final String httpsProxyHost) {
+        this.httpsProxyHost = httpsProxyHost;
+        return this;
+    }
+
+    @Nonnull
+    public FrontendMapBuilder httpsProxyPort(@Nullable final Integer httpsProxyPort) {
+        this.httpsProxyPort = httpsProxyPort;
+        return this;
+    }
+
+    @Nonnull
+    public FrontendMapBuilder httpsProxyUsername(@Nullable final String httpsProxyUsername) {
+        this.httpsProxyUsername = httpsProxyUsername;
+        return this;
+    }
+
+    @Nonnull
+    public FrontendMapBuilder httpsProxyPassword(@Nullable final String httpsProxyPassword) {
+        this.httpsProxyPassword = httpsProxyPassword;
         return this;
     }
 
@@ -318,17 +350,29 @@ public final class FrontendMapBuilder {
         if (verboseModeEnabled != null) {
             properties.put("verboseModeEnabled", verboseModeEnabled);
         }
-        if (proxyHost != null) {
-            properties.put("proxyHost", proxyHost);
+        if (httpProxyHost != null) {
+            properties.put("httpProxyHost", httpProxyHost);
         }
-        if (proxyPort != null) {
-            properties.put("proxyPort", proxyPort);
+        if (httpProxyPort != null) {
+            properties.put("httpProxyPort", httpProxyPort);
         }
-        if (proxyUsername != null) {
-            properties.put("proxyUsername", proxyUsername);
+        if (httpProxyUsername != null) {
+            properties.put("httpProxyUsername", httpProxyUsername);
         }
-        if (proxyPassword != null) {
-            properties.put("proxyPassword", proxyPassword);
+        if (httpProxyPassword != null) {
+            properties.put("httpProxyPassword", httpProxyPassword);
+        }
+        if (httpsProxyHost != null) {
+            properties.put("httpsProxyHost", httpsProxyHost);
+        }
+        if (httpsProxyPort != null) {
+            properties.put("httpsProxyPort", httpsProxyPort);
+        }
+        if (httpsProxyUsername != null) {
+            properties.put("httpsProxyUsername", httpsProxyUsername);
+        }
+        if (httpsProxyPassword != null) {
+            properties.put("httpsProxyPassword", httpsProxyPassword);
         }
         return unmodifiableMap(properties);
     }

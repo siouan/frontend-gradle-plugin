@@ -16,7 +16,7 @@
             Then, the exact URL used by default to download the distribution is
             <fgp-code>https://github.com/yarnpkg/yarn/releases/download/vVERSION/yarn-vVERSION.tar.gz</fgp-code>.
         </p>
-        <div class="card mt-3">
+        <div class="card my-3">
             <div class="card-body">
                 <h5 class="card-title">About URL pattern token</h5>
                 <p class="card-text">

@@ -1,7 +1,7 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
 import java.io.IOException;
-import java.net.Proxy;
+import java.net.URL;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -22,6 +22,7 @@ import org.siouan.frontendgradleplugin.domain.model.InstallSettings;
 import org.siouan.frontendgradleplugin.domain.model.Platform;
 import org.siouan.frontendgradleplugin.domain.model.ProxySettings;
 import org.siouan.frontendgradleplugin.domain.usecase.AbstractInstallDistribution;
+import org.siouan.frontendgradleplugin.domain.usecase.ResolveProxySettingsByUrl;
 import org.siouan.frontendgradleplugin.infrastructure.BeanRegistryException;
 import org.siouan.frontendgradleplugin.infrastructure.Beans;
 
@@ -31,58 +32,110 @@ import org.siouan.frontendgradleplugin.infrastructure.Beans;
 public abstract class AbstractDistributionInstallTask extends DefaultTask {
 
     /**
-     * Proxy host used to download resources.
+     * Proxy host used to download resources with HTTP protocol.
+     *
+     * @since 5.0.0
+     */
+    private final Property<String> httpProxyHost;
+
+    /**
+     * Proxy port used to download resources with HTTP protocol.
+     *
+     * @since 5.0.0
+     */
+    private final Property<Integer> httpProxyPort;
+
+    /**
+     * Username to authenticate on the proxy server for HTTP requests.
+     *
+     * @since 5.0.0
+     */
+    private final Property<String> httpProxyUsername;
+
+    /**
+     * Password to authenticate on the proxy server for HTTP requests.
+     *
+     * @since 5.0.0
+     */
+    private final Property<String> httpProxyPassword;
+
+    /**
+     * Proxy host used to download resources with HTTPS protocol.
      *
      * @since 2.1.0
      */
-    private final Property<String> proxyHost;
+    private final Property<String> httpsProxyHost;
 
     /**
-     * Proxy port used to download resources.
+     * Proxy port used to download resources with HTTPS protocol.
      *
      * @since 2.1.0
      */
-    private final Property<Integer> proxyPort;
+    private final Property<Integer> httpsProxyPort;
 
     /**
-     * Username to authenticate on the proxy server.
+     * Username to authenticate on the proxy server for HTTPS requests.
      *
      * @since 3.0.0
      */
-    private final Property<String> proxyUsername;
+    private final Property<String> httpsProxyUsername;
 
     /**
-     * Password to authenticate on the proxy server.
+     * Password to authenticate on the proxy server for HTTPS requests.
      *
      * @since 3.0.0
      */
-    private final Property<String> proxyPassword;
+    private final Property<String> httpsProxyPassword;
 
     protected AbstractDistributionInstallTask() {
-        this.proxyHost = getProject().getObjects().property(String.class);
-        this.proxyPort = getProject().getObjects().property(Integer.class);
-        this.proxyUsername = getProject().getObjects().property(String.class);
-        this.proxyPassword = getProject().getObjects().property(String.class);
+        this.httpProxyHost = getProject().getObjects().property(String.class);
+        this.httpProxyPort = getProject().getObjects().property(Integer.class);
+        this.httpProxyUsername = getProject().getObjects().property(String.class);
+        this.httpProxyPassword = getProject().getObjects().property(String.class);
+        this.httpsProxyHost = getProject().getObjects().property(String.class);
+        this.httpsProxyPort = getProject().getObjects().property(Integer.class);
+        this.httpsProxyUsername = getProject().getObjects().property(String.class);
+        this.httpsProxyPassword = getProject().getObjects().property(String.class);
     }
 
     @Internal
-    public Property<String> getProxyHost() {
-        return proxyHost;
+    public Property<String> getHttpProxyHost() {
+        return httpProxyHost;
     }
 
     @Internal
-    public Property<Integer> getProxyPort() {
-        return proxyPort;
+    public Property<Integer> getHttpProxyPort() {
+        return httpProxyPort;
     }
 
     @Internal
-    public Property<String> getProxyUsername() {
-        return proxyUsername;
+    public Property<String> getHttpProxyUsername() {
+        return httpProxyUsername;
     }
 
     @Internal
-    public Property<String> getProxyPassword() {
-        return proxyPassword;
+    public Property<String> getHttpProxyPassword() {
+        return httpProxyPassword;
+    }
+
+    @Internal
+    public Property<String> getHttpsProxyHost() {
+        return httpsProxyHost;
+    }
+
+    @Internal
+    public Property<Integer> getHttpsProxyPort() {
+        return httpsProxyPort;
+    }
+
+    @Internal
+    public Property<String> getHttpsProxyUsername() {
+        return httpsProxyUsername;
+    }
+
+    @Internal
+    public Property<String> getHttpsProxyPassword() {
+        return httpsProxyPassword;
     }
 
     /**
@@ -101,21 +154,22 @@ public abstract class AbstractDistributionInstallTask extends DefaultTask {
     @TaskAction
     public void execute() throws BeanRegistryException, FrontendException, IOException {
         final Credentials distributionServerCredentials = getDistributionServerCredentials();
-        final ProxySettings proxySettings;
-        final Credentials proxyServerCredentials;
-        if (proxyHost.isPresent()) {
-            proxyServerCredentials =
-                proxyUsername.isPresent() ? new Credentials(proxyUsername.get(), proxyPassword.get()) : null;
-            proxySettings = new ProxySettings(Proxy.Type.HTTP, proxyHost.get(), proxyPort.get(),
-                proxyServerCredentials);
-        } else {
-            proxySettings = null;
-        }
+        final Credentials httpProxyCredentials = httpProxyUsername
+            .map(username -> new Credentials(username, httpProxyPassword.get()))
+            .getOrNull();
+        final Credentials httpsProxyCredentials = httpsProxyUsername
+            .map(username -> new Credentials(username, httpsProxyPassword.get()))
+            .getOrNull();
+
         final String beanRegistryId = getProject().getPath();
         Beans
             .getBean(beanRegistryId, getInstallDistributionClass())
             .execute(getInstallSettings(Beans.getBean(beanRegistryId, Platform.class), distributionServerCredentials,
-                proxySettings));
+                Beans
+                    .getBean(beanRegistryId, ResolveProxySettingsByUrl.class)
+                    .execute(httpProxyHost.getOrNull(), httpProxyPort.get(), httpProxyCredentials,
+                        httpsProxyHost.getOrNull(), httpsProxyPort.get(), httpsProxyCredentials,
+                        new URL(getDistributionUrlRoot()))));
     }
 
     /**
@@ -135,6 +189,16 @@ public abstract class AbstractDistributionInstallTask extends DefaultTask {
     @Internal
     @Nonnull
     protected abstract Class<? extends AbstractInstallDistribution> getInstallDistributionClass();
+
+    /**
+     * Gets the URL root to download the distribution. This root must contain the protocol, the domain name or IP
+     * address, and the port. The pathinfo spec is optional.
+     *
+     * @return The URL root.
+     */
+    @Internal
+    @Nonnull
+    protected abstract String getDistributionUrlRoot();
 
     /**
      * Gets the install settings.
