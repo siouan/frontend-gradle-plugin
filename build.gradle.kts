@@ -34,7 +34,7 @@ java {
 
 dependencies {
     implementation(gradleApi())
-    implementation("org.apache.httpcomponents:httpclient:4.5.13")
+    implementation("org.apache.httpcomponents.client5:httpclient5:5.0.3")
     implementation("org.apache.commons:commons-compress:1.20")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0")

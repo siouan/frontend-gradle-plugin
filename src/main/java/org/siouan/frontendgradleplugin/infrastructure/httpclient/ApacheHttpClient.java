@@ -2,27 +2,19 @@ package org.siouan.frontendgradleplugin.infrastructure.httpclient;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Base64;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.http.HttpHost;
-import org.apache.http.auth.AUTH;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.MalformedChallengeException;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.AuthCache;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.config.CookieSpecs;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.impl.auth.BasicScheme;
-import org.apache.http.impl.client.BasicAuthCache;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicHeader;
+import org.apache.hc.client5.http.auth.AuthScope;
+import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
+import org.apache.hc.client5.http.impl.auth.BasicScheme;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.protocol.HttpClientContext;
+import org.apache.hc.core5.http.HttpHost;
 import org.siouan.frontendgradleplugin.domain.exception.HttpClientException;
 import org.siouan.frontendgradleplugin.domain.model.Credentials;
 import org.siouan.frontendgradleplugin.domain.model.HttpResponse;
@@ -40,24 +32,20 @@ public class ApacheHttpClient extends AbstractHttpClient {
     @Override
     @Nonnull
     protected HttpResponse getRemoteResource(@Nonnull final URL resourceUrl, @Nullable final Credentials credentials,
-        @Nullable final ProxySettings proxySettings) throws IOException, HttpClientException {
-        final BasicScheme basicScheme = new BasicScheme();
-        final RequestConfig.Builder requestConfigBuilder = RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD);
-        final AuthCache authCache = new BasicAuthCache();
+        @Nullable final ProxySettings proxySettings) throws IOException {
+
+        final RequestConfig.Builder requestConfigBuilder = RequestConfig.custom();
+
         final HttpClientContext httpClientContext = HttpClientContext.create();
-        httpClientContext.setAuthCache(authCache);
-        final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+        final BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
 
         if (credentials != null) {
             // Basic authentication for distribution server
             final HttpHost serverHost = new HttpHost(resourceUrl.getHost(), resourceUrl.getPort());
-            try {
-                basicScheme.processChallenge(new BasicHeader(AUTH.WWW_AUTH, buildAuthorization(credentials)));
-            } catch (MalformedChallengeException e) {
-                throw new HttpClientException(e);
-            }
-            authCache.put(serverHost, basicScheme);
-            registerCredentials(credentialsProvider, serverHost, credentials.getUsername(), credentials.getPassword());
+            final BasicScheme basicScheme = new BasicScheme();
+            registerCredentials(credentialsProvider, basicScheme, serverHost, credentials.getUsername(),
+                credentials.getPassword());
+            httpClientContext.resetAuthExchange(serverHost, basicScheme);
         }
 
         // Proxy management
@@ -65,16 +53,10 @@ public class ApacheHttpClient extends AbstractHttpClient {
             final HttpHost proxyServerHost = new HttpHost(proxySettings.getProxyHost(), proxySettings.getProxyPort());
             final Credentials proxyCredentials = proxySettings.getCredentials();
             if (proxyCredentials != null) {
-                // Basic authentication for proxy server
-                try {
-                    basicScheme.processChallenge(
-                        new BasicHeader(AUTH.PROXY_AUTH, buildAuthorization(proxyCredentials)));
-                } catch (MalformedChallengeException e) {
-                    throw new HttpClientException(e);
-                }
-                authCache.put(proxyServerHost, basicScheme);
-                registerCredentials(credentialsProvider, proxyServerHost, proxyCredentials.getUsername(),
+                final BasicScheme basicScheme = new BasicScheme();
+                registerCredentials(credentialsProvider, basicScheme, proxyServerHost, proxyCredentials.getUsername(),
                     proxyCredentials.getPassword());
+                httpClientContext.resetAuthExchange(proxyServerHost, basicScheme);
             }
             requestConfigBuilder.setProxy(proxyServerHost);
         }
@@ -94,13 +76,12 @@ public class ApacheHttpClient extends AbstractHttpClient {
         }
     }
 
-    private void registerCredentials(@Nonnull final CredentialsProvider credentialsProvider,
-        @Nonnull final HttpHost host, @Nonnull final String username, @Nonnull final String password) {
-        credentialsProvider.setCredentials(new AuthScope(host), new UsernamePasswordCredentials(username, password));
-    }
-
-    private String buildAuthorization(@Nonnull final Credentials credentials) {
-        final String basicCredentials = credentials.getUsername() + ':' + credentials.getPassword();
-        return "Basic " + Base64.getEncoder().encodeToString(basicCredentials.getBytes());
+    private void registerCredentials(@Nonnull final BasicCredentialsProvider credentialsProvider,
+        @Nonnull final BasicScheme basicScheme, @Nonnull final HttpHost host, @Nonnull final String username,
+        @Nonnull final String password) {
+        final UsernamePasswordCredentials usernamePasswordCredentials = new UsernamePasswordCredentials(username,
+            password.toCharArray());
+        credentialsProvider.setCredentials(new AuthScope(host), usernamePasswordCredentials);
+        basicScheme.initPreemptive(usernamePasswordCredentials);
     }
 }
