@@ -333,7 +333,7 @@ class AuthenticationAndProxyFuncTest {
 
         // Try to download the distribution through a proxy server, but the port used is not the same port than the
         // port of the WireMock proxy server.
-        final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder().verboseModeEnabled(true);
+        final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder().verboseModeEnabled(false);
         if (nodeDistributionUrlRoot != null) {
             frontendMapBuilder
                 .nodeVersion("14.15.4")
