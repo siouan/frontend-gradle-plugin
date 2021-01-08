@@ -22,9 +22,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
-import org.siouan.frontendgradleplugin.domain.usecase.GetNodeExecutablePath;
-import org.siouan.frontendgradleplugin.domain.usecase.GetYarnExecutablePath;
-import org.siouan.frontendgradleplugin.test.fixture.PlatformFixture;
 import org.siouan.frontendgradleplugin.test.util.FrontendMapBuilder;
 
 /**
@@ -32,7 +29,7 @@ import org.siouan.frontendgradleplugin.test.util.FrontendMapBuilder;
  * type in a Gradle build.  Test cases uses fake Node.js/Yarn distributions, to avoid the download overhead. The 'yarn'
  * and 'npm' executables in these distributions simply call the 'node' executable with the same arguments.
  */
-class TaskTypesWithDistributionsInPathFuncTest {
+class TaskTypesWithGlobalDistributionsFuncTest {
 
     private static final String RUN_NODE_TASK_NAME = "myRunNodeTask";
 
@@ -55,9 +52,7 @@ class TaskTypesWithDistributionsInPathFuncTest {
 
     @Test
     void shouldFailRunningCustomTasksWhenNodeExecutableDoesNotExist() throws IOException {
-        final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeDistributionProvided(true)
-            .verboseModeEnabled(true);
+        final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder().nodeDistributionProvided(true);
         final String runNodeTaskDefinition = buildNodeTaskDefinition(RUN_NODE_TASK_NAME,
             temporaryScriptPath.toString().replace("\\", "\\\\"));
         final String runNpxTaskDefinition = buildNpxTaskDefinition(RUN_NPX_TASK_NAME,
@@ -66,23 +61,21 @@ class TaskTypesWithDistributionsInPathFuncTest {
             FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, "run another-script");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap(),
             String.join("\n", runNodeTaskDefinition, runNpxTaskDefinition, runNpmYarnTaskDefinition));
-        final Path nodeExecutablePath = getResourcePath("node-dist-without-node").resolve(
-            PlatformFixture.LOCAL_PLATFORM.isWindowsOs() ? GetNodeExecutablePath.WINDOWS_EXECUTABLE_FILE_PATH
-                : GetNodeExecutablePath.NON_WINDOWS_EXECUTABLE_FILE_PATH);
+        final Path nodejsHomePath = getResourcePath("node-dist-without-node");
 
-        final BuildResult result1 = runGradleAndExpectFailure(projectDirectoryPath, nodeExecutablePath, null,
+        final BuildResult result1 = runGradleAndExpectFailure(projectDirectoryPath, nodejsHomePath, null,
             RUN_NODE_TASK_NAME);
 
         assertTaskSkipped(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskFailed(result1, RUN_NODE_TASK_NAME);
 
-        final BuildResult result2 = runGradleAndExpectFailure(projectDirectoryPath, nodeExecutablePath, null,
+        final BuildResult result2 = runGradleAndExpectFailure(projectDirectoryPath, nodejsHomePath, null,
             RUN_NPX_TASK_NAME);
 
         assertTaskSkipped(result2, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskFailed(result2, RUN_NPX_TASK_NAME);
 
-        final BuildResult result3 = runGradleAndExpectFailure(projectDirectoryPath, nodeExecutablePath, null,
+        final BuildResult result3 = runGradleAndExpectFailure(projectDirectoryPath, nodejsHomePath, null,
             RUN_NPM_YARN_TASK_NAME);
 
         assertTaskSkipped(result3, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
@@ -91,9 +84,7 @@ class TaskTypesWithDistributionsInPathFuncTest {
 
     @Test
     void shouldFailRunningCustomTasksWhenNpxExecutableDoesNotExist() throws IOException {
-        final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeDistributionProvided(true)
-            .verboseModeEnabled(true);
+        final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder().nodeDistributionProvided(true);
         final String runNodeTaskDefinition = buildNodeTaskDefinition(RUN_NODE_TASK_NAME,
             temporaryScriptPath.toString().replace("\\", "\\\\"));
         final String runNpxTaskDefinition = buildNpxTaskDefinition(RUN_NPX_TASK_NAME,
@@ -102,22 +93,20 @@ class TaskTypesWithDistributionsInPathFuncTest {
             FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, "run another-script");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap(),
             String.join("\n", runNodeTaskDefinition, runNpxTaskDefinition, runNpmYarnTaskDefinition));
-        final Path nodeExecutablePath = getResourcePath("node-dist-without-npx").resolve(
-            PlatformFixture.LOCAL_PLATFORM.isWindowsOs() ? GetNodeExecutablePath.WINDOWS_EXECUTABLE_FILE_PATH
-                : GetNodeExecutablePath.NON_WINDOWS_EXECUTABLE_FILE_PATH);
+        final Path nodejsHomePath = getResourcePath("node-dist-without-npx");
 
-        final BuildResult result1 = runGradle(projectDirectoryPath, nodeExecutablePath, null, RUN_NODE_TASK_NAME);
+        final BuildResult result1 = runGradle(projectDirectoryPath, nodejsHomePath, null, RUN_NODE_TASK_NAME);
 
         assertTaskSkipped(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskSuccess(result1, RUN_NODE_TASK_NAME);
 
-        final BuildResult result2 = runGradleAndExpectFailure(projectDirectoryPath, nodeExecutablePath, null,
+        final BuildResult result2 = runGradleAndExpectFailure(projectDirectoryPath, nodejsHomePath, null,
             RUN_NPX_TASK_NAME);
 
         assertTaskSkipped(result2, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskFailed(result2, RUN_NPX_TASK_NAME);
 
-        final BuildResult result3 = runGradle(projectDirectoryPath, nodeExecutablePath, null, RUN_NPM_YARN_TASK_NAME);
+        final BuildResult result3 = runGradle(projectDirectoryPath, nodejsHomePath, null, RUN_NPM_YARN_TASK_NAME);
 
         assertTaskSkipped(result3, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskSuccess(result3, RUN_NPM_YARN_TASK_NAME);
@@ -125,9 +114,7 @@ class TaskTypesWithDistributionsInPathFuncTest {
 
     @Test
     void shouldFailRunningCustomTasksWhenNpmExecutableDoesNotExist() throws IOException {
-        final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeDistributionProvided(true)
-            .verboseModeEnabled(true);
+        final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder().nodeDistributionProvided(true);
         final String runNodeTaskDefinition = buildNodeTaskDefinition(RUN_NODE_TASK_NAME,
             temporaryScriptPath.toString().replace("\\", "\\\\"));
         final String runNpxTaskDefinition = buildNpxTaskDefinition(RUN_NPX_TASK_NAME,
@@ -136,23 +123,21 @@ class TaskTypesWithDistributionsInPathFuncTest {
             FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, "run another-script");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap(),
             String.join("\n", runNodeTaskDefinition, runNpxTaskDefinition, runNpmYarnTaskDefinition));
-        final Path nodeExecutablePath = getResourcePath("node-dist-without-npm").resolve(
-            PlatformFixture.LOCAL_PLATFORM.isWindowsOs() ? GetNodeExecutablePath.WINDOWS_EXECUTABLE_FILE_PATH
-                : GetNodeExecutablePath.NON_WINDOWS_EXECUTABLE_FILE_PATH);
+        final Path nodejsHomePath = getResourcePath("node-dist-without-npm");
 
-        final BuildResult result1 = runGradle(projectDirectoryPath, nodeExecutablePath, null, RUN_NODE_TASK_NAME);
+        final BuildResult result1 = runGradle(projectDirectoryPath, nodejsHomePath, null, RUN_NODE_TASK_NAME);
 
         assertTaskSkipped(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskSuccess(result1, RUN_NODE_TASK_NAME);
 
-        final BuildResult result2 = runGradleAndExpectFailure(projectDirectoryPath, nodeExecutablePath, null,
+        final BuildResult result2 = runGradleAndExpectFailure(projectDirectoryPath, nodejsHomePath, null,
             RUN_NPX_TASK_NAME);
 
         assertTaskSkipped(result2, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         // Failure because npx requires npm.
         assertTaskFailed(result2, RUN_NPX_TASK_NAME);
 
-        final BuildResult result3 = runGradleAndExpectFailure(projectDirectoryPath, nodeExecutablePath, null,
+        final BuildResult result3 = runGradleAndExpectFailure(projectDirectoryPath, nodejsHomePath, null,
             RUN_NPM_YARN_TASK_NAME);
 
         assertTaskSkipped(result3, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
@@ -162,11 +147,10 @@ class TaskTypesWithDistributionsInPathFuncTest {
     @Test
     void shouldFailRunningCustomTasksWhenYarnExecutableDoesNotExist() throws IOException {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("12.18.3")
-            .nodeDistributionUrl(getResourceUrl("node-v12.18.3.zip"))
+            .nodeVersion("14.15.4")
+            .nodeDistributionUrl(getResourceUrl("node-v14.15.4.zip"))
             .yarnEnabled(true)
-            .yarnDistributionProvided(true)
-            .verboseModeEnabled(true);
+            .yarnDistributionProvided(true);
         final String runNodeTaskDefinition = buildNodeTaskDefinition(RUN_NODE_TASK_NAME,
             temporaryScriptPath.toString().replace("\\", "\\\\"));
         final String runNpmYarnTaskDefinition = buildNpmYarnTaskDefinition(RUN_NPM_YARN_TASK_NAME,
@@ -174,17 +158,15 @@ class TaskTypesWithDistributionsInPathFuncTest {
             "run another-script");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap(),
             String.join("\n", runNodeTaskDefinition, runNpmYarnTaskDefinition));
-        final Path yarnExecutablePath = projectDirectoryPath
-            .resolve("yarn-dist")
-            .resolve(PlatformFixture.LOCAL_PLATFORM.isWindowsOs() ? GetYarnExecutablePath.WINDOWS_EXECUTABLE_FILE_PATH
-                : GetYarnExecutablePath.NON_WINDOWS_EXECUTABLE_FILE_PATH);
+        final Path nodejsHomePath = getResourcePath("node-dist-provided");
+        final Path yarnHomePath = projectDirectoryPath.resolve("yarn-dist");
 
-        final BuildResult result1 = runGradle(projectDirectoryPath, null, yarnExecutablePath, RUN_NODE_TASK_NAME);
+        final BuildResult result1 = runGradle(projectDirectoryPath, nodejsHomePath, yarnHomePath, RUN_NODE_TASK_NAME);
 
         assertTaskSuccess(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskSuccess(result1, RUN_NODE_TASK_NAME);
 
-        final BuildResult result2 = runGradleAndExpectFailure(projectDirectoryPath, null, yarnExecutablePath,
+        final BuildResult result2 = runGradleAndExpectFailure(projectDirectoryPath, nodejsHomePath, yarnHomePath,
             RUN_NPM_YARN_TASK_NAME);
 
         assertTaskUpToDate(result2, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
@@ -194,9 +176,7 @@ class TaskTypesWithDistributionsInPathFuncTest {
 
     @Test
     void shouldRunCustomTasks() throws IOException {
-        final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeDistributionProvided(true)
-            .verboseModeEnabled(true);
+        final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder().nodeDistributionProvided(true);
         final String runNodeTaskDefinition = buildNodeTaskDefinition(RUN_NODE_TASK_NAME,
             temporaryScriptPath.toString().replace("\\", "\\\\"));
         final String runNpxTaskDefinition = buildNpxTaskDefinition(RUN_NPX_TASK_NAME,
@@ -205,21 +185,21 @@ class TaskTypesWithDistributionsInPathFuncTest {
             FrontendGradlePlugin.INSTALL_TASK_NAME, "run another-script");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap(),
             String.join("\n", runNodeTaskDefinition, runNpxTaskDefinition, runNpmYarnTaskDefinition));
-        final Path nodeExecutablePath = getResourcePath("node-dist-provided").resolve(
-            PlatformFixture.LOCAL_PLATFORM.isWindowsOs() ? GetNodeExecutablePath.WINDOWS_EXECUTABLE_FILE_PATH
-                : GetNodeExecutablePath.NON_WINDOWS_EXECUTABLE_FILE_PATH);
+        final Path nodejsHomePath = getResourcePath("node-dist-provided");
+        final Path yarnHomePath = getResourcePath("yarn-dist-provided");
 
-        final BuildResult result1 = runGradle(projectDirectoryPath, nodeExecutablePath, null, RUN_NODE_TASK_NAME);
+        final BuildResult result1 = runGradle(projectDirectoryPath, nodejsHomePath, yarnHomePath, RUN_NODE_TASK_NAME);
 
         assertTaskSkipped(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskSuccess(result1, RUN_NODE_TASK_NAME);
 
-        final BuildResult result2 = runGradle(projectDirectoryPath, nodeExecutablePath, null, RUN_NPX_TASK_NAME);
+        final BuildResult result2 = runGradle(projectDirectoryPath, nodejsHomePath, yarnHomePath, RUN_NPX_TASK_NAME);
 
         assertTaskSkipped(result2, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskSuccess(result2, RUN_NPX_TASK_NAME);
 
-        final BuildResult result3 = runGradle(projectDirectoryPath, nodeExecutablePath, null, RUN_NPM_YARN_TASK_NAME);
+        final BuildResult result3 = runGradle(projectDirectoryPath, nodejsHomePath, yarnHomePath,
+            RUN_NPM_YARN_TASK_NAME);
 
         assertTaskSkipped(result3, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskSkipped(result3, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
@@ -229,23 +209,19 @@ class TaskTypesWithDistributionsInPathFuncTest {
         frontendMapBuilder.yarnEnabled(true).yarnDistributionProvided(true);
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap(),
             String.join("\n", runNodeTaskDefinition, runNpxTaskDefinition, runNpmYarnTaskDefinition));
-        final Path yarnExecutablePath = getResourcePath("yarn-dist-provided").resolve(
-            PlatformFixture.LOCAL_PLATFORM.isWindowsOs() ? GetYarnExecutablePath.WINDOWS_EXECUTABLE_FILE_PATH
-                : GetYarnExecutablePath.NON_WINDOWS_EXECUTABLE_FILE_PATH);
 
-        final BuildResult result4 = runGradle(projectDirectoryPath, nodeExecutablePath, yarnExecutablePath,
-            RUN_NODE_TASK_NAME);
+        final BuildResult result4 = runGradle(projectDirectoryPath, nodejsHomePath, yarnHomePath, RUN_NODE_TASK_NAME);
 
         assertTaskSkipped(result4, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskSuccess(result4, RUN_NODE_TASK_NAME);
 
-        final BuildResult result5 = runGradleAndExpectFailure(projectDirectoryPath, nodeExecutablePath,
-            yarnExecutablePath, RUN_NPX_TASK_NAME);
+        final BuildResult result5 = runGradleAndExpectFailure(projectDirectoryPath, nodejsHomePath, yarnHomePath,
+            RUN_NPX_TASK_NAME);
 
         assertTaskSkipped(result5, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskFailed(result5, RUN_NPX_TASK_NAME);
 
-        final BuildResult result6 = runGradle(projectDirectoryPath, nodeExecutablePath, yarnExecutablePath,
+        final BuildResult result6 = runGradle(projectDirectoryPath, nodejsHomePath, yarnHomePath,
             RUN_NPM_YARN_TASK_NAME);
 
         assertTaskSkipped(result6, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);

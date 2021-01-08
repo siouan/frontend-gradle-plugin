@@ -34,7 +34,7 @@ Finally:
 - Open a browser, connect to URL `http://localhost:8080`, and see the following message displayed: "Hello from the
 `frontend-gradle-plugin`!".
 
-[dsl-reference]: <../../README.md#dsl-reference> (DSL reference)
+[dsl-reference]: <https://siouan.github.io/frontend-gradle-plugin/configuration> (DSL reference)
 [gradle-java-plugin]: <https://docs.gradle.org/current/userguide/java_plugin.html> (Gradle Java plugin)
 [gradle-spring-boot-plugin]: <https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/html/> (Gradle Spring Boot plugin)
 [gradle-war-plugin]: <https://docs.gradle.org/current/userguide/war_plugin.html> (Gradle WAR plugin)

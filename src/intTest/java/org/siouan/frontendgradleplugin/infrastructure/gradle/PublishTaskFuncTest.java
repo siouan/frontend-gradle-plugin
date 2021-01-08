@@ -45,8 +45,8 @@ class PublishTaskFuncTest {
     void shouldBeSkippedWhenPublishScriptIsNotDefined() throws IOException {
         Files.copy(getResourcePath("package-npm.json"), packageJsonDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("12.18.3")
-            .nodeDistributionUrl(getResourceUrl("node-v12.18.3.zip"))
+            .nodeVersion("14.15.4")
+            .nodeDistributionUrl(getResourceUrl("node-v14.15.4.zip"))
             .assembleScript("run assemble");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
@@ -72,8 +72,8 @@ class PublishTaskFuncTest {
     void shouldBeSkippedWhenAssembleScriptIsNotDefined() throws IOException {
         Files.copy(getResourcePath("package-npm.json"), packageJsonDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("12.18.3")
-            .nodeDistributionUrl(getResourceUrl("node-v12.18.3.zip"))
+            .nodeVersion("14.15.4")
+            .nodeDistributionUrl(getResourceUrl("node-v14.15.4.zip"))
             .publishScript("run publish");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
@@ -99,8 +99,8 @@ class PublishTaskFuncTest {
     void shouldPublishFrontendWithNpmOrYarn() throws IOException {
         Files.copy(getResourcePath("package-npm.json"), packageJsonDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("12.18.3")
-            .nodeDistributionUrl(getResourceUrl("node-v12.18.3.zip"))
+            .nodeVersion("14.15.4")
+            .nodeDistributionUrl(getResourceUrl("node-v14.15.4.zip"))
             .assembleScript("run assemble")
             .publishScript("run publish");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
@@ -128,8 +128,8 @@ class PublishTaskFuncTest {
             StandardCopyOption.REPLACE_EXISTING);
         frontendMapBuilder
             .yarnEnabled(true)
-            .yarnVersion("1.22.4")
-            .yarnDistributionUrl(getResourceUrl("yarn-v1.22.4.tar.gz"));
+            .yarnVersion("1.22.10")
+            .yarnDistributionUrl(getResourceUrl("yarn-v1.22.10.tar.gz"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result3 = runGradle(projectDirectoryPath, PublishingPlugin.PUBLISH_LIFECYCLE_TASK_NAME);

@@ -113,6 +113,12 @@ public class YarnInstallTask extends AbstractDistributionInstallTask {
         return InstallYarnDistribution.class;
     }
 
+    @Nonnull
+    @Override
+    protected String getDistributionUrlRoot() {
+        return yarnDistributionUrlRoot.get();
+    }
+
     @Override
     @Nonnull
     protected InstallSettings getInstallSettings(@Nonnull final Platform platform,

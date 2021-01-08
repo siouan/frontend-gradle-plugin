@@ -33,8 +33,8 @@ class InstallDependenciesTaskFuncTest {
     void shouldInstallFrontendWithNpmOrYarnAndDefaultScript() throws IOException {
         Files.copy(getResourcePath("package-npm.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("12.18.3")
-            .nodeDistributionUrl(getResourceUrl("node-v12.18.3.zip"));
+            .nodeVersion("14.15.4")
+            .nodeDistributionUrl(getResourceUrl("node-v14.15.4.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, FrontendGradlePlugin.INSTALL_TASK_NAME);
@@ -54,8 +54,8 @@ class InstallDependenciesTaskFuncTest {
             StandardCopyOption.REPLACE_EXISTING);
         frontendMapBuilder
             .yarnEnabled(true)
-            .yarnVersion("1.22.4")
-            .yarnDistributionUrl(getResourceUrl("yarn-v1.22.4.tar.gz"));
+            .yarnVersion("1.22.10")
+            .yarnDistributionUrl(getResourceUrl("yarn-v1.22.10.tar.gz"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result3 = runGradle(projectDirectoryPath, FrontendGradlePlugin.INSTALL_TASK_NAME);
@@ -75,8 +75,8 @@ class InstallDependenciesTaskFuncTest {
     void shouldInstallFrontendWithNpmOrYarnAndCustomScript() throws IOException {
         Files.copy(getResourcePath("package-npm.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("12.18.3")
-            .nodeDistributionUrl(getResourceUrl("node-v12.18.3.zip"))
+            .nodeVersion("14.15.4")
+            .nodeDistributionUrl(getResourceUrl("node-v14.15.4.zip"))
             .installScript("ci");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
@@ -97,8 +97,8 @@ class InstallDependenciesTaskFuncTest {
             StandardCopyOption.REPLACE_EXISTING);
         frontendMapBuilder
             .yarnEnabled(true)
-            .yarnVersion("1.22.4")
-            .yarnDistributionUrl(getResourceUrl("yarn-v1.22.4.tar.gz"));
+            .yarnVersion("1.22.10")
+            .yarnDistributionUrl(getResourceUrl("yarn-v1.22.10.tar.gz"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result3 = runGradle(projectDirectoryPath, FrontendGradlePlugin.INSTALL_TASK_NAME);

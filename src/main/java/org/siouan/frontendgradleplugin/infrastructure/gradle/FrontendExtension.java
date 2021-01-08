@@ -137,32 +137,60 @@ public class FrontendExtension {
     private final Property<File> packageJsonDirectory;
 
     /**
-     * Proxy host used to download resources.
+     * Proxy host used to download resources with HTTP protocol.
+     *
+     * @since 5.0.0
+     */
+    private final Property<String> httpProxyHost;
+
+    /**
+     * Proxy port used to download resources with HTTP protocol.
+     *
+     * @since 5.0.0
+     */
+    private final Property<Integer> httpProxyPort;
+
+    /**
+     * Username to authenticate on the proxy server for HTTP requests.
+     *
+     * @since 5.0.0
+     */
+    private final Property<String> httpProxyUsername;
+
+    /**
+     * Password to authenticate on the proxy server for HTTP requests.
+     *
+     * @since 5.0.0
+     */
+    private final Property<String> httpProxyPassword;
+
+    /**
+     * Proxy host used to download resources with HTTPS protocol.
      *
      * @since 2.1.0
      */
-    private final Property<String> proxyHost;
+    private final Property<String> httpsProxyHost;
 
     /**
-     * Proxy port used to download resources.
+     * Proxy port used to download resources with HTTPS protocol.
      *
      * @since 2.1.0
      */
-    private final Property<Integer> proxyPort;
+    private final Property<Integer> httpsProxyPort;
 
     /**
-     * Username to authenticate on the proxy server.
+     * Username to authenticate on the proxy server for HTTPS requests.
      *
      * @since 3.0.0
      */
-    private final Property<String> proxyUsername;
+    private final Property<String> httpsProxyUsername;
 
     /**
-     * Password to authenticate on the proxy server.
+     * Password to authenticate on the proxy server for HTTPS requests.
      *
      * @since 3.0.0
      */
-    private final Property<String> proxyPassword;
+    private final Property<String> httpsProxyPassword;
 
     /**
      * Whether verbose mode is enabled.
@@ -193,10 +221,14 @@ public class FrontendExtension {
         checkScript = project.getObjects().property(String.class);
         publishScript = project.getObjects().property(String.class);
         packageJsonDirectory = project.getObjects().property(File.class);
-        proxyHost = project.getObjects().property(String.class);
-        proxyPort = project.getObjects().property(Integer.class);
-        proxyUsername = project.getObjects().property(String.class);
-        proxyPassword = project.getObjects().property(String.class);
+        httpProxyHost = project.getObjects().property(String.class);
+        httpProxyPort = project.getObjects().property(Integer.class);
+        httpProxyUsername = project.getObjects().property(String.class);
+        httpProxyPassword = project.getObjects().property(String.class);
+        httpsProxyHost = project.getObjects().property(String.class);
+        httpsProxyPort = project.getObjects().property(Integer.class);
+        httpsProxyUsername = project.getObjects().property(String.class);
+        httpsProxyPassword = project.getObjects().property(String.class);
         verboseModeEnabled = project.getObjects().property(Boolean.class);
     }
 
@@ -284,20 +316,36 @@ public class FrontendExtension {
         return packageJsonDirectory;
     }
 
-    public Property<String> getProxyHost() {
-        return proxyHost;
+    public Property<String> getHttpProxyHost() {
+        return httpProxyHost;
     }
 
-    public Property<Integer> getProxyPort() {
-        return proxyPort;
+    public Property<Integer> getHttpProxyPort() {
+        return httpProxyPort;
     }
 
-    public Property<String> getProxyUsername() {
-        return proxyUsername;
+    public Property<String> getHttpProxyUsername() {
+        return httpProxyUsername;
     }
 
-    public Property<String> getProxyPassword() {
-        return proxyPassword;
+    public Property<String> getHttpProxyPassword() {
+        return httpProxyPassword;
+    }
+
+    public Property<String> getHttpsProxyHost() {
+        return httpsProxyHost;
+    }
+
+    public Property<Integer> getHttpsProxyPort() {
+        return httpsProxyPort;
+    }
+
+    public Property<String> getHttpsProxyUsername() {
+        return httpsProxyUsername;
+    }
+
+    public Property<String> getHttpsProxyPassword() {
+        return httpsProxyPassword;
     }
 
     public Property<Boolean> getVerboseModeEnabled() {

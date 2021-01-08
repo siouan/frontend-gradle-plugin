@@ -35,17 +35,24 @@ public class Platform {
     private final Environment environment;
 
     /**
+     * System-wide proxy settings.
+     */
+    private final SystemProxySettings systemProxySettings;
+
+    /**
      * Builds a platform with the given architecture.
      *
      * @param jvmArch JVM architecture.
      * @param osName Underlying O/S name.
      * @param environment Environment.
+     * @param systemProxySettings System-wide proxy settings.
      */
-    public Platform(@Nonnull final String jvmArch, @Nonnull final String osName,
-        @Nonnull final Environment environment) {
+    public Platform(@Nonnull final String jvmArch, @Nonnull final String osName, @Nonnull final Environment environment,
+        @Nonnull final SystemProxySettings systemProxySettings) {
         this.jvmArch = jvmArch;
         this.osName = osName;
         this.environment = environment;
+        this.systemProxySettings = systemProxySettings;
     }
 
     /**
@@ -94,10 +101,20 @@ public class Platform {
         return environment;
     }
 
+    /**
+     * Gets system-wide proxy settings.
+     *
+     * @return Proxy settings.
+     */
+    @Nonnull
+    public SystemProxySettings getSystemProxySettings() {
+        return systemProxySettings;
+    }
+
     @Override
     public String toString() {
         return Platform.class.getSimpleName() + " {jvmArch=" + jvmArch + ", osName=" + osName + ", environment="
-            + environment + '}';
+            + environment + ", systemProxySettings=" + systemProxySettings + '}';
     }
 
     /**

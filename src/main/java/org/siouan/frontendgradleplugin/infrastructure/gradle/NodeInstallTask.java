@@ -114,6 +114,12 @@ public class NodeInstallTask extends AbstractDistributionInstallTask {
         return InstallNodeDistribution.class;
     }
 
+    @Nonnull
+    @Override
+    protected String getDistributionUrlRoot() {
+        return nodeDistributionUrlRoot.get();
+    }
+
     @Override
     @Nonnull
     protected InstallSettings getInstallSettings(@Nonnull final Platform platform,

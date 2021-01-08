@@ -44,7 +44,10 @@
         </section>
 
         <section>
-            <fgp-sub-sub-title id="tweaking-tasks">Tweaking the built-in tasks</fgp-sub-sub-title>
+            <fgp-sub-sub-title id="tweaking-tasks">
+                Tweaking the built-in tasks
+                <fgp-site-link path="#app" class="small text-info">&uparrow;</fgp-site-link>
+            </fgp-sub-sub-title>
 
             <p>
                 If you need to customize the plugin's built-in tasks (e.g. declare additional I/O or dependencies), it
