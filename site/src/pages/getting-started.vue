@@ -15,7 +15,7 @@
         <fgp-sub-title>Supported distributions</fgp-sub-title>
         <ul>
             <li><fgp-nodejs-link /> 6.2.1+</li>
-            <li><fgp-yarn-link /> 1.0+ (<fgp-yarn-link :version="2" /> not supported)</li>
+            <li><fgp-yarn-link /> 1.0+ (<fgp-yarn-link :version="2" /> initial support planned in release 6.0.0)</li>
         </ul>
 
         <fgp-sub-title>Steps</fgp-sub-title>
