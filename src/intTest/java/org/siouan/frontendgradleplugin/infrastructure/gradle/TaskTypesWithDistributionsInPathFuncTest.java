@@ -57,7 +57,7 @@ class TaskTypesWithDistributionsInPathFuncTest {
     void shouldFailRunningCustomTasksWhenNodeExecutableDoesNotExist() throws IOException {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
             .nodeDistributionProvided(true)
-            .verboseModeEnabled(true);
+            .verboseModeEnabled(false);
         final String runNodeTaskDefinition = buildNodeTaskDefinition(RUN_NODE_TASK_NAME,
             temporaryScriptPath.toString().replace("\\", "\\\\"));
         final String runNpxTaskDefinition = buildNpxTaskDefinition(RUN_NPX_TASK_NAME,
@@ -93,7 +93,7 @@ class TaskTypesWithDistributionsInPathFuncTest {
     void shouldFailRunningCustomTasksWhenNpxExecutableDoesNotExist() throws IOException {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
             .nodeDistributionProvided(true)
-            .verboseModeEnabled(true);
+            .verboseModeEnabled(false);
         final String runNodeTaskDefinition = buildNodeTaskDefinition(RUN_NODE_TASK_NAME,
             temporaryScriptPath.toString().replace("\\", "\\\\"));
         final String runNpxTaskDefinition = buildNpxTaskDefinition(RUN_NPX_TASK_NAME,
@@ -127,7 +127,7 @@ class TaskTypesWithDistributionsInPathFuncTest {
     void shouldFailRunningCustomTasksWhenNpmExecutableDoesNotExist() throws IOException {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
             .nodeDistributionProvided(true)
-            .verboseModeEnabled(true);
+            .verboseModeEnabled(false);
         final String runNodeTaskDefinition = buildNodeTaskDefinition(RUN_NODE_TASK_NAME,
             temporaryScriptPath.toString().replace("\\", "\\\\"));
         final String runNpxTaskDefinition = buildNpxTaskDefinition(RUN_NPX_TASK_NAME,
@@ -166,7 +166,7 @@ class TaskTypesWithDistributionsInPathFuncTest {
             .nodeDistributionUrl(getResourceUrl("node-v14.15.4.zip"))
             .yarnEnabled(true)
             .yarnDistributionProvided(true)
-            .verboseModeEnabled(true);
+            .verboseModeEnabled(false);
         final String runNodeTaskDefinition = buildNodeTaskDefinition(RUN_NODE_TASK_NAME,
             temporaryScriptPath.toString().replace("\\", "\\\\"));
         final String runNpmYarnTaskDefinition = buildNpmYarnTaskDefinition(RUN_NPM_YARN_TASK_NAME,
@@ -196,7 +196,7 @@ class TaskTypesWithDistributionsInPathFuncTest {
     void shouldRunCustomTasks() throws IOException {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
             .nodeDistributionProvided(true)
-            .verboseModeEnabled(true);
+            .verboseModeEnabled(false);
         final String runNodeTaskDefinition = buildNodeTaskDefinition(RUN_NODE_TASK_NAME,
             temporaryScriptPath.toString().replace("\\", "\\\\"));
         final String runNpxTaskDefinition = buildNpxTaskDefinition(RUN_NPX_TASK_NAME,
