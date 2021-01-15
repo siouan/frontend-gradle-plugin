@@ -130,7 +130,7 @@ class MultiProjectsFuncTest {
         assertTaskSuccess(result1, SUB_PROJECT_2_NAME, FrontendGradlePlugin.PUBLISH_TASK_NAME);
         assertTaskSuccess(result1, SUB_PROJECT_2_NAME, PublishingPlugin.PUBLISH_LIFECYCLE_TASK_NAME);
 
-        final BuildResult result2 = runGradle(projectDirectoryPath, LogLevel.INFO, BasePlugin.CLEAN_TASK_NAME,
+        final BuildResult result2 = runGradle(projectDirectoryPath, LogLevel.LIFECYCLE, BasePlugin.CLEAN_TASK_NAME,
             LifecycleBasePlugin.BUILD_TASK_NAME, PublishingPlugin.PUBLISH_LIFECYCLE_TASK_NAME);
 
         assertTaskIgnored(result2, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);

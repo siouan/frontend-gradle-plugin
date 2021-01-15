@@ -113,12 +113,12 @@ class TaskTypesWithDownloadedDistributionsFuncTest {
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap(),
             String.join("\n", runNodeTaskDefinition, runNpxTaskDefinition, runNpmYarnTaskDefinition));
 
-        final BuildResult result1 = runGradle(projectDirectoryPath, LogLevel.INFO, RUN_NODE_TASK_NAME);
+        final BuildResult result1 = runGradle(projectDirectoryPath, LogLevel.LIFECYCLE, RUN_NODE_TASK_NAME);
 
         assertTaskSuccess(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskSuccess(result1, RUN_NODE_TASK_NAME);
 
-        final BuildResult result2 = runGradle(projectDirectoryPath, LogLevel.INFO, RUN_NODE_TASK_NAME);
+        final BuildResult result2 = runGradle(projectDirectoryPath, LogLevel.LIFECYCLE, RUN_NODE_TASK_NAME);
 
         assertTaskUpToDate(result2, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskSuccess(result2, RUN_NODE_TASK_NAME);
@@ -154,7 +154,7 @@ class TaskTypesWithDownloadedDistributionsFuncTest {
             .yarnEnabled(true)
             .yarnVersion("1.22.10")
             .yarnInstallDirectory(projectDirectoryPath.resolve("yarn-dist"))
-            .verboseModeEnabled(true);
+            .verboseModeEnabled(false);
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap(),
             String.join("\n", runNodeTaskDefinition, runNpxTaskDefinition, runNpmYarnTaskDefinition));
 
