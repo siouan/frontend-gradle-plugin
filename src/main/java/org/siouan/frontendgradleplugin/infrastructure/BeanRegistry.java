@@ -5,9 +5,9 @@ import static java.util.stream.Collectors.toSet;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -26,8 +26,15 @@ import javax.annotation.Nullable;
 public class BeanRegistry {
 
     /**
-     * Map of singleton instances, whose values may be {@code null} when a bean has been registered only, and not
-     * retrieved yet.
+     * Set of types available for injection. When a bean is instanciated, it is placed in the map of {@link #singletons}
+     * below, for future injections.
+     */
+    private final Set<Class<?>> registeredBeanTypes;
+
+    /**
+     * Map of singleton instances, whose values are never {@code null}. If a bean type is present in the {@link
+     * #registeredBeanTypes} set and is not a key in this map, it means the type has not been instanciated yet. If a
+     * bean type is present in the map, an instance is available for injection.
      */
     private final Map<Class<?>, Object> singletons;
 
@@ -35,15 +42,21 @@ public class BeanRegistry {
      * Builds an initializes the registry with {@link #init()}.
      */
     public BeanRegistry() {
-        this.singletons = new HashMap<>();
+        this.registeredBeanTypes = ConcurrentHashMap.newKeySet();
+        this.singletons = new ConcurrentHashMap<>();
         init();
+    }
+
+    public void clear() {
+        registeredBeanTypes.clear();
+        singletons.clear();
     }
 
     /**
      * Initializes the registry by removing all registered beans, and registering the registry itself.
      */
     public void init() {
-        singletons.clear();
+        clear();
         // The registry itself is available for injection.
         registerBean(BeanRegistry.class, this);
     }
@@ -120,7 +133,10 @@ public class BeanRegistry {
      * @param <T> Type of bean.
      */
     private <T> void registerBean(@Nonnull final Class<T> beanClass, @Nullable final T bean) {
-        singletons.put(beanClass, bean);
+        registeredBeanTypes.add(beanClass);
+        if (bean != null) {
+            singletons.put(beanClass, bean);
+        }
     }
 
     /**
@@ -133,7 +149,7 @@ public class BeanRegistry {
      * @return {@code true} if the bean class is already registered, or is an instance of a bean registry.
      */
     private <T> boolean isBeanRegistered(@Nonnull final Class<T> beanClass) {
-        return getClass().isAssignableFrom(beanClass) || singletons.containsKey(beanClass);
+        return getClass().isAssignableFrom(beanClass) || registeredBeanTypes.contains(beanClass);
     }
 
     /**
@@ -162,8 +178,7 @@ public class BeanRegistry {
     @Nullable
     private <T, C extends T> Class<C> getAssignableClass(@Nonnull final Class<T> beanClass)
         throws TooManyCandidateBeansException {
-        final Set<Class<C>> assignableBeanClasses = singletons
-            .keySet()
+        final Set<Class<C>> assignableBeanClasses = registeredBeanTypes
             .stream()
             .filter(clazz -> !clazz.equals(beanClass))
             .filter(beanClass::isAssignableFrom)

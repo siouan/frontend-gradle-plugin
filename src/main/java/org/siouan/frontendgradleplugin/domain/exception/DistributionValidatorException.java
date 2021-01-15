@@ -9,7 +9,7 @@ import javax.annotation.Nonnull;
  */
 public abstract class DistributionValidatorException extends FrontendException {
 
-    public DistributionValidatorException(@Nonnull final String message) {
+    protected DistributionValidatorException(@Nonnull final String message) {
         super(message);
     }
 }

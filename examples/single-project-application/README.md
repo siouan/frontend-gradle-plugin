@@ -20,7 +20,7 @@ Add the following lines after the `nodeVersion` property initialization:
 
 ```groovy
 yarnEnabled = true
-yarnVersion = '1.22.4'
+yarnVersion = '1.22.10'
 ```
 
 - [`package.json`](package.json):
@@ -30,6 +30,6 @@ Replace `npm` executable with `yarn` executable in the `scripts` section.
 Finally, enter `gradlew build` on a command line.
 
 [classic-yarn]: <https://classic.yarnpkg.com/> (Yarn 1.x)
-[dsl-reference]: <../../README.md#dsl-reference> (DSL reference)
+[dsl-reference]: <https://siouan.github.io/frontend-gradle-plugin/configuration> (DSL reference)
 [gradle-wrapper]: <https://docs.gradle.org/current/userguide/gradle_wrapper.html> (Gradle Wrapper)
 [npm]: <https://www.npmjs.com/> (npm)
