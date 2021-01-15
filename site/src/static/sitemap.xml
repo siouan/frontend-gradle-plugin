@@ -4,27 +4,27 @@
     xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
         <loc>https://siouan.github.io/frontend-gradle-plugin/</loc>
-        <lastmod>2020-11-01</lastmod>
+        <lastmod>2021-01-15</lastmod>
         <changefreq>weekly</changefreq>
     </url>
     <url>
         <loc>https://siouan.github.io/frontend-gradle-plugin/getting-started/</loc>
-        <lastmod>2020-11-01</lastmod>
+        <lastmod>2021-01-01</lastmod>
         <changefreq>weekly</changefreq>
     </url>
     <url>
         <loc>https://siouan.github.io/frontend-gradle-plugin/configuration/</loc>
-        <lastmod>2020-11-01</lastmod>
+        <lastmod>2021-01-15</lastmod>
         <changefreq>weekly</changefreq>
     </url>
     <url>
         <loc>https://siouan.github.io/frontend-gradle-plugin/node-npm-npx-yarn-tasks/</loc>
-        <lastmod>2020-11-01</lastmod>
+        <lastmod>2021-01-15</lastmod>
         <changefreq>weekly</changefreq>
     </url>
     <url>
         <loc>https://siouan.github.io/frontend-gradle-plugin/faqs/</loc>
-        <lastmod>2020-11-01</lastmod>
+        <lastmod>2021-01-15</lastmod>
         <changefreq>weekly</changefreq>
     </url>
 </urlset>
