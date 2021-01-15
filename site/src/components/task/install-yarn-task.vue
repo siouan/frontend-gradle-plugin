@@ -7,9 +7,13 @@
                 downloads and install a <fgp-yarn-link /> distribution in the directory pointed by the
                 <fgp-property-link name="yarnInstallDirectory" />. The URL used to download the distribution is resolved
                 using the <fgp-property-link name="yarnDistributionUrlRoot" /> property and the
-                <fgp-property-link name="yarnDistributionUrlPathPattern" /> property. Optionally, defining the
-                <fgp-property-link name="proxyHost" /> property and the <fgp-property-link name="proxyPort" /> property
-                allows to use a proxy server when downloading the distribution and the shasum.
+                <fgp-property-link name="yarnDistributionUrlPathPattern" /> property. By default, the plugin relies on
+                the VM <fgp-java-network-properties-link>network properties</fgp-java-network-properties-link> to know
+                if a proxy server shall be used when downloading the distribution. A custom proxy server may also be
+                used by defining the <fgp-property-link name="httpsProxyHost" /> property (respectively the
+                <fgp-property-link name="httpProxyHost" /> property) if the
+                <fgp-property-link name="yarnDistributionUrlRoot" /> property uses the <fgp-code>https</fgp-code>
+                protocol (resp. uses the <fgp-code>http</fgp-code> protocol).
             </p>
             <p>
                 If a <fgp-yarn-link /> distribution is already installed in the local platform - either as a global

@@ -32,9 +32,25 @@ java {
     withSourcesJar()
 }
 
+sourceSets {
+    create("intTest") {
+        compileClasspath += sourceSets.main.get().output + sourceSets.test.get().output
+        runtimeClasspath += sourceSets.main.get().output + sourceSets.test.get().output
+    }
+}
+
+val intTestImplementation: Configuration by configurations.getting {
+    extendsFrom(configurations.implementation.get())
+    extendsFrom(configurations.testImplementation.get())
+}
+
+configurations["intTestRuntimeOnly"]
+    .extendsFrom(configurations.runtimeOnly.get())
+    .extendsFrom(configurations.testRuntimeOnly.get())
+
 dependencies {
     implementation(gradleApi())
-    implementation("org.apache.httpcomponents:httpclient:4.5.13")
+    implementation("org.apache.httpcomponents.client5:httpclient5:5.0.3")
     implementation("org.apache.commons:commons-compress:1.20")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0")
@@ -42,25 +58,40 @@ dependencies {
     testImplementation("org.mockito:mockito-core:3.6.0")
     testImplementation("org.mockito:mockito-junit-jupiter:3.6.0")
     testImplementation("org.assertj:assertj-core:3.18.0")
-    testImplementation("com.github.tomakehurst:wiremock:2.27.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.0")
+
+    intTestImplementation("com.github.tomakehurst:wiremock:2.27.2")
 }
 
 tasks.named<Wrapper>("wrapper") {
     distributionType = Wrapper.DistributionType.ALL
 }
 
-tasks.named<Test>("test") {
+tasks.register<Test>("integrationTest") {
+    description = "Runs integration tests."
+    group = "verification"
+    testClassesDirs = sourceSets["intTest"].output.classesDirs
+    classpath = sourceSets["intTest"].runtimeClasspath
+    shouldRunAfter("test")
+}
+
+tasks.withType<Test> {
     useJUnitPlatform()
-    gradle.addListener(GradleTestListener(logger))
+}
+
+tasks.named<Task>("check") {
+    dependsOn(tasks.named("integrationTest"))
 }
 
 tasks.named<JacocoReport>("jacocoTestReport") {
+    executionData.setFrom(file("${project.buildDir}/jacoco/test.exec"), file("${project.buildDir}/jacoco/integrationTest.exec"))
     reports {
-        xml.setEnabled(true)
-        xml.setDestination(file("${buildDir}/reports/jacoco/report.xml"))
+        xml.isEnabled = true
+        xml.destination = file("${buildDir}/reports/jacoco/report.xml")
     }
 }
+
+gradle.addListener(GradleTestListener(logger))
 
 gradlePlugin {
     plugins {
