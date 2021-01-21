@@ -1,7 +1,19 @@
 <template>
     <fgp-task name="installYarn">
-        <template v-slot:title>Install <fgp-yarn-link /></template>
+        <template v-slot:title>Install Yarn</template>
         <template v-slot:description>
+            <fgp-section-title>Starting from release 6.0.0</fgp-section-title>
+            <p>
+                If the <fgp-property-link name="yarnEnabled" /> property is <fgp-code>true</fgp-code>, the task
+                executes command <fgp-code>yarn set version &lt;yarnVersion&gt;</fgp-code> in the project directory.
+                In other words, the task installs the relevant Yarn distribution in the current project, based on the
+                value of the <fgp-property-link name="yarnVersion" /> property. Downloading and installing the
+                distribution is entirely managed by the <fgp-yarn-link /> distribution globally installed after
+                execution of the <fgp-task-link name="installGlobalYarn" />. To customize this process (proxy usage,
+                etc), please refer to Yarn's
+                <fgp-link href="https://yarnpkg.com/configuration/yarnrc">configuration options</fgp-link>.
+            </p>
+            <fgp-section-title>Prior to release 6.0.0</fgp-section-title>
             <p>
                 If the <fgp-property-link name="yarnEnabled" /> property is <fgp-code>true</fgp-code>, the task
                 downloads and install a <fgp-yarn-link /> distribution in the directory pointed by the
@@ -39,13 +51,27 @@
 
 <script>
 import Vue from "vue";
+import fgpCode from "../code";
 import fgpGradleGuidesLink from "../link/gradle-guides-link";
 import fgpGradleTaskOutcomeLink from "../link/gradle-task-outcome-link";
 import fgpInfo from "../info";
+import fgpLink from "../link/link";
+import fgpSectionTitle from "../section-title";
 import fgpTask from "./task";
+import fgpTaskLink from "../link/task-link";
 import fgpYarnLink from "../link/yarn-link";
 
 export default Vue.component("fgp-install-yarn-task", {
-    components: { fgpGradleGuidesLink, fgpGradleTaskOutcomeLink, fgpInfo, fgpTask, fgpYarnLink }
+    components: {
+        fgpCode,
+        fgpGradleGuidesLink,
+        fgpGradleTaskOutcomeLink,
+        fgpInfo,
+        fgpLink,
+        fgpSectionTitle,
+        fgpTask,
+        fgpTaskLink,
+        fgpYarnLink
+    }
 });
 </script>

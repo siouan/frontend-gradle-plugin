@@ -57,16 +57,9 @@ public class FrontendExtension {
     private final Property<String> nodeDistributionServerPassword;
 
     /**
-     * Whether a Yarn distribution shall be downloaded and installed.
+     * Whether a Yarn distribution shall be downloaded, installed, and used by the plugin instead of NPM.
      */
     private final Property<Boolean> yarnEnabled;
-
-    /**
-     * Whether a Yarn distribution is provided.
-     *
-     * @since 2.0.0
-     */
-    private final Property<Boolean> yarnDistributionProvided;
 
     /**
      * Version of the distribution to download.
@@ -74,37 +67,25 @@ public class FrontendExtension {
     private final Property<String> yarnVersion;
 
     /**
-     * Directory where the distribution shall be installed.
+     * The Yarn script to install a Yarn Classic 1.x distribution globally.
+     *
+     * @since 6.0.0
      */
-    private final DirectoryProperty yarnInstallDirectory;
+    private final Property<String> yarnGlobalInstallScript;
 
     /**
-     * URL root part to build the exact URL to download the Yarn distribution.
+     * The Yarn script to enable Yarn Berry in the current (sub-)project.
      *
-     * @since 3.0.0
+     * @since 6.0.0
      */
-    private final Property<String> yarnDistributionUrlRoot;
+    private final Property<String> yarnBerryEnableScript;
 
     /**
-     * Trailing path pattern to build the exact URL to download the Yarn distribution.
+     * The Yarn script to install a Yarn distribution in the current (sub-)project.
      *
-     * @since 3.0.0
+     * @since 6.0.0
      */
-    private final Property<String> yarnDistributionUrlPathPattern;
-
-    /**
-     * Username to authenticate on the server providing Yarn distributions.
-     *
-     * @since 3.0.0
-     */
-    private final Property<String> yarnDistributionServerUsername;
-
-    /**
-     * Password to authenticate on the server providing Yarn distributions.
-     *
-     * @since 3.0.0
-     */
-    private final Property<String> yarnDistributionServerPassword;
+    private final Property<String> yarnInstallScript;
 
     /**
      * The npm/Yarn script installing frontend dependencies.
@@ -207,14 +188,11 @@ public class FrontendExtension {
         nodeDistributionUrlPathPattern = project.getObjects().property(String.class);
         nodeDistributionServerUsername = project.getObjects().property(String.class);
         nodeDistributionServerPassword = project.getObjects().property(String.class);
-        yarnDistributionProvided = project.getObjects().property(Boolean.class);
         yarnEnabled = project.getObjects().property(Boolean.class);
         yarnVersion = project.getObjects().property(String.class);
-        yarnInstallDirectory = project.getObjects().directoryProperty();
-        yarnDistributionUrlRoot = project.getObjects().property(String.class);
-        yarnDistributionUrlPathPattern = project.getObjects().property(String.class);
-        yarnDistributionServerUsername = project.getObjects().property(String.class);
-        yarnDistributionServerPassword = project.getObjects().property(String.class);
+        yarnGlobalInstallScript = project.getObjects().property(String.class);
+        yarnBerryEnableScript = project.getObjects().property(String.class);
+        yarnInstallScript = project.getObjects().property(String.class);
         installScript = project.getObjects().property(String.class);
         cleanScript = project.getObjects().property(String.class);
         assembleScript = project.getObjects().property(String.class);
@@ -264,32 +242,20 @@ public class FrontendExtension {
         return yarnEnabled;
     }
 
-    public Property<Boolean> getYarnDistributionProvided() {
-        return yarnDistributionProvided;
-    }
-
     public Property<String> getYarnVersion() {
         return yarnVersion;
     }
 
-    public DirectoryProperty getYarnInstallDirectory() {
-        return yarnInstallDirectory;
+    public Property<String> getYarnGlobalInstallScript() {
+        return yarnGlobalInstallScript;
     }
 
-    public Property<String> getYarnDistributionUrlRoot() {
-        return yarnDistributionUrlRoot;
+    public Property<String> getYarnBerryEnableScript() {
+        return yarnBerryEnableScript;
     }
 
-    public Property<String> getYarnDistributionUrlPathPattern() {
-        return yarnDistributionUrlPathPattern;
-    }
-
-    public Property<String> getYarnDistributionServerUsername() {
-        return yarnDistributionServerUsername;
-    }
-
-    public Property<String> getYarnDistributionServerPassword() {
-        return yarnDistributionServerPassword;
+    public Property<String> getYarnInstallScript() {
+        return yarnInstallScript;
     }
 
     public Property<String> getInstallScript() {

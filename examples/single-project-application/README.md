@@ -12,7 +12,7 @@ This example demonstrates the following feature:
 
 ### Description
 
-Source code shows configuration with [npm][npm]. To use [Yarn][classic-yarn], modify the following files:
+Source code shows configuration with [npm][npm]. To use [Yarn][yarn], modify the following files:
 
 - [`build.gradle`](build.gradle)
 
@@ -20,7 +20,7 @@ Add the following lines after the `nodeVersion` property initialization:
 
 ```groovy
 yarnEnabled = true
-yarnVersion = '1.22.10'
+yarnVersion = '3.0.0'
 ```
 
 - [`package.json`](package.json):
@@ -29,7 +29,7 @@ Replace `npm` executable with `yarn` executable in the `scripts` section.
 
 Finally, enter `gradlew build` on a command line.
 
-[classic-yarn]: <https://classic.yarnpkg.com/> (Yarn 1.x)
 [dsl-reference]: <https://siouan.github.io/frontend-gradle-plugin/configuration> (DSL reference)
 [gradle-wrapper]: <https://docs.gradle.org/current/userguide/gradle_wrapper.html> (Gradle Wrapper)
 [npm]: <https://www.npmjs.com/> (npm)
+[yarn]: <https://yarnpkg.com/> (Yarn)

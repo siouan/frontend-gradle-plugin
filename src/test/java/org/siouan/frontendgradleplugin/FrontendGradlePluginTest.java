@@ -21,7 +21,9 @@ import org.siouan.frontendgradleplugin.infrastructure.gradle.FrontendExtension;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.InstallDependenciesTask;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.NodeInstallTask;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.PublishTask;
-import org.siouan.frontendgradleplugin.infrastructure.gradle.YarnInstallTask;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.EnableYarnBerryTask;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.YarnGlobalInstallTask;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.InstallYarnTask;
 
 /**
  * Unit tests for the {@link FrontendGradlePlugin} class.
@@ -57,14 +59,7 @@ class FrontendGradlePluginTest {
         assertThat(extension.getNodeDistributionServerUsername().isPresent()).isFalse();
         assertThat(extension.getNodeDistributionServerPassword().isPresent()).isFalse();
         assertThat(extension.getYarnEnabled().get()).isFalse();
-        assertThat(extension.getYarnDistributionProvided().get()).isFalse();
         assertThat(extension.getYarnVersion().isPresent()).isFalse();
-        assertThat(extension.getYarnDistributionUrlRoot().get()).isEqualTo(
-            FrontendGradlePlugin.DEFAULT_YARN_DISTRIBUTION_URL_ROOT);
-        assertThat(extension.getYarnDistributionUrlPathPattern().get()).isEqualTo(
-            FrontendGradlePlugin.DEFAULT_YARN_DISTRIBUTION_URL_PATH_PATTERN);
-        assertThat(extension.getYarnInstallDirectory().getAsFile().get()).isEqualTo(
-            project.file(FrontendGradlePlugin.DEFAULT_YARN_INSTALL_DIRNAME));
         assertThat(extension.getPackageJsonDirectory().get()).isEqualTo(project.getProjectDir());
         assertThat(extension.getHttpsProxyHost().isPresent()).isFalse();
         assertThat(extension.getHttpsProxyPort().get()).isEqualTo(FrontendGradlePlugin.DEFAULT_HTTPS_PROXY_PORT);
@@ -87,11 +82,7 @@ class FrontendGradlePluginTest {
         extension.getNodeDistributionUrlPathPattern().set("/node.tar.gz");
         extension.getNodeInstallDirectory().set(project.file("node-dist"));
         extension.getYarnEnabled().set(true);
-        extension.getYarnDistributionProvided().set(true);
         extension.getYarnVersion().set("6.5.4");
-        extension.getYarnDistributionUrlRoot().set("http://yarn");
-        extension.getYarnDistributionUrlPathPattern().set("/yarn.tar.gz");
-        extension.getYarnInstallDirectory().set(project.file("yarn-dist"));
         extension.getInstallScript().set("run ci");
         extension.getCleanScript().set("run clean");
         extension.getAssembleScript().set("run build");
@@ -112,7 +103,7 @@ class FrontendGradlePluginTest {
 
         final NodeInstallTask nodeInstallTask = project
             .getTasks()
-            .named(FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, NodeInstallTask.class)
+            .named(FrontendGradlePlugin.INSTALL_NODE_TASK_NAME, NodeInstallTask.class)
             .get();
         assertThat(nodeInstallTask.getNodeVersion().getOrNull()).isEqualTo(extension.getNodeVersion().getOrNull());
         assertThat(nodeInstallTask.getNodeDistributionUrlRoot().get()).isEqualTo(
@@ -130,41 +121,40 @@ class FrontendGradlePluginTest {
             extension.getHttpsProxyPassword().getOrNull());
         assertThat(nodeInstallTask.getDependsOn()).isEmpty();
 
-        final YarnInstallTask yarnInstallTask = project
+        final YarnGlobalInstallTask yarnGlobalInstallTask = project
             .getTasks()
-            .named(FrontendGradlePlugin.YARN_INSTALL_TASK_NAME, YarnInstallTask.class)
+            .named(FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME, YarnGlobalInstallTask.class)
             .get();
-        assertThat(yarnInstallTask.getOnlyIf()).isNotNull();
-        assertThat(yarnInstallTask.getYarnVersion().getOrNull()).isEqualTo(extension.getYarnVersion().getOrNull());
-        assertThat(yarnInstallTask.getYarnDistributionUrlRoot().get()).isEqualTo(
-            extension.getYarnDistributionUrlRoot().get());
-        assertThat(yarnInstallTask.getYarnDistributionUrlPathPattern().get()).isEqualTo(
-            extension.getYarnDistributionUrlPathPattern().get());
-        assertThat(yarnInstallTask.getYarnInstallDirectory().get()).isEqualTo(
-            extension.getYarnInstallDirectory().get());
-        assertThat(yarnInstallTask.getHttpsProxyHost().getOrNull()).isEqualTo(
-            extension.getHttpsProxyHost().getOrNull());
-        assertThat(yarnInstallTask.getHttpsProxyPort().get()).isEqualTo(extension.getHttpsProxyPort().get());
-        assertThat(yarnInstallTask.getHttpsProxyUsername().getOrNull()).isEqualTo(
-            extension.getHttpsProxyUsername().getOrNull());
-        assertThat(yarnInstallTask.getHttpsProxyPassword().getOrNull()).isEqualTo(
-            extension.getHttpsProxyPassword().getOrNull());
-        assertThat(yarnInstallTask.getDependsOn()).isEmpty();
+        assertThat(yarnGlobalInstallTask.getOnlyIf()).isNotNull();
+        assertThat(yarnGlobalInstallTask.getDependsOn()).containsExactlyInAnyOrder(nodeInstallTask.getName());
+
+        final EnableYarnBerryTask enableYarnBerryTask = project
+            .getTasks()
+            .named(FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME, EnableYarnBerryTask.class)
+            .get();
+        assertThat(enableYarnBerryTask.getOnlyIf()).isNotNull();
+        assertThat(enableYarnBerryTask.getDependsOn()).containsExactlyInAnyOrder(
+            yarnGlobalInstallTask.getName());
+
+        final InstallYarnTask installYarnTask = project
+            .getTasks()
+            .named(FrontendGradlePlugin.INSTALL_YARN_TASK_NAME, InstallYarnTask.class)
+            .get();
+        assertThat(installYarnTask.getOnlyIf()).isNotNull();
+        assertThat(installYarnTask.getDependsOn()).containsExactlyInAnyOrder(enableYarnBerryTask.getName());
 
         final InstallDependenciesTask installDependenciesTask = project
             .getTasks()
-            .named(FrontendGradlePlugin.INSTALL_TASK_NAME, InstallDependenciesTask.class)
+            .named(FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME, InstallDependenciesTask.class)
             .get();
         assertThat(installDependenciesTask.getNodeInstallDirectory().getOrNull()).isEqualTo(
             extension.getNodeInstallDirectory().getOrNull());
         assertThat(installDependenciesTask.getYarnEnabled().get()).isEqualTo(extension.getYarnEnabled().get());
-        assertThat(installDependenciesTask.getYarnInstallDirectory().get()).isEqualTo(
-            extension.getYarnInstallDirectory().get());
         assertThat(installDependenciesTask.getInstallScript().get()).isEqualTo(extension.getInstallScript().get());
         assertThat(installDependenciesTask.getPackageJsonDirectory().get()).isEqualTo(
             extension.getPackageJsonDirectory().get());
         assertThat(installDependenciesTask.getDependsOn()).containsExactlyInAnyOrder(nodeInstallTask.getName(),
-            yarnInstallTask.getName());
+            installYarnTask.getName());
 
         final CleanTask frontendCleanTask = project
             .getTasks()
@@ -173,8 +163,6 @@ class FrontendGradlePluginTest {
         assertThat(frontendCleanTask.getNodeInstallDirectory().getOrNull()).isEqualTo(
             extension.getNodeInstallDirectory().getOrNull());
         assertThat(frontendCleanTask.getYarnEnabled().get()).isEqualTo(extension.getYarnEnabled().get());
-        assertThat(frontendCleanTask.getYarnInstallDirectory().get()).isEqualTo(
-            extension.getYarnInstallDirectory().get());
         assertThat(frontendCleanTask.getCleanScript().getOrNull()).isEqualTo(extension.getCleanScript().getOrNull());
         assertThat(frontendCleanTask.getPackageJsonDirectory().get()).isEqualTo(
             extension.getPackageJsonDirectory().get());
@@ -193,8 +181,6 @@ class FrontendGradlePluginTest {
         assertThat(frontendAssembleTask.getNodeInstallDirectory().getOrNull()).isEqualTo(
             extension.getNodeInstallDirectory().getOrNull());
         assertThat(frontendAssembleTask.getYarnEnabled().get()).isEqualTo(extension.getYarnEnabled().get());
-        assertThat(frontendAssembleTask.getYarnInstallDirectory().get()).isEqualTo(
-            extension.getYarnInstallDirectory().get());
         assertThat(frontendAssembleTask.getAssembleScript().getOrNull()).isEqualTo(
             extension.getAssembleScript().getOrNull());
         assertThat(frontendAssembleTask.getPackageJsonDirectory().get()).isEqualTo(
@@ -214,8 +200,6 @@ class FrontendGradlePluginTest {
         assertThat(frontendCheckTask.getNodeInstallDirectory().getOrNull()).isEqualTo(
             extension.getNodeInstallDirectory().getOrNull());
         assertThat(frontendCheckTask.getYarnEnabled().get()).isEqualTo(extension.getYarnEnabled().get());
-        assertThat(frontendCheckTask.getYarnInstallDirectory().get()).isEqualTo(
-            extension.getYarnInstallDirectory().get());
         assertThat(frontendCheckTask.getCheckScript().getOrNull()).isEqualTo(extension.getCheckScript().getOrNull());
         assertThat(frontendCheckTask.getPackageJsonDirectory().get()).isEqualTo(
             extension.getPackageJsonDirectory().get());
@@ -234,8 +218,6 @@ class FrontendGradlePluginTest {
         assertThat(frontendPublishTask.getNodeInstallDirectory().getOrNull()).isEqualTo(
             extension.getNodeInstallDirectory().getOrNull());
         assertThat(frontendPublishTask.getYarnEnabled().get()).isEqualTo(extension.getYarnEnabled().get());
-        assertThat(frontendPublishTask.getYarnInstallDirectory().get()).isEqualTo(
-            extension.getYarnInstallDirectory().get());
         assertThat(frontendPublishTask.getPublishScript().getOrNull()).isEqualTo(
             extension.getPublishScript().getOrNull());
         assertThat(frontendPublishTask.getPackageJsonDirectory().get()).isEqualTo(

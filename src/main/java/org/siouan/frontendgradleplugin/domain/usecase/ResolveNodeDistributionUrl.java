@@ -6,13 +6,12 @@ import javax.annotation.Nonnull;
 
 import org.siouan.frontendgradleplugin.domain.exception.UnsupportedPlatformException;
 import org.siouan.frontendgradleplugin.domain.model.DistributionDefinition;
-import org.siouan.frontendgradleplugin.domain.model.DistributionUrlResolver;
 import org.siouan.frontendgradleplugin.domain.model.Platform;
 
 /**
  * Resolves the URL to download a Node.js distribution.
  */
-public class ResolveNodeDistributionUrl implements DistributionUrlResolver {
+public class ResolveNodeDistributionUrl {
 
     /**
      * Token in the download URL pattern replaced with the version number.
@@ -40,7 +39,14 @@ public class ResolveNodeDistributionUrl implements DistributionUrlResolver {
         this.resolveNodeDistributionType = resolveNodeDistributionType;
     }
 
-    @Override
+    /**
+     * Resolves the URL to download the distribution.
+     *
+     * @param distributionDefinition Properties to resolve the appropriate distribution.
+     * @return An URL.
+     * @throws UnsupportedPlatformException If the underlying platform is not supported and a URL cannot be resolved.
+     * @throws MalformedURLException If the URL built is invalid due to an invalid definition.
+     */
     @Nonnull
     public URL execute(@Nonnull final DistributionDefinition distributionDefinition)
         throws UnsupportedPlatformException, MalformedURLException {

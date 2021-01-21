@@ -33,9 +33,9 @@ class NodeInstallTaskFuncTest {
     void shouldBeSkippedWhenDistributionIsProvided() throws IOException {
         createBuildFile(projectDirectoryPath, new FrontendMapBuilder().nodeDistributionProvided(true).toMap());
 
-        final BuildResult result = runGradle(projectDirectoryPath, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        final BuildResult result = runGradle(projectDirectoryPath, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
 
-        assertTaskSkipped(result, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        assertTaskSkipped(result, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
     }
 
     @Test
@@ -43,9 +43,9 @@ class NodeInstallTaskFuncTest {
         createBuildFile(projectDirectoryPath, emptyMap());
 
         final BuildResult result = runGradleAndExpectFailure(projectDirectoryPath,
-            FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+            FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
 
-        assertTaskFailed(result, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        assertTaskFailed(result, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
     }
 
     @Test
@@ -53,37 +53,37 @@ class NodeInstallTaskFuncTest {
         createBuildFile(projectDirectoryPath, singletonMap("nodeVersion", "0.76.34"));
 
         final BuildResult result = runGradleAndExpectFailure(projectDirectoryPath,
-            FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+            FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
 
-        assertTaskFailed(result, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        assertTaskFailed(result, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
     }
 
     @Test
     void shouldFailWhenDistributionCannotBeDownloadedWithInvalidUrl() throws IOException {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("14.15.4")
+            .nodeVersion("14.17.0")
             .nodeDistributionUrlRoot("protocol://domain/unknown");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result = runGradleAndExpectFailure(projectDirectoryPath,
-            FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+            FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
 
-        assertTaskFailed(result, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        assertTaskFailed(result, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
     }
 
     @Test
     void shouldSucceedFirstTimeAndBeUpToDateSecondTime() throws IOException {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("14.15.4")
-            .nodeDistributionUrl(getResourceUrl("node-v14.15.4.zip"));
+            .nodeVersion("14.17.0")
+            .nodeDistributionUrl(getResourceUrl("node-v14.17.0.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
-        final BuildResult result1 = runGradle(projectDirectoryPath, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        final BuildResult result1 = runGradle(projectDirectoryPath, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
 
-        assertTaskSuccess(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        assertTaskSuccess(result1, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
 
-        final BuildResult result2 = runGradle(projectDirectoryPath, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        final BuildResult result2 = runGradle(projectDirectoryPath, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
 
-        assertTaskUpToDate(result2, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        assertTaskUpToDate(result2, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
     }
 }

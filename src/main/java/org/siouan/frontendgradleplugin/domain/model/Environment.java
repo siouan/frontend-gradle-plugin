@@ -16,19 +16,12 @@ public class Environment {
     private final Path nodeInstallDirectoryPath;
 
     /**
-     * Path to a directory containing a global Yarn distribution.
-     */
-    private final Path yarnInstallDirectoryPath;
-
-    /**
      * Builds an environment.
      *
      * @param nodeInstallDirectoryPath Path to a directory containing a global Node.js distribution.
-     * @param yarnInstallDirectoryPath Path to a directory containing a global Yarn distribution.
      */
-    public Environment(@Nullable final Path nodeInstallDirectoryPath, @Nullable final Path yarnInstallDirectoryPath) {
+    public Environment(@Nullable final Path nodeInstallDirectoryPath) {
         this.nodeInstallDirectoryPath = nodeInstallDirectoryPath;
-        this.yarnInstallDirectoryPath = yarnInstallDirectoryPath;
     }
 
     /**
@@ -41,19 +34,8 @@ public class Environment {
         return nodeInstallDirectoryPath;
     }
 
-    /**
-     * Gets the path to a directory containing a global Yarn distribution.
-     *
-     * @return Path.
-     */
-    @Nullable
-    public Path getYarnInstallDirectoryPath() {
-        return yarnInstallDirectoryPath;
-    }
-
     @Override
     public String toString() {
-        return Environment.class.getSimpleName() + " {nodeInstallDirectory=" + nodeInstallDirectoryPath
-            + ", yarnInstallDirectory=" + yarnInstallDirectoryPath + '}';
+        return Environment.class.getSimpleName() + " {nodeInstallDirectory=" + nodeInstallDirectoryPath + '}';
     }
 }

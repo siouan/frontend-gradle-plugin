@@ -21,7 +21,7 @@ public abstract class AbstractGetExecutablePath {
 
     private final Logger logger;
 
-    public AbstractGetExecutablePath(final FileManager fileManager, final Logger logger) {
+    protected AbstractGetExecutablePath(final FileManager fileManager, final Logger logger) {
         this.fileManager = fileManager;
         this.logger = logger;
     }
@@ -67,7 +67,7 @@ public abstract class AbstractGetExecutablePath {
         }
 
         executablePath = getExecutableFileName(platform);
-        logger.info("Executable '{}' resolved from PATH environment variable", executablePath);
+        logger.info("Executable '{}' is expected to be found with PATH environment variable", executablePath);
         return executablePath;
     }
 

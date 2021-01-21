@@ -10,6 +10,7 @@ import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.TaskAction;
 import org.siouan.frontendgradleplugin.domain.exception.ExecutableNotFoundException;
+import org.siouan.frontendgradleplugin.domain.exception.NonRunnableTaskException;
 import org.siouan.frontendgradleplugin.domain.model.Platform;
 import org.siouan.frontendgradleplugin.infrastructure.BeanRegistryException;
 import org.siouan.frontendgradleplugin.infrastructure.Beans;
@@ -33,16 +34,6 @@ public abstract class AbstractRunCommandTask extends DefaultTask {
     final DirectoryProperty nodeInstallDirectory;
 
     /**
-     * Whether a Yarn distribution shall be downloaded and installed.
-     */
-    final Property<Boolean> yarnEnabled;
-
-    /**
-     * Directory where the Yarn distribution is installed.
-     */
-    final DirectoryProperty yarnInstallDirectory;
-
-    /**
      * The command to execute.
      */
     final Property<String> script;
@@ -50,8 +41,6 @@ public abstract class AbstractRunCommandTask extends DefaultTask {
     AbstractRunCommandTask() {
         packageJsonDirectory = getProject().getObjects().property(File.class);
         nodeInstallDirectory = getProject().getObjects().directoryProperty();
-        yarnEnabled = getProject().getObjects().property(Boolean.class);
-        yarnInstallDirectory = getProject().getObjects().directoryProperty();
         script = getProject().getObjects().property(String.class);
     }
 
@@ -67,30 +56,37 @@ public abstract class AbstractRunCommandTask extends DefaultTask {
     }
 
     @Internal
-    public DirectoryProperty getYarnInstallDirectory() {
-        return yarnInstallDirectory;
-    }
-
-    @Internal
     protected abstract String getExecutableType();
+
+    /**
+     * Asserts this task is runnable.
+     *
+     * @throws NonRunnableTaskException When the task is not runnable.
+     */
+    protected void assertThatTaskIsRunnable() throws NonRunnableTaskException {
+        if (!script.isPresent()) {
+            throw new NonRunnableTaskException("Missing property 'script'.");
+        }
+    }
 
     /**
      * Executes the task. If a command has been provided, it is run with the selected type of executable. Otherwise, the
      * task does nothing.
      *
+     * @throws NonRunnableTaskException When the task is not runnable.
      * @throws ExecutableNotFoundException When the executable cannot be found (Node, npx, npm, Yarn).
      * @throws BeanRegistryException If a component cannot be instanciated.
      */
     @TaskAction
-    public void execute() throws ExecutableNotFoundException, BeanRegistryException {
-        if (script.isPresent()) {
-            final String beanRegistryId = getProject().getPath();
-            Beans
-                .getBean(beanRegistryId, GradleScriptRunnerAdapter.class)
-                .execute(new ScriptProperties(getProject(), packageJsonDirectory.map(File::toPath).get(),
-                    getExecutableType(), nodeInstallDirectory.getAsFile().map(File::toPath).getOrNull(),
-                    yarnInstallDirectory.getAsFile().map(File::toPath).getOrNull(), script.get(),
+    public void execute() throws NonRunnableTaskException, ExecutableNotFoundException, BeanRegistryException {
+        assertThatTaskIsRunnable();
+
+        final String beanRegistryId = getProject().getPath();
+        Beans
+            .getBean(beanRegistryId, GradleScriptRunnerAdapter.class)
+            .execute(
+                new ScriptProperties(getProject(), packageJsonDirectory.map(File::toPath).get(), getExecutableType(),
+                    nodeInstallDirectory.getAsFile().map(File::toPath).getOrNull(), script.get(),
                     Beans.getBean(beanRegistryId, Platform.class)));
-        }
     }
 }

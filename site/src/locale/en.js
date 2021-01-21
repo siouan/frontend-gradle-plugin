@@ -33,13 +33,18 @@ export default {
                 label: "Release notes"
             }
         },
-        yarn1: {
+        yarnBerry: {
             label: "Yarn",
-            title: "Yarn 1.x"
+            originalName: "Berry",
+            title: "Yarn Berry"
+        },
+        yarn1: {
+            label: "Yarn 1",
+            title: "Classic Yarn"
         },
         yarn2: {
-            label: "Yarn 2",
-            title: "Yarn 2"
+            label: "Yarn 2+",
+            title: "Yarn"
         }
     },
     siouan: {
