@@ -43,4 +43,9 @@ class ResolveNodeDistributionArchitectureIdTest {
     void shouldReturnFullDownloadUrlWhenResolvingUrlWithMacOsAndJreArchEqualToPPC() {
         assertThat(usecase.execute(PlatformFixture.aPlatform("ppc", "Mac OS X"))).contains("darwin-x64");
     }
+
+    @Test
+    void shouldReturnFullDownloadUrlWhenResolvingUrlWithMacOsAndJreArchEqualToArm64() {
+        assertThat(usecase.execute(PlatformFixture.aPlatform("aarch64", "Mac OS X"))).contains("darwin-arm64");
+    }
 }

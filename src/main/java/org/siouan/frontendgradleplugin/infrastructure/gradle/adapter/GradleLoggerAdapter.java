@@ -44,7 +44,7 @@ public class GradleLoggerAdapter implements Logger {
 
     @Override
     public void debug(@Nonnull final String message, @Nullable Object... parameters) {
-        if (gradleLogger == null) {
+        if ((gradleLogger == null) || !gradleLogger.isDebugEnabled()) {
             return;
         }
 
