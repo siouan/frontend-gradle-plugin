@@ -16,7 +16,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-20.04, macos-latest, windows-2019]
+        os: [ubuntu-20.04, macos-10.15, windows-2019]
 
     steps:
       - name: Init Ubuntu environment
@@ -24,7 +24,7 @@ jobs:
         run: sudo rm -f /usr/local/bin/node /usr/local/bin/npm /usr/local/bin/npx /usr/bin/yarn
 
       - name: Init MacOS environment
-        if: matrix.os == 'macos-latest'
+        if: matrix.os == 'macos-10.15'
         run: sudo rm -f /usr/local/bin/node /usr/local/bin/npm /usr/local/bin/npx /usr/bin/yarn /Users/runner/.yarn/bin/yarn
 
       - name: Init Windows environment
