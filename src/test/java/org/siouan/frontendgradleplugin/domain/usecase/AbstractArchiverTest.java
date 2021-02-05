@@ -174,7 +174,7 @@ public class AbstractArchiverTest {
         final Path otherEmptyDirPath = rootDirPath.resolve("other-empty-dir");
         final Path rootFilePath = temporaryDirectoryPath.resolve("root-file");
         final ExplodeSettings settings = new ExplodeSettings(
-            PlatformFixture.aDefaultPlatform(SystemUtils.getSystemJvmArch(), osName), archiveFilePath,
+            PlatformFixture.aPlatform(SystemUtils.getSystemJvmArch(), osName), archiveFilePath,
             temporaryDirectoryPath);
 
         when(fileManager.isDirectory(temporaryDirectoryPath)).thenReturn(true);

@@ -13,6 +13,16 @@ import org.siouan.frontendgradleplugin.domain.model.DistributionUrlResolver;
  */
 public class GetDistributionUrlResolver {
 
+    private final ResolveNodeDistributionUrl resolveNodeDistributionUrl;
+
+    private final ResolveYarnDistributionUrl resolveYarnDistributionUrl;
+
+    public GetDistributionUrlResolver(final ResolveNodeDistributionUrl resolveNodeDistributionUrl,
+        final ResolveYarnDistributionUrl resolveYarnDistributionUrl) {
+        this.resolveNodeDistributionUrl = resolveNodeDistributionUrl;
+        this.resolveYarnDistributionUrl = resolveYarnDistributionUrl;
+    }
+
     /**
      * Gets an instance of a distribution URL resolver supporting the given ID.
      *
@@ -24,9 +34,9 @@ public class GetDistributionUrlResolver {
     public Optional<DistributionUrlResolver> execute(@Nonnull final String distributionId) {
         switch (distributionId) {
         case DistributionId.NODE:
-            return Optional.of(new ResolveNodeDistributionUrl());
+            return Optional.of(resolveNodeDistributionUrl);
         case DistributionId.YARN:
-            return Optional.of(new ResolveYarnDistributionUrl());
+            return Optional.of(resolveYarnDistributionUrl);
         default:
             return Optional.empty();
         }

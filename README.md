@@ -42,6 +42,7 @@ IDE, and their support to this project.
 With their feedback, plugin improvement is possible. Special thanks to:
 
 @[andreaschiona](https://github.com/andreaschiona),
+@[apo1967](https://github.com/apo1967),
 @[byxor](https://github.com/byxor),
 @[ChFlick](https://github.com/ChFlick),
 @[ckosloski](https://github.com/ckosloski),

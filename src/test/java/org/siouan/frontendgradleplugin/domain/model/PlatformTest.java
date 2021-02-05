@@ -14,62 +14,62 @@ class PlatformTest {
     @Test
     void shouldReturnFalseWhenJvmArchIsNot64Bits() {
         assertThat(
-            PlatformFixture.aDefaultPlatform("OS_64_bits", SystemUtils.getSystemOsName()).is64BitsArch()).isFalse();
+            PlatformFixture.aPlatform("OS_64_bits", SystemUtils.getSystemOsName()).is64BitsArch()).isFalse();
     }
 
     @Test
     void shouldReturnTrueWhenJvmArchContains_x64() {
-        assertThat(PlatformFixture.aDefaultPlatform("_X64_", SystemUtils.getSystemOsName()).is64BitsArch()).isTrue();
+        assertThat(PlatformFixture.aPlatform("_X64_", SystemUtils.getSystemOsName()).is64BitsArch()).isTrue();
     }
 
     @Test
     void shouldReturnTrueWhenJvmArchContains_x86_64() {
-        assertThat(PlatformFixture.aDefaultPlatform("_X86_64_", SystemUtils.getSystemOsName()).is64BitsArch()).isTrue();
+        assertThat(PlatformFixture.aPlatform("_X86_64_", SystemUtils.getSystemOsName()).is64BitsArch()).isTrue();
     }
 
     @Test
     void shouldReturnTrueWhenJvmArchContains_amd64() {
-        assertThat(PlatformFixture.aDefaultPlatform("_Amd64_", SystemUtils.getSystemOsName()).is64BitsArch()).isTrue();
+        assertThat(PlatformFixture.aPlatform("_Amd64_", SystemUtils.getSystemOsName()).is64BitsArch()).isTrue();
     }
 
     @Test
     void shouldReturnTrueWhenJvmArchContains_ppc() {
-        assertThat(PlatformFixture.aDefaultPlatform("_PPC_", SystemUtils.getSystemOsName()).is64BitsArch()).isTrue();
+        assertThat(PlatformFixture.aPlatform("_PPC_", SystemUtils.getSystemOsName()).is64BitsArch()).isTrue();
     }
 
     @Test
     void shouldReturnTrueWhenJvmArchContains_sparc() {
-        assertThat(PlatformFixture.aDefaultPlatform("_Sparc_", SystemUtils.getSystemOsName()).is64BitsArch()).isTrue();
+        assertThat(PlatformFixture.aPlatform("_Sparc_", SystemUtils.getSystemOsName()).is64BitsArch()).isTrue();
     }
 
     @Test
     void shouldReturnFalseWhenOsNameDoesNotContain_linux() {
-        assertThat(PlatformFixture.aDefaultPlatform(SystemUtils.getSystemJvmArch(), "_Unix_").isLinuxOs()).isFalse();
+        assertThat(PlatformFixture.aPlatform(SystemUtils.getSystemJvmArch(), "_Unix_").isLinuxOs()).isFalse();
     }
 
     @Test
     void shouldReturnTrueWhenOsNameContains_linux() {
-        assertThat(PlatformFixture.aDefaultPlatform(SystemUtils.getSystemJvmArch(), "_Linux_").isLinuxOs()).isTrue();
+        assertThat(PlatformFixture.aPlatform(SystemUtils.getSystemJvmArch(), "_Linux_").isLinuxOs()).isTrue();
     }
 
     @Test
     void shouldReturnFalseWhenOsNameDoesNotContain_mac_os() {
-        assertThat(PlatformFixture.aDefaultPlatform(SystemUtils.getSystemJvmArch(), "_MACOS_").isMacOs()).isFalse();
+        assertThat(PlatformFixture.aPlatform(SystemUtils.getSystemJvmArch(), "_MACOS_").isMacOs()).isFalse();
     }
 
     @Test
     void shouldReturnTrueWhenOsNameContains_mac_os() {
-        assertThat(PlatformFixture.aDefaultPlatform(SystemUtils.getSystemJvmArch(), "_Mac OS_").isMacOs()).isTrue();
+        assertThat(PlatformFixture.aPlatform(SystemUtils.getSystemJvmArch(), "_Mac OS_").isMacOs()).isTrue();
     }
 
     @Test
     void shouldReturnFalseWhenOsNameDoesNotContain_windows() {
-        assertThat(PlatformFixture.aDefaultPlatform(SystemUtils.getSystemJvmArch(), "_WinNT_").isWindowsOs()).isFalse();
+        assertThat(PlatformFixture.aPlatform(SystemUtils.getSystemJvmArch(), "_WinNT_").isWindowsOs()).isFalse();
     }
 
     @Test
     void shouldReturnTrueWhenOsNameContains_windows() {
         assertThat(
-            PlatformFixture.aDefaultPlatform(SystemUtils.getSystemJvmArch(), "_Windows_").isWindowsOs()).isTrue();
+            PlatformFixture.aPlatform(SystemUtils.getSystemJvmArch(), "_Windows_").isWindowsOs()).isTrue();
     }
 }
