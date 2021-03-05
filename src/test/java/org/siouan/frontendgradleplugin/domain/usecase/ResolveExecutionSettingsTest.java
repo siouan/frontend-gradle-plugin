@@ -259,7 +259,7 @@ class ResolveExecutionSettingsTest {
         assertThat(executionSettings.getAdditionalExecutablePaths()).isEmpty();
         assertThat(executionSettings.getExecutablePath()).isEqualTo(ResolveExecutionSettings.UNIX_EXECUTABLE_PATH);
         assertThat(executionSettings.getArguments()).containsExactly(
-            ResolveExecutionSettings.UNIX_EXECUTABLE_AUTOEXIT_FLAG, nodeExecutablePath + " run script");
+            ResolveExecutionSettings.UNIX_EXECUTABLE_AUTOEXIT_FLAG, "\"" + nodeExecutablePath + "\" run script");
         verifyNoMoreInteractions(getNodeExecutablePath, getNpmExecutablePath, getNpxExecutablePath,
             getYarnExecutablePath);
     }
@@ -280,7 +280,7 @@ class ResolveExecutionSettingsTest {
         assertThat(executionSettings.getAdditionalExecutablePaths()).containsExactly(nodeExecutablePath.getParent());
         assertThat(executionSettings.getExecutablePath()).isEqualTo(ResolveExecutionSettings.UNIX_EXECUTABLE_PATH);
         assertThat(executionSettings.getArguments()).containsExactly(
-            ResolveExecutionSettings.UNIX_EXECUTABLE_AUTOEXIT_FLAG, npmExecutablePath + " run script");
+            ResolveExecutionSettings.UNIX_EXECUTABLE_AUTOEXIT_FLAG, "\"" + npmExecutablePath + "\" run script");
         verifyNoMoreInteractions(getNodeExecutablePath, getNpmExecutablePath, getNpxExecutablePath,
             getYarnExecutablePath);
     }
@@ -301,7 +301,7 @@ class ResolveExecutionSettingsTest {
         assertThat(executionSettings.getAdditionalExecutablePaths()).containsExactly(nodeExecutablePath.getParent());
         assertThat(executionSettings.getExecutablePath()).isEqualTo(ResolveExecutionSettings.UNIX_EXECUTABLE_PATH);
         assertThat(executionSettings.getArguments()).containsExactly(
-            ResolveExecutionSettings.UNIX_EXECUTABLE_AUTOEXIT_FLAG, npxExecutablePath + " run script");
+            ResolveExecutionSettings.UNIX_EXECUTABLE_AUTOEXIT_FLAG, "\"" + npxExecutablePath + "\" run script");
         verifyNoMoreInteractions(getNodeExecutablePath, getNpmExecutablePath, getNpxExecutablePath,
             getYarnExecutablePath);
     }
@@ -322,7 +322,7 @@ class ResolveExecutionSettingsTest {
         assertThat(executionSettings.getAdditionalExecutablePaths()).containsExactly(nodeExecutablePath.getParent());
         assertThat(executionSettings.getExecutablePath()).isEqualTo(ResolveExecutionSettings.UNIX_EXECUTABLE_PATH);
         assertThat(executionSettings.getArguments()).containsExactly(
-            ResolveExecutionSettings.UNIX_EXECUTABLE_AUTOEXIT_FLAG, yarnExecutablePath + " run script");
+            ResolveExecutionSettings.UNIX_EXECUTABLE_AUTOEXIT_FLAG, "\"" + yarnExecutablePath + "\" run script");
         verifyNoMoreInteractions(getNodeExecutablePath, getNpmExecutablePath, getNpxExecutablePath,
             getYarnExecutablePath);
     }
