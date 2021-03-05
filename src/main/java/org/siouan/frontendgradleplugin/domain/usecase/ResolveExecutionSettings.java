@@ -117,13 +117,12 @@ public class ResolveExecutionSettings {
                 // variable.
                 args.add(scriptExecutablePath.toString() + ' ' + script.trim());
             } else {
-                // Enclose the executable path between double-quotes in case of the path contains whitespaces.
-                args.add('"' + scriptExecutablePath.toString() + "\" " + script.trim());
+                args.add(enclosePathInDoubleQuotesToEscapceWhitespace(scriptExecutablePath) + " " + script.trim());
             }
         } else {
             executable = UNIX_EXECUTABLE_PATH;
             args.add(UNIX_EXECUTABLE_AUTOEXIT_FLAG);
-            args.add(scriptExecutablePath.toString() + UNIX_SCRIPT_ARG_SEPARATOR_CHAR + String.join(
+            args.add(enclosePathInDoubleQuotesToEscapceWhitespace(scriptExecutablePath) + UNIX_SCRIPT_ARG_SEPARATOR_CHAR + String.join(
                 Character.toString(UNIX_SCRIPT_ARG_SEPARATOR_CHAR),
                 new StringSplitter(UNIX_SCRIPT_ARG_SEPARATOR_CHAR, UNIX_SCRIPT_ARG_ESCAPE_CHAR).execute(
                     script.trim())));
@@ -138,5 +137,9 @@ public class ResolveExecutionSettings {
         }
 
         return new ExecutionSettings(packageJsonDirectoryPath, executablePaths, executable, args);
+    }
+
+    private static String enclosePathInDoubleQuotesToEscapceWhitespace(Path path) {
+        return '"' + path.toString() + '"';
     }
 }
