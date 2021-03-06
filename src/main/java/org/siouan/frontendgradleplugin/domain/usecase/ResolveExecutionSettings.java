@@ -54,23 +54,16 @@ public class ResolveExecutionSettings {
 
     private final GetNodeExecutablePath getNodeExecutablePath;
 
-    private final GetNpmExecutablePath getNpmExecutablePath;
-
-    private final GetNpxExecutablePath getNpxExecutablePath;
-
-    private final GetYarnExecutablePath getYarnExecutablePath;
+    private final ResolveExecutablePath resolveExecutablePath;
 
     public ResolveExecutionSettings(final GetNodeExecutablePath getNodeExecutablePath,
-        final GetNpmExecutablePath getNpmExecutablePath, final GetNpxExecutablePath getNpxExecutablePath,
-        final GetYarnExecutablePath getYarnExecutablePath) {
+        final ResolveExecutablePath resolveExecutablePath) {
         this.getNodeExecutablePath = getNodeExecutablePath;
-        this.getNpmExecutablePath = getNpmExecutablePath;
-        this.getNpxExecutablePath = getNpxExecutablePath;
-        this.getYarnExecutablePath = getYarnExecutablePath;
+        this.resolveExecutablePath = resolveExecutablePath;
     }
 
     /**
-     * Resolves the execution settings to run the given script with a node/npm/npx/yarn executable.
+     * Resolves execution settings to run the given script with a node/npm/npx/yarn executable.
      *
      * @param packageJsonDirectoryPath Path to the {@code package.json} file, used as the working directory.
      * @param executableType Type of executable.
@@ -87,23 +80,8 @@ public class ResolveExecutionSettings {
         @Nullable final Path nodeInstallDirectoryPath, @Nullable final Path yarnInstallDirectoryPath,
         @Nonnull final Platform platform, @Nonnull final String script) throws ExecutableNotFoundException {
         final Path nodeExecutablePath = getNodeExecutablePath.execute(nodeInstallDirectoryPath, platform);
-        final Path scriptExecutablePath;
-        switch (executableType) {
-        case ExecutableType.NODE:
-            scriptExecutablePath = nodeExecutablePath;
-            break;
-        case ExecutableType.NPM:
-            scriptExecutablePath = getNpmExecutablePath.execute(nodeInstallDirectoryPath, platform);
-            break;
-        case ExecutableType.NPX:
-            scriptExecutablePath = getNpxExecutablePath.execute(nodeInstallDirectoryPath, platform);
-            break;
-        case ExecutableType.YARN:
-            scriptExecutablePath = getYarnExecutablePath.execute(yarnInstallDirectoryPath, platform);
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported type of execution: " + executableType);
-        }
+        final Path scriptExecutablePath = resolveExecutablePath.execute(executableType, nodeInstallDirectoryPath,
+            yarnInstallDirectoryPath, platform);
 
         final Path executable;
         final List<String> args = new ArrayList<>();
@@ -117,13 +95,13 @@ public class ResolveExecutionSettings {
                 // variable.
                 args.add(scriptExecutablePath.toString() + ' ' + script.trim());
             } else {
-                args.add(enclosePathInDoubleQuotesToEscapceWhitespace(scriptExecutablePath) + " " + script.trim());
+                args.add(escapeWhitespacesFromCommandLineToken(scriptExecutablePath) + " " + script.trim());
             }
         } else {
             executable = UNIX_EXECUTABLE_PATH;
             args.add(UNIX_EXECUTABLE_AUTOEXIT_FLAG);
-            args.add(enclosePathInDoubleQuotesToEscapceWhitespace(scriptExecutablePath) + UNIX_SCRIPT_ARG_SEPARATOR_CHAR + String.join(
-                Character.toString(UNIX_SCRIPT_ARG_SEPARATOR_CHAR),
+            args.add(escapeWhitespacesFromCommandLineToken(scriptExecutablePath) + UNIX_SCRIPT_ARG_SEPARATOR_CHAR
+                + String.join(Character.toString(UNIX_SCRIPT_ARG_SEPARATOR_CHAR),
                 new StringSplitter(UNIX_SCRIPT_ARG_SEPARATOR_CHAR, UNIX_SCRIPT_ARG_ESCAPE_CHAR).execute(
                     script.trim())));
         }
@@ -139,7 +117,7 @@ public class ResolveExecutionSettings {
         return new ExecutionSettings(packageJsonDirectoryPath, executablePaths, executable, args);
     }
 
-    private static String enclosePathInDoubleQuotesToEscapceWhitespace(Path path) {
+    private String escapeWhitespacesFromCommandLineToken(Path path) {
         return '"' + path.toString() + '"';
     }
 }

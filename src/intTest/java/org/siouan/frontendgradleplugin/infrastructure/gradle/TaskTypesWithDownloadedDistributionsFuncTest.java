@@ -17,7 +17,6 @@ import static org.siouan.frontendgradleplugin.test.util.TaskTypes.createJavascri
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 import org.gradle.api.logging.LogLevel;
@@ -47,8 +46,7 @@ class TaskTypesWithDownloadedDistributionsFuncTest {
 
     @BeforeEach
     void setUp() throws IOException {
-        Path directoryPathWithSpace = Files.createDirectory(Paths.get(temporaryDirectoryPath.toString(), "some space"));
-        projectDirectoryPath = directoryPathWithSpace;
+        projectDirectoryPath = Files.createDirectory(temporaryDirectoryPath.resolve("project directory with spaces"));
     }
 
     @Test
