@@ -55,6 +55,7 @@ With their feedback, plugin improvement is possible. Special thanks to:
 @[rolaca11](https://github.com/rolaca11),
 @[stephanebastian](https://github.com/stephanebastian),
 @[TapaiBalazs](https://github.com/TapaiBalazs),
+@[tngwoerleij](https://github.com/tngwoerleij),
 @[trohr](https://github.com/trohr)
 
 [contributing]: <CONTRIBUTING.md> (Contributing to this project)
