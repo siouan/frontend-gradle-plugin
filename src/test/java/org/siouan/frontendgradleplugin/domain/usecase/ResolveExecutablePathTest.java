@@ -20,7 +20,7 @@ import org.siouan.frontendgradleplugin.test.fixture.PathFixture;
 import org.siouan.frontendgradleplugin.test.fixture.PlatformFixture;
 
 @ExtendWith(MockitoExtension.class)
-class ResolveExecutionPathTest {
+class ResolveExecutablePathTest {
 
     private static final Path NODE_INSTALL_DIRECTORY_PATH = PathFixture.ANY_PATH.resolve("node");
 
