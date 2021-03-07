@@ -19,6 +19,10 @@ public final class PlatformFixture {
     private PlatformFixture() {
     }
 
+    public static Platform aPlatform() {
+        return LOCAL_PLATFORM;
+    }
+
     public static Platform aDefaultPlatform(@Nonnull final String jvmArch, @Nonnull final String osName) {
         return new Platform(jvmArch, osName, EnvironmentFixture.EMPTY_ENVIRONMENT,
             SystemProxySettingsFixture.defaultSystemProxySettings());

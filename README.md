@@ -46,6 +46,7 @@ With their feedback, plugin improvement is possible. Special thanks to:
 @[ChFlick](https://github.com/ChFlick),
 @[ckosloski](https://github.com/ckosloski),
 @[davidkron](https://github.com/davidkron),
+@[fdw](https://github.com/fdw),
 @[jorgheymans](https://github.com/jorgheymans),
 @[ludik0](https://github.com/ludik0),
 @[mike-howell](https://github.com/mike-howell),
@@ -55,6 +56,7 @@ With their feedback, plugin improvement is possible. Special thanks to:
 @[rolaca11](https://github.com/rolaca11),
 @[stephanebastian](https://github.com/stephanebastian),
 @[TapaiBalazs](https://github.com/TapaiBalazs),
+@[tngwoerleij](https://github.com/tngwoerleij),
 @[trohr](https://github.com/trohr)
 
 [contributing]: <CONTRIBUTING.md> (Contributing to this project)

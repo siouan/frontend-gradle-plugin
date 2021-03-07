@@ -45,8 +45,8 @@ class TaskTypesWithDownloadedDistributionsFuncTest {
     private Path projectDirectoryPath;
 
     @BeforeEach
-    void setUp() {
-        projectDirectoryPath = temporaryDirectoryPath;
+    void setUp() throws IOException {
+        projectDirectoryPath = Files.createDirectory(temporaryDirectoryPath.resolve("project directory with spaces"));
     }
 
     @Test
