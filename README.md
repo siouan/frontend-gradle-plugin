@@ -57,7 +57,8 @@ With their feedback, plugin improvement is possible. Special thanks to:
 @[stephanebastian](https://github.com/stephanebastian),
 @[TapaiBalazs](https://github.com/TapaiBalazs),
 @[tngwoerleij](https://github.com/tngwoerleij),
-@[trohr](https://github.com/trohr)
+@[trohr](https://github.com/trohr),
+@[xehonk](https://github.com/xehonk)
 
 [contributing]: <CONTRIBUTING.md> (Contributing to this project)
 [example-multi-projects-war-application]: <examples/multi-projects-war-application> (Build a full-stack Spring Boot WAR application with dedicated frontend and backend sub-projects)
