@@ -2,7 +2,7 @@ val fgpArtifactId: String by extra
 
 pluginManagement {
     plugins {
-        id("com.gradle.enterprise") version "3.4.1"
+        id("com.gradle.enterprise") version "3.5.1"
         id("com.gradle.plugin-publish") version "0.12.0"
     }
 }
