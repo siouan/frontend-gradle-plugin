@@ -1,6 +1,6 @@
 <h2 align="center">Frontend Gradle plugin - Integrated <a href="https://nodejs.org/" title="Node.js">Node.js</a>, <a href="https://www.npmjs.com/" title="npm">npm</a>, <a href="https://yarnpkg.com/" title="Yarn">Yarn</a> builds</h2> 
 <p align="center">
-    <a href="https://github.com/siouan/frontend-gradle-plugin/releases/tag/v5.0.0"><img src="https://img.shields.io/badge/Latest%20release-5.0.0-blue.svg" alt="Latest release 5.0.0"/></a>
+    <a href="https://github.com/siouan/frontend-gradle-plugin/releases/tag/v5.0.1"><img src="https://img.shields.io/badge/Latest%20release-5.0.1-blue.svg" alt="Latest release 5.0.1"/></a>
     <a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-green.svg" alt="License Apache 2.0"/></a>
     <br/>
     <a href="https://travis-ci.com/siouan/frontend-gradle-plugin"><img src="https://travis-ci.com/siouan/frontend-gradle-plugin.svg?branch=master" alt="Build status"/></a>
@@ -42,10 +42,12 @@ IDE, and their support to this project.
 With their feedback, plugin improvement is possible. Special thanks to:
 
 @[andreaschiona](https://github.com/andreaschiona),
+@[apo1967](https://github.com/apo1967),
 @[byxor](https://github.com/byxor),
 @[ChFlick](https://github.com/ChFlick),
 @[ckosloski](https://github.com/ckosloski),
 @[davidkron](https://github.com/davidkron),
+@[fdw](https://github.com/fdw),
 @[jorgheymans](https://github.com/jorgheymans),
 @[ludik0](https://github.com/ludik0),
 @[mike-howell](https://github.com/mike-howell),
@@ -55,7 +57,9 @@ With their feedback, plugin improvement is possible. Special thanks to:
 @[rolaca11](https://github.com/rolaca11),
 @[stephanebastian](https://github.com/stephanebastian),
 @[TapaiBalazs](https://github.com/TapaiBalazs),
-@[trohr](https://github.com/trohr)
+@[tngwoerleij](https://github.com/tngwoerleij),
+@[trohr](https://github.com/trohr),
+@[xehonk](https://github.com/xehonk)
 
 [contributing]: <CONTRIBUTING.md> (Contributing to this project)
 [example-multi-projects-war-application]: <examples/multi-projects-war-application> (Build a full-stack Spring Boot WAR application with dedicated frontend and backend sub-projects)
