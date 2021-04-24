@@ -43,8 +43,8 @@ class AssembleTaskFuncTest {
     void shouldBeSkippedWhenScriptIsNotDefined() throws IOException {
         Files.copy(getResourcePath("package-npm.json"), packageJsonDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("14.15.4")
-            .nodeDistributionUrl(getResourceUrl("node-v14.15.4.zip"));
+            .nodeVersion("14.16.1")
+            .nodeDistributionUrl(getResourceUrl("node-v14.16.1.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result = runGradle(projectDirectoryPath, FrontendGradlePlugin.ASSEMBLE_TASK_NAME);
@@ -59,8 +59,8 @@ class AssembleTaskFuncTest {
     void shouldAssembleAndSkipFrontendAssemblingTask() throws IOException {
         Files.copy(getResourcePath("package-npm.json"), packageJsonDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("14.15.4")
-            .nodeDistributionUrl(getResourceUrl("node-v14.15.4.zip"));
+            .nodeVersion("14.16.1")
+            .nodeDistributionUrl(getResourceUrl("node-v14.16.1.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result = runGradle(projectDirectoryPath, BasePlugin.ASSEMBLE_TASK_NAME);
@@ -76,8 +76,8 @@ class AssembleTaskFuncTest {
     void shouldAssembleFrontendWithNpmOrYarn() throws IOException {
         Files.copy(getResourcePath("package-npm.json"), packageJsonDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("14.15.4")
-            .nodeDistributionUrl(getResourceUrl("node-v14.15.4.zip"))
+            .nodeVersion("14.16.1")
+            .nodeDistributionUrl(getResourceUrl("node-v14.16.1.zip"))
             .assembleScript("run assemble");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 

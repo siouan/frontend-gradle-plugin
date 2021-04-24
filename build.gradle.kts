@@ -14,11 +14,12 @@ plugins {
     id("java-gradle-plugin")
     id("jacoco")
     id("com.gradle.plugin-publish")
-    id ("maven-publish")
+    id("maven-publish")
+    id("org.sonarqube")
 }
 
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 group = fgpGroup
@@ -84,6 +85,7 @@ tasks.named<Task>("check") {
 }
 
 tasks.named<JacocoReport>("jacocoTestReport") {
+    dependsOn(tasks.named("integrationTest"))
     executionData.setFrom(file("${project.buildDir}/jacoco/test.exec"), file("${project.buildDir}/jacoco/integrationTest.exec"))
     reports {
         xml.isEnabled = true
@@ -112,5 +114,32 @@ pluginBundle {
             description = fgpDescription
             tags = fgpGradlePluginPortalTags.split(",")
         }
+    }
+}
+
+sonarqube {
+    properties {
+        property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.organization", "siouan")
+        property("sonar.projectKey", "siouan_frontend-gradle-plugin")
+        property("sonar.projectName", "frontend-gradle-plugin")
+        property("sonar.projectVersion", "5.0.1-jdk11")
+
+        property("sonar.links.homepage", "https://github.com/siouan/frontend-gradle-plugin")
+        property("sonar.links.ci", "https://travis-ci.com/siouan/frontend-gradle-plugin")
+        property("sonar.links.scm", "https://github.com/siouan/frontend-gradle-plugin")
+        property("sonar.links.issue", "https://github.com/siouan/frontend-gradle-plugin/issues")
+
+        property("sonar.sources", "src/main")
+        property("sonar.tests", "src/test,src/intTest")
+
+        property("sonar.java.binaries", "build/classes/java/main")
+        property("sonar.java.test.binaries", "build/classes/java/test,build/classes/java/intTest")
+        property("sonar.junit.reportPaths", "build/test-results/test/,build/test-results/integrationTest/")
+        property("sonar.coverage.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco/report.xml")
+
+        // Unrelevant duplications detected on task inputs
+        property("sonar.cpd.exclusions", "**/org/siouan/frontendgradleplugin/domain/model/*.java,**/org/siouan/frontendgradleplugin/domain/usecase/Get*ExecutablePath.java")
+
     }
 }

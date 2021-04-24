@@ -1,7 +1,7 @@
 # This workflow will build a Java project with Gradle
 # For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
 
-name: Continuous integration
+name: Build
 
 on:
   push:
@@ -12,7 +12,7 @@ on:
 
 jobs:
   build:
-    name: Build plugin
+    name: Build
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -21,11 +21,11 @@ jobs:
     steps:
       - name: Init Ubuntu environment
         if: matrix.os == 'ubuntu-20.04'
-        run: sudo rm -f /usr/local/bin/node /usr/local/bin/npm /usr/local/bin/npx /usr/bin/yarn
+        run: sudo rm -f /usr/local/bin/node /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/yarn /usr/bin/yarn
 
       - name: Init MacOS environment
         if: matrix.os == 'macos-10.15'
-        run: sudo rm -f /usr/local/bin/node /usr/local/bin/npm /usr/local/bin/npx /usr/bin/yarn /Users/runner/.yarn/bin/yarn
+        run: sudo rm -f /usr/local/bin/node /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin//yarn /usr/bin/yarn /Users/runner/.yarn/bin/yarn
 
       - name: Init Windows environment
         if: matrix.os == 'windows-2019'
@@ -64,7 +64,7 @@ jobs:
         with:
           path: |
             - ~/.sonar/cache/
-          key: ${{ runner.os }}-sonar-${{ hashFiles('**/*.gradle*') }}
+          key: ${{ runner.os }}-sonar
 
       - name: Grant executable permission
         run: chmod +x gradlew src/intTest/resources/*/bin/*
@@ -78,8 +78,9 @@ jobs:
         run: ./gradlew :build --console=plain
 
       - name: Scan source code and test results
-        uses: SonarSource/sonarcloud-github-action@v1.4
         if: matrix.os == 'ubuntu-20.04'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./gradlew -i sonarqube --console=plain
+
