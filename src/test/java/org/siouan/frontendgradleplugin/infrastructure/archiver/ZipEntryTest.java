@@ -41,7 +41,7 @@ class ZipEntryTest {
         assertThat(entry.getName()).isEqualTo(name);
         assertThat(entry.isDirectory()).isEqualTo(isDirectory);
         assertThat(entry.isSymbolicLink()).isEqualTo(isSymbolicLink);
-        assertThat(entry.isFile()).isEqualTo(false);
+        assertThat(entry.isFile()).isFalse();
         assertThat(entry.getUnixMode()).isEqualTo(unixMode);
     }
 
@@ -62,7 +62,7 @@ class ZipEntryTest {
         assertThat(entry.getName()).isEqualTo(name);
         assertThat(entry.isDirectory()).isEqualTo(isDirectory);
         assertThat(entry.isSymbolicLink()).isEqualTo(isSymbolicLink);
-        assertThat(entry.isFile()).isEqualTo(false);
+        assertThat(entry.isFile()).isFalse();
         assertThat(entry.getUnixMode()).isEqualTo(unixMode);
     }
 
@@ -83,7 +83,7 @@ class ZipEntryTest {
         assertThat(entry.getName()).isEqualTo(name);
         assertThat(entry.isDirectory()).isEqualTo(isDirectory);
         assertThat(entry.isSymbolicLink()).isEqualTo(isSymbolicLink);
-        assertThat(entry.isFile()).isEqualTo(true);
+        assertThat(entry.isFile()).isTrue();
         assertThat(entry.getUnixMode()).isEqualTo(unixMode);
     }
 }

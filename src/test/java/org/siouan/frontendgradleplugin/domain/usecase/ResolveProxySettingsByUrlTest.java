@@ -67,10 +67,11 @@ class ResolveProxySettingsByUrlTest {
     private ResolveProxySettingsByUrl usecase;
 
     @Test
-    void shouldFailWhenUrlUsesUnsupportedProtocol() {
-        assertThatThrownBy(
-            () -> usecase.execute(null, 80, null, null, 443, null, new URL("ftp", HOST, PORT, "/"))).isInstanceOf(
-            IllegalArgumentException.class);
+    void shouldFailWhenUrlUsesUnsupportedProtocol() throws MalformedURLException {
+        final URL url = new URL("ftp", HOST, PORT, "/");
+
+        assertThatThrownBy(() -> usecase.execute(null, 80, null, null, 443, null, url))
+            .isInstanceOf(IllegalArgumentException.class);
 
         verifyNoMoreInteractions(systemProxySettings, isNonProxyHost, selectProxySettings);
     }
@@ -107,8 +108,8 @@ class ResolveProxySettingsByUrlTest {
             PLUGIN_HTTP_PROXY_PORT, PLUGIN_HTTP_PROXY_CREDENTIALS)).thenReturn(proxySettings);
 
         assertThat(usecase.execute(PLUGIN_HTTP_PROXY_HOST, PLUGIN_HTTP_PROXY_PORT, PLUGIN_HTTP_PROXY_CREDENTIALS,
-            PLUGIN_HTTPS_PROXY_HOST, PLUGIN_HTTPS_PROXY_PORT, PLUGIN_HTTPS_PROXY_CREDENTIALS, resourceUrl)).isEqualTo(
-            proxySettings);
+            PLUGIN_HTTPS_PROXY_HOST, PLUGIN_HTTPS_PROXY_PORT, PLUGIN_HTTPS_PROXY_CREDENTIALS, resourceUrl))
+            .isEqualTo(proxySettings);
 
         verifyNoMoreInteractions(systemProxySettings, isNonProxyHost, selectProxySettings);
     }
@@ -126,8 +127,8 @@ class ResolveProxySettingsByUrlTest {
             PLUGIN_HTTPS_PROXY_PORT, PLUGIN_HTTPS_PROXY_CREDENTIALS)).thenReturn(proxySettings);
 
         assertThat(usecase.execute(PLUGIN_HTTP_PROXY_HOST, PLUGIN_HTTP_PROXY_PORT, PLUGIN_HTTP_PROXY_CREDENTIALS,
-            PLUGIN_HTTPS_PROXY_HOST, PLUGIN_HTTPS_PROXY_PORT, PLUGIN_HTTPS_PROXY_CREDENTIALS, resourceUrl)).isEqualTo(
-            proxySettings);
+            PLUGIN_HTTPS_PROXY_HOST, PLUGIN_HTTPS_PROXY_PORT, PLUGIN_HTTPS_PROXY_CREDENTIALS, resourceUrl))
+            .isEqualTo(proxySettings);
 
         verifyNoMoreInteractions(systemProxySettings, isNonProxyHost, selectProxySettings);
     }

@@ -45,7 +45,7 @@ import org.siouan.frontendgradleplugin.test.fixture.ArchiverImpl;
 import org.siouan.frontendgradleplugin.test.fixture.PlatformFixture;
 
 @ExtendWith(MockitoExtension.class)
-public class AbstractArchiverTest {
+class AbstractArchiverTest {
 
     private static final String ARCHIVE_FILENAME = "archive.zip";
 
@@ -74,8 +74,8 @@ public class AbstractArchiverTest {
         final ExplodeSettings settings = new ExplodeSettings(PlatformFixture.LOCAL_PLATFORM, archiveFilePath,
             temporaryDirectoryPath);
 
-        assertThatThrownBy(() -> new ArchiverImpl(fileManager, context, entries).explode(settings)).isInstanceOf(
-            DirectoryNotFoundException.class);
+        assertThatThrownBy(() -> new ArchiverImpl(fileManager, context, entries).explode(settings))
+            .isInstanceOf(DirectoryNotFoundException.class);
 
         verifyNoMoreInteractions(fileManager, context);
     }
@@ -87,9 +87,8 @@ public class AbstractArchiverTest {
             temporaryDirectoryPath);
         final ArchiverException expectedException = mock(ArchiverException.class);
 
-        assertThatThrownBy(
-            () -> new ArchiverImpl(fileManager, context, entries, expectedException).explode(settings)).isEqualTo(
-            expectedException);
+        assertThatThrownBy(() -> new ArchiverImpl(fileManager, context, entries, expectedException).explode(settings))
+            .isEqualTo(expectedException);
 
         verifyNoMoreInteractions(fileManager, context);
     }
@@ -102,8 +101,8 @@ public class AbstractArchiverTest {
             temporaryDirectoryPath);
         when(context.getSettings()).thenReturn(settings);
 
-        assertThatThrownBy(() -> new ArchiverImpl(fileManager, context, entries).explode(settings)).isInstanceOf(
-            SlipAttackException.class);
+        assertThatThrownBy(() -> new ArchiverImpl(fileManager, context, entries).explode(settings))
+            .isInstanceOf(SlipAttackException.class);
 
         verify(context).close();
         verifyNoMoreInteractions(fileManager, context);
@@ -118,9 +117,8 @@ public class AbstractArchiverTest {
         entries.add(newFileEntry("unwritable-file", 0777, null));
         final IOException expectedException = new IOException();
 
-        assertThatThrownBy(
-            () -> new ArchiverImpl(fileManager, context, entries, expectedException).explode(settings)).isEqualTo(
-            expectedException);
+        assertThatThrownBy(() -> new ArchiverImpl(fileManager, context, entries, expectedException).explode(settings))
+            .isEqualTo(expectedException);
 
         verify(context).close();
         verifyNoMoreInteractions(fileManager, context);
@@ -134,8 +132,8 @@ public class AbstractArchiverTest {
         when(context.getSettings()).thenReturn(settings);
         entries.add(newUnknownEntry("name"));
 
-        assertThatThrownBy(() -> new ArchiverImpl(fileManager, context, entries).explode(settings)).isInstanceOf(
-            UnsupportedEntryException.class);
+        assertThatThrownBy(() -> new ArchiverImpl(fileManager, context, entries).explode(settings))
+            .isInstanceOf(UnsupportedEntryException.class);
 
         verify(context).close();
         verifyNoMoreInteractions(fileManager, context);
@@ -154,12 +152,13 @@ public class AbstractArchiverTest {
             eq(normalizedAndRelativizedTargetFilePath))).thenReturn(false);
         when(fileManager.exists(argThat(path -> path.endsWith(relativizedTargetFilePath)))).thenReturn(true);
 
-        assertThatThrownBy(() -> new ArchiverImpl(fileManager, context, entries).explode(settings)).isInstanceOf(
-            InvalidRelativizedSymbolicLinkTargetException.class);
+        assertThatThrownBy(() -> new ArchiverImpl(fileManager, context, entries).explode(settings))
+            .isInstanceOf(InvalidRelativizedSymbolicLinkTargetException.class);
 
         verify(context).close();
-        verify(fileManager).createSymbolicLink(temporaryDirectoryPath.resolve("unsupported-symlink"),
-            normalizedAndRelativizedTargetFilePath);
+        verify(fileManager)
+            .createSymbolicLink(temporaryDirectoryPath.resolve("unsupported-symlink"),
+                normalizedAndRelativizedTargetFilePath);
         verifyNoMoreInteractions(fileManager, context);
     }
 
@@ -174,8 +173,7 @@ public class AbstractArchiverTest {
         final Path otherEmptyDirPath = rootDirPath.resolve("other-empty-dir");
         final Path rootFilePath = temporaryDirectoryPath.resolve("root-file");
         final ExplodeSettings settings = new ExplodeSettings(
-            PlatformFixture.aPlatform(SystemUtils.getSystemJvmArch(), osName), archiveFilePath,
-            temporaryDirectoryPath);
+            PlatformFixture.aPlatform(SystemUtils.getSystemJvmArch(), osName), archiveFilePath, temporaryDirectoryPath);
 
         when(fileManager.isDirectory(temporaryDirectoryPath)).thenReturn(true);
         when(context.getSettings()).thenReturn(settings);
@@ -236,18 +234,18 @@ public class AbstractArchiverTest {
 
         if (!settings.getPlatform().isWindowsOs()) {
             verify(fileManager).createSymbolicLink(rootDirPath.resolve("invalid-symlink"), Paths.get("unknown-target"));
-            verify(fileManager).createSymbolicLink(rootDirPath.resolve("symlink-to-nested-file"),
-                Paths.get("nested-dir/nested-file"));
-            verify(fileManager).createSymbolicLink(rootDirPath.resolve("symlink-to-empty-dir"),
-                Paths.get("other-empty-dir"));
+            verify(fileManager)
+                .createSymbolicLink(rootDirPath.resolve("symlink-to-nested-file"), Paths.get("nested-dir/nested-file"));
+            verify(fileManager)
+                .createSymbolicLink(rootDirPath.resolve("symlink-to-empty-dir"), Paths.get("other-empty-dir"));
 
-            verify(fileManager).setPosixFilePermissions(nestedEmptyDirPath,
-                PosixFilePermissions.fromString("rwx------"));
+            verify(fileManager)
+                .setPosixFilePermissions(nestedEmptyDirPath, PosixFilePermissions.fromString("rwx------"));
             verify(fileManager).setPosixFilePermissions(rootDirPath, PosixFilePermissions.fromString("rwxr-x---"));
             verify(fileManager).setPosixFilePermissions(nestedDirPath, PosixFilePermissions.fromString("rwxr-x---"));
             verify(fileManager).setPosixFilePermissions(nestedFilePath, PosixFilePermissions.fromString("rw-r-x-w-"));
-            verify(fileManager).setPosixFilePermissions(otherEmptyDirPath,
-                PosixFilePermissions.fromString("r-xr-xr-x"));
+            verify(fileManager)
+                .setPosixFilePermissions(otherEmptyDirPath, PosixFilePermissions.fromString("r-xr-xr-x"));
             verify(fileManager).setPosixFilePermissions(rootFilePath, PosixFilePermissions.fromString("r------wx"));
         }
 
