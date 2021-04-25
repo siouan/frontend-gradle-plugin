@@ -10,8 +10,10 @@ import javax.annotation.Nonnull;
  */
 public class Platform {
 
+    private static final String[] SUPPORTED_JVM_ARM_64_BITS_ARCH_IDS = new String[] {"aarch64"};
+
     private static final String[] SUPPORTED_JVM_64_BITS_ARCH_IDS = new String[] {"x64", "x86_64", "amd64", "ppc",
-        "sparc"};
+        "sparc", "aarch64"};
 
     private static final String[] SUPPORTED_LINUX_OS_IDS = new String[] {"linux"};
 
@@ -35,24 +37,17 @@ public class Platform {
     private final Environment environment;
 
     /**
-     * System-wide proxy settings.
-     */
-    private final SystemProxySettings systemProxySettings;
-
-    /**
      * Builds a platform with the given architecture.
      *
      * @param jvmArch JVM architecture.
      * @param osName Underlying O/S name.
      * @param environment Environment.
-     * @param systemProxySettings System-wide proxy settings.
      */
-    public Platform(@Nonnull final String jvmArch, @Nonnull final String osName, @Nonnull final Environment environment,
-        @Nonnull final SystemProxySettings systemProxySettings) {
+    public Platform(@Nonnull final String jvmArch, @Nonnull final String osName,
+        @Nonnull final Environment environment) {
         this.jvmArch = jvmArch;
         this.osName = osName;
         this.environment = environment;
-        this.systemProxySettings = systemProxySettings;
     }
 
     /**
@@ -62,6 +57,15 @@ public class Platform {
      */
     public boolean is64BitsArch() {
         return matchesAnyIdPart(jvmArch, SUPPORTED_JVM_64_BITS_ARCH_IDS);
+    }
+
+    /**
+     * Tells whether the JVM has an ARM 64 bits architecture.
+     *
+     * @return {@code true} if the architecture is an ARM 64 bits architecture.
+     */
+    public boolean isArm64BitsArch() {
+        return matchesAnyIdPart(jvmArch, SUPPORTED_JVM_ARM_64_BITS_ARCH_IDS);
     }
 
     /**
@@ -101,20 +105,10 @@ public class Platform {
         return environment;
     }
 
-    /**
-     * Gets system-wide proxy settings.
-     *
-     * @return Proxy settings.
-     */
-    @Nonnull
-    public SystemProxySettings getSystemProxySettings() {
-        return systemProxySettings;
-    }
-
     @Override
     public String toString() {
         return Platform.class.getSimpleName() + " {jvmArch=" + jvmArch + ", osName=" + osName + ", environment="
-            + environment + ", systemProxySettings=" + systemProxySettings + '}';
+            + environment + '}';
     }
 
     /**

@@ -28,14 +28,14 @@ class IsNonProxyHostTest {
 
     @Test
     void shouldReturnFalseIfHostnameDoesNotMatchNonProxyHosts() {
-        assertThat(
-            usecase.execute(new HashSet<>(Arrays.asList("*.bar.baz2", "foo2.bar.*", "*.bar.*")), HOSTNAME)).isFalse();
+        assertThat(usecase.execute(new HashSet<>(Arrays.asList("*.bar.baz2", "foo2.bar.*", "*.bar.*")), HOSTNAME))
+            .isFalse();
     }
 
     @Test
     void shouldReturnFalseIfIpAddressDoesNotMatchNonProxyHosts() {
-        assertThat(usecase.execute(new HashSet<>(Arrays.asList("*.52.85.102", "64.52.85.*", "*.52.85.*")),
-            IP_ADDRESS)).isFalse();
+        assertThat(usecase.execute(new HashSet<>(Arrays.asList("*.52.85.102", "64.52.85.*", "*.52.85.*")), IP_ADDRESS))
+            .isFalse();
     }
 
     @Test

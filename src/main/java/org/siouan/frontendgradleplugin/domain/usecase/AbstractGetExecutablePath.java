@@ -21,7 +21,7 @@ public abstract class AbstractGetExecutablePath {
 
     private final Logger logger;
 
-    public AbstractGetExecutablePath(final FileManager fileManager, final Logger logger) {
+    protected AbstractGetExecutablePath(final FileManager fileManager, final Logger logger) {
         this.fileManager = fileManager;
         this.logger = logger;
     }

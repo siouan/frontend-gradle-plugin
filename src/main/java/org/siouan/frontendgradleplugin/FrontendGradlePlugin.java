@@ -168,7 +168,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
             SystemUtils.getHttpProxyPort().orElse(DEFAULT_HTTP_PROXY_PORT), SystemUtils.getHttpsProxyHost(),
             SystemUtils.getHttpsProxyPort().orElse(DEFAULT_HTTPS_PROXY_PORT), SystemUtils.getNonProxyHosts());
         final Platform platform = new Platform(SystemUtils.getSystemJvmArch(), SystemUtils.getSystemOsName(),
-            new Environment(nodejsHomePath, yarnHomePath), systemProxySettings);
+            new Environment(nodejsHomePath, yarnHomePath));
 
         final FrontendExtension extension = project
             .getExtensions()
@@ -244,10 +244,10 @@ public class FrontendGradlePlugin implements Plugin<Project> {
     private void finalizeExtension(@Nonnull final FrontendExtension extension) {
         // When a distribution is provided, the install directory is optional. The plugin may use environment variables
         // to locate the executables required.
-        if (extension.getNodeDistributionProvided().get()) {
+        if (Boolean.TRUE.equals(extension.getNodeDistributionProvided().get())) {
             extension.getNodeInstallDirectory().convention((Directory) null);
         }
-        if (extension.getYarnDistributionProvided().get()) {
+        if (Boolean.TRUE.equals(extension.getYarnDistributionProvided().get())) {
             extension.getYarnInstallDirectory().convention((Directory) null);
         }
     }

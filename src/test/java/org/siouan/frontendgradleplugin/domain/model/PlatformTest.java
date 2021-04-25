@@ -13,8 +13,7 @@ class PlatformTest {
 
     @Test
     void shouldReturnFalseWhenJvmArchIsNot64Bits() {
-        assertThat(
-            PlatformFixture.aPlatform("OS_64_bits", SystemUtils.getSystemOsName()).is64BitsArch()).isFalse();
+        assertThat(PlatformFixture.aPlatform("OS_64_bits", SystemUtils.getSystemOsName()).is64BitsArch()).isFalse();
     }
 
     @Test
@@ -33,6 +32,12 @@ class PlatformTest {
     }
 
     @Test
+    void shouldReturnTrueWhenJvmArchContains_aarch64() {
+        assertThat(PlatformFixture.aPlatform("_Aarch64_", SystemUtils.getSystemOsName()).is64BitsArch())
+            .isTrue();
+    }
+
+    @Test
     void shouldReturnTrueWhenJvmArchContains_ppc() {
         assertThat(PlatformFixture.aPlatform("_PPC_", SystemUtils.getSystemOsName()).is64BitsArch()).isTrue();
     }
@@ -40,6 +45,11 @@ class PlatformTest {
     @Test
     void shouldReturnTrueWhenJvmArchContains_sparc() {
         assertThat(PlatformFixture.aPlatform("_Sparc_", SystemUtils.getSystemOsName()).is64BitsArch()).isTrue();
+    }
+
+    @Test
+    void shouldConfirmArm64ArchWhenJvmArchContains_aarch64() {
+        assertThat(PlatformFixture.aPlatform("_Aarch64_", SystemUtils.getSystemOsName()).isArm64BitsArch()).isTrue();
     }
 
     @Test
@@ -69,7 +79,6 @@ class PlatformTest {
 
     @Test
     void shouldReturnTrueWhenOsNameContains_windows() {
-        assertThat(
-            PlatformFixture.aPlatform(SystemUtils.getSystemJvmArch(), "_Windows_").isWindowsOs()).isTrue();
+        assertThat(PlatformFixture.aPlatform(SystemUtils.getSystemJvmArch(), "_Windows_").isWindowsOs()).isTrue();
     }
 }
