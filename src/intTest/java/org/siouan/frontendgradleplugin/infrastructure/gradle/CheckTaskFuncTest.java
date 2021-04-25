@@ -34,8 +34,8 @@ class CheckTaskFuncTest {
     void shouldDoNothingWhenScriptIsNotDefined() throws IOException {
         Files.copy(getResourcePath("package-npm.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("14.15.4")
-            .nodeDistributionUrl(getResourceUrl("node-v14.15.4.zip"));
+            .nodeVersion("14.16.1")
+            .nodeDistributionUrl(getResourceUrl("node-v14.16.1.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result = runGradle(projectDirectoryPath, FrontendGradlePlugin.CHECK_TASK_NAME);
@@ -50,8 +50,8 @@ class CheckTaskFuncTest {
     void shouldCheckWithoutFrontendTasks() throws IOException {
         Files.copy(getResourcePath("package-npm.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("14.15.4")
-            .nodeDistributionUrl(getResourceUrl("node-v14.15.4.zip"));
+            .nodeVersion("14.16.1")
+            .nodeDistributionUrl(getResourceUrl("node-v14.16.1.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result = runGradle(projectDirectoryPath, FrontendGradlePlugin.GRADLE_CHECK_TASK_NAME);
@@ -67,8 +67,8 @@ class CheckTaskFuncTest {
     void shouldCheckFrontendWithNpmOrYarn() throws IOException {
         Files.copy(getResourcePath("package-npm.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("14.15.4")
-            .nodeDistributionUrl(getResourceUrl("node-v14.15.4.zip"))
+            .nodeVersion("14.16.1")
+            .nodeDistributionUrl(getResourceUrl("node-v14.16.1.zip"))
             .checkScript("run check");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
