@@ -22,9 +22,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
 import org.siouan.frontendgradleplugin.test.util.FrontendMapBuilder;
-import org.siouan.frontendgradleplugin.test.util.GradleBuildAssertions;
-import org.siouan.frontendgradleplugin.test.util.GradleBuildFiles;
-import org.siouan.frontendgradleplugin.test.util.GradleHelper;
 import org.siouan.frontendgradleplugin.test.util.ServerConfigurator;
 
 /**
@@ -91,12 +88,12 @@ class AuthenticationAndProxyFuncTest {
 
         // We use a HTTP address because proxying through HTTPS is not supported with WireMock.
         final FrontendMapBuilder frontendMapBuilder = configureNodeServerAndPluginWithDirectConnection("AYr2n{VF");
-        GradleBuildFiles.createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
+        createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
-        final BuildResult result1 = GradleHelper.runGradleAndExpectFailure(projectDirectoryPath,
+        final BuildResult result1 = runGradleAndExpectFailure(projectDirectoryPath,
             FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
 
-        GradleBuildAssertions.assertTaskFailed(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        assertTaskFailed(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
     }
 
     // Same test as above, just use the exact password.
@@ -107,11 +104,11 @@ class AuthenticationAndProxyFuncTest {
         // We use a HTTP address because proxying through HTTPS is not supported with WireMock.
         final FrontendMapBuilder frontendMapBuilder = configureNodeServerAndPluginWithDirectConnection(
             DISTRIBUTION_SERVER_PASSWORD);
-        GradleBuildFiles.createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
+        createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
-        final BuildResult result1 = GradleHelper.runGradle(projectDirectoryPath, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        final BuildResult result1 = runGradle(projectDirectoryPath, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
 
-        GradleBuildAssertions.assertTaskSuccess(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        assertTaskSuccess(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
     }
 
     @Test
@@ -124,13 +121,13 @@ class AuthenticationAndProxyFuncTest {
         // the proxy server, and the build shall succeed.
         final FrontendMapBuilder frontendMapBuilder = configureNodeServerAndPluginWithProxyConnection(
             DISTRIBUTION_SERVER_PORT + 10);
-        GradleBuildFiles.createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
+        createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         // The build should fail with a java.net.ConnectException because the proxy server is not reachable.
-        final BuildResult result1 = GradleHelper.runGradleAndExpectFailure(projectDirectoryPath,
+        final BuildResult result1 = runGradleAndExpectFailure(projectDirectoryPath,
             FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
 
-        GradleBuildAssertions.assertTaskFailed(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        assertTaskFailed(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
     }
 
     // Same test as above, just use the exact proxy server port.
@@ -140,11 +137,11 @@ class AuthenticationAndProxyFuncTest {
 
         // We use a HTTP address because proxying through HTTPS is not supported with WireMock.
         final FrontendMapBuilder frontendMapBuilder = configureNodeServerAndPluginWithProxyConnection();
-        GradleBuildFiles.createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
+        createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
-        final BuildResult result1 = GradleHelper.runGradle(projectDirectoryPath, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        final BuildResult result1 = runGradle(projectDirectoryPath, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
 
-        GradleBuildAssertions.assertTaskSuccess(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        assertTaskSuccess(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
     }
 
     @Test
@@ -153,12 +150,12 @@ class AuthenticationAndProxyFuncTest {
 
         // We use a HTTP address because proxying through HTTPS is not supported with WireMock.
         final FrontendMapBuilder frontendMapBuilder = configureNodeServerAndPluginWithProxyConnection("xE!s67O?");
-        GradleBuildFiles.createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
+        createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
-        final BuildResult result1 = GradleHelper.runGradleAndExpectFailure(projectDirectoryPath,
+        final BuildResult result1 = runGradleAndExpectFailure(projectDirectoryPath,
             FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
 
-        GradleBuildAssertions.assertTaskFailed(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        assertTaskFailed(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
     }
 
     // Same test as above, just use the exact password.
@@ -169,11 +166,11 @@ class AuthenticationAndProxyFuncTest {
         // We use a HTTP address because proxying through HTTPS is not supported with WireMock.
         final FrontendMapBuilder frontendMapBuilder = configureNodeServerAndPluginWithProxyConnection(
             PROXY_SERVER_PASSWORD);
-        GradleBuildFiles.createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
+        createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
-        final BuildResult result1 = GradleHelper.runGradle(projectDirectoryPath, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        final BuildResult result1 = runGradle(projectDirectoryPath, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
 
-        GradleBuildAssertions.assertTaskSuccess(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        assertTaskSuccess(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
     }
 
     @Test
@@ -182,12 +179,12 @@ class AuthenticationAndProxyFuncTest {
 
         // We use a HTTP address because proxying through HTTPS is not supported with WireMock.
         final FrontendMapBuilder frontendMapBuilder = configureYarnServerAndPluginWithDirectConnection("AYr2n{VF");
-        GradleBuildFiles.createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
+        createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
-        final BuildResult result1 = GradleHelper.runGradleAndExpectFailure(projectDirectoryPath,
+        final BuildResult result1 = runGradleAndExpectFailure(projectDirectoryPath,
             FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
 
-        GradleBuildAssertions.assertTaskFailed(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
+        assertTaskFailed(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
     }
 
     // Same test as above, just use the exact password.
@@ -198,11 +195,11 @@ class AuthenticationAndProxyFuncTest {
         // We use a HTTP address because proxying through HTTPS is not supported with WireMock.
         final FrontendMapBuilder frontendMapBuilder = configureYarnServerAndPluginWithDirectConnection(
             DISTRIBUTION_SERVER_PASSWORD);
-        GradleBuildFiles.createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
+        createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
-        final BuildResult result1 = GradleHelper.runGradle(projectDirectoryPath, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
+        final BuildResult result1 = runGradle(projectDirectoryPath, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
 
-        GradleBuildAssertions.assertTaskSuccess(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
+        assertTaskSuccess(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
     }
 
     @Test
@@ -215,13 +212,13 @@ class AuthenticationAndProxyFuncTest {
         // the proxy server, and the build shall succeed.
         final FrontendMapBuilder frontendMapBuilder = configureYarnServerAndPluginWithProxyConnection(
             DISTRIBUTION_SERVER_PORT + 10);
-        GradleBuildFiles.createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
+        createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         // The build should fail with a java.net.ConnectException because the proxy server is not reachable.
-        final BuildResult result1 = GradleHelper.runGradleAndExpectFailure(projectDirectoryPath,
+        final BuildResult result1 = runGradleAndExpectFailure(projectDirectoryPath,
             FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
 
-        GradleBuildAssertions.assertTaskFailed(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
+        assertTaskFailed(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
     }
 
     // Same test as above, just use the exact proxy server port.
@@ -232,11 +229,11 @@ class AuthenticationAndProxyFuncTest {
         // We use a HTTP address because proxying through HTTPS is not supported with WireMock.
         final FrontendMapBuilder frontendMapBuilder = configureYarnServerAndPluginWithProxyConnection(
             DISTRIBUTION_SERVER_PORT);
-        GradleBuildFiles.createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
+        createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
-        final BuildResult result1 = GradleHelper.runGradle(projectDirectoryPath, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
+        final BuildResult result1 = runGradle(projectDirectoryPath, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
 
-        GradleBuildAssertions.assertTaskSuccess(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
+        assertTaskSuccess(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
     }
 
     @Test
@@ -245,12 +242,12 @@ class AuthenticationAndProxyFuncTest {
 
         // We use a HTTP address because proxying through HTTPS is not supported with WireMock.
         final FrontendMapBuilder frontendMapBuilder = configureYarnServerAndPluginWithProxyConnection("xE!s67O?");
-        GradleBuildFiles.createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
+        createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
-        final BuildResult result1 = GradleHelper.runGradleAndExpectFailure(projectDirectoryPath,
+        final BuildResult result1 = runGradleAndExpectFailure(projectDirectoryPath,
             FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
 
-        GradleBuildAssertions.assertTaskFailed(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
+        assertTaskFailed(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
     }
 
     // Same test as above, just use the exact password.
@@ -261,11 +258,11 @@ class AuthenticationAndProxyFuncTest {
         // We use a HTTP address because proxying through HTTPS is not supported with WireMock.
         final FrontendMapBuilder frontendMapBuilder = configureYarnServerAndPluginWithProxyConnection(
             PROXY_SERVER_PASSWORD);
-        GradleBuildFiles.createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
+        createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
-        final BuildResult result1 = GradleHelper.runGradle(projectDirectoryPath, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
+        final BuildResult result1 = runGradle(projectDirectoryPath, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
 
-        GradleBuildAssertions.assertTaskSuccess(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
+        assertTaskSuccess(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
     }
 
     @Nonnull
