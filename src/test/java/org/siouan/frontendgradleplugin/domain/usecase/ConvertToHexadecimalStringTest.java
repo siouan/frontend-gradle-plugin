@@ -15,7 +15,7 @@ class ConvertToHexadecimalStringTest {
 
     @Test
     void shouldConvertEmptyByteBufferToEmptyString() {
-        assertThat(usecase.execute(new byte[] {})).isEqualTo("");
+        assertThat(usecase.execute(new byte[] {})).isEmpty();
     }
 
     @Test

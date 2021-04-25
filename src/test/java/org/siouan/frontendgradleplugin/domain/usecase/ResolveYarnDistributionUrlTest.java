@@ -27,6 +27,6 @@ class ResolveYarnDistributionUrlTest {
     void shouldReturnFullDownloadUrl() throws MalformedURLException {
         assertThat(usecase
             .execute(new DistributionDefinition(PlatformFixture.LOCAL_PLATFORM, VERSION, URL_ROOT, URL_PATH_PATTERN))
-            .toString()).isEqualTo("https://foo.bar/dist/v3.65.2.tar.gz");
+            .toString()).hasToString("https://foo.bar/dist/v3.65.2.tar.gz");
     }
 }
