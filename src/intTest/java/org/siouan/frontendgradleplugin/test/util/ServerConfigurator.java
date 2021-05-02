@@ -61,7 +61,7 @@ public class ServerConfigurator {
                 mappingBuilder = get(urlPathMatching("^.*/node-v[^/]+$"));
                 withAuth(mappingBuilder);
                 server.stubFor(mappingBuilder.willReturn(
-                    aResponse().withBody(Files.readAllBytes(getResourcePath("node-v14.15.4.zip")))));
+                    aResponse().withBody(Files.readAllBytes(getResourcePath("node-v14.16.1.zip")))));
 
                 mappingBuilder = get(urlPathMatching("^.*/SHASUMS256.txt$"));
                 withAuth(mappingBuilder);
