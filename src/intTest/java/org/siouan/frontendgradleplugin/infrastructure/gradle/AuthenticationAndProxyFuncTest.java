@@ -14,6 +14,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
+import org.gradle.api.logging.LogLevel;
 import org.gradle.testkit.runner.BuildResult;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;

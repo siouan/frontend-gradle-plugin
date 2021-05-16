@@ -24,7 +24,7 @@ import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
  */
 public final class GradleHelper {
 
-    private static final String MINIMAL_GRADLE_VERSION = "5.1";
+    private static final String MINIMAL_GRADLE_VERSION = "6.1";
 
     private GradleHelper() {
     }
@@ -127,7 +127,7 @@ public final class GradleHelper {
         @Nonnull final LogLevel loggingLevel, @Nullable final Path nodejsPath, @Nullable final Path yarnPath,
         @Nonnull final String... additionalArguments) {
         final List<String> arguments = new ArrayList<>();
-        //arguments.add("-s");
+        arguments.add("-s");
         toLoggingLevelProperty(loggingLevel).ifPresent(arguments::add);
         arguments.addAll(asList(additionalArguments));
         final Map<String, String> environment = new HashMap<>();
