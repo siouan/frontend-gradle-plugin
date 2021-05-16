@@ -3,16 +3,15 @@ package org.siouan.frontendgradleplugin.test.fixture;
 import javax.annotation.Nonnull;
 
 import org.siouan.frontendgradleplugin.domain.model.Platform;
-import org.siouan.frontendgradleplugin.domain.util.SystemUtils;
 
 public final class PlatformFixture {
 
-    public static final Platform LOCAL_PLATFORM = aPlatform(SystemUtils.getSystemJvmArch(),
-        SystemUtils.getSystemOsName());
+    public static final Platform LOCAL_PLATFORM = aPlatform(SystemPropertyFixture.getSystemJvmArch(),
+        SystemPropertyFixture.getSystemOsName());
 
-    public static final Platform ANY_WINDOWS_PLATFORM = aPlatform(SystemUtils.getSystemJvmArch(), "Windows NT");
+    public static final Platform ANY_WINDOWS_PLATFORM = aPlatform(SystemPropertyFixture.getSystemJvmArch(), "Windows NT");
 
-    public static final Platform ANY_UNIX_PLATFORM = aPlatform(SystemUtils.getSystemJvmArch(), "Linux");
+    public static final Platform ANY_UNIX_PLATFORM = aPlatform(SystemPropertyFixture.getSystemJvmArch(), "Linux");
 
     public static final Platform ANY_NON_WINDOWS_PLATFORM = ANY_UNIX_PLATFORM;
 
@@ -20,7 +19,7 @@ public final class PlatformFixture {
     }
 
     public static Platform aPlatform() {
-        return aPlatform(SystemUtils.getSystemJvmArch(), "Linux");
+        return aPlatform(SystemPropertyFixture.getSystemJvmArch(), "Linux");
     }
 
     public static Platform aPlatform(@Nonnull final String jvmArch, @Nonnull final String osName) {

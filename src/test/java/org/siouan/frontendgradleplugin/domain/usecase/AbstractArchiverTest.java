@@ -39,7 +39,7 @@ import org.siouan.frontendgradleplugin.domain.exception.UnsupportedEntryExceptio
 import org.siouan.frontendgradleplugin.domain.model.ArchiverContext;
 import org.siouan.frontendgradleplugin.domain.model.ExplodeSettings;
 import org.siouan.frontendgradleplugin.domain.provider.FileManager;
-import org.siouan.frontendgradleplugin.domain.util.SystemUtils;
+import org.siouan.frontendgradleplugin.test.fixture.SystemPropertyFixture;
 import org.siouan.frontendgradleplugin.test.fixture.ArchiveEntryImpl;
 import org.siouan.frontendgradleplugin.test.fixture.ArchiverImpl;
 import org.siouan.frontendgradleplugin.test.fixture.PlatformFixture;
@@ -173,7 +173,7 @@ class AbstractArchiverTest {
         final Path otherEmptyDirPath = rootDirPath.resolve("other-empty-dir");
         final Path rootFilePath = temporaryDirectoryPath.resolve("root-file");
         final ExplodeSettings settings = new ExplodeSettings(
-            PlatformFixture.aPlatform(SystemUtils.getSystemJvmArch(), osName), archiveFilePath, temporaryDirectoryPath);
+            PlatformFixture.aPlatform(SystemPropertyFixture.getSystemJvmArch(), osName), archiveFilePath, temporaryDirectoryPath);
 
         when(fileManager.isDirectory(temporaryDirectoryPath)).thenReturn(true);
         when(context.getSettings()).thenReturn(settings);

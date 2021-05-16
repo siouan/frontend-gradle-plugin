@@ -40,7 +40,7 @@ public class GradleScriptRunnerAdapter {
         logger.debug("Execution settings: {}", executionSettings);
 
         scriptProperties
-            .getProject()
+            .getExecOperations()
             .exec(new ExecSpecAction(executionSettings, this::logExecSpecBeforeExecution))
             .rethrowFailure()
             .assertNormalExitValue();

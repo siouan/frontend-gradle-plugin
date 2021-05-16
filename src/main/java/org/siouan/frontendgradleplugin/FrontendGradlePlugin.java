@@ -1,12 +1,8 @@
 package org.siouan.frontendgradleplugin;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Optional;
 import java.util.function.BiPredicate;
 import javax.annotation.Nonnull;
 
-import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
@@ -16,20 +12,18 @@ import org.gradle.api.publish.plugins.PublishingPlugin;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.language.base.plugins.LifecycleBasePlugin;
-import org.siouan.frontendgradleplugin.domain.model.Environment;
-import org.siouan.frontendgradleplugin.domain.model.Platform;
-import org.siouan.frontendgradleplugin.domain.model.SystemProxySettings;
-import org.siouan.frontendgradleplugin.domain.util.SystemUtils;
-import org.siouan.frontendgradleplugin.infrastructure.BeanRegistry;
-import org.siouan.frontendgradleplugin.infrastructure.BeanRegistryException;
+import org.siouan.frontendgradleplugin.domain.model.SystemSettingsProvider;
 import org.siouan.frontendgradleplugin.infrastructure.Beans;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.AssembleTask;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.CheckTask;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.CleanTask;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.FrontendExtension;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.GradleSettings;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.InstallDependenciesTask;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.NodeInstallTask;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.PublishTask;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.SystemExtension;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.SystemSettingsProviderImpl;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.TaskLoggerConfigurer;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.YarnInstallTask;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.adapter.GradleLoggerAdapter;
@@ -77,6 +71,16 @@ public class FrontendGradlePlugin implements Plugin<Project> {
     public static final String PUBLISH_TASK_NAME = "publishFrontend";
 
     /**
+     * Default port for the proxy server handling HTTP requests.
+     */
+    public static final int DEFAULT_HTTP_PROXY_PORT = 80;
+
+    /**
+     * Default port for the proxy server handling HTTPS requests.
+     */
+    public static final int DEFAULT_HTTPS_PROXY_PORT = 443;
+
+    /**
      * Name of the task that installs a Node.js distribution.
      */
     public static final String DEFAULT_NODE_INSTALL_DIRNAME = "node";
@@ -90,16 +94,6 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      * URL pattern used to download the Node.js distribution.
      */
     public static final String DEFAULT_NODE_DISTRIBUTION_URL_ROOT = "https://nodejs.org/dist/";
-
-    /**
-     * Default port for the proxy server handling HTTP requests.
-     */
-    public static final int DEFAULT_HTTP_PROXY_PORT = 80;
-
-    /**
-     * Default port for the proxy server handling HTTPS requests.
-     */
-    public static final int DEFAULT_HTTPS_PROXY_PORT = 443;
 
     /**
      * URL pattern used to download the Yarn distribution.
@@ -162,17 +156,11 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         project.getPluginManager().apply(BasePlugin.class);
         project.getPluginManager().apply(PublishingPlugin.class);
 
-        final Path nodejsHomePath = getEnvironmentVariable(NODEJS_HOME_ENV_VAR).map(Paths::get).orElse(null);
-        final Path yarnHomePath = getEnvironmentVariable(YARN_HOME_ENV_VAR).map(Paths::get).orElse(null);
-        final SystemProxySettings systemProxySettings = new SystemProxySettings(SystemUtils.getHttpProxyHost(),
-            SystemUtils.getHttpProxyPort().orElse(DEFAULT_HTTP_PROXY_PORT), SystemUtils.getHttpsProxyHost(),
-            SystemUtils.getHttpsProxyPort().orElse(DEFAULT_HTTPS_PROXY_PORT), SystemUtils.getNonProxyHosts());
-        final Platform platform = new Platform(SystemUtils.getSystemJvmArch(), SystemUtils.getSystemOsName(),
-            new Environment(nodejsHomePath, yarnHomePath));
+        final SystemExtension systemExtension = new SystemExtension(project.getProviders());
 
         final FrontendExtension extension = project
             .getExtensions()
-            .create(EXTENSION_NAME, FrontendExtension.class, project);
+            .create(EXTENSION_NAME, FrontendExtension.class, project.getObjects());
 
         extension.getNodeDistributionProvided().convention(false);
         extension.getNodeDistributionUrlRoot().convention(DEFAULT_NODE_DISTRIBUTION_URL_ROOT);
@@ -193,7 +181,24 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         extension.getHttpsProxyPort().convention(DEFAULT_HTTPS_PROXY_PORT);
         extension.getVerboseModeEnabled().convention(false);
 
+        final SystemSettingsProvider systemSettingsProvider = new SystemSettingsProviderImpl(systemExtension,
+            DEFAULT_HTTP_PROXY_PORT, DEFAULT_HTTPS_PROXY_PORT);
+        final GradleSettings gradleSettings = new GradleSettings(project.getLogging().getLevel(),
+            project.getGradle().getStartParameter().getLogLevel());
+        final String beanRegistryId = Beans.getBeanRegistryId(project.getLayout().getProjectDirectory().toString());
+        Beans.initBeanRegistry(beanRegistryId);
+        Beans.registerBean(beanRegistryId, extension);
+        Beans.registerBean(beanRegistryId, systemSettingsProvider);
+        Beans.registerBean(beanRegistryId, gradleSettings);
+        Beans.registerBean(beanRegistryId, GradleLoggerAdapter.class);
+        Beans.registerBean(beanRegistryId, TaskLoggerConfigurer.class);
+        Beans.registerBean(beanRegistryId, FileManagerImpl.class);
+        Beans.registerBean(beanRegistryId, ChannelProviderImpl.class);
+        Beans.registerBean(beanRegistryId, ArchiverProviderImpl.class);
+        Beans.registerBean(beanRegistryId, HttpClientProviderImpl.class);
+
         final TaskContainer taskContainer = project.getTasks();
+        // Regular tasks
         taskContainer.register(NODE_INSTALL_TASK_NAME, NodeInstallTask.class,
             task -> configureNodeInstallTask(task, extension));
         taskContainer.register(YARN_INSTALL_TASK_NAME, YarnInstallTask.class,
@@ -214,24 +219,6 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         configureDependency(taskContainer, GRADLE_CHECK_TASK_NAME, CHECK_TASK_NAME, CheckTask.class);
         configureDependency(taskContainer, PublishingPlugin.PUBLISH_LIFECYCLE_TASK_NAME, PUBLISH_TASK_NAME,
             PublishTask.class);
-
-        final String beanRegistryId = project.getPath();
-        Beans.initBeanRegistry(beanRegistryId);
-        Beans.registerBean(beanRegistryId, systemProxySettings);
-        Beans.registerBean(beanRegistryId, platform);
-        Beans.registerBean(beanRegistryId, GradleLoggerAdapter.class);
-        Beans.registerBean(beanRegistryId, FileManagerImpl.class);
-        Beans.registerBean(beanRegistryId, ChannelProviderImpl.class);
-        Beans.registerBean(beanRegistryId, ArchiverProviderImpl.class);
-        Beans.registerBean(beanRegistryId, HttpClientProviderImpl.class);
-        try {
-            project
-                .getGradle()
-                .addListener(new TaskLoggerConfigurer(Beans.getBean(beanRegistryId, BeanRegistry.class), extension));
-            project.getLogger().debug("Platform: {}", Beans.getBean(beanRegistryId, Platform.class));
-        } catch (final BeanRegistryException e) {
-            throw new GradleException("Cannot get instance of bean registry", e);
-        }
 
         project.afterEvaluate(p -> finalizeExtension(extension));
     }
@@ -468,16 +455,5 @@ public class FrontendGradlePlugin implements Plugin<Project> {
     private <T extends Task, D extends Task> boolean canDependOn(final T task,
         final TaskProvider<D> dependsOnTaskProvider, final BiPredicate<T, D> condition) {
         return dependsOnTaskProvider.isPresent() && condition.test(task, dependsOnTaskProvider.get());
-    }
-
-    /**
-     * Gets the value of an environment variable.
-     *
-     * @param variableName Variable name.
-     * @return Variable value.
-     */
-    @Nonnull
-    private Optional<String> getEnvironmentVariable(@Nonnull final String variableName) {
-        return Optional.ofNullable(System.getenv(variableName)).filter(value -> !value.trim().isEmpty());
     }
 }

@@ -17,7 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.siouan.frontendgradleplugin.domain.model.Credentials;
 import org.siouan.frontendgradleplugin.domain.model.ProxySettings;
-import org.siouan.frontendgradleplugin.domain.model.SystemProxySettings;
+import org.siouan.frontendgradleplugin.domain.model.SystemSettingsProvider;
 import org.siouan.frontendgradleplugin.test.fixture.CredentialsFixture;
 import org.siouan.frontendgradleplugin.test.fixture.ProxySettingsFixture;
 
@@ -55,7 +55,7 @@ class ResolveProxySettingsByUrlTest {
     private static final int SYSTEM_HTTPS_PROXY_PORT = 91;
 
     @Mock
-    private SystemProxySettings systemProxySettings;
+    private SystemSettingsProvider systemSettingsProvider;
 
     @Mock
     private IsNonProxyHost isNonProxyHost;
@@ -73,36 +73,36 @@ class ResolveProxySettingsByUrlTest {
         assertThatThrownBy(() -> usecase.execute(null, 80, null, null, 443, null, url))
             .isInstanceOf(IllegalArgumentException.class);
 
-        verifyNoMoreInteractions(systemProxySettings, isNonProxyHost, selectProxySettings);
+        verifyNoMoreInteractions(systemSettingsProvider, isNonProxyHost, selectProxySettings);
     }
 
     @Test
     void shouldReturnNullWhenUrlUsesFileProtocol() throws MalformedURLException {
         assertThat(usecase.execute(null, 80, null, null, 443, null, new URL(FILE_RESOURCE_URL))).isNull();
 
-        verifyNoMoreInteractions(systemProxySettings, isNonProxyHost, selectProxySettings);
+        verifyNoMoreInteractions(systemSettingsProvider, isNonProxyHost, selectProxySettings);
     }
 
     @Test
     void shouldReturnNullWhenUrlUsesNonProxyHost() throws MalformedURLException {
         final Set<String> nonProxyHosts = Collections.singleton(PLUGIN_HTTP_PROXY_HOST);
-        when(systemProxySettings.getNonProxyHosts()).thenReturn(nonProxyHosts);
+        when(systemSettingsProvider.getNonProxyHosts()).thenReturn(nonProxyHosts);
         final URL resourceUrl = new URL(HTTP_RESOURCE_URL);
         when(isNonProxyHost.execute(nonProxyHosts, resourceUrl.getHost())).thenReturn(true);
 
         assertThat(usecase.execute(null, 80, null, null, 443, null, resourceUrl)).isNull();
 
-        verifyNoMoreInteractions(systemProxySettings, isNonProxyHost, selectProxySettings);
+        verifyNoMoreInteractions(systemSettingsProvider, isNonProxyHost, selectProxySettings);
     }
 
     @Test
     void shouldReturnHttpProxySettingsWhenUrlUsesNonSecureHttpProtocol() throws MalformedURLException {
         final Set<String> nonProxyHosts = Collections.emptySet();
-        when(systemProxySettings.getNonProxyHosts()).thenReturn(nonProxyHosts);
+        when(systemSettingsProvider.getNonProxyHosts()).thenReturn(nonProxyHosts);
         final URL resourceUrl = new URL(HTTP_RESOURCE_URL);
         when(isNonProxyHost.execute(nonProxyHosts, resourceUrl.getHost())).thenReturn(false);
-        when(systemProxySettings.getHttpProxyHost()).thenReturn(SYSTEM_HTTP_PROXY_HOST);
-        when(systemProxySettings.getHttpProxyPort()).thenReturn(SYSTEM_HTTP_PROXY_PORT);
+        when(systemSettingsProvider.getHttpProxyHost()).thenReturn(SYSTEM_HTTP_PROXY_HOST);
+        when(systemSettingsProvider.getHttpProxyPort()).thenReturn(SYSTEM_HTTP_PROXY_PORT);
         final ProxySettings proxySettings = ProxySettingsFixture.someProxySettings();
         when(selectProxySettings.execute(SYSTEM_HTTP_PROXY_HOST, SYSTEM_HTTP_PROXY_PORT, PLUGIN_HTTP_PROXY_HOST,
             PLUGIN_HTTP_PROXY_PORT, PLUGIN_HTTP_PROXY_CREDENTIALS)).thenReturn(proxySettings);
@@ -111,17 +111,17 @@ class ResolveProxySettingsByUrlTest {
             PLUGIN_HTTPS_PROXY_HOST, PLUGIN_HTTPS_PROXY_PORT, PLUGIN_HTTPS_PROXY_CREDENTIALS, resourceUrl))
             .isEqualTo(proxySettings);
 
-        verifyNoMoreInteractions(systemProxySettings, isNonProxyHost, selectProxySettings);
+        verifyNoMoreInteractions(systemSettingsProvider, isNonProxyHost, selectProxySettings);
     }
 
     @Test
     void shouldReturnHttpsProxySettingsWhenUrlUsesSecureHttpProtocol() throws MalformedURLException {
         final Set<String> nonProxyHosts = Collections.emptySet();
-        when(systemProxySettings.getNonProxyHosts()).thenReturn(nonProxyHosts);
+        when(systemSettingsProvider.getNonProxyHosts()).thenReturn(nonProxyHosts);
         final URL resourceUrl = new URL(HTTPS_RESOURCE_URL);
         when(isNonProxyHost.execute(nonProxyHosts, resourceUrl.getHost())).thenReturn(false);
-        when(systemProxySettings.getHttpsProxyHost()).thenReturn(SYSTEM_HTTPS_PROXY_HOST);
-        when(systemProxySettings.getHttpsProxyPort()).thenReturn(SYSTEM_HTTPS_PROXY_PORT);
+        when(systemSettingsProvider.getHttpsProxyHost()).thenReturn(SYSTEM_HTTPS_PROXY_HOST);
+        when(systemSettingsProvider.getHttpsProxyPort()).thenReturn(SYSTEM_HTTPS_PROXY_PORT);
         final ProxySettings proxySettings = ProxySettingsFixture.someProxySettings();
         when(selectProxySettings.execute(SYSTEM_HTTPS_PROXY_HOST, SYSTEM_HTTPS_PROXY_PORT, PLUGIN_HTTPS_PROXY_HOST,
             PLUGIN_HTTPS_PROXY_PORT, PLUGIN_HTTPS_PROXY_CREDENTIALS)).thenReturn(proxySettings);
@@ -130,6 +130,6 @@ class ResolveProxySettingsByUrlTest {
             PLUGIN_HTTPS_PROXY_HOST, PLUGIN_HTTPS_PROXY_PORT, PLUGIN_HTTPS_PROXY_CREDENTIALS, resourceUrl))
             .isEqualTo(proxySettings);
 
-        verifyNoMoreInteractions(systemProxySettings, isNonProxyHost, selectProxySettings);
+        verifyNoMoreInteractions(systemSettingsProvider, isNonProxyHost, selectProxySettings);
     }
 }
