@@ -4,7 +4,7 @@
 
         <fgp-sub-title>Requirements</fgp-sub-title>
         <ul>
-            <li><fgp-gradle-link /> 5.1+</li>
+            <li><fgp-gradle-link /> 6.1+</li>
             <li>JDK 8+ 64 bits</li>
             <li>
                 The plugin is built and tested on Linux, Mac OS, Windows (see the list of build environments used in
