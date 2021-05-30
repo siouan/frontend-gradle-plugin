@@ -85,6 +85,7 @@ tasks.named<Task>("check") {
 }
 
 tasks.named<JacocoReport>("jacocoTestReport") {
+    dependsOn(tasks.named("integrationTest"))
     executionData.setFrom(file("${project.buildDir}/jacoco/test.exec"), file("${project.buildDir}/jacoco/integrationTest.exec"))
     reports {
         xml.isEnabled = true

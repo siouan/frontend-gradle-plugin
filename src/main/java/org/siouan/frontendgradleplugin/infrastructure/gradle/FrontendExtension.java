@@ -1,9 +1,11 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
 import java.io.File;
+import javax.annotation.Nonnull;
+import javax.inject.Inject;
 
-import org.gradle.api.Project;
 import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
 
 /**
@@ -199,37 +201,38 @@ public class FrontendExtension {
      */
     private final Property<Boolean> verboseModeEnabled;
 
-    public FrontendExtension(final Project project) {
-        nodeDistributionProvided = project.getObjects().property(Boolean.class);
-        nodeVersion = project.getObjects().property(String.class);
-        nodeInstallDirectory = project.getObjects().directoryProperty();
-        nodeDistributionUrlRoot = project.getObjects().property(String.class);
-        nodeDistributionUrlPathPattern = project.getObjects().property(String.class);
-        nodeDistributionServerUsername = project.getObjects().property(String.class);
-        nodeDistributionServerPassword = project.getObjects().property(String.class);
-        yarnDistributionProvided = project.getObjects().property(Boolean.class);
-        yarnEnabled = project.getObjects().property(Boolean.class);
-        yarnVersion = project.getObjects().property(String.class);
-        yarnInstallDirectory = project.getObjects().directoryProperty();
-        yarnDistributionUrlRoot = project.getObjects().property(String.class);
-        yarnDistributionUrlPathPattern = project.getObjects().property(String.class);
-        yarnDistributionServerUsername = project.getObjects().property(String.class);
-        yarnDistributionServerPassword = project.getObjects().property(String.class);
-        installScript = project.getObjects().property(String.class);
-        cleanScript = project.getObjects().property(String.class);
-        assembleScript = project.getObjects().property(String.class);
-        checkScript = project.getObjects().property(String.class);
-        publishScript = project.getObjects().property(String.class);
-        packageJsonDirectory = project.getObjects().property(File.class);
-        httpProxyHost = project.getObjects().property(String.class);
-        httpProxyPort = project.getObjects().property(Integer.class);
-        httpProxyUsername = project.getObjects().property(String.class);
-        httpProxyPassword = project.getObjects().property(String.class);
-        httpsProxyHost = project.getObjects().property(String.class);
-        httpsProxyPort = project.getObjects().property(Integer.class);
-        httpsProxyUsername = project.getObjects().property(String.class);
-        httpsProxyPassword = project.getObjects().property(String.class);
-        verboseModeEnabled = project.getObjects().property(Boolean.class);
+    @Inject
+    public FrontendExtension(@Nonnull final ObjectFactory objectFactory) {
+        nodeDistributionProvided = objectFactory.property(Boolean.class);
+        nodeVersion = objectFactory.property(String.class);
+        nodeInstallDirectory = objectFactory.directoryProperty();
+        nodeDistributionUrlRoot = objectFactory.property(String.class);
+        nodeDistributionUrlPathPattern = objectFactory.property(String.class);
+        nodeDistributionServerUsername = objectFactory.property(String.class);
+        nodeDistributionServerPassword = objectFactory.property(String.class);
+        yarnDistributionProvided = objectFactory.property(Boolean.class);
+        yarnEnabled = objectFactory.property(Boolean.class);
+        yarnVersion = objectFactory.property(String.class);
+        yarnInstallDirectory = objectFactory.directoryProperty();
+        yarnDistributionUrlRoot = objectFactory.property(String.class);
+        yarnDistributionUrlPathPattern = objectFactory.property(String.class);
+        yarnDistributionServerUsername = objectFactory.property(String.class);
+        yarnDistributionServerPassword = objectFactory.property(String.class);
+        installScript = objectFactory.property(String.class);
+        cleanScript = objectFactory.property(String.class);
+        assembleScript = objectFactory.property(String.class);
+        checkScript = objectFactory.property(String.class);
+        publishScript = objectFactory.property(String.class);
+        packageJsonDirectory = objectFactory.property(File.class);
+        httpProxyHost = objectFactory.property(String.class);
+        httpProxyPort = objectFactory.property(Integer.class);
+        httpProxyUsername = objectFactory.property(String.class);
+        httpProxyPassword = objectFactory.property(String.class);
+        httpsProxyHost = objectFactory.property(String.class);
+        httpsProxyPort = objectFactory.property(Integer.class);
+        httpsProxyUsername = objectFactory.property(String.class);
+        httpsProxyPassword = objectFactory.property(String.class);
+        verboseModeEnabled = objectFactory.property(Boolean.class);
     }
 
     public Property<Boolean> getNodeDistributionProvided() {

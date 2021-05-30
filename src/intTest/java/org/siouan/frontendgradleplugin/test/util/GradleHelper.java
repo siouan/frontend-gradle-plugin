@@ -24,7 +24,7 @@ import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
  */
 public final class GradleHelper {
 
-    private static final String MINIMAL_GRADLE_VERSION = "5.1";
+    private static final String MINIMAL_GRADLE_VERSION = "6.1";
 
     private GradleHelper() {
     }

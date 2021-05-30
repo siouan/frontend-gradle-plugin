@@ -1,9 +1,13 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
-import java.util.Objects;
+import javax.annotation.Nonnull;
+import javax.inject.Inject;
 
+import org.gradle.api.file.ProjectLayout;
+import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
+import org.gradle.process.ExecOperations;
 import org.siouan.frontendgradleplugin.domain.model.ExecutableType;
 
 /**
@@ -21,16 +25,10 @@ import org.siouan.frontendgradleplugin.domain.model.ExecutableType;
  */
 public class RunNpmYarn extends AbstractRunCommandTask {
 
-    public RunNpmYarn() {
-        super();
-        final FrontendExtension extension = Objects.requireNonNull(
-            getProject().getExtensions().findByType(FrontendExtension.class));
-        packageJsonDirectory.set(extension.getPackageJsonDirectory());
-        nodeInstallDirectory.set(extension.getNodeInstallDirectory());
-        yarnEnabled.set(extension.getYarnEnabled());
-        if (extension.getYarnEnabled().get()) {
-            yarnInstallDirectory.set(extension.getYarnInstallDirectory());
-        }
+    @Inject
+    public RunNpmYarn(@Nonnull final ProjectLayout projectLayout, @Nonnull final ObjectFactory objectFactory,
+        @Nonnull final ExecOperations execOperations) {
+        super(projectLayout, objectFactory, execOperations);
     }
 
     @Input
