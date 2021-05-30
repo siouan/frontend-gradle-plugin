@@ -4,7 +4,7 @@ import java.nio.file.Path;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.gradle.api.Project;
+import org.gradle.process.ExecOperations;
 import org.siouan.frontendgradleplugin.domain.model.ExecutableType;
 import org.siouan.frontendgradleplugin.domain.model.Platform;
 
@@ -16,9 +16,9 @@ import org.siouan.frontendgradleplugin.domain.model.Platform;
 public class ScriptProperties {
 
     /**
-     * Gradle project.
+     * Gradle exec operations.
      */
-    private final Project project;
+    private final ExecOperations execOperations;
 
     /**
      * Path to the directory containing the {@code package.json} file.
@@ -53,7 +53,7 @@ public class ScriptProperties {
     /**
      * Builds a job to run a script.
      *
-     * @param project Gradle project.
+     * @param execOperations Gradle project.
      * @param packageJsonDirectoryPath Path to the directory containing the {@code package.json} file.
      * @param executableType Executor to use to run the script.
      * @param nodeInstallDirectory Node install directory.
@@ -62,10 +62,10 @@ public class ScriptProperties {
      * @param platform Underlying platform.
      * @see ExecutableType
      */
-    public ScriptProperties(@Nonnull final Project project, @Nonnull final Path packageJsonDirectoryPath,
+    public ScriptProperties(@Nonnull final ExecOperations execOperations, @Nonnull final Path packageJsonDirectoryPath,
         @Nonnull final String executableType, @Nullable final Path nodeInstallDirectory,
         @Nullable final Path yarnInstallDirectory, @Nonnull final String script, @Nonnull final Platform platform) {
-        this.project = project;
+        this.execOperations = execOperations;
         this.packageJsonDirectoryPath = packageJsonDirectoryPath;
         this.executableType = executableType;
         this.nodeInstallDirectory = nodeInstallDirectory;
@@ -75,8 +75,8 @@ public class ScriptProperties {
     }
 
     @Nonnull
-    public Project getProject() {
-        return project;
+    public ExecOperations getExecOperations() {
+        return execOperations;
     }
 
     @Nonnull
