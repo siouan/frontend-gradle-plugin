@@ -9,7 +9,8 @@ public final class PlatformFixture {
     public static final Platform LOCAL_PLATFORM = aPlatform(SystemPropertyFixture.getSystemJvmArch(),
         SystemPropertyFixture.getSystemOsName());
 
-    public static final Platform ANY_WINDOWS_PLATFORM = aPlatform(SystemPropertyFixture.getSystemJvmArch(), "Windows NT");
+    public static final Platform ANY_WINDOWS_PLATFORM = aPlatform(SystemPropertyFixture.getSystemJvmArch(),
+        "Windows NT");
 
     public static final Platform ANY_UNIX_PLATFORM = aPlatform(SystemPropertyFixture.getSystemJvmArch(), "Linux");
 

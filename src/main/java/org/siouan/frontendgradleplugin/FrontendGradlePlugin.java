@@ -198,7 +198,6 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         Beans.registerBean(beanRegistryId, HttpClientProviderImpl.class);
 
         final TaskContainer taskContainer = project.getTasks();
-        // Regular tasks
         taskContainer.register(NODE_INSTALL_TASK_NAME, NodeInstallTask.class,
             task -> configureNodeInstallTask(task, extension));
         taskContainer.register(YARN_INSTALL_TASK_NAME, YarnInstallTask.class,

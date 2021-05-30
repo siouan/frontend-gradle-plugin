@@ -59,8 +59,8 @@ class GradleScriptRunnerAdapterTest {
         final ExecutableNotFoundException expectedException = new ExecutableNotFoundException(Paths.get("exe"));
         when(resolveExecutionSettings.execute(scriptProperties.getPackageJsonDirectoryPath(),
             scriptProperties.getExecutableType(), scriptProperties.getNodeInstallDirectory(),
-            scriptProperties.getYarnInstallDirectory(), scriptProperties.getPlatform(),
-            scriptProperties.getScript())).thenThrow(expectedException);
+            scriptProperties.getYarnInstallDirectory(), scriptProperties.getPlatform(), scriptProperties.getScript()))
+            .thenThrow(expectedException);
 
         assertThatThrownBy(() -> adapter.execute(scriptProperties)).isEqualTo(expectedException);
 
@@ -79,12 +79,12 @@ class GradleScriptRunnerAdapterTest {
             executablePaths, nodeInstallationDirectory.resolve("npm"), arguments);
         when(resolveExecutionSettings.execute(scriptProperties.getPackageJsonDirectoryPath(),
             scriptProperties.getExecutableType(), scriptProperties.getNodeInstallDirectory(),
-            scriptProperties.getYarnInstallDirectory(), scriptProperties.getPlatform(),
-            scriptProperties.getScript())).thenReturn(executionSettings);
+            scriptProperties.getYarnInstallDirectory(), scriptProperties.getPlatform(), scriptProperties.getScript()))
+            .thenReturn(executionSettings);
         final ExecResult execResult = mock(ExecResult.class);
         when(execOperations.exec(
-            argThat(new ExecSpecActionMatcher(new ExecSpecAction(executionSettings, execSpec -> {}))))).thenReturn(
-            execResult);
+            argThat(new ExecSpecActionMatcher(new ExecSpecAction(executionSettings, execSpec -> {})))))
+            .thenReturn(execResult);
         when(execResult.rethrowFailure()).thenReturn(execResult);
 
         adapter.execute(scriptProperties);
