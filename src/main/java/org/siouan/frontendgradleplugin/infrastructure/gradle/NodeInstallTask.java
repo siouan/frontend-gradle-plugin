@@ -2,8 +2,11 @@ package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.inject.Inject;
 
 import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.file.ProjectLayout;
+import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Internal;
@@ -58,14 +61,15 @@ public class NodeInstallTask extends AbstractDistributionInstallTask {
      */
     private final Property<String> nodeDistributionServerPassword;
 
-    public NodeInstallTask() {
-        super();
-        this.nodeVersion = getProject().getObjects().property(String.class);
-        this.nodeInstallDirectory = getProject().getObjects().directoryProperty();
-        this.nodeDistributionUrlRoot = getProject().getObjects().property(String.class);
-        this.nodeDistributionUrlPathPattern = getProject().getObjects().property(String.class);
-        this.nodeDistributionServerUsername = getProject().getObjects().property(String.class);
-        this.nodeDistributionServerPassword = getProject().getObjects().property(String.class);
+    @Inject
+    public NodeInstallTask(@Nonnull final ProjectLayout projectLayout, @Nonnull final ObjectFactory objectFactory) {
+        super(projectLayout, objectFactory);
+        this.nodeVersion = objectFactory.property(String.class);
+        this.nodeInstallDirectory = objectFactory.directoryProperty();
+        this.nodeDistributionUrlRoot = objectFactory.property(String.class);
+        this.nodeDistributionUrlPathPattern = objectFactory.property(String.class);
+        this.nodeDistributionServerUsername = objectFactory.property(String.class);
+        this.nodeDistributionServerPassword = objectFactory.property(String.class);
     }
 
     @Input

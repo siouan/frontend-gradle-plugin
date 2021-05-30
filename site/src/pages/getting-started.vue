@@ -4,7 +4,7 @@
 
         <fgp-sub-title>Requirements</fgp-sub-title>
         <ul>
-            <li><fgp-gradle-link /> 5.1+</li>
+            <li><fgp-gradle-link /> 6.1+</li>
             <li>JDK 8+ 64 bits</li>
             <li>
                 The plugin is built and tested on Linux, Mac OS, Windows (see the list of build environments used in
@@ -23,7 +23,7 @@
             Starting from release <fgp-repo-link path="/releases/tag/v3.0.1">3.0.1</fgp-repo-link>, ID
             <fgp-code>org.siouan.frontend</fgp-code> and classpath
             <fgp-code>org.siouan:frontend-gradle-plugin:&lt;version></fgp-code> are deprecated. If you are already using
-            the plugin, we recommend <fgp-repo-link path="/releases/tag/v5.1.0">upgrading</fgp-repo-link> to the latest
+            the plugin, we recommend <fgp-repo-link path="/releases/tag/v5.2.0">upgrading</fgp-repo-link> to the latest
             release as soon as possible.
         </fgp-info>
         <ol>
@@ -41,17 +41,17 @@
                             <template v-slot:groovy>
 <pre><fgp-code>plugins {
     <fgp-code-comment>// For JDK 11+</fgp-code-comment>
-    id 'org.siouan.frontend-jdk11' version '5.1.0'
+    id 'org.siouan.frontend-jdk11' version '5.2.0'
     <fgp-code-comment>// For JDK 8+</fgp-code-comment>
-    id 'org.siouan.frontend-jdk8' version '5.1.0'
+    id 'org.siouan.frontend-jdk8' version '5.2.0'
 }</fgp-code></pre>
                             </template>
                             <template v-slot:kotlin>
 <pre><fgp-code>plugins {
     <fgp-code-comment>// For JDK 11+</fgp-code-comment>
-    id("org.siouan.frontend-jdk11") version "5.1.0"
+    id("org.siouan.frontend-jdk11") version "5.2.0"
     <fgp-code-comment>// For JDK 8+</fgp-code-comment>
-    id("org.siouan.frontend-jdk8") version "5.1.0"
+    id("org.siouan.frontend-jdk8") version "5.2.0"
 }</fgp-code></pre>
                             </template>
                         </fgp-gradle-scripts>
@@ -70,9 +70,9 @@
     }
     dependencies {
         <fgp-code-comment>// For JDK 11+</fgp-code-comment>
-        classpath 'org.siouan:frontend-gradle-plugin-jdk11:5.1.0'
+        classpath 'org.siouan:frontend-gradle-plugin-jdk11:5.2.0'
         <fgp-code-comment>// For JDK 8+</fgp-code-comment>
-        classpath 'org.siouan:frontend-gradle-plugin-jdk8:5.1.0'
+        classpath 'org.siouan:frontend-gradle-plugin-jdk8:5.2.0'
     }
 }
 
@@ -88,9 +88,9 @@ apply plugin: 'org.siouan.frontend-jdk8'</fgp-code></pre>
     }
     dependencies {
         <fgp-code-comment>// For JDK 11+</fgp-code-comment>
-        classpath("org.siouan:frontend-gradle-plugin-jdk11:5.1.0")
+        classpath("org.siouan:frontend-gradle-plugin-jdk11:5.2.0")
         <fgp-code-comment>// For JDK 8+</fgp-code-comment>
-        classpath("org.siouan:frontend-gradle-plugin-jdk8:5.1.0")
+        classpath("org.siouan:frontend-gradle-plugin-jdk8:5.2.0")
     }
 }
 

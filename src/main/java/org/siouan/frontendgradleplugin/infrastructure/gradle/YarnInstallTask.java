@@ -2,8 +2,11 @@ package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.inject.Inject;
 
 import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.file.ProjectLayout;
+import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Internal;
@@ -58,13 +61,15 @@ public class YarnInstallTask extends AbstractDistributionInstallTask {
      */
     private final Property<String> yarnDistributionServerPassword;
 
-    public YarnInstallTask() {
-        this.yarnVersion = getProject().getObjects().property(String.class);
-        this.yarnInstallDirectory = getProject().getObjects().directoryProperty();
-        this.yarnDistributionUrlRoot = getProject().getObjects().property(String.class);
-        this.yarnDistributionUrlPathPattern = getProject().getObjects().property(String.class);
-        this.yarnDistributionServerUsername = getProject().getObjects().property(String.class);
-        this.yarnDistributionServerPassword = getProject().getObjects().property(String.class);
+    @Inject
+    public YarnInstallTask(@Nonnull final ProjectLayout projectLayout, @Nonnull final ObjectFactory objectFactory) {
+        super(projectLayout, objectFactory);
+        this.yarnVersion = objectFactory.property(String.class);
+        this.yarnInstallDirectory = objectFactory.directoryProperty();
+        this.yarnDistributionUrlRoot = objectFactory.property(String.class);
+        this.yarnDistributionUrlPathPattern = objectFactory.property(String.class);
+        this.yarnDistributionServerUsername = objectFactory.property(String.class);
+        this.yarnDistributionServerPassword = objectFactory.property(String.class);
     }
 
     @Input
