@@ -4904,9 +4904,9 @@ is-color-stop@^1.0.0:
     rgba-regex "^1.0.0"
 
 is-core-module@^2.2.0:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/is-core-module/-/is-core-module-2.3.0.tgz#d341652e3408bca69c4671b79a0954a3d349f887"
-  integrity sha512-xSphU2KG9867tsYdLD4RWQ1VqdFl4HTO9Thf3I/3dLEfr0dbPTWKsuCKrgqMljg4nPE+Gq0VCnzT3gr0CyBmsw==
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/is-core-module/-/is-core-module-2.2.0.tgz#97037ef3d52224d85163f5597b2b63d9afed981a"
+  integrity sha512-XRAfAdyyY5F5cOXn7hYQDqh2Xmii+DEfIcQGxK/uNwMHhIkPWO0g8msXcbzLe+MpGoR951MlqM/2iIlU4vKDdQ==
   dependencies:
     has "^1.0.3"
 
@@ -5917,9 +5917,9 @@ node-gyp@^3.8.0:
     which "1"
 
 node-html-parser@^3.1.2:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/node-html-parser/-/node-html-parser-3.2.0.tgz#2b1b81297bc6387a868b227761b35e553d5bf92c"
-  integrity sha512-fXhiFFnccwoUW92VvDACbtg1Kv7Ky0Qj9Rv7ETWpczSFLW07JWM6zQ+d523kiHNpodQHlvDhtjK2T86AclzXzQ==
+  version "3.1.6"
+  resolved "https://registry.yarnpkg.com/node-html-parser/-/node-html-parser-3.1.6.tgz#b29581e374adefc0c8a4c14b7f21f16aa83b7df6"
+  integrity sha512-E4tXYV/gjGqowVhTKrqz0hvVGRjurANIQK5vI7djr7PdrWYKNXBBQJMV586NwBNVeERou1fGPyC+FWXBcSauyw==
   dependencies:
     css-select "^3.1.2"
     he "1.2.0"

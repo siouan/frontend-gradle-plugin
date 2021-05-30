@@ -1,5 +1,5 @@
 plugins {
-    id("org.siouan.frontend-jdk8") version "5.0.1"
+    id("org.siouan.frontend-jdk8") version "5.1.0"
 }
 
 frontend {

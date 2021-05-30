@@ -122,7 +122,7 @@ sonarqube {
         property("sonar.organization", "siouan")
         property("sonar.projectKey", "siouan_frontend-gradle-plugin")
         property("sonar.projectName", "frontend-gradle-plugin")
-        property("sonar.projectVersion", "5.1.0-jdk8")
+        property("sonar.projectVersion", "5.2.0-jdk8")
 
         property("sonar.links.homepage", "https://github.com/siouan/frontend-gradle-plugin")
         property("sonar.links.ci", "https://travis-ci.com/siouan/frontend-gradle-plugin")
