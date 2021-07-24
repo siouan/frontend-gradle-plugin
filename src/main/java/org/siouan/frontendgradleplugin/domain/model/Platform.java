@@ -10,6 +10,8 @@ import javax.annotation.Nonnull;
  */
 public class Platform {
 
+    private static final String[] SUPPORTED_JVM_ARM_32_BITS_ARCH_IDS = new String[] {"arm"};
+
     private static final String[] SUPPORTED_JVM_ARM_64_BITS_ARCH_IDS = new String[] {"aarch64"};
 
     private static final String[] SUPPORTED_JVM_64_BITS_ARCH_IDS = new String[] {"x64", "x86_64", "amd64", "ppc",
@@ -66,6 +68,15 @@ public class Platform {
      */
     public boolean isArm64BitsArch() {
         return matchesAnyIdPart(jvmArch, SUPPORTED_JVM_ARM_64_BITS_ARCH_IDS);
+    }
+
+    /**
+     * Tells whether the JVM has an ARM 32 bits architecture.
+     *
+     * @return {@code true} if the architecture is an ARM 64 bits architecture.
+     */
+    public boolean isArm32BitsArch() {
+        return matchesAnyIdPart(jvmArch, SUPPORTED_JVM_ARM_32_BITS_ARCH_IDS);
     }
 
     /**
