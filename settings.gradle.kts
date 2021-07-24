@@ -2,9 +2,9 @@ val fgpArtifactId: String by extra
 
 pluginManagement {
     plugins {
-        id("com.gradle.enterprise") version "3.6.1"
-        id("com.gradle.plugin-publish") version "0.14.0"
-        id("org.sonarqube") version "3.1.1"
+        id("com.gradle.enterprise") version "3.6.3"
+        id("com.gradle.plugin-publish") version "0.15.0"
+        id("org.sonarqube") version "3.3"
     }
 }
 
