@@ -48,6 +48,7 @@ With their feedback, plugin improvement is possible. Special thanks to:
 @[ckosloski](https://github.com/ckosloski),
 @[davidkron](https://github.com/davidkron),
 @[fdw](https://github.com/fdw),
+@[Griefed](https://github.com/Griefed),
 @[joschi](https://github.com/joschi),
 @[jorgheymans](https://github.com/jorgheymans),
 @[ludik0](https://github.com/ludik0),
