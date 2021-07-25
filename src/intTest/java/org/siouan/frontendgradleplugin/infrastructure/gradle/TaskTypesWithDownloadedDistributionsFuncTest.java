@@ -74,7 +74,7 @@ class TaskTypesWithDownloadedDistributionsFuncTest {
         Files.copy(getResourcePath("package-npm.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
             .nodeVersion("12.16.0")
-            .nodeDistributionUrl(getResourceUrl("node-v14.16.1.zip"))
+            .nodeDistributionUrl(getResourceUrl("node-v14.17.3.zip"))
             .yarnEnabled(true);
         final String runNpxTaskDefinition = buildNpxTaskDefinition(RUN_NPX_TASK_NAME,
             FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, "--version");
