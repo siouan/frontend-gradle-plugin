@@ -35,8 +35,8 @@ class CleanTaskFuncTest {
     void shouldDoNothingWhenScriptIsNotDefined() throws IOException {
         Files.copy(getResourcePath("package-npm.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("14.16.1")
-            .nodeDistributionUrl(getResourceUrl("node-v14.16.1.zip"));
+            .nodeVersion("14.17.3")
+            .nodeDistributionUrl(getResourceUrl("node-v14.17.3.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result = runGradle(projectDirectoryPath, FrontendGradlePlugin.CLEAN_TASK_NAME);
@@ -51,8 +51,8 @@ class CleanTaskFuncTest {
     void shouldCleanWithoutFrontendTasks() throws IOException {
         Files.copy(getResourcePath("package-npm.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("14.16.1")
-            .nodeDistributionUrl(getResourceUrl("node-v14.16.1.zip"));
+            .nodeVersion("14.17.3")
+            .nodeDistributionUrl(getResourceUrl("node-v14.17.3.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result = runGradle(projectDirectoryPath, BasePlugin.CLEAN_TASK_NAME);
@@ -68,8 +68,8 @@ class CleanTaskFuncTest {
     void shouldCleanFrontendWithNpmOrYarn() throws IOException {
         Files.copy(getResourcePath("package-npm.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("14.16.1")
-            .nodeDistributionUrl(getResourceUrl("node-v14.16.1.zip"))
+            .nodeVersion("14.17.3")
+            .nodeDistributionUrl(getResourceUrl("node-v14.17.3.zip"))
             .cleanScript("run clean");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 

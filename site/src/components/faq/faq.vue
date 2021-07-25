@@ -1,5 +1,5 @@
 <template>
-    <article class="mb-3 border-bottom">
+    <article class="mt-4 pb-2 border-bottom">
         <header>
             <h4>
                 <slot name="question" /> <fgp-site-link path="#app" class="small text-info">&uparrow;</fgp-site-link>

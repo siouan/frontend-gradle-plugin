@@ -1,6 +1,6 @@
 <h2 align="center">Frontend Gradle plugin - Integrated <a href="https://nodejs.org/" title="Node.js">Node.js</a>, <a href="https://www.npmjs.com/" title="npm">npm</a>, <a href="https://yarnpkg.com/" title="Yarn">Yarn</a> builds</h2> 
 <p align="center">
-    <a href="https://github.com/siouan/frontend-gradle-plugin/releases/tag/v5.2.0"><img src="https://img.shields.io/badge/Latest%20release-5.2.0-blue.svg" alt="Latest release 5.2.0"/></a>
+    <a href="https://github.com/siouan/frontend-gradle-plugin/releases/tag/v5.3.0"><img src="https://img.shields.io/badge/Latest%20release-5.3.0-blue.svg" alt="Latest release 5.3.0"/></a>
     <a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-green.svg" alt="License Apache 2.0"/></a>
     <br/>
     <a href="https://github.com/siouan/frontend-gradle-plugin/actions/workflows/build.yml"><img src="https://github.com/siouan/frontend-gradle-plugin/actions/workflows/build.yml/badge.svg?branch=master" alt="Build status"/></a>
@@ -48,6 +48,7 @@ With their feedback, plugin improvement is possible. Special thanks to:
 @[ckosloski](https://github.com/ckosloski),
 @[davidkron](https://github.com/davidkron),
 @[fdw](https://github.com/fdw),
+@[Griefed](https://github.com/Griefed),
 @[joschi](https://github.com/joschi),
 @[jorgheymans](https://github.com/jorgheymans),
 @[ludik0](https://github.com/ludik0),
