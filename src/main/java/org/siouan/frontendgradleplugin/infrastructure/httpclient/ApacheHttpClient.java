@@ -40,7 +40,8 @@ public class ApacheHttpClient extends AbstractHttpClient {
 
         if (credentials != null) {
             // Basic authentication for distribution server
-            final HttpHost serverHost = new HttpHost(resourceUrl.getHost(), resourceUrl.getPort());
+            final HttpHost serverHost = new HttpHost(resourceUrl.getProtocol(), resourceUrl.getHost(),
+                resourceUrl.getPort());
             final BasicScheme basicScheme = new BasicScheme();
             registerCredentials(credentialsProvider, basicScheme, serverHost, credentials.getUsername(),
                 credentials.getPassword());

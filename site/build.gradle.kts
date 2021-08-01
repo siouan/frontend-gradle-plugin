@@ -3,7 +3,7 @@ plugins {
 }
 
 frontend {
-    nodeVersion.set("14.17.0")
+    nodeVersion.set("14.17.3")
     yarnEnabled.set(true)
     yarnVersion.set("1.22.10")
     assembleScript.set("run generate")

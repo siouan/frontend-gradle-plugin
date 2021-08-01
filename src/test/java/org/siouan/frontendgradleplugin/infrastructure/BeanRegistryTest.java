@@ -40,8 +40,8 @@ class BeanRegistryTest {
 
     @Test
     void shouldFailGettingBeanWithInterface() {
-        assertThatThrownBy(() -> beanRegistry.getBean(BeanInterface.class)).isInstanceOf(
-            IllegalArgumentException.class);
+        assertThatThrownBy(() -> beanRegistry.getBean(BeanInterface.class))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -51,26 +51,26 @@ class BeanRegistryTest {
 
     @Test
     void shouldFailGettingBeanWithAbstractClass() {
-        assertThatThrownBy(() -> beanRegistry.getBean(AbstractBeanWithPublicConstructor.class)).isInstanceOf(
-            IllegalArgumentException.class);
+        assertThatThrownBy(() -> beanRegistry.getBean(AbstractBeanWithPublicConstructor.class))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void shouldFailGettingBeanWithClassHavingNoPublicConstructors() {
-        assertThatThrownBy(() -> beanRegistry.getBean(NonPublicConstructorBean.class)).isInstanceOf(
-            ZeroOrMultiplePublicConstructorsException.class);
+        assertThatThrownBy(() -> beanRegistry.getBean(NonPublicConstructorBean.class))
+            .isInstanceOf(ZeroOrMultiplePublicConstructorsException.class);
     }
 
     @Test
     void shouldFailGettingBeanWithClassHavingMultiplePublicConstructors() {
-        assertThatThrownBy(() -> beanRegistry.getBean(MultiplePublicConstructorsBean.class)).isInstanceOf(
-            ZeroOrMultiplePublicConstructorsException.class);
+        assertThatThrownBy(() -> beanRegistry.getBean(MultiplePublicConstructorsBean.class))
+            .isInstanceOf(ZeroOrMultiplePublicConstructorsException.class);
     }
 
     @Test
     void shouldFailGettingBeanWithConstructorHavingAnInvalidParameter() {
-        assertThatThrownBy(() -> beanRegistry.getBean(BeanWithNonPublicParameterConstructor.class)).isInstanceOf(
-            ZeroOrMultiplePublicConstructorsException.class);
+        assertThatThrownBy(() -> beanRegistry.getBean(BeanWithNonPublicParameterConstructor.class))
+            .isInstanceOf(ZeroOrMultiplePublicConstructorsException.class);
     }
 
     @Test
@@ -129,8 +129,7 @@ class BeanRegistryTest {
         final DefaultPublicConstructorBean bean3 = beanRegistry.getBean(DefaultPublicConstructorBean.class);
 
         assertThat(bean1).isNotNull();
-        assertThat(bean2).isSameAs(bean2);
-        assertThat(bean2).isSameAs(bean3);
+        assertThat(bean3).isSameAs(bean2).isSameAs(bean1);
     }
 
     @Test

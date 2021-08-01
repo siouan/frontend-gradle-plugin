@@ -30,56 +30,56 @@ class InstallYarnTaskFuncTest {
     @Test
     void should_be_skipped_when_yarn_is_not_enabled() throws IOException {
         createBuildFile(projectDirectoryPath, new FrontendMapBuilder()
-            .nodeVersion("14.17.0")
-            .nodeDistributionUrl(getResourceUrl("node-v14.17.0.zip"))
+            .nodeVersion("14.17.3")
+            .nodeDistributionUrl(getResourceUrl("node-v14.17.3.zip"))
             .toMap());
 
-        final BuildResult result = runGradle(projectDirectoryPath, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        final BuildResult result = runGradle(projectDirectoryPath, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
 
-        assertTaskSuccess(result, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskSuccess(result, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskSkipped(result, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskSkipped(result, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskSkipped(result, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskSkipped(result, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
     }
 
     @Test
     void should_fail_when_yarn_version_is_not_set() throws IOException {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("14.17.0")
-            .nodeDistributionUrl(getResourceUrl("node-v14.17.0.zip"))
+            .nodeVersion("14.17.3")
+            .nodeDistributionUrl(getResourceUrl("node-v14.17.3.zip"))
             .yarnEnabled(true);
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result = runGradleAndExpectFailure(projectDirectoryPath,
-            FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+            FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
 
-        assertTaskSuccess(result, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskSuccess(result, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskSuccess(result, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskSuccess(result, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskFailed(result, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskFailed(result, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
     }
 
     @Test
     void should_be_always_executed_when_yarn_is_enabled() throws IOException {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("14.17.0")
-            .nodeDistributionUrl(getResourceUrl("node-v14.17.0.zip"))
+            .nodeVersion("14.17.3")
+            .nodeDistributionUrl(getResourceUrl("node-v14.17.3.zip"))
             .yarnEnabled(true)
             .yarnVersion("3.0.0");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
-        final BuildResult result1 = runGradle(projectDirectoryPath, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        final BuildResult result1 = runGradle(projectDirectoryPath, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
 
-        assertTaskSuccess(result1, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskSuccess(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskSuccess(result1, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskSuccess(result1, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskSuccess(result1, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskSuccess(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
 
-        final BuildResult result2 = runGradle(projectDirectoryPath, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        final BuildResult result2 = runGradle(projectDirectoryPath, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
 
-        assertTaskUpToDate(result2, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskUpToDate(result2, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskSuccess(result2, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskSuccess(result2, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskSuccess(result2, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskSuccess(result2, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
     }
 }

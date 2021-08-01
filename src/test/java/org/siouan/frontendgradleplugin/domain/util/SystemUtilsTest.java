@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.siouan.frontendgradleplugin.test.fixture.SystemPropertyFixture;
 
 @ExtendWith(MockitoExtension.class)
 class SystemUtilsTest {
@@ -23,61 +24,61 @@ class SystemUtilsTest {
 
     @Test
     void shouldReturnANonNullStringWhenGettingJvmArch() {
-        assertThat(SystemUtils.getSystemJvmArch()).isNotNull();
+        assertThat(SystemPropertyFixture.getSystemJvmArch()).isNotNull();
     }
 
     @Test
     void shouldReturnANonNullStringWhenGettingOsName() {
-        assertThat(SystemUtils.getSystemOsName()).isNotNull();
+        assertThat(SystemPropertyFixture.getSystemOsName()).isNotNull();
     }
 
     @Test
     void shouldReturnHttpProxyHost() {
         System.setProperty("http.proxyHost", "http-proxy");
 
-        assertThat(SystemUtils.getHttpProxyHost()).isEqualTo("http-proxy");
+        assertThat(SystemPropertyFixture.getHttpProxyHost()).isEqualTo("http-proxy");
     }
 
     @Test
     void shouldReturnNoHttpProxyPortWhenUndefined() {
-        assertThat(SystemUtils.getHttpProxyPort()).isEmpty();
+        assertThat(SystemPropertyFixture.getHttpProxyPort()).isEmpty();
     }
 
     @Test
     void shouldReturnHttpProxyPortWhenNonBlank() {
         System.setProperty("http.proxyPort", "743");
 
-        assertThat(SystemUtils.getHttpProxyPort()).contains(743);
+        assertThat(SystemPropertyFixture.getHttpProxyPort()).contains(743);
     }
 
     @Test
     void shouldReturnNoHttpNonProxyHostsWhenSystemPropertyIsNullOrBlank() {
-        assertThat(SystemUtils.getNonProxyHosts()).isEmpty();
+        assertThat(SystemPropertyFixture.getNonProxyHosts()).isEmpty();
     }
 
     @Test
     void shouldReturnHttpNonProxyHostsWhenSystemPropertyIsDefined() {
         System.setProperty("http.nonProxyHosts", "localhost|127.*|[::1]");
 
-        assertThat(SystemUtils.getNonProxyHosts()).containsExactlyInAnyOrder("localhost", "127.*", "[::1]");
+        assertThat(SystemPropertyFixture.getNonProxyHosts()).containsExactlyInAnyOrder("localhost", "127.*", "[::1]");
     }
 
     @Test
     void shouldReturnHttpsProxyHost() {
         System.setProperty("https.proxyHost", "https-proxy");
 
-        assertThat(SystemUtils.getHttpsProxyHost()).isEqualTo("https-proxy");
+        assertThat(SystemPropertyFixture.getHttpsProxyHost()).isEqualTo("https-proxy");
     }
 
     @Test
     void shouldReturnNoHttpsProxyPortWhenUndefined() {
-        assertThat(SystemUtils.getHttpsProxyPort()).isEmpty();
+        assertThat(SystemPropertyFixture.getHttpsProxyPort()).isEmpty();
     }
 
     @Test
     void shouldReturnHttpsProxyPortWhenNonBlank() {
         System.setProperty("https.proxyPort", "1988");
 
-        assertThat(SystemUtils.getHttpsProxyPort()).contains(1988);
+        assertThat(SystemPropertyFixture.getHttpsProxyPort()).contains(1988);
     }
 }

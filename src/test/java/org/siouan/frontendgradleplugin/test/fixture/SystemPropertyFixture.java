@@ -1,37 +1,22 @@
-package org.siouan.frontendgradleplugin.domain.util;
+package org.siouan.frontendgradleplugin.test.fixture;
 
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import org.siouan.frontendgradleplugin.domain.model.SystemProperty;
 
 /**
  * This class provides utilities to get system information.
  *
  * @since 2.0.0
  */
-public final class SystemUtils {
+public final class SystemPropertyFixture {
 
-    private static final String JVM_ARCH_PROPERTY = "os.arch";
-
-    private static final String HTTP_PROXY_HOST = "http.proxyHost";
-
-    private static final String HTTP_PROXY_PORT = "http.proxyPort";
-
-    private static final String HTTPS_PROXY_HOST = "https.proxyHost";
-
-    private static final String HTTPS_PROXY_PORT = "https.proxyPort";
-
-    private static final String NON_PROXY_HOSTS = "http.nonProxyHosts";
-
-    private static final String NON_PROXY_HOSTS_SPLIT_PATTERN = Pattern.quote("|");
-
-    private static final String OS_NAME_PROPERTY = "os.name";
-
-    private SystemUtils() {
+    private SystemPropertyFixture() {
     }
 
     /**
@@ -42,9 +27,9 @@ public final class SystemUtils {
      */
     @Nonnull
     public static Set<String> getNonProxyHosts() {
-        final String nonProxyHosts = System.getProperty(NON_PROXY_HOSTS);
+        final String nonProxyHosts = System.getProperty(SystemProperty.NON_PROXY_HOSTS);
         return ((nonProxyHosts == null) || nonProxyHosts.isBlank()) ? Collections.emptySet()
-            : Set.of(nonProxyHosts.split(NON_PROXY_HOSTS_SPLIT_PATTERN));
+            : Set.of(nonProxyHosts.split(SystemProperty.NON_PROXY_HOSTS_SPLIT_PATTERN));
     }
 
     /**
@@ -54,7 +39,7 @@ public final class SystemUtils {
      */
     @Nullable
     public static String getHttpProxyHost() {
-        return System.getProperty(HTTP_PROXY_HOST);
+        return System.getProperty(SystemProperty.HTTP_PROXY_HOST);
     }
 
     /**
@@ -63,7 +48,7 @@ public final class SystemUtils {
      * @return Port number.
      */
     public static Optional<Integer> getHttpProxyPort() {
-        final String httpProxyPort = System.getProperty(HTTP_PROXY_PORT);
+        final String httpProxyPort = System.getProperty(SystemProperty.HTTP_PROXY_PORT);
         return Optional.ofNullable(httpProxyPort).filter(port -> !port.isBlank()).map(Integer::parseInt);
     }
 
@@ -74,7 +59,7 @@ public final class SystemUtils {
      */
     @Nullable
     public static String getHttpsProxyHost() {
-        return System.getProperty(HTTPS_PROXY_HOST);
+        return System.getProperty(SystemProperty.HTTPS_PROXY_HOST);
     }
 
     /**
@@ -83,7 +68,7 @@ public final class SystemUtils {
      * @return Port number.
      */
     public static Optional<Integer> getHttpsProxyPort() {
-        final String httpsProxyPort = System.getProperty(HTTPS_PROXY_PORT);
+        final String httpsProxyPort = System.getProperty(SystemProperty.HTTPS_PROXY_PORT);
         return Optional.ofNullable(httpsProxyPort).filter(port -> !port.isBlank()).map(Integer::parseInt);
     }
 
@@ -94,7 +79,7 @@ public final class SystemUtils {
      */
     @Nonnull
     public static String getSystemJvmArch() {
-        return getPropertyAndAssertNotNull(JVM_ARCH_PROPERTY);
+        return getPropertyAndAssertNotNull(SystemProperty.JVM_ARCH_PROPERTY);
     }
 
     /**
@@ -104,7 +89,7 @@ public final class SystemUtils {
      */
     @Nonnull
     public static String getSystemOsName() {
-        return getPropertyAndAssertNotNull(OS_NAME_PROPERTY);
+        return getPropertyAndAssertNotNull(SystemProperty.OS_NAME_PROPERTY);
     }
 
     @Nonnull

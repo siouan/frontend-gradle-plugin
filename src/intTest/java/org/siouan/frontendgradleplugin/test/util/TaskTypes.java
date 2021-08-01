@@ -27,7 +27,7 @@ public final class TaskTypes {
 
     @Nonnull
     public static String buildNodeTaskDefinition(@Nonnull final String taskName, @Nullable final String script) {
-        return buildNodeTaskDefinition(taskName, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME, script);
+        return buildNodeTaskDefinition(taskName, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, script);
     }
 
     @Nonnull

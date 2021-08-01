@@ -2,14 +2,9 @@ package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
 import javax.annotation.Nonnull;
 
-import org.gradle.api.GradleException;
 import org.gradle.api.Task;
-import org.gradle.api.execution.TaskExecutionListener;
 import org.gradle.api.logging.LogLevel;
 import org.gradle.api.logging.LoggingManager;
-import org.gradle.api.tasks.TaskState;
-import org.siouan.frontendgradleplugin.infrastructure.BeanRegistry;
-import org.siouan.frontendgradleplugin.infrastructure.BeanRegistryException;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.adapter.GradleLoggerAdapter;
 
 /**
@@ -17,36 +12,28 @@ import org.siouan.frontendgradleplugin.infrastructure.gradle.adapter.GradleLogge
  *
  * @since 2.0.0
  */
-public class TaskLoggerConfigurer implements TaskExecutionListener {
-
-    private final BeanRegistry beanRegistry;
+public class TaskLoggerConfigurer {
 
     private final FrontendExtension extension;
 
-    public TaskLoggerConfigurer(final BeanRegistry beanRegistry, final FrontendExtension extension) {
-        this.beanRegistry = beanRegistry;
+    private final GradleLoggerAdapter gradleLoggerAdapter;
+
+    private final GradleSettings gradleSettings;
+
+    public TaskLoggerConfigurer(final FrontendExtension extension, final GradleLoggerAdapter gradleLoggerAdapter,
+        final GradleSettings gradleSettings) {
         this.extension = extension;
+        this.gradleLoggerAdapter = gradleLoggerAdapter;
+        this.gradleSettings = gradleSettings;
     }
 
-    @Override
-    public void beforeExecute(@Nonnull final Task task) {
+    public void initLoggerAdapter(@Nonnull final Task task) {
         task
             .getLogger()
             .debug("Configuring logger for task '{}': verboseModeEnabled={}", task.getName(),
                 extension.getVerboseModeEnabled().get());
-        try {
-            beanRegistry
-                .getBean(GradleLoggerAdapter.class)
-                .init(task.getLogger(), resolveLogLevel(task), extension.getVerboseModeEnabled().get(),
-                    '[' + task.getName() + "] ");
-        } catch (final BeanRegistryException e) {
-            throw new GradleException("Cannot get instance of bean registry", e);
-        }
-    }
-
-    @Override
-    public void afterExecute(@Nonnull final Task task, @Nonnull final TaskState state) {
-        // Event not used
+        gradleLoggerAdapter.init(task.getLogger(), resolveLogLevel(task), extension.getVerboseModeEnabled().get(),
+            '[' + task.getName() + "] ");
     }
 
     /**
@@ -65,11 +52,11 @@ public class TaskLoggerConfigurer implements TaskExecutionListener {
             return loggingLevel;
         }
 
-        loggingLevel = task.getProject().getLogging().getLevel();
+        loggingLevel = gradleSettings.getProjectLogLevel();
         if (loggingLevel != null) {
             return loggingLevel;
         }
 
-        return task.getProject().getGradle().getStartParameter().getLogLevel();
+        return gradleSettings.getCommandLineLogLevel();
     }
 }

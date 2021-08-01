@@ -1,5 +1,7 @@
 package org.siouan.frontendgradleplugin.infrastructure;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -32,6 +34,10 @@ public final class Beans {
             .ifPresentOrElse(BeanRegistry::init, () -> INSTANCE.addBeanRegistry(registryId, new BeanRegistry()));
     }
 
+    public static String getBeanRegistryId(@Nonnull final String decodedId) {
+        return Base64.getEncoder().encodeToString(decodedId.getBytes(StandardCharsets.UTF_8));
+    }
+
     public static <T> T getBean(@Nonnull final String registryId, @Nonnull final Class<T> beanClass)
         throws BeanInstanciationException, TooManyCandidateBeansException, ZeroOrMultiplePublicConstructorsException {
         return INSTANCE.findBeanRegistryByIdOrFail(registryId).getBean(beanClass);
@@ -51,8 +57,8 @@ public final class Beans {
 
     @Nonnull
     public BeanRegistry findBeanRegistryByIdOrFail(@Nonnull final String registryId) {
-        return findBeanRegistryById(registryId).orElseThrow(
-            () -> new IllegalArgumentException("No registry was found with ID " + registryId));
+        return findBeanRegistryById(registryId)
+            .orElseThrow(() -> new IllegalArgumentException("No registry was found with ID " + registryId));
     }
 
     @Nonnull

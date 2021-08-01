@@ -56,12 +56,6 @@ public class GetYarnExecutablePath extends AbstractGetExecutablePath {
 
     @Nonnull
     @Override
-    protected Optional<Path> getInstallDirectoryFromEnvironment(@Nonnull final Platform platform) {
-        return Optional.ofNullable(platform.getEnvironment().getNodeInstallDirectoryPath());
-    }
-
-    @Nonnull
-    @Override
     protected Path getWindowsExecutableFileName() {
         return WINDOWS_EXECUTABLE_FILE_NAME;
     }
@@ -70,5 +64,11 @@ public class GetYarnExecutablePath extends AbstractGetExecutablePath {
     @Override
     protected Path getNonWindowsExecutableFileName() {
         return NON_WINDOWS_EXECUTABLE_FILE_NAME;
+    }
+
+    @Nonnull
+    @Override
+    protected Optional<Path> getInstallDirectoryFromEnvironment(@Nonnull final Platform platform) {
+        return Optional.ofNullable(platform.getEnvironment().getNodeInstallDirectoryPath());
     }
 }

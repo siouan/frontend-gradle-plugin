@@ -20,6 +20,11 @@ class ResolveNodeDistributionArchitectureIdTest {
     }
 
     @Test
+    void shouldNotBeResolvedWhenOsIsMacOsAndJreArchIsI386() {
+        assertThat(usecase.execute(PlatformFixture.aPlatform("i386", "Mac OS"))).isEmpty();
+    }
+
+    @Test
     void shouldNotBeResolvedWhenOsIsSolarisOsAndJreArchIsSparc() {
         assertThat(usecase.execute(PlatformFixture.aPlatform("sparc", "Solaris"))).isEmpty();
     }
@@ -40,7 +45,17 @@ class ResolveNodeDistributionArchitectureIdTest {
     }
 
     @Test
+    void shouldReturnFullDownloadUrlWhenResolvingUrlWithLinuxAndJreArchEqualToArm() {
+        assertThat(usecase.execute(PlatformFixture.aPlatform("armv", "Linux"))).contains("linux-armv7l");
+    }
+
+    @Test
     void shouldReturnFullDownloadUrlWhenResolvingUrlWithMacOsAndJreArchEqualToPPC() {
         assertThat(usecase.execute(PlatformFixture.aPlatform("ppc", "Mac OS X"))).contains("darwin-x64");
+    }
+
+    @Test
+    void shouldReturnFullDownloadUrlWhenResolvingUrlWithMacOsAndJreArchEqualToArm64() {
+        assertThat(usecase.execute(PlatformFixture.aPlatform("aarch64", "Mac OS X"))).contains("darwin-arm64");
     }
 }

@@ -14,7 +14,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
 
-import org.gradle.api.Project;
+import org.gradle.process.ExecOperations;
 import org.gradle.process.ExecResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,7 +38,7 @@ class GradleScriptRunnerAdapterTest {
     private static final String SCRIPT = "script";
 
     @Mock
-    private Project project;
+    private ExecOperations execOperations;
 
     @Mock
     private ResolveExecutionSettings resolveExecutionSettings;
@@ -53,7 +53,7 @@ class GradleScriptRunnerAdapterTest {
 
     @Test
     void shouldFailResolvingExecSettingsWhenExecutableIsNotFound() throws ExecutableNotFoundException {
-        final ScriptProperties scriptProperties = new ScriptProperties(project,
+        final ScriptProperties scriptProperties = new ScriptProperties(execOperations,
             PathFixture.ANY_PATH.resolve("frontend"), ExecutableType.NPM, PathFixture.ANY_PATH.resolve("node"), SCRIPT,
             PlatformFixture.LOCAL_PLATFORM);
         final ExecutableNotFoundException expectedException = new ExecutableNotFoundException(Paths.get("exe"));
@@ -63,13 +63,13 @@ class GradleScriptRunnerAdapterTest {
 
         assertThatThrownBy(() -> adapter.execute(scriptProperties)).isEqualTo(expectedException);
 
-        verifyNoMoreInteractions(resolveExecutionSettings, project);
+        verifyNoMoreInteractions(resolveExecutionSettings, execOperations);
     }
 
     @Test
     void shouldRunScriptWhenSettingsAreResolved() throws ExecutableNotFoundException {
         final Path nodeInstallationDirectory = PathFixture.ANY_PATH.resolve("node");
-        final ScriptProperties scriptProperties = new ScriptProperties(project,
+        final ScriptProperties scriptProperties = new ScriptProperties(execOperations,
             PathFixture.ANY_PATH.resolve("frontend"), ExecutableType.NPM, nodeInstallationDirectory, SCRIPT,
             PlatformFixture.LOCAL_PLATFORM);
         final Set<Path> executablePaths = emptySet();
@@ -80,14 +80,14 @@ class GradleScriptRunnerAdapterTest {
             scriptProperties.getExecutableType(), scriptProperties.getNodeInstallDirectory(),
             scriptProperties.getPlatform(), scriptProperties.getScript())).thenReturn(executionSettings);
         final ExecResult execResult = mock(ExecResult.class);
-        when(project.exec(
-            argThat(new ExecSpecActionMatcher(new ExecSpecAction(executionSettings, execSpec -> {}))))).thenReturn(
-            execResult);
+        when(execOperations.exec(
+            argThat(new ExecSpecActionMatcher(new ExecSpecAction(executionSettings, execSpec -> {})))))
+            .thenReturn(execResult);
         when(execResult.rethrowFailure()).thenReturn(execResult);
 
         adapter.execute(scriptProperties);
 
         verify(execResult).assertNormalExitValue();
-        verifyNoMoreInteractions(resolveExecutionSettings, project, execResult);
+        verifyNoMoreInteractions(resolveExecutionSettings, execOperations, execResult);
     }
 }

@@ -98,7 +98,7 @@ class TaskTypesWithDownloadedDistributionsFuncTest {
         Files.copy(getResourcePath("package-npm.json"), packageJsonDirectoryPath.resolve("package.json"));
         final Path temporaryScriptPath = createJavascriptFile(temporaryDirectoryPath.resolve("script.js"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("14.17.0")
+            .nodeVersion("14.17.3")
             .nodeInstallDirectory(projectDirectoryPath.resolve("node-dist"))
             .packageJsonDirectory(packageJsonDirectoryPath)
             .verboseModeEnabled(false);
@@ -107,9 +107,9 @@ class TaskTypesWithDownloadedDistributionsFuncTest {
         final String runNpmTaskDefinition = buildNpmTaskDefinition(RUN_NPM_TASK_NAME,
             FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME, "run another-script");
         final String runNpxTaskDefinition = buildNpxTaskDefinition(RUN_NPX_TASK_NAME,
-            FrontendGradlePlugin.INSTALL_NODE_TASK_NAME, "--version");
+            FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, "--version");
         final String runYarnTaskDefinition = buildYarnTaskDefinition(RUN_YARN_TASK_NAME,
-            Set.of(FrontendGradlePlugin.INSTALL_NODE_TASK_NAME, FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME),
+            Set.of(FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME),
             "run another-script");
         final String additionalContent = String.join("\n", runNodeTaskDefinition, runNpmTaskDefinition,
             runNpxTaskDefinition, runYarnTaskDefinition);
@@ -117,10 +117,10 @@ class TaskTypesWithDownloadedDistributionsFuncTest {
 
         final BuildResult result1 = runGradle(projectDirectoryPath, RUN_NODE_TASK_NAME);
 
-        assertTaskSuccess(result1, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskSuccess(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskIgnored(result1, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskIgnored(result1, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskIgnored(result1, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskIgnored(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskIgnored(result1, FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME);
         assertTaskSuccess(result1, RUN_NODE_TASK_NAME);
         assertTaskIgnored(result1, RUN_NPM_TASK_NAME);
@@ -129,10 +129,10 @@ class TaskTypesWithDownloadedDistributionsFuncTest {
 
         final BuildResult result2 = runGradle(projectDirectoryPath, RUN_NODE_TASK_NAME);
 
-        assertTaskUpToDate(result2, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskUpToDate(result2, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskIgnored(result2, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskIgnored(result2, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskIgnored(result2, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskIgnored(result2, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskIgnored(result2, FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME);
         assertTaskSuccess(result2, RUN_NODE_TASK_NAME);
         assertTaskIgnored(result2, RUN_NPM_TASK_NAME);
@@ -141,10 +141,10 @@ class TaskTypesWithDownloadedDistributionsFuncTest {
 
         final BuildResult result3 = runGradle(projectDirectoryPath, RUN_NPX_TASK_NAME);
 
-        assertTaskUpToDate(result3, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskUpToDate(result3, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskIgnored(result3, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskIgnored(result3, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskIgnored(result3, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskIgnored(result3, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskIgnored(result3, FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME);
         assertTaskIgnored(result3, RUN_NODE_TASK_NAME);
         assertTaskIgnored(result3, RUN_NPM_TASK_NAME);
@@ -153,10 +153,10 @@ class TaskTypesWithDownloadedDistributionsFuncTest {
 
         final BuildResult result4 = runGradle(projectDirectoryPath, RUN_NPX_TASK_NAME);
 
-        assertTaskUpToDate(result4, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskUpToDate(result4, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskIgnored(result4, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskIgnored(result4, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskIgnored(result4, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskIgnored(result4, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskIgnored(result4, FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME);
         assertTaskIgnored(result4, RUN_NODE_TASK_NAME);
         assertTaskIgnored(result4, RUN_NPM_TASK_NAME);
@@ -165,10 +165,10 @@ class TaskTypesWithDownloadedDistributionsFuncTest {
 
         final BuildResult result5 = runGradle(projectDirectoryPath, RUN_NPM_TASK_NAME);
 
-        assertTaskUpToDate(result5, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskUpToDate(result5, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskSkipped(result5, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskSkipped(result5, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskSkipped(result5, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskSkipped(result5, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskSuccess(result5, FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME);
         assertTaskIgnored(result5, RUN_NODE_TASK_NAME);
         assertTaskSuccess(result5, RUN_NPM_TASK_NAME);
@@ -177,10 +177,10 @@ class TaskTypesWithDownloadedDistributionsFuncTest {
 
         final BuildResult result6 = runGradle(projectDirectoryPath, RUN_NPM_TASK_NAME);
 
-        assertTaskUpToDate(result6, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskUpToDate(result6, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskSkipped(result6, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskSkipped(result6, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskSkipped(result6, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskSkipped(result6, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskSuccess(result6, FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME);
         assertTaskIgnored(result6, RUN_NODE_TASK_NAME);
         assertTaskSuccess(result6, RUN_NPM_TASK_NAME);
@@ -189,10 +189,10 @@ class TaskTypesWithDownloadedDistributionsFuncTest {
 
         final BuildResult result7 = runGradleAndExpectFailure(projectDirectoryPath, RUN_YARN_TASK_NAME);
 
-        assertTaskUpToDate(result7, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskUpToDate(result7, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskSkipped(result7, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskSkipped(result7, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskSkipped(result7, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskSkipped(result7, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskSuccess(result7, FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME);
         assertTaskIgnored(result7, RUN_NODE_TASK_NAME);
         assertTaskIgnored(result7, RUN_NPM_TASK_NAME);
@@ -207,10 +207,10 @@ class TaskTypesWithDownloadedDistributionsFuncTest {
 
         final BuildResult result8 = runGradle(projectDirectoryPath, RUN_NODE_TASK_NAME);
 
-        assertTaskUpToDate(result8, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskUpToDate(result8, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskIgnored(result8, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskIgnored(result8, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskIgnored(result8, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskIgnored(result8, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskIgnored(result8, FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME);
         assertTaskSuccess(result8, RUN_NODE_TASK_NAME);
         assertTaskIgnored(result8, RUN_NPM_TASK_NAME);
@@ -219,10 +219,10 @@ class TaskTypesWithDownloadedDistributionsFuncTest {
 
         final BuildResult result9 = runGradle(projectDirectoryPath, RUN_NPX_TASK_NAME);
 
-        assertTaskUpToDate(result9, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskUpToDate(result9, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskIgnored(result9, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskIgnored(result9, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskIgnored(result9, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskIgnored(result9, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskIgnored(result9, FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME);
         assertTaskIgnored(result9, RUN_NODE_TASK_NAME);
         assertTaskIgnored(result9, RUN_NPM_TASK_NAME);
@@ -231,10 +231,10 @@ class TaskTypesWithDownloadedDistributionsFuncTest {
 
         final BuildResult result10 = runGradle(projectDirectoryPath, RUN_NPM_TASK_NAME);
 
-        assertTaskUpToDate(result10, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskUpToDate(result10, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskSuccess(result10, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskSuccess(result10, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskSuccess(result10, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskSuccess(result10, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskSuccess(result10, FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME);
         assertTaskIgnored(result10, RUN_NODE_TASK_NAME);
         assertTaskSuccess(result10, RUN_NPM_TASK_NAME);
@@ -243,10 +243,10 @@ class TaskTypesWithDownloadedDistributionsFuncTest {
 
         final BuildResult result11 = runGradle(projectDirectoryPath, RUN_YARN_TASK_NAME);
 
-        assertTaskUpToDate(result11, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskUpToDate(result11, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskSuccess(result11, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskSuccess(result11, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskSuccess(result11, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskSuccess(result11, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskSuccess(result11, FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME);
         assertTaskIgnored(result11, RUN_NODE_TASK_NAME);
         assertTaskIgnored(result11, RUN_NPM_TASK_NAME);

@@ -43,16 +43,16 @@ class AssembleTaskFuncTest {
     void should_be_skipped_when_script_is_not_defined() throws IOException {
         Files.copy(getResourcePath("package-npm.json"), packageJsonDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("14.17.0")
-            .nodeDistributionUrl(getResourceUrl("node-v14.17.0.zip"));
+            .nodeVersion("14.17.3")
+            .nodeDistributionUrl(getResourceUrl("node-v14.17.3.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result = runGradle(projectDirectoryPath, FrontendGradlePlugin.ASSEMBLE_TASK_NAME);
 
-        assertTaskIgnored(result, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskIgnored(result, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskIgnored(result, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskIgnored(result, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskIgnored(result, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskIgnored(result, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskIgnored(result, FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME);
         assertTaskSkipped(result, FrontendGradlePlugin.ASSEMBLE_TASK_NAME);
     }
@@ -61,16 +61,16 @@ class AssembleTaskFuncTest {
     void should_be_skipped_when_assembling_with_gradle_and_script_is_not_defined() throws IOException {
         Files.copy(getResourcePath("package-npm.json"), packageJsonDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("14.17.0")
-            .nodeDistributionUrl(getResourceUrl("node-v14.17.0.zip"));
+            .nodeVersion("14.17.3")
+            .nodeDistributionUrl(getResourceUrl("node-v14.17.3.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result = runGradle(projectDirectoryPath, BasePlugin.ASSEMBLE_TASK_NAME);
 
-        assertTaskIgnored(result, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskIgnored(result, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskIgnored(result, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskIgnored(result, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskIgnored(result, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskIgnored(result, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskIgnored(result, FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME);
         assertTaskSkipped(result, FrontendGradlePlugin.ASSEMBLE_TASK_NAME);
         assertTaskUpToDate(result, BasePlugin.ASSEMBLE_TASK_NAME);
@@ -80,27 +80,27 @@ class AssembleTaskFuncTest {
     void should_assemble_frontend_with_npm_or_yarn() throws IOException {
         Files.copy(getResourcePath("package-npm.json"), packageJsonDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("14.17.0")
-            .nodeDistributionUrl(getResourceUrl("node-v14.17.0.zip"))
+            .nodeVersion("14.17.3")
+            .nodeDistributionUrl(getResourceUrl("node-v14.17.3.zip"))
             .assembleScript("run assemble");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, BasePlugin.ASSEMBLE_TASK_NAME);
 
-        assertTaskSuccess(result1, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskSuccess(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskSkipped(result1, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskSkipped(result1, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskSkipped(result1, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskSkipped(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskSuccess(result1, FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME);
         assertTaskSuccess(result1, FrontendGradlePlugin.ASSEMBLE_TASK_NAME);
         assertTaskSuccess(result1, BasePlugin.ASSEMBLE_TASK_NAME);
 
         final BuildResult result2 = runGradle(projectDirectoryPath, BasePlugin.ASSEMBLE_TASK_NAME);
 
-        assertTaskUpToDate(result2, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskUpToDate(result2, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskSkipped(result2, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskSkipped(result2, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskSkipped(result2, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskSkipped(result2, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskSuccess(result2, FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME);
         assertTaskSuccess(result2, FrontendGradlePlugin.ASSEMBLE_TASK_NAME);
         assertTaskSuccess(result2, BasePlugin.ASSEMBLE_TASK_NAME);
@@ -113,20 +113,20 @@ class AssembleTaskFuncTest {
 
         final BuildResult result3 = runGradle(projectDirectoryPath, BasePlugin.ASSEMBLE_TASK_NAME);
 
-        assertTaskUpToDate(result3, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskUpToDate(result3, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskSuccess(result3, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskSuccess(result3, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskSuccess(result3, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskSuccess(result3, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskSuccess(result3, FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME);
         assertTaskSuccess(result3, FrontendGradlePlugin.ASSEMBLE_TASK_NAME);
         assertTaskSuccess(result3, BasePlugin.ASSEMBLE_TASK_NAME);
 
         final BuildResult result4 = runGradle(projectDirectoryPath, BasePlugin.ASSEMBLE_TASK_NAME);
 
-        assertTaskUpToDate(result4, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskUpToDate(result4, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskSuccess(result4, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskSuccess(result4, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskSuccess(result4, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskSuccess(result4, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskSuccess(result4, FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME);
         assertTaskSuccess(result4, FrontendGradlePlugin.ASSEMBLE_TASK_NAME);
         assertTaskSuccess(result4, BasePlugin.ASSEMBLE_TASK_NAME);
