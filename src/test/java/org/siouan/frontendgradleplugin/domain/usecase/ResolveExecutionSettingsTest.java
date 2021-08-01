@@ -54,7 +54,7 @@ class ResolveExecutionSettingsTest {
         when(getNodeExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenThrow(expectedException);
 
         assertThatThrownBy(
-            () -> usecase.execute(PACKAGE_JSON_DIRECTORY_PATH, ExecutableType.NODE, NODE_INSTALL_DIRECTORY_PATH, null,
+            () -> usecase.execute(PACKAGE_JSON_DIRECTORY_PATH, ExecutableType.NODE, NODE_INSTALL_DIRECTORY_PATH,
                 platform, SCRIPT)).isEqualTo(expectedException);
 
         verifyNoMoreInteractions(getNodeExecutablePath, getNpmExecutablePath, getNpxExecutablePath,
@@ -70,7 +70,7 @@ class ResolveExecutionSettingsTest {
         when(getNpmExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenThrow(expectedException);
 
         assertThatThrownBy(
-            () -> usecase.execute(PACKAGE_JSON_DIRECTORY_PATH, ExecutableType.NPM, NODE_INSTALL_DIRECTORY_PATH, null,
+            () -> usecase.execute(PACKAGE_JSON_DIRECTORY_PATH, ExecutableType.NPM, NODE_INSTALL_DIRECTORY_PATH,
                 platform, SCRIPT)).isEqualTo(expectedException);
 
         verifyNoMoreInteractions(getNodeExecutablePath, getNpmExecutablePath, getNpxExecutablePath,
@@ -86,7 +86,7 @@ class ResolveExecutionSettingsTest {
         when(getNpxExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenThrow(expectedException);
 
         assertThatThrownBy(
-            () -> usecase.execute(PACKAGE_JSON_DIRECTORY_PATH, ExecutableType.NPX, NODE_INSTALL_DIRECTORY_PATH, null,
+            () -> usecase.execute(PACKAGE_JSON_DIRECTORY_PATH, ExecutableType.NPX, NODE_INSTALL_DIRECTORY_PATH,
                 platform, SCRIPT)).isEqualTo(expectedException);
 
         verifyNoMoreInteractions(getNodeExecutablePath, getNpmExecutablePath, getNpxExecutablePath,
@@ -99,11 +99,11 @@ class ResolveExecutionSettingsTest {
         when(getNodeExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenReturn(
             NODE_INSTALL_DIRECTORY_PATH.resolve("node"));
         final Exception expectedException = new ExecutableNotFoundException(Paths.get("yarn"));
-        when(getYarnExecutablePath.execute(YARN_INSTALL_DIRECTORY_PATH, platform)).thenThrow(expectedException);
+        when(getYarnExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenThrow(expectedException);
 
         assertThatThrownBy(
             () -> usecase.execute(PACKAGE_JSON_DIRECTORY_PATH, ExecutableType.YARN, NODE_INSTALL_DIRECTORY_PATH,
-                YARN_INSTALL_DIRECTORY_PATH, platform, SCRIPT)).isEqualTo(expectedException);
+                platform, SCRIPT)).isEqualTo(expectedException);
 
         verifyNoMoreInteractions(getNodeExecutablePath, getNpmExecutablePath, getNpxExecutablePath,
             getYarnExecutablePath);
@@ -116,7 +116,7 @@ class ResolveExecutionSettingsTest {
             NODE_INSTALL_DIRECTORY_PATH.resolve("node"));
 
         assertThatThrownBy(
-            () -> usecase.execute(PACKAGE_JSON_DIRECTORY_PATH, "JAVAC", NODE_INSTALL_DIRECTORY_PATH, null, platform,
+            () -> usecase.execute(PACKAGE_JSON_DIRECTORY_PATH, "JAVAC", NODE_INSTALL_DIRECTORY_PATH, platform,
                 SCRIPT)).isInstanceOf(IllegalArgumentException.class);
 
         verifyNoMoreInteractions(getNodeExecutablePath, getNpmExecutablePath, getNpxExecutablePath,
@@ -131,7 +131,7 @@ class ResolveExecutionSettingsTest {
         when(getNodeExecutablePath.execute(null, platform)).thenReturn(nodeExecutablePath);
 
         final ExecutionSettings executionSettings = usecase.execute(PACKAGE_JSON_DIRECTORY_PATH, ExecutableType.NODE,
-            null, null, platform, SCRIPT);
+            null, platform, SCRIPT);
 
         assertThat(executionSettings.getWorkingDirectoryPath()).isEqualTo(PACKAGE_JSON_DIRECTORY_PATH);
         assertThat(executionSettings.getAdditionalExecutablePaths()).isEmpty();
@@ -150,7 +150,7 @@ class ResolveExecutionSettingsTest {
         when(getNodeExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenReturn(nodeExecutablePath);
 
         final ExecutionSettings executionSettings = usecase.execute(PACKAGE_JSON_DIRECTORY_PATH, ExecutableType.NODE,
-            NODE_INSTALL_DIRECTORY_PATH, null, platform, SCRIPT);
+            NODE_INSTALL_DIRECTORY_PATH, platform, SCRIPT);
 
         assertThat(executionSettings.getWorkingDirectoryPath()).isEqualTo(PACKAGE_JSON_DIRECTORY_PATH);
         assertThat(executionSettings.getAdditionalExecutablePaths()).isEmpty();
@@ -171,7 +171,7 @@ class ResolveExecutionSettingsTest {
         when(getNpmExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenReturn(npmExecutablePath);
 
         final ExecutionSettings executionSettings = usecase.execute(PACKAGE_JSON_DIRECTORY_PATH, ExecutableType.NPM,
-            NODE_INSTALL_DIRECTORY_PATH, null, platform, SCRIPT);
+            NODE_INSTALL_DIRECTORY_PATH, platform, SCRIPT);
 
         assertThat(executionSettings.getWorkingDirectoryPath()).isEqualTo(PACKAGE_JSON_DIRECTORY_PATH);
         assertThat(executionSettings.getAdditionalExecutablePaths()).containsExactly(nodeExecutablePath.getParent());
@@ -192,7 +192,7 @@ class ResolveExecutionSettingsTest {
         when(getNpxExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenReturn(npxExecutablePath);
 
         final ExecutionSettings executionSettings = usecase.execute(PACKAGE_JSON_DIRECTORY_PATH, ExecutableType.NPX,
-            NODE_INSTALL_DIRECTORY_PATH, null, platform, SCRIPT);
+            NODE_INSTALL_DIRECTORY_PATH, platform, SCRIPT);
 
         assertThat(executionSettings.getWorkingDirectoryPath()).isEqualTo(PACKAGE_JSON_DIRECTORY_PATH);
         assertThat(executionSettings.getAdditionalExecutablePaths()).containsExactly(nodeExecutablePath.getParent());
@@ -204,16 +204,16 @@ class ResolveExecutionSettingsTest {
     }
 
     @Test
-    void shouldResolveExecSettingsWithWindowsCmdWhenExecutableIsYarnInDistributionAndNodeIsInDistributionAndOsIsWindows()
+    void shouldResolveExecSettingsWithWindowsCmdWhenNodeAndYarnExecutablesAreInInstallDirectoryAndOsIsWindows()
         throws ExecutableNotFoundException {
         final Platform platform = PlatformFixture.aPlatform(SystemUtils.getSystemJvmArch(), "Windows NT");
         final Path nodeExecutablePath = NODE_INSTALL_DIRECTORY_PATH.resolve("node");
-        final Path yarnExecutablePath = YARN_INSTALL_DIRECTORY_PATH.resolve("yarn");
+        final Path yarnExecutablePath = NODE_INSTALL_DIRECTORY_PATH.resolve("yarn");
         when(getNodeExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenReturn(nodeExecutablePath);
-        when(getYarnExecutablePath.execute(YARN_INSTALL_DIRECTORY_PATH, platform)).thenReturn(yarnExecutablePath);
+        when(getYarnExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenReturn(yarnExecutablePath);
 
         final ExecutionSettings executionSettings = usecase.execute(PACKAGE_JSON_DIRECTORY_PATH, ExecutableType.YARN,
-            NODE_INSTALL_DIRECTORY_PATH, YARN_INSTALL_DIRECTORY_PATH, platform, SCRIPT);
+            NODE_INSTALL_DIRECTORY_PATH, platform, SCRIPT);
 
         assertThat(executionSettings.getWorkingDirectoryPath()).isEqualTo(PACKAGE_JSON_DIRECTORY_PATH);
         assertThat(executionSettings.getAdditionalExecutablePaths()).containsOnly(nodeExecutablePath.getParent());
@@ -225,7 +225,7 @@ class ResolveExecutionSettingsTest {
     }
 
     @Test
-    void shouldResolveExecSettingsWithWindowsCmdWhenExecutableIsYarnInPathAndNodeIsInPathAndOsIsWindows()
+    void shouldResolveExecSettingsWithWindowsCmdWhenNodeAndYarnExecutablesAreInPathAndOsIsWindows()
         throws ExecutableNotFoundException {
         final Platform platform = PlatformFixture.aPlatform(SystemUtils.getSystemJvmArch(), "Windows NT");
         final Path nodeExecutablePath = Paths.get("node");
@@ -234,7 +234,7 @@ class ResolveExecutionSettingsTest {
         when(getYarnExecutablePath.execute(null, platform)).thenReturn(yarnExecutablePath);
 
         final ExecutionSettings executionSettings = usecase.execute(PACKAGE_JSON_DIRECTORY_PATH, ExecutableType.YARN,
-            null, null, platform, SCRIPT);
+            null, platform, SCRIPT);
 
         assertThat(executionSettings.getWorkingDirectoryPath()).isEqualTo(PACKAGE_JSON_DIRECTORY_PATH);
         assertThat(executionSettings.getAdditionalExecutablePaths()).isEmpty();
@@ -253,7 +253,7 @@ class ResolveExecutionSettingsTest {
         when(getNodeExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenReturn(nodeExecutablePath);
 
         final ExecutionSettings executionSettings = usecase.execute(PACKAGE_JSON_DIRECTORY_PATH, ExecutableType.NODE,
-            NODE_INSTALL_DIRECTORY_PATH, null, platform, SCRIPT);
+            NODE_INSTALL_DIRECTORY_PATH, platform, SCRIPT);
 
         assertThat(executionSettings.getWorkingDirectoryPath()).isEqualTo(PACKAGE_JSON_DIRECTORY_PATH);
         assertThat(executionSettings.getAdditionalExecutablePaths()).isEmpty();
@@ -274,7 +274,7 @@ class ResolveExecutionSettingsTest {
         when(getNpmExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenReturn(npmExecutablePath);
 
         final ExecutionSettings executionSettings = usecase.execute(PACKAGE_JSON_DIRECTORY_PATH, ExecutableType.NPM,
-            NODE_INSTALL_DIRECTORY_PATH, null, platform, SCRIPT);
+            NODE_INSTALL_DIRECTORY_PATH, platform, SCRIPT);
 
         assertThat(executionSettings.getWorkingDirectoryPath()).isEqualTo(PACKAGE_JSON_DIRECTORY_PATH);
         assertThat(executionSettings.getAdditionalExecutablePaths()).containsExactly(nodeExecutablePath.getParent());
@@ -295,7 +295,7 @@ class ResolveExecutionSettingsTest {
         when(getNpxExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenReturn(npxExecutablePath);
 
         final ExecutionSettings executionSettings = usecase.execute(PACKAGE_JSON_DIRECTORY_PATH, ExecutableType.NPX,
-            NODE_INSTALL_DIRECTORY_PATH, null, platform, SCRIPT);
+            NODE_INSTALL_DIRECTORY_PATH, platform, SCRIPT);
 
         assertThat(executionSettings.getWorkingDirectoryPath()).isEqualTo(PACKAGE_JSON_DIRECTORY_PATH);
         assertThat(executionSettings.getAdditionalExecutablePaths()).containsExactly(nodeExecutablePath.getParent());
@@ -307,16 +307,16 @@ class ResolveExecutionSettingsTest {
     }
 
     @Test
-    void shouldResolveExecSettingsWithUnixShellWhenExecutableIsYarnInPathAndOsIsNotWindows()
+    void shouldResolveExecSettingsWithUnixShellWhenNodeAndYarnExecutablesAreInInstallDirectoryAndOsIsNotWindows()
         throws ExecutableNotFoundException {
         final Platform platform = PlatformFixture.aPlatform(SystemUtils.getSystemJvmArch(), "Linux");
         final Path nodeExecutablePath = NODE_INSTALL_DIRECTORY_PATH.resolve("node");
-        final Path yarnExecutablePath = YARN_INSTALL_DIRECTORY_PATH.resolve("yarn");
+        final Path yarnExecutablePath = NODE_INSTALL_DIRECTORY_PATH.resolve("yarn");
         when(getNodeExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenReturn(nodeExecutablePath);
-        when(getYarnExecutablePath.execute(YARN_INSTALL_DIRECTORY_PATH, platform)).thenReturn(yarnExecutablePath);
+        when(getYarnExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenReturn(yarnExecutablePath);
 
         final ExecutionSettings executionSettings = usecase.execute(PACKAGE_JSON_DIRECTORY_PATH, ExecutableType.YARN,
-            NODE_INSTALL_DIRECTORY_PATH, YARN_INSTALL_DIRECTORY_PATH, platform, SCRIPT);
+            NODE_INSTALL_DIRECTORY_PATH, platform, SCRIPT);
 
         assertThat(executionSettings.getWorkingDirectoryPath()).isEqualTo(PACKAGE_JSON_DIRECTORY_PATH);
         assertThat(executionSettings.getAdditionalExecutablePaths()).containsExactly(nodeExecutablePath.getParent());

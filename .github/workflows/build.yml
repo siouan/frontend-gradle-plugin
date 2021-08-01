@@ -1,7 +1,4 @@
-# This workflow will build a Java project with Gradle
-# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
-
-name: Build status
+name: Build
 
 on:
   push:
@@ -16,12 +13,12 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-20.04, macos-10.15, windows-2019]
+        os: [ ubuntu-20.04, macos-10.15, windows-2019 ]
 
     steps:
       - name: Init Ubuntu environment
         if: matrix.os == 'ubuntu-20.04'
-        run: sudo rm -f /usr/local/bin/node /usr/local/bin/npm /usr/local/bin/npx /usr/bin/yarn
+        run: sudo rm -f /usr/local/bin/node /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/yarn
 
       - name: Init MacOS environment
         if: matrix.os == 'macos-10.15'
@@ -29,7 +26,9 @@ jobs:
 
       - name: Init Windows environment
         if: matrix.os == 'windows-2019'
-        run: rm -r -fo "C:\Program Files\nodejs" && rm -r -fo "C:\npm"
+        run: |
+          Rename-Item "C:\Program Files\nodejs" "nodejs.old" -Force
+          Rename-Item "C:\npm" "npm.old" -Force
 
       - name: Git checkout for source code analysis
         uses: actions/checkout@v2
@@ -69,13 +68,19 @@ jobs:
       - name: Grant executable permission
         run: chmod +x gradlew src/intTest/resources/*/bin/*
 
-      - name: Build plugin with test coverage
+      - name: Build plugin on Linux (with test coverage)
         if: matrix.os == 'ubuntu-20.04'
         run: ./gradlew build jacocoTestReport --console=plain
 
-      - name: Build plugin
-        if: matrix.os != 'ubuntu-20.04'
+      - name: Build plugin on MacOS
+        if: matrix.os == 'macos-10.15'
         run: ./gradlew :build --console=plain
+
+      - name: Build plugin on Windows
+        if: matrix.os == 'windows-2019'
+        run: |
+          Remove-Item Env:npm_config_prefix
+          ./gradlew :build --console=plain
 
       - name: Scan source code and test results
         uses: SonarSource/sonarcloud-github-action@v1.4

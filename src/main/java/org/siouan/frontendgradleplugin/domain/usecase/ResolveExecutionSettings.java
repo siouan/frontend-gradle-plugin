@@ -75,7 +75,6 @@ public class ResolveExecutionSettings {
      * @param packageJsonDirectoryPath Path to the {@code package.json} file, used as the working directory.
      * @param executableType Type of executable.
      * @param nodeInstallDirectoryPath Path to the Node install directory.
-     * @param yarnInstallDirectoryPath Path to the Yarn install directory.
      * @param platform Underlying platform.
      * @param script Script.
      * @return Appropriate settings to run the script on the given platform.
@@ -84,7 +83,7 @@ public class ResolveExecutionSettings {
      */
     @Nonnull
     public ExecutionSettings execute(@Nonnull final Path packageJsonDirectoryPath, @Nonnull final String executableType,
-        @Nullable final Path nodeInstallDirectoryPath, @Nullable final Path yarnInstallDirectoryPath,
+        @Nullable final Path nodeInstallDirectoryPath,
         @Nonnull final Platform platform, @Nonnull final String script) throws ExecutableNotFoundException {
         final Path nodeExecutablePath = getNodeExecutablePath.execute(nodeInstallDirectoryPath, platform);
         final Path scriptExecutablePath;
@@ -99,7 +98,7 @@ public class ResolveExecutionSettings {
             scriptExecutablePath = getNpxExecutablePath.execute(nodeInstallDirectoryPath, platform);
             break;
         case ExecutableType.YARN:
-            scriptExecutablePath = getYarnExecutablePath.execute(yarnInstallDirectoryPath, platform);
+            scriptExecutablePath = getYarnExecutablePath.execute(nodeInstallDirectoryPath, platform);
             break;
         default:
             throw new IllegalArgumentException("Unsupported type of execution: " + executableType);

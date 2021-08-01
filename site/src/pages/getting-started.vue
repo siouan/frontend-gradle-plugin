@@ -4,7 +4,7 @@
 
         <fgp-sub-title>Requirements</fgp-sub-title>
         <ul>
-            <li><fgp-gradle-link /> 5.1+</li>
+            <li><fgp-gradle-link /> 6.1+</li>
             <li>JDK 8+ 64 bits</li>
             <li>
                 The plugin is built and tested on Linux, Mac OS, Windows (see the list of build environments used in
@@ -15,7 +15,7 @@
         <fgp-sub-title>Supported distributions</fgp-sub-title>
         <ul>
             <li><fgp-nodejs-link /> 6.2.1+</li>
-            <li><fgp-yarn-link /> 1.0+ (<fgp-yarn-link :version="2" /> initial support planned in release 6.0.0)</li>
+            <li><fgp-yarn-link /> 1.0+</li>
         </ul>
 
         <fgp-sub-title>Steps</fgp-sub-title>
@@ -156,7 +156,7 @@ export default Vue.component("fgp-getting-started", {
     mixins: [fgpAppConfig, fgpPageMeta],
     data() {
         return {
-            htmlTitle: "Getting started: building a Javascript application with Gradle and Node.js",
+            htmlTitle: "Getting started: building a Javascript application with the Gradle Node plugin",
             linkCanonicalHref: process.env.FGP_WEBSITE_URL + 'getting-started/',
             metaDescription: "Guide to get started with the plugin: requirements, supported Node.js and Yarn distributions, installation steps."
         }

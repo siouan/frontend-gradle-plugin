@@ -15,13 +15,12 @@ import org.siouan.frontendgradleplugin.domain.exception.FrontendException;
 import org.siouan.frontendgradleplugin.domain.exception.InvalidDistributionUrlException;
 import org.siouan.frontendgradleplugin.domain.exception.ResourceDownloadException;
 import org.siouan.frontendgradleplugin.domain.exception.UnsupportedDistributionArchiveException;
-import org.siouan.frontendgradleplugin.domain.exception.UnsupportedDistributionIdException;
 import org.siouan.frontendgradleplugin.domain.exception.UnsupportedPlatformException;
 import org.siouan.frontendgradleplugin.domain.model.Credentials;
 import org.siouan.frontendgradleplugin.domain.model.InstallSettings;
 import org.siouan.frontendgradleplugin.domain.model.Platform;
 import org.siouan.frontendgradleplugin.domain.model.ProxySettings;
-import org.siouan.frontendgradleplugin.domain.usecase.AbstractInstallDistribution;
+import org.siouan.frontendgradleplugin.domain.usecase.InstallNodeDistribution;
 import org.siouan.frontendgradleplugin.domain.usecase.ResolveProxySettingsByUrl;
 import org.siouan.frontendgradleplugin.infrastructure.BeanRegistryException;
 import org.siouan.frontendgradleplugin.infrastructure.Beans;
@@ -142,7 +141,6 @@ public abstract class AbstractDistributionInstallTask extends DefaultTask {
      * Installs a distribution.
      *
      * @throws BeanRegistryException If a component cannot be instanciated.
-     * @throws UnsupportedDistributionIdException If the type of distribution to install is not supported.
      * @throws UnsupportedDistributionArchiveException If the distribution file type is not supported.
      * @throws UnsupportedPlatformException If the underlying platform is not supported.
      * @throws InvalidDistributionUrlException If the URL to download the distribution is not valid.
@@ -188,7 +186,7 @@ public abstract class AbstractDistributionInstallTask extends DefaultTask {
      */
     @Internal
     @Nonnull
-    protected abstract Class<? extends AbstractInstallDistribution> getInstallDistributionClass();
+    protected abstract Class<? extends InstallNodeDistribution> getInstallDistributionClass();
 
     /**
      * Gets the URL root to download the distribution. This root must contain the protocol, the domain name or IP

@@ -9,6 +9,16 @@ import org.siouan.frontendgradleplugin.domain.model.ExecutableType;
  */
 public abstract class AbstractRunPredefinedCommandTask extends AbstractRunCommandTask {
 
+    /**
+     * Whether a Yarn distribution shall be downloaded and installed.
+     */
+    final Property<Boolean> yarnEnabled;
+
+    AbstractRunPredefinedCommandTask() {
+        super();
+        yarnEnabled = getProject().getObjects().property(Boolean.class);
+    }
+
     @Input
     public Property<Boolean> getYarnEnabled() {
         return yarnEnabled;

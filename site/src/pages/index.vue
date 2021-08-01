@@ -3,7 +3,8 @@
         <fgp-main-title class="text-center">
             Frontend Gradle plugin
             <small class="text-muted">
-                - Integrated <fgp-nodejs-link />, <fgp-npm-link />, <fgp-yarn-link /> builds
+                - Integrated <fgp-nodejs-link />, <fgp-npm-link />, <fgp-yarn-link />
+                builds
             </small>
             <fgp-image-link
                 href="https://github.com/siouan/frontend-gradle-plugin/releases/tag/v6.0.0"
@@ -30,11 +31,14 @@
         <fgp-sub-title>Features</fgp-sub-title>
 
         <fgp-feature-card title="Distribution management" icon-class="fas fa-dice-d6 text-primary">
-            The plugin downloads and installs a <fgp-nodejs-link /> distribution and/or a <fgp-yarn-link /> distribution
-            when required. Optionally, a shared/global distribution may be used instead to avoid network overhead and
-            duplication. The plugin may also use a HTTP proxy server for downloads, to take advantage of any caching
-            facility, and submit to the organization's security rules. Basic authentication scheme is supported for both
-            distribution and proxy servers.
+            The plugin downloads and installs a <fgp-nodejs-link /> distribution. When required, the plugin may also
+            trigger the install of a Yarn distribution relying on the
+            <fgp-yarn-link label-key="navigation.yarnBerry.originalName" /> baseline. This means that both
+            <fgp-yarn1-link /> and <fgp-yarn2-link /> distributions are supported. Optionally, a
+            shared/global <fgp-nodejs-link /> distribution may be used instead to avoid network overhead and
+            duplication. The plugin may also use a HTTP proxy server when downloading the <fgp-nodejs-link />
+            distribution, to take advantage of any caching facility, and submit to the organization's security rules.
+            Basic authentication scheme is supported for both distribution and proxy servers.
         </fgp-feature-card>
         <fgp-feature-card title="Configurable dependencies installation" icon-class="fa fa-cogs text-secondary">
             Depending on the environment, installing frontend dependencies using the
@@ -96,6 +100,8 @@ import fgpRepoLink from "../components/link/repo-link";
 import fgpSiteLink from "../components/link/site-link";
 import fgpSubTitle from "../components/sub-title";
 import fgpYarnLink from "../components/link/yarn-link";
+import fgpYarn1Link from "../components/link/yarn1-link";
+import fgpYarn2Link from "../components/link/yarn2-link";
 
 export default Vue.component("fgp-index", {
     components: {
@@ -112,14 +118,16 @@ export default Vue.component("fgp-index", {
         fgpRepoLink,
         fgpSiteLink,
         fgpSubTitle,
-        fgpYarnLink
+        fgpYarnLink,
+        fgpYarn1Link,
+        fgpYarn2Link
     },
     mixins: [fgpAppConfig, fgpPageMeta],
     data() {
         return {
-            htmlTitle: "Gradle plugin to build frontend applications with node, npm, yarn",
+            htmlTitle: "Gradle Node/NPM/Yarn plugin to build Javascript applications",
             linkCanonicalHref: process.env.FGP_WEBSITE_URL,
-            metaDescription: "Gradle plugin to build frontend applications with node/npm/yarn: distribution management, configurable tasks (build, test, publish), NPX support"
+            metaDescription: "All-in-one Gradle Node plugin, Gradle NPM plugin, Gradle Yarn plugin to build Javascript applications with Gradle: distribution management, built-in tasks, NPX support"
         }
     }
 });

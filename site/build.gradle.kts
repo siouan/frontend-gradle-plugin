@@ -1,9 +1,9 @@
 plugins {
-    id("org.siouan.frontend-jdk11") version "4.0.1"
+    id("org.siouan.frontend-jdk11") version "5.3.0"
 }
 
 frontend {
-    nodeVersion.set("14.15.4")
+    nodeVersion.set("14.17.0")
     yarnEnabled.set(true)
     yarnVersion.set("1.22.10")
     assembleScript.set("run generate")

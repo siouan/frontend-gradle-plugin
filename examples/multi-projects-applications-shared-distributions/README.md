@@ -15,15 +15,15 @@ This example demonstrates the following features:
 ### Description
 
 The `npm-frontend` project is the 'master' of the [Node.js][nodejs] distribution, installed in the directory of the root
-project. The `yarn-frontend` project is the 'master' of the [Yarn][classic-yarn] distribution, also installed in the directory
+project. The `yarn-frontend` project uses [Yarn][yarn], also installed in the directory
 of the root project, and the project uses the [Node.js][nodejs] distribution _provided_ by the `npm-frontend` project.
 The `yarn-frontend:installFrontend` task depends on the `npm-frontend:installNode` to ensure the [Node.js][nodejs]
 distribution is installed if one of the `yarn-frontend` project's task is executed directly.
 
 Finally, enter `gradlew build` on a command line.
 
-[classic-yarn]: <https://classic.yarnpkg.com/> (Yarn 1.x)
 [dsl-reference]: <https://siouan.github.io/frontend-gradle-plugin/configuration> (DSL reference)
 [gradle-wrapper]: <https://docs.gradle.org/current/userguide/gradle_wrapper.html> (Gradle Wrapper)
 [nodejs]: <https://nodejs.org/> (Node.js)
 [npm]: <https://www.npmjs.com/> (npm)
+[yarn]: <https://yarnpkg.com/> (Yarn)
