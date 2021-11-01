@@ -2,6 +2,7 @@ package org.siouan.frontendgradleplugin.infrastructure.gradle.adapter;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 import org.gradle.api.logging.LogLevel;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,8 +42,19 @@ class GradleLoggerAdapterTest {
     }
 
     @Test
+    void shouldNotLogDebugMessageWhenNotLevelNotEnabled() {
+        adapter.init(logger, LOGGING_LEVEL, false, PREFIX);
+        when(logger.isDebugEnabled()).thenReturn(false);
+
+        adapter.debug(MESSAGE, PARAMETER_1, PARAMETER_2);
+
+        verifyNoMoreInteractions(logger);
+    }
+
+    @Test
     void shouldDelegateDebugLoggingToGradleLogger() {
         adapter.init(logger, LOGGING_LEVEL, false, PREFIX);
+        when(logger.isDebugEnabled()).thenReturn(true);
 
         adapter.debug(MESSAGE, PARAMETER_1, PARAMETER_2);
 
@@ -107,6 +119,7 @@ class GradleLoggerAdapterTest {
     @Test
     void shouldLogMessageWithoutPrefix() {
         adapter.init(logger, LOGGING_LEVEL, false, null);
+        when(logger.isDebugEnabled()).thenReturn(true);
 
         adapter.debug(MESSAGE, PARAMETER_1, PARAMETER_2);
 

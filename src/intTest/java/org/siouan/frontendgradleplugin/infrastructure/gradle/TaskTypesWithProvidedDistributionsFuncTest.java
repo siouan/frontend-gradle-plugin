@@ -64,11 +64,11 @@ class TaskTypesWithProvidedDistributionsFuncTest {
         final String runNodeTaskDefinition = buildNodeTaskDefinition(RUN_NODE_TASK_NAME,
             temporaryScriptPath.toString().replace("\\", "\\\\"));
         final String runNpmTaskDefinition = buildNpmTaskDefinition(RUN_NPM_TASK_NAME,
-            FrontendGradlePlugin.INSTALL_NODE_TASK_NAME, "run npm-script");
+            FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, "run npm-script");
         final String runNpxTaskDefinition = buildNpxTaskDefinition(RUN_NPX_TASK_NAME,
-            FrontendGradlePlugin.INSTALL_NODE_TASK_NAME, "npx-library");
+            FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, "npx-library");
         final String runYarnTaskDefinition = buildYarnTaskDefinition(RUN_YARN_TASK_NAME,
-            Set.of(FrontendGradlePlugin.INSTALL_NODE_TASK_NAME, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME),
+            Set.of(FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME),
             "run yarn-script");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap(),
             String.join("\n", runNodeTaskDefinition, runNpxTaskDefinition, runNpmTaskDefinition,
@@ -76,10 +76,10 @@ class TaskTypesWithProvidedDistributionsFuncTest {
 
         final BuildResult result1 = runGradleAndExpectFailure(projectDirectoryPath, RUN_NODE_TASK_NAME);
 
-        assertTaskSkipped(result1, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskSkipped(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskIgnored(result1, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskIgnored(result1, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskIgnored(result1, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskIgnored(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskFailed(result1, RUN_NODE_TASK_NAME);
         assertTaskIgnored(result1, RUN_NPM_TASK_NAME);
         assertTaskIgnored(result1, RUN_NPX_TASK_NAME);
@@ -87,10 +87,10 @@ class TaskTypesWithProvidedDistributionsFuncTest {
 
         final BuildResult result2 = runGradleAndExpectFailure(projectDirectoryPath, RUN_NPM_TASK_NAME);
 
-        assertTaskSkipped(result2, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskSkipped(result2, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskIgnored(result2, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskIgnored(result2, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskIgnored(result2, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskIgnored(result2, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskIgnored(result2, RUN_NODE_TASK_NAME);
         assertTaskFailed(result2, RUN_NPM_TASK_NAME);
         assertTaskIgnored(result2, RUN_NPX_TASK_NAME);
@@ -98,10 +98,10 @@ class TaskTypesWithProvidedDistributionsFuncTest {
 
         final BuildResult result3 = runGradleAndExpectFailure(projectDirectoryPath, RUN_NPX_TASK_NAME);
 
-        assertTaskSkipped(result3, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskSkipped(result3, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskIgnored(result3, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskIgnored(result3, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskIgnored(result3, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskIgnored(result3, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskIgnored(result3, RUN_NODE_TASK_NAME);
         assertTaskIgnored(result3, RUN_NPM_TASK_NAME);
         assertTaskFailed(result3, RUN_NPX_TASK_NAME);
@@ -109,10 +109,10 @@ class TaskTypesWithProvidedDistributionsFuncTest {
 
         final BuildResult result4 = runGradleAndExpectFailure(projectDirectoryPath, RUN_YARN_TASK_NAME);
 
-        assertTaskSkipped(result4, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskSkipped(result4, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskFailed(result4, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskIgnored(result4, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskIgnored(result4, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskIgnored(result4, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskIgnored(result4, RUN_NODE_TASK_NAME);
         assertTaskIgnored(result4, RUN_NPM_TASK_NAME);
         assertTaskIgnored(result4, RUN_NPX_TASK_NAME);
@@ -130,11 +130,11 @@ class TaskTypesWithProvidedDistributionsFuncTest {
         final String runNodeTaskDefinition = buildNodeTaskDefinition(RUN_NODE_TASK_NAME,
             temporaryScriptPath.toString().replace("\\", "\\\\"));
         final String runNpmTaskDefinition = buildNpmTaskDefinition(RUN_NPM_TASK_NAME,
-            FrontendGradlePlugin.INSTALL_NODE_TASK_NAME, "run npm-script");
+            FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, "run npm-script");
         final String runNpxTaskDefinition = buildNpxTaskDefinition(RUN_NPX_TASK_NAME,
-            FrontendGradlePlugin.INSTALL_NODE_TASK_NAME, "npx-library");
+            FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, "npx-library");
         final String runYarnTaskDefinition = buildYarnTaskDefinition(RUN_YARN_TASK_NAME,
-            Set.of(FrontendGradlePlugin.INSTALL_NODE_TASK_NAME, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME),
+            Set.of(FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME),
             "run yarn-script");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap(),
             String.join("\n", runNodeTaskDefinition, runNpxTaskDefinition, runNpmTaskDefinition,
@@ -142,10 +142,10 @@ class TaskTypesWithProvidedDistributionsFuncTest {
 
         final BuildResult result1 = runGradle(projectDirectoryPath, RUN_NODE_TASK_NAME);
 
-        assertTaskSkipped(result1, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskSkipped(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskIgnored(result1, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskIgnored(result1, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskIgnored(result1, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskIgnored(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskSuccess(result1, RUN_NODE_TASK_NAME);
         assertTaskIgnored(result1, RUN_NPM_TASK_NAME);
         assertTaskIgnored(result1, RUN_NPX_TASK_NAME);
@@ -153,10 +153,10 @@ class TaskTypesWithProvidedDistributionsFuncTest {
 
         final BuildResult result2 = runGradleAndExpectFailure(projectDirectoryPath, RUN_NPM_TASK_NAME);
 
-        assertTaskSkipped(result2, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskSkipped(result2, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskIgnored(result2, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskIgnored(result2, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskIgnored(result2, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskIgnored(result2, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskIgnored(result2, RUN_NODE_TASK_NAME);
         assertTaskFailed(result2, RUN_NPM_TASK_NAME);
         assertTaskIgnored(result2, RUN_NPX_TASK_NAME);
@@ -164,10 +164,10 @@ class TaskTypesWithProvidedDistributionsFuncTest {
 
         final BuildResult result3 = runGradleAndExpectFailure(projectDirectoryPath, RUN_NPX_TASK_NAME);
 
-        assertTaskSkipped(result3, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskSkipped(result3, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskIgnored(result3, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskIgnored(result3, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskIgnored(result3, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskIgnored(result3, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskIgnored(result3, RUN_NODE_TASK_NAME);
         assertTaskIgnored(result3, RUN_NPM_TASK_NAME);
         assertTaskFailed(result3, RUN_NPX_TASK_NAME);
@@ -175,10 +175,10 @@ class TaskTypesWithProvidedDistributionsFuncTest {
 
         final BuildResult result4 = runGradleAndExpectFailure(projectDirectoryPath, RUN_YARN_TASK_NAME);
 
-        assertTaskSkipped(result4, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskSkipped(result4, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskFailed(result4, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskIgnored(result4, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskIgnored(result4, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskIgnored(result4, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskIgnored(result4, RUN_NODE_TASK_NAME);
         assertTaskIgnored(result4, RUN_NPM_TASK_NAME);
         assertTaskIgnored(result4, RUN_NPX_TASK_NAME);
@@ -196,11 +196,11 @@ class TaskTypesWithProvidedDistributionsFuncTest {
         final String runNodeTaskDefinition = buildNodeTaskDefinition(RUN_NODE_TASK_NAME,
             temporaryScriptPath.toString().replace("\\", "\\\\"));
         final String runNpmTaskDefinition = buildNpmTaskDefinition(RUN_NPM_TASK_NAME,
-            FrontendGradlePlugin.INSTALL_NODE_TASK_NAME, "run npm-script");
+            FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, "run npm-script");
         final String runNpxTaskDefinition = buildNpxTaskDefinition(RUN_NPX_TASK_NAME,
-            FrontendGradlePlugin.INSTALL_NODE_TASK_NAME, "npx-library");
+            FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, "npx-library");
         final String runYarnTaskDefinition = buildYarnTaskDefinition(RUN_YARN_TASK_NAME,
-            Set.of(FrontendGradlePlugin.INSTALL_NODE_TASK_NAME, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME),
+            Set.of(FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME),
             "run yarn-script");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap(),
             String.join("\n", runNodeTaskDefinition, runNpxTaskDefinition, runNpmTaskDefinition,
@@ -208,10 +208,10 @@ class TaskTypesWithProvidedDistributionsFuncTest {
 
         final BuildResult result1 = runGradle(projectDirectoryPath, RUN_NODE_TASK_NAME);
 
-        assertTaskSkipped(result1, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskSkipped(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskIgnored(result1, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskIgnored(result1, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskIgnored(result1, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskIgnored(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskSuccess(result1, RUN_NODE_TASK_NAME);
         assertTaskIgnored(result1, RUN_NPM_TASK_NAME);
         assertTaskIgnored(result1, RUN_NPX_TASK_NAME);
@@ -219,10 +219,10 @@ class TaskTypesWithProvidedDistributionsFuncTest {
 
         final BuildResult result2 = runGradle(projectDirectoryPath, RUN_NPM_TASK_NAME);
 
-        assertTaskSkipped(result2, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskSkipped(result2, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskIgnored(result2, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskIgnored(result2, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskIgnored(result2, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskIgnored(result2, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskIgnored(result2, RUN_NODE_TASK_NAME);
         assertTaskSuccess(result2, RUN_NPM_TASK_NAME);
         assertTaskIgnored(result2, RUN_NPX_TASK_NAME);
@@ -230,10 +230,10 @@ class TaskTypesWithProvidedDistributionsFuncTest {
 
         final BuildResult result3 = runGradleAndExpectFailure(projectDirectoryPath, RUN_NPX_TASK_NAME);
 
-        assertTaskSkipped(result3, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskSkipped(result3, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskIgnored(result3, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskIgnored(result3, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskIgnored(result3, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskIgnored(result3, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskIgnored(result3, RUN_NODE_TASK_NAME);
         assertTaskIgnored(result3, RUN_NPM_TASK_NAME);
         assertTaskFailed(result3, RUN_NPX_TASK_NAME);
@@ -241,10 +241,10 @@ class TaskTypesWithProvidedDistributionsFuncTest {
 
         final BuildResult result4 = runGradle(projectDirectoryPath, RUN_YARN_TASK_NAME);
 
-        assertTaskSkipped(result4, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskSkipped(result4, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskSuccess(result4, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskSuccess(result4, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskSuccess(result4, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskSuccess(result4, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskIgnored(result4, RUN_NODE_TASK_NAME);
         assertTaskIgnored(result4, RUN_NPM_TASK_NAME);
         assertTaskIgnored(result4, RUN_NPX_TASK_NAME);
@@ -262,11 +262,11 @@ class TaskTypesWithProvidedDistributionsFuncTest {
         final String runNodeTaskDefinition = buildNodeTaskDefinition(RUN_NODE_TASK_NAME,
             temporaryScriptPath.toString().replace("\\", "\\\\"));
         final String runNpmTaskDefinition = buildNpmTaskDefinition(RUN_NPM_TASK_NAME,
-            FrontendGradlePlugin.INSTALL_NODE_TASK_NAME, "run npm-script");
+            FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, "run npm-script");
         final String runNpxTaskDefinition = buildNpxTaskDefinition(RUN_NPX_TASK_NAME,
-            FrontendGradlePlugin.INSTALL_NODE_TASK_NAME, "npx-library");
+            FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, "npx-library");
         final String runYarnTaskDefinition = buildYarnTaskDefinition(RUN_YARN_TASK_NAME,
-            Set.of(FrontendGradlePlugin.INSTALL_NODE_TASK_NAME, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME),
+            Set.of(FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME),
             "run yarn-script");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap(),
             String.join("\n", runNodeTaskDefinition, runNpxTaskDefinition, runNpmTaskDefinition,
@@ -274,10 +274,10 @@ class TaskTypesWithProvidedDistributionsFuncTest {
 
         final BuildResult result1 = runGradle(projectDirectoryPath, RUN_NODE_TASK_NAME);
 
-        assertTaskSkipped(result1, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskSkipped(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskIgnored(result1, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskIgnored(result1, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskIgnored(result1, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskIgnored(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskSuccess(result1, RUN_NODE_TASK_NAME);
         assertTaskIgnored(result1, RUN_NPM_TASK_NAME);
         assertTaskIgnored(result1, RUN_NPX_TASK_NAME);
@@ -285,10 +285,10 @@ class TaskTypesWithProvidedDistributionsFuncTest {
 
         final BuildResult result2 = runGradle(projectDirectoryPath, RUN_NPM_TASK_NAME);
 
-        assertTaskSkipped(result2, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskSkipped(result2, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskIgnored(result2, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskIgnored(result2, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskIgnored(result2, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskIgnored(result2, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskIgnored(result2, RUN_NODE_TASK_NAME);
         assertTaskSuccess(result2, RUN_NPM_TASK_NAME);
         assertTaskIgnored(result2, RUN_NPX_TASK_NAME);
@@ -296,10 +296,10 @@ class TaskTypesWithProvidedDistributionsFuncTest {
 
         final BuildResult result3 = runGradle(projectDirectoryPath, RUN_NPX_TASK_NAME);
 
-        assertTaskSkipped(result3, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskSkipped(result3, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskIgnored(result3, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskIgnored(result3, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskIgnored(result3, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskIgnored(result3, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskIgnored(result3, RUN_NODE_TASK_NAME);
         assertTaskIgnored(result3, RUN_NPM_TASK_NAME);
         assertTaskSuccess(result3, RUN_NPX_TASK_NAME);
@@ -307,10 +307,10 @@ class TaskTypesWithProvidedDistributionsFuncTest {
 
         final BuildResult result4 = runGradleAndExpectFailure(projectDirectoryPath, RUN_YARN_TASK_NAME);
 
-        assertTaskSkipped(result4, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskSkipped(result4, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskSuccess(result4, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskFailed(result4, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskIgnored(result4, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskIgnored(result4, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskIgnored(result4, RUN_NODE_TASK_NAME);
         assertTaskIgnored(result4, RUN_NPM_TASK_NAME);
         assertTaskIgnored(result4, RUN_NPX_TASK_NAME);
@@ -326,11 +326,11 @@ class TaskTypesWithProvidedDistributionsFuncTest {
         final String runNodeTaskDefinition = buildNodeTaskDefinition(RUN_NODE_TASK_NAME,
             temporaryScriptPath.toString().replace("\\", "\\\\"));
         final String runNpmTaskDefinition = buildNpmTaskDefinition(RUN_NPM_TASK_NAME,
-            FrontendGradlePlugin.INSTALL_NODE_TASK_NAME, "run npm-script");
+            FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, "run npm-script");
         final String runNpxTaskDefinition = buildNpxTaskDefinition(RUN_NPX_TASK_NAME,
-            FrontendGradlePlugin.INSTALL_NODE_TASK_NAME, "npx-library");
+            FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, "npx-library");
         final String runYarnTaskDefinition = buildYarnTaskDefinition(RUN_YARN_TASK_NAME,
-            Set.of(FrontendGradlePlugin.INSTALL_NODE_TASK_NAME, FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME),
+            Set.of(FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME),
             "run yarn-script");
         final String additionalContent = String.join("\n", runNodeTaskDefinition, runNpxTaskDefinition,
             runNpmTaskDefinition, runYarnTaskDefinition);
@@ -338,10 +338,10 @@ class TaskTypesWithProvidedDistributionsFuncTest {
 
         final BuildResult result1 = runGradle(projectDirectoryPath, RUN_NODE_TASK_NAME);
 
-        assertTaskSkipped(result1, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskSkipped(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskIgnored(result1, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskIgnored(result1, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskIgnored(result1, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskIgnored(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskIgnored(result1, FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME);
         assertTaskSuccess(result1, RUN_NODE_TASK_NAME);
         assertTaskIgnored(result1, RUN_NPX_TASK_NAME);
@@ -350,10 +350,10 @@ class TaskTypesWithProvidedDistributionsFuncTest {
 
         final BuildResult result2 = runGradle(projectDirectoryPath, RUN_NPX_TASK_NAME);
 
-        assertTaskSkipped(result2, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskSkipped(result2, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskIgnored(result2, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskIgnored(result2, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskIgnored(result2, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskIgnored(result2, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskIgnored(result2, FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME);
         assertTaskIgnored(result2, RUN_NODE_TASK_NAME);
         assertTaskSuccess(result2, RUN_NPX_TASK_NAME);
@@ -362,10 +362,10 @@ class TaskTypesWithProvidedDistributionsFuncTest {
 
         final BuildResult result3 = runGradle(projectDirectoryPath, RUN_NPM_TASK_NAME);
 
-        assertTaskSkipped(result3, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskSkipped(result3, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskIgnored(result3, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskIgnored(result3, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskIgnored(result3, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskIgnored(result3, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskIgnored(result3, FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME);
         assertTaskIgnored(result3, RUN_NODE_TASK_NAME);
         assertTaskIgnored(result3, RUN_NPX_TASK_NAME);
@@ -374,10 +374,10 @@ class TaskTypesWithProvidedDistributionsFuncTest {
 
         final BuildResult result4 = runGradleAndExpectFailure(projectDirectoryPath, RUN_YARN_TASK_NAME);
 
-        assertTaskSkipped(result4, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskSkipped(result4, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskSkipped(result4, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskSkipped(result4, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskSkipped(result4, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskSkipped(result4, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskSuccess(result4, FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME);
         assertTaskIgnored(result4, RUN_NODE_TASK_NAME);
         assertTaskIgnored(result4, RUN_NPX_TASK_NAME);
@@ -389,10 +389,10 @@ class TaskTypesWithProvidedDistributionsFuncTest {
 
         final BuildResult result5 = runGradle(projectDirectoryPath, RUN_NODE_TASK_NAME);
 
-        assertTaskSkipped(result5, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskSkipped(result5, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskIgnored(result5, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskIgnored(result5, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskIgnored(result5, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskIgnored(result5, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskIgnored(result5, FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME);
         assertTaskSuccess(result5, RUN_NODE_TASK_NAME);
         assertTaskIgnored(result5, RUN_NPX_TASK_NAME);
@@ -401,10 +401,10 @@ class TaskTypesWithProvidedDistributionsFuncTest {
 
         final BuildResult result6 = runGradle(projectDirectoryPath, RUN_NPX_TASK_NAME);
 
-        assertTaskSkipped(result6, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskSkipped(result6, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskIgnored(result6, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskIgnored(result6, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskIgnored(result6, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskIgnored(result6, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskIgnored(result6, FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME);
         assertTaskIgnored(result6, RUN_NODE_TASK_NAME);
         assertTaskSuccess(result6, RUN_NPX_TASK_NAME);
@@ -413,10 +413,10 @@ class TaskTypesWithProvidedDistributionsFuncTest {
 
         final BuildResult result7 = runGradle(projectDirectoryPath, RUN_NPM_TASK_NAME);
 
-        assertTaskSkipped(result7, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskSkipped(result7, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskIgnored(result7, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskIgnored(result7, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskIgnored(result7, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskIgnored(result7, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskIgnored(result7, FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME);
         assertTaskIgnored(result7, RUN_NODE_TASK_NAME);
         assertTaskIgnored(result7, RUN_NPX_TASK_NAME);
@@ -425,10 +425,10 @@ class TaskTypesWithProvidedDistributionsFuncTest {
 
         final BuildResult result8 = runGradle(projectDirectoryPath, RUN_YARN_TASK_NAME);
 
-        assertTaskSkipped(result8, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        assertTaskSkipped(result8, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
         assertTaskSuccess(result8, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
         assertTaskSuccess(result8, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
-        assertTaskSuccess(result8, FrontendGradlePlugin.INSTALL_YARN_TASK_NAME);
+        assertTaskSuccess(result8, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
         assertTaskSuccess(result8, FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME);
         assertTaskIgnored(result8, RUN_NODE_TASK_NAME);
         assertTaskIgnored(result8, RUN_NPX_TASK_NAME);

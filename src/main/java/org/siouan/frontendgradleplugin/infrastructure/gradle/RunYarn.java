@@ -1,9 +1,13 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
-import java.util.Objects;
+import javax.annotation.Nonnull;
+import javax.inject.Inject;
 
+import org.gradle.api.file.ProjectLayout;
+import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
+import org.gradle.process.ExecOperations;
 
 /**
  * Task type allowing developers to implement custom task and run a {@code yarn} command. To do so, the {@code script}
@@ -23,13 +27,10 @@ import org.gradle.api.tasks.Input;
  */
 public class RunYarn extends AbstractRunYarnTask {
 
-    public RunYarn() {
-        super();
-        final FrontendExtension extension = Objects.requireNonNull(
-            getProject().getExtensions().findByType(FrontendExtension.class));
-        packageJsonDirectory.set(extension.getPackageJsonDirectory());
-        nodeInstallDirectory.set(extension.getNodeInstallDirectory());
-        yarnEnabled.set(extension.getYarnEnabled());
+    @Inject
+    public RunYarn(@Nonnull final ProjectLayout projectLayout, @Nonnull final ObjectFactory objectFactory,
+        @Nonnull final ExecOperations execOperations) {
+        super(projectLayout, objectFactory, execOperations);
     }
 
     @Input

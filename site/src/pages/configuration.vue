@@ -12,7 +12,7 @@
             <template v-slot:groovy>
                 <pre><fgp-code>frontend {
     <fgp-property-link name="nodeDistributionProvided" /> = false
-    <fgp-property-link name="nodeVersion" /> = '14.17.0'
+    <fgp-property-link name="nodeVersion" /> = '14.17.3'
     <fgp-property-link name="nodeDistributionUrlRoot" /> = 'https://nodejs.org/dist/'
     <fgp-property-link name="nodeDistributionUrlPathPattern" /> = 'vVERSION/node-vVERSION-ARCH.TYPE'
     <fgp-property-link name="nodeDistributionServerUsername" /> = 'username'
@@ -51,7 +51,7 @@
             <template v-slot:kotlin>
                 <pre><fgp-code>frontend {
     <fgp-property-link name="nodeDistributionProvided" />.set(false)
-    <fgp-property-link name="nodeVersion" />.set("14.17.0")
+    <fgp-property-link name="nodeVersion" />.set("14.17.3")
     <fgp-property-link name="nodeDistributionUrlRoot" />.set("https://nodejs.org/dist/")
     <fgp-property-link name="nodeDistributionUrlPathPattern" />.set("vVERSION/node-vVERSION-ARCH.TYPE")
     <fgp-property-link name="nodeDistributionServerUsername" />.set("username")

@@ -3,7 +3,7 @@ plugins {
 }
 
 frontend {
-    nodeVersion = '14.17.0'
+    nodeVersion = '14.17.3'
     assembleScript = 'run build'
     cleanScript = 'run clean'
     checkScript = 'run check'

@@ -85,9 +85,9 @@ class AuthenticationAndProxyFuncTest {
         GradleBuildFiles.createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = GradleHelper.runGradleAndExpectFailure(projectDirectoryPath,
-            FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+            FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
 
-        GradleBuildAssertions.assertTaskFailed(result1, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        GradleBuildAssertions.assertTaskFailed(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
     }
 
     // Same test as above, just use the exact password.
@@ -101,9 +101,9 @@ class AuthenticationAndProxyFuncTest {
         GradleBuildFiles.createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = GradleHelper.runGradle(projectDirectoryPath,
-            FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+            FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
 
-        GradleBuildAssertions.assertTaskSuccess(result1, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        GradleBuildAssertions.assertTaskSuccess(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
     }
 
     @Test
@@ -120,9 +120,9 @@ class AuthenticationAndProxyFuncTest {
 
         // The build should fail with a java.net.ConnectException because the proxy server is not reachable.
         final BuildResult result1 = GradleHelper.runGradleAndExpectFailure(projectDirectoryPath,
-            FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+            FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
 
-        GradleBuildAssertions.assertTaskFailed(result1, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        GradleBuildAssertions.assertTaskFailed(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
     }
 
     // Same test as above, just use the exact proxy server port.
@@ -135,9 +135,9 @@ class AuthenticationAndProxyFuncTest {
         GradleBuildFiles.createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = GradleHelper.runGradle(projectDirectoryPath,
-            FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+            FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
 
-        GradleBuildAssertions.assertTaskSuccess(result1, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        GradleBuildAssertions.assertTaskSuccess(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
     }
 
     @Test
@@ -149,9 +149,9 @@ class AuthenticationAndProxyFuncTest {
         GradleBuildFiles.createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = GradleHelper.runGradleAndExpectFailure(projectDirectoryPath,
-            FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+            FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
 
-        GradleBuildAssertions.assertTaskFailed(result1, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        GradleBuildAssertions.assertTaskFailed(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
     }
 
     // Same test as above, just use the exact password.
@@ -165,9 +165,9 @@ class AuthenticationAndProxyFuncTest {
         GradleBuildFiles.createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = GradleHelper.runGradle(projectDirectoryPath,
-            FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+            FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
 
-        GradleBuildAssertions.assertTaskSuccess(result1, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
+        GradleBuildAssertions.assertTaskSuccess(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
     }
 
     @Nonnull
@@ -214,7 +214,7 @@ class AuthenticationAndProxyFuncTest {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder().verboseModeEnabled(false);
         if (nodeDistributionUrlRoot != null) {
             frontendMapBuilder
-                .nodeVersion("14.17.0")
+                .nodeVersion("14.17.3")
                 .nodeDistributionUrlRoot(nodeDistributionUrlRoot)
                 .nodeDistributionUrlPathPattern(nodeDistributionUrlPathPattern);
             distributionServerConfigurator.withNodeDistribution();

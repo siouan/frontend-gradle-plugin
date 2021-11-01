@@ -1,7 +1,12 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
+import javax.annotation.Nonnull;
+
+import org.gradle.api.file.ProjectLayout;
+import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
+import org.gradle.process.ExecOperations;
 import org.siouan.frontendgradleplugin.domain.exception.NonRunnableTaskException;
 import org.siouan.frontendgradleplugin.domain.model.ExecutableType;
 
@@ -12,14 +17,9 @@ import org.siouan.frontendgradleplugin.domain.model.ExecutableType;
  */
 public abstract class AbstractRunYarnTask extends AbstractRunCommandTask {
 
-    /**
-     * Directory where the 'package.json' file is located.
-     */
-    final Property<Boolean> yarnEnabled;
-
-    AbstractRunYarnTask() {
-        super();
-        yarnEnabled = getProject().getObjects().property(Boolean.class);
+    AbstractRunYarnTask(@Nonnull final ProjectLayout projectLayout, @Nonnull final ObjectFactory objectFactory,
+        @Nonnull final ExecOperations execOperations) {
+        super(projectLayout, objectFactory, execOperations);
     }
 
     @Input

@@ -14,7 +14,8 @@ plugins {
     id("java-gradle-plugin")
     id("jacoco")
     id("com.gradle.plugin-publish")
-    id ("maven-publish")
+    id("maven-publish")
+    id("org.sonarqube")
 }
 
 repositories {
@@ -50,15 +51,15 @@ configurations["intTestRuntimeOnly"]
 
 dependencies {
     implementation(gradleApi())
-    implementation("org.apache.httpcomponents.client5:httpclient5:5.0.3")
-    implementation("org.apache.commons:commons-compress:1.20")
+    implementation("org.apache.httpcomponents.client5:httpclient5:5.1")
+    implementation("org.apache.commons:commons-compress:1.21")
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.7.0")
-    testImplementation("org.mockito:mockito-core:3.7.7")
-    testImplementation("org.mockito:mockito-junit-jupiter:3.7.7")
-    testImplementation("org.assertj:assertj-core:3.18.1")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.7.2")
+    testImplementation("org.mockito:mockito-core:3.11.2")
+    testImplementation("org.mockito:mockito-junit-jupiter:3.11.2")
+    testImplementation("org.assertj:assertj-core:3.20.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.2")
 
     intTestImplementation("com.github.tomakehurst:wiremock:2.27.2")
 }
@@ -84,10 +85,11 @@ tasks.named<Task>("check") {
 }
 
 tasks.named<JacocoReport>("jacocoTestReport") {
+    dependsOn(tasks.named("integrationTest"))
     executionData.setFrom(file("${project.buildDir}/jacoco/test.exec"), file("${project.buildDir}/jacoco/integrationTest.exec"))
     reports {
-        xml.isEnabled = true
-        xml.destination = file("${buildDir}/reports/jacoco/report.xml")
+        xml.required.set(true)
+        xml.outputLocation.set(file("${buildDir}/reports/jacoco/report.xml"))
     }
 }
 
@@ -112,5 +114,31 @@ pluginBundle {
             description = fgpDescription
             tags = fgpGradlePluginPortalTags.split(",")
         }
+    }
+}
+
+sonarqube {
+    properties {
+        property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.organization", "siouan")
+        property("sonar.projectKey", "siouan_frontend-gradle-plugin")
+        property("sonar.projectName", "frontend-gradle-plugin")
+        property("sonar.projectVersion", "6.0.0-jdk11")
+
+        property("sonar.links.homepage", "https://github.com/siouan/frontend-gradle-plugin")
+        property("sonar.links.ci", "https://travis-ci.com/siouan/frontend-gradle-plugin")
+        property("sonar.links.scm", "https://github.com/siouan/frontend-gradle-plugin")
+        property("sonar.links.issue", "https://github.com/siouan/frontend-gradle-plugin/issues")
+
+        property("sonar.sources", "src/main")
+        property("sonar.tests", "src/test,src/intTest")
+
+        property("sonar.java.binaries", "build/classes/java/main")
+        property("sonar.java.test.binaries", "build/classes/java/test,build/classes/java/intTest")
+        property("sonar.junit.reportPaths", "build/test-results/test/,build/test-results/integrationTest/")
+        property("sonar.coverage.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco/report.xml")
+
+        // Unrelevant duplications detected on task inputs
+        property("sonar.cpd.exclusions", "**/org/siouan/frontendgradleplugin/domain/model/*.java,**/org/siouan/frontendgradleplugin/domain/usecase/Get*ExecutablePath.java")
     }
 }
