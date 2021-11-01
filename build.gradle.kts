@@ -51,15 +51,15 @@ configurations["intTestRuntimeOnly"]
 
 dependencies {
     implementation(gradleApi())
-    implementation("org.apache.httpcomponents.client5:httpclient5:5.1")
+    implementation("org.apache.httpcomponents.client5:httpclient5:5.1.1")
     implementation("org.apache.commons:commons-compress:1.21")
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.2")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.7.2")
-    testImplementation("org.mockito:mockito-core:3.11.2")
-    testImplementation("org.mockito:mockito-junit-jupiter:3.11.2")
-    testImplementation("org.assertj:assertj-core:3.20.2")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.8.1")
+    testImplementation("org.mockito:mockito-core:4.0.0")
+    testImplementation("org.mockito:mockito-junit-jupiter:4.0.0")
+    testImplementation("org.assertj:assertj-core:3.21.0")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
 
     intTestImplementation("com.github.tomakehurst:wiremock:2.27.2")
 }

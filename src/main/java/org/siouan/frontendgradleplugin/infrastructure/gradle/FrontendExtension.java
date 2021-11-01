@@ -2,7 +2,6 @@ package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
 import java.io.File;
 import javax.annotation.Nonnull;
-import javax.inject.Inject;
 
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.model.ObjectFactory;
