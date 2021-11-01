@@ -19,8 +19,8 @@
                 </li>
             </ul>
             <fgp-info>
-                Applies only when the <fgp-property-link name="yarnDistributionProvided" /> property is
-                <fgp-code>false</fgp-code>.
+                Releases &lt; 6.0.0: applies only when the <fgp-property-link name="yarnDistributionProvided" /> property
+                is <fgp-code>false</fgp-code>.
             </fgp-info>
         </template>
     </fgp-faq>

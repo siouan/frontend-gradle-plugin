@@ -34,18 +34,23 @@ class ResolveNodeDistributionUrlTest {
 
     @Test
     void shouldReturnSameUrlIfItDoesNotContainAnyToken() throws MalformedURLException, UnsupportedPlatformException {
-        assertThat(usecase.execute(
-            new DistributionDefinition(PlatformFixture.aPlatform(), "3.5.2", "https://foo.bar/dist/", "node.zip")))
-            .hasToString("https://foo.bar/dist/node.zip");
+        assertThat(usecase.execute(new DistributionDefinition(
+            PlatformFixture.aPlatform(),
+            "3.5.2",
+            "https://foo.bar/dist/",
+            "node.zip"
+        ))).hasToString("https://foo.bar/dist/node.zip");
 
         verifyNoMoreInteractions(resolveNodeDistributionArchitectureId, resolveNodeDistributionType);
     }
 
     @Test
     void shouldReplaceVersionTokenWhenPresent() throws MalformedURLException, UnsupportedPlatformException {
-        assertThat(usecase.execute(
-            new DistributionDefinition(PlatformFixture.aPlatform(), "3.5.2", "https://foo.bar/dist/",
-                "node-vVERSION.zip"))).hasToString("https://foo.bar/dist/node-v3.5.2.zip");
+        assertThat(usecase.execute(new DistributionDefinition(PlatformFixture.aPlatform(),
+            "3.5.2",
+            "https://foo.bar/dist/",
+            "node-vVERSION.zip"
+        ))).hasToString("https://foo.bar/dist/node-v3.5.2.zip");
 
         verifyNoMoreInteractions(resolveNodeDistributionArchitectureId, resolveNodeDistributionType);
     }
@@ -55,9 +60,12 @@ class ResolveNodeDistributionUrlTest {
         final Platform platform = PlatformFixture.aPlatform();
         when(resolveNodeDistributionArchitectureId.execute(platform)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> usecase.execute(
-            new DistributionDefinition(platform, "3.5.2", "https://foo.bar/dist/", "node-ARCH.zip")))
-            .isInstanceOf(UnsupportedPlatformException.class);
+        assertThatThrownBy(() -> usecase.execute(new DistributionDefinition(
+            platform,
+            "3.5.2",
+            "https://foo.bar/dist/",
+            "node-ARCH.zip"
+        ))).isInstanceOf(UnsupportedPlatformException.class);
 
         verifyNoMoreInteractions(resolveNodeDistributionArchitectureId, resolveNodeDistributionType);
     }
@@ -68,9 +76,12 @@ class ResolveNodeDistributionUrlTest {
         final Platform platform = PlatformFixture.aPlatform();
         when(resolveNodeDistributionArchitectureId.execute(platform)).thenReturn(Optional.of("linux-x64"));
 
-        assertThat(
-            usecase.execute(new DistributionDefinition(platform, "3.5.2", "https://foo.bar/dist/", "node-ARCH.zip")))
-            .hasToString("https://foo.bar/dist/node-linux-x64.zip");
+        assertThat(usecase.execute(new DistributionDefinition(
+            platform,
+            "3.5.2",
+            "https://foo.bar/dist/",
+            "node-ARCH.zip"
+        ))).hasToString("https://foo.bar/dist/node-linux-x64.zip");
 
         verifyNoMoreInteractions(resolveNodeDistributionArchitectureId, resolveNodeDistributionType);
     }
@@ -80,9 +91,12 @@ class ResolveNodeDistributionUrlTest {
         final Platform platform = PlatformFixture.aPlatform();
         when(resolveNodeDistributionType.execute(platform)).thenReturn("tar.gz");
 
-        assertThat(
-            usecase.execute(new DistributionDefinition(platform, "3.5.2", "https://foo.bar/dist/", "node-dist.TYPE")))
-            .hasToString("https://foo.bar/dist/node-dist.tar.gz");
+        assertThat(usecase.execute(new DistributionDefinition(
+            platform,
+            "3.5.2",
+            "https://foo.bar/dist/",
+            "node-dist.TYPE"
+        ))).hasToString("https://foo.bar/dist/node-dist.tar.gz");
 
         verifyNoMoreInteractions(resolveNodeDistributionArchitectureId, resolveNodeDistributionType);
     }
@@ -94,9 +108,12 @@ class ResolveNodeDistributionUrlTest {
         when(resolveNodeDistributionArchitectureId.execute(platform)).thenReturn(Optional.of("darwin-arm64"));
         when(resolveNodeDistributionType.execute(platform)).thenReturn("tar.gz");
 
-        assertThat(usecase
-            .execute(new DistributionDefinition(platform, VERSION, "https://foo.bar/dist/", "node-vVERSION-ARCH.TYPE"))
-            .toString()).isEqualTo("https://foo.bar/dist/node-v3.5.2-darwin-arm64.tar.gz");
+        assertThat(usecase.execute(new DistributionDefinition(
+            platform,
+            VERSION,
+            "https://foo.bar/dist/",
+            "node-vVERSION-ARCH.TYPE"
+        ))).hasToString("https://foo.bar/dist/node-v3.5.2-darwin-arm64.tar.gz");
     }
 
     @Test
@@ -106,9 +123,12 @@ class ResolveNodeDistributionUrlTest {
         when(resolveNodeDistributionArchitectureId.execute(platform)).thenReturn(Optional.of("linux-x64"));
         when(resolveNodeDistributionType.execute(platform)).thenReturn("tar.gz");
 
-        assertThat(usecase.execute(
-            new DistributionDefinition(platform, "3.5.2", "https://foo.bar/dist/", "node-vVERSION-ARCH.TYPE")))
-            .hasToString("https://foo.bar/dist/node-v3.5.2-linux-x64.tar.gz");
+        assertThat(usecase.execute(new DistributionDefinition(
+            platform,
+            "3.5.2",
+            "https://foo.bar/dist/",
+            "node-vVERSION-ARCH.TYPE"
+        ))).hasToString("https://foo.bar/dist/node-v3.5.2-linux-x64.tar.gz");
 
         verifyNoMoreInteractions(resolveNodeDistributionArchitectureId, resolveNodeDistributionType);
     }
