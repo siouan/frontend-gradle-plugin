@@ -21,15 +21,17 @@ jobs:
     steps:
       - name: Init Ubuntu environment
         if: matrix.os == 'ubuntu-20.04'
-        run: sudo rm -f /usr/local/bin/node /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/yarn /usr/bin/yarn
+        run: sudo rm -f /usr/local/bin/node /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/yarn
 
       - name: Init MacOS environment
         if: matrix.os == 'macos-10.15'
-        run: sudo rm -f /usr/local/bin/node /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin//yarn /usr/bin/yarn /Users/runner/.yarn/bin/yarn
+        run: sudo rm -f /usr/local/bin/node /usr/local/bin/npm /usr/local/bin/npx /usr/bin/yarn /Users/runner/.yarn/bin/yarn
 
       - name: Init Windows environment
         if: matrix.os == 'windows-2019'
-        run: rm -r -fo "C:\Program Files\nodejs" && rm -r -fo "C:\npm"
+        run: |
+          Rename-Item "C:\Program Files\nodejs" "nodejs.old" -Force
+          Rename-Item "C:\npm" "npm.old" -Force
 
       - name: Git checkout for source code analysis
         uses: actions/checkout@v2
@@ -51,28 +53,44 @@ jobs:
           architecture: x64
 
       - name: Cache Gradle's cache and wrapper
-        uses: actions/cache@v2.1.3
+        uses: actions/cache@v2
         with:
           path: |
-            - ~/.gradle/caches/
-            - ~/.gradle/wrapper/
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+            ~/.gradle/caches/
+            ~/.gradle/wrapper/
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
       - name: Cache Sonar's cache
-        uses: actions/cache@v2.1.3
+        uses: actions/cache@v2
         if: matrix.os == 'ubuntu-20.04'
         with:
           path: |
-            - ~/.sonar/cache/
-          key: ${{ runner.os }}-sonar
+            ~/.sonar/cache/
+          key: ${{ runner.os }}-sonar-${{ hashFiles('**/*.gradle*') }}
 
       - name: Grant executable permission
         run: chmod +x gradlew src/intTest/resources/*/bin/*
 
-      - name: Build plugin with test coverage
+      - name: Build plugin on Linux (with test coverage)
         if: matrix.os == 'ubuntu-20.04'
         run: ./gradlew build jacocoTestReport --console=plain
 
-      - name: Build plugin
-        if: matrix.os != 'ubuntu-20.04'
+      - name: Build plugin on MacOS
+        if: matrix.os == 'macos-10.15'
         run: ./gradlew :build --console=plain
+
+      - name: Build plugin on Windows
+        if: matrix.os == 'windows-2019'
+        run: |
+          Remove-Item Env:npm_config_prefix
+          ./gradlew :build --console=plain
+
+      - name: Scan source code and test results
+        if: matrix.os == 'ubuntu-20.04'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./gradlew -i sonarqube --console=plain
+

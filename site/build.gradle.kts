@@ -1,11 +1,11 @@
 plugins {
-    id("org.siouan.frontend-jdk8") version "5.1.0"
+    id("org.siouan.frontend-jdk8") version "5.3.0"
 }
 
 frontend {
-    nodeVersion.set("14.17.3")
+    nodeVersion.set("14.18.1")
     yarnEnabled.set(true)
-    yarnVersion.set("1.22.10")
+    yarnVersion.set("1.22.17")
     assembleScript.set("run generate")
     cleanScript.set("run clean")
     publishScript.set("run deploy")
