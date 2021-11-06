@@ -3,7 +3,6 @@ package org.siouan.frontendgradleplugin.domain.usecase;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
@@ -12,11 +11,8 @@ import org.siouan.frontendgradleplugin.domain.exception.DistributionValidatorExc
 import org.siouan.frontendgradleplugin.domain.exception.FrontendException;
 import org.siouan.frontendgradleplugin.domain.exception.InvalidDistributionUrlException;
 import org.siouan.frontendgradleplugin.domain.exception.ResourceDownloadException;
-import org.siouan.frontendgradleplugin.domain.exception.UnsupportedDistributionIdException;
 import org.siouan.frontendgradleplugin.domain.exception.UnsupportedPlatformException;
 import org.siouan.frontendgradleplugin.domain.model.DistributionDefinition;
-import org.siouan.frontendgradleplugin.domain.model.DistributionUrlResolver;
-import org.siouan.frontendgradleplugin.domain.model.DistributionValidator;
 import org.siouan.frontendgradleplugin.domain.model.DistributionValidatorSettings;
 import org.siouan.frontendgradleplugin.domain.model.DownloadSettings;
 import org.siouan.frontendgradleplugin.domain.model.GetDistributionSettings;
@@ -34,23 +30,23 @@ public class GetDistribution {
      */
     private static final Pattern URL_FILENAME_PATTERN = Pattern.compile("^.*/([^/]+)/*$");
 
-    private final GetDistributionUrlResolver getDistributionUrlResolver;
+    private final ResolveNodeDistributionUrl resolveNodeDistributionUrl;
 
     private final BuildTemporaryFileName buildTemporaryFileName;
 
     private final DownloadResource downloadResource;
 
-    private final GetDistributionValidator getDistributionValidator;
+    private final ValidateNodeDistribution validateNodeDistribution;
 
     private final Logger logger;
 
-    public GetDistribution(final GetDistributionUrlResolver getDistributionUrlResolver,
+    public GetDistribution(final ResolveNodeDistributionUrl resolveNodeDistributionUrl,
         final BuildTemporaryFileName buildTemporaryFileName, final DownloadResource downloadResource,
-        final GetDistributionValidator getDistributionValidator, final Logger logger) {
-        this.getDistributionUrlResolver = getDistributionUrlResolver;
+        final ValidateNodeDistribution validateNodeDistribution, final Logger logger) {
+        this.resolveNodeDistributionUrl = resolveNodeDistributionUrl;
         this.buildTemporaryFileName = buildTemporaryFileName;
         this.downloadResource = downloadResource;
-        this.getDistributionValidator = getDistributionValidator;
+        this.validateNodeDistribution = validateNodeDistribution;
         this.logger = logger;
     }
 
@@ -64,7 +60,6 @@ public class GetDistribution {
      *
      * @param getDistributionSettings Settings to get the distribution file.
      * @return Path to the distribution file.
-     * @throws UnsupportedDistributionIdException If the type of distribution to install is not supported.
      * @throws UnsupportedPlatformException If the target platform is not supported.
      * @throws InvalidDistributionUrlException If the URL to download the distribution is invalid.
      * @throws DistributionValidatorException If the downloaded distribution file is invalid.
@@ -75,13 +70,10 @@ public class GetDistribution {
     public Path execute(@Nonnull final GetDistributionSettings getDistributionSettings)
         throws FrontendException, IOException {
         // Resolve the URL to download the distribution
-        final DistributionUrlResolver distributionUrlResolver = getDistributionUrlResolver
-            .execute(getDistributionSettings.getDistributionId())
-            .orElseThrow(() -> new UnsupportedDistributionIdException(getDistributionSettings.getDistributionId()));
         final DistributionDefinition distributionDefinition = new DistributionDefinition(
             getDistributionSettings.getPlatform(), getDistributionSettings.getVersion(),
             getDistributionSettings.getDistributionUrlRoot(), getDistributionSettings.getDistributionUrlPathPattern());
-        final URL distributionUrl = distributionUrlResolver.execute(distributionDefinition);
+        final URL distributionUrl = resolveNodeDistributionUrl.execute(distributionDefinition);
 
         // Download the distribution
         logger.info("Downloading distribution at '{}'", distributionUrl);
@@ -95,15 +87,12 @@ public class GetDistribution {
             new DownloadSettings(distributionUrl, getDistributionSettings.getDistributionServerCredentials(),
                 getDistributionSettings.getProxySettings(), temporaryFilePath, distributionFilePath));
 
-        final Optional<DistributionValidator> distributionValidator = getDistributionValidator.execute(
-            getDistributionSettings.getDistributionId());
-        if (distributionValidator.isPresent()) {
-            final DistributionValidatorSettings distributionValidatorSettings = new DistributionValidatorSettings(
-                getDistributionSettings.getTemporaryDirectoryPath(), distributionUrl,
-                getDistributionSettings.getDistributionServerCredentials(), getDistributionSettings.getProxySettings(),
-                distributionFilePath);
-            distributionValidator.get().execute(distributionValidatorSettings);
-        }
+        final DistributionValidatorSettings distributionValidatorSettings = new DistributionValidatorSettings(
+            getDistributionSettings.getTemporaryDirectoryPath(), distributionUrl,
+            getDistributionSettings.getDistributionServerCredentials(), getDistributionSettings.getProxySettings(),
+            distributionFilePath);
+        validateNodeDistribution.execute(distributionValidatorSettings);
+
         return distributionFilePath;
     }
 

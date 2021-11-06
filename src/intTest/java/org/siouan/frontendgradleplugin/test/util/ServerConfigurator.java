@@ -27,8 +27,6 @@ public class ServerConfigurator {
 
     private boolean nodeEnabled;
 
-    private boolean yarnEnabled;
-
     private String username;
 
     private String password;
@@ -37,15 +35,10 @@ public class ServerConfigurator {
         this.server = server;
         this.proxyTargetHost = proxyTargetHost;
         this.nodeEnabled = false;
-        this.yarnEnabled = false;
     }
 
     public void withNodeDistribution() {
         this.nodeEnabled = true;
-    }
-
-    public void withYarnDistribution() {
-        this.yarnEnabled = true;
     }
 
     public void withAuth(@Nonnull final String username, @Nonnull final String password) {
@@ -67,14 +60,6 @@ public class ServerConfigurator {
                 withAuth(mappingBuilder);
                 server.stubFor(mappingBuilder.willReturn(
                     aResponse().withBody(Files.readAllBytes(getResourcePath("SHASUMS256.txt")))));
-            }
-
-            if (yarnEnabled) {
-                // The distribution server is configured to return test resources to avoid network overhead.
-                mappingBuilder = get(urlPathMatching("^.*/yarn-v[^/]+$"));
-                withAuth(mappingBuilder);
-                server.stubFor(mappingBuilder.willReturn(
-                    aResponse().withBody(Files.readAllBytes(getResourcePath("yarn-v1.22.10.tar.gz")))));
             }
         } else {
             // The proxy server is configured to forward requests to the distribution server.

@@ -36,11 +36,6 @@ public class ScriptProperties {
     private final Path nodeInstallDirectory;
 
     /**
-     * Directory where the Yarn distribution is installed.
-     */
-    private final Path yarnInstallDirectory;
-
-    /**
      * The script run by the job with npm or Yarn.
      */
     private final String script;
@@ -57,19 +52,17 @@ public class ScriptProperties {
      * @param packageJsonDirectoryPath Path to the directory containing the {@code package.json} file.
      * @param executableType Executor to use to run the script.
      * @param nodeInstallDirectory Node install directory.
-     * @param yarnInstallDirectory Yarn install directory.
      * @param script The script run by the job.
      * @param platform Underlying platform.
      * @see ExecutableType
      */
     public ScriptProperties(@Nonnull final ExecOperations execOperations, @Nonnull final Path packageJsonDirectoryPath,
-        @Nonnull final String executableType, @Nullable final Path nodeInstallDirectory,
-        @Nullable final Path yarnInstallDirectory, @Nonnull final String script, @Nonnull final Platform platform) {
+        @Nonnull final String executableType, @Nullable final Path nodeInstallDirectory, @Nonnull final String script,
+        @Nonnull final Platform platform) {
         this.execOperations = execOperations;
         this.packageJsonDirectoryPath = packageJsonDirectoryPath;
         this.executableType = executableType;
         this.nodeInstallDirectory = nodeInstallDirectory;
-        this.yarnInstallDirectory = yarnInstallDirectory;
         this.script = script;
         this.platform = platform;
     }
@@ -92,11 +85,6 @@ public class ScriptProperties {
     @Nullable
     public Path getNodeInstallDirectory() {
         return nodeInstallDirectory;
-    }
-
-    @Nullable
-    public Path getYarnInstallDirectory() {
-        return yarnInstallDirectory;
     }
 
     @Nonnull

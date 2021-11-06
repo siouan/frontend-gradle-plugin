@@ -67,7 +67,7 @@ public abstract class AbstractGetExecutablePath {
         }
 
         executablePath = getExecutableFileName(platform);
-        logger.info("Executable '{}' resolved from PATH environment variable", executablePath);
+        logger.info("Executable '{}' expected to be found through PATH environment variable", executablePath);
         return executablePath;
     }
 

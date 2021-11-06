@@ -31,19 +31,7 @@ public final class FrontendMapBuilder {
 
     private Boolean yarnEnabled;
 
-    private Boolean yarnDistributionProvided;
-
     private String yarnVersion;
-
-    private String yarnDistributionUrlRoot;
-
-    private String yarnDistributionUrlPathPattern;
-
-    private String yarnDistributionServerUsername;
-
-    private String yarnDistributionServerPassword;
-
-    private Path yarnInstallDirectory;
 
     private String installScript;
 
@@ -137,57 +125,8 @@ public final class FrontendMapBuilder {
     }
 
     @Nonnull
-    public FrontendMapBuilder yarnDistributionProvided(@Nullable final Boolean yarnDistributionProvided) {
-        this.yarnDistributionProvided = yarnDistributionProvided;
-        return this;
-    }
-
-    @Nonnull
     public FrontendMapBuilder yarnVersion(@Nullable final String yarnVersion) {
         this.yarnVersion = yarnVersion;
-        return this;
-    }
-
-    @Nonnull
-    public FrontendMapBuilder yarnDistributionUrlRoot(@Nullable final String yarnDistributionUrlRoot) {
-        this.yarnDistributionUrlRoot = yarnDistributionUrlRoot;
-        return this;
-    }
-
-    @Nonnull
-    public FrontendMapBuilder yarnDistributionUrlRoot(@Nullable final URL yarnDistributionUrlRoot) {
-        return yarnDistributionUrlRoot(Objects.toString(yarnDistributionUrlRoot, null));
-    }
-
-    @Nonnull
-    public FrontendMapBuilder yarnDistributionUrlPathPattern(@Nullable final String yarnDistributionUrlPathPattern) {
-        this.yarnDistributionUrlPathPattern = yarnDistributionUrlPathPattern;
-        return this;
-    }
-
-    @Nonnull
-    public FrontendMapBuilder yarnDistributionUrl(@Nonnull final URL yarnDistributionUrl) {
-        final String fileName = yarnDistributionUrl.getFile();
-        final String yarnDistributionUrlAsString = yarnDistributionUrl.toString();
-        return yarnDistributionUrlRoot(yarnDistributionUrlAsString.substring(0,
-            yarnDistributionUrlAsString.indexOf(fileName))).yarnDistributionUrlPathPattern(fileName);
-    }
-
-    @Nonnull
-    public FrontendMapBuilder yarnDistributionServerUsername(@Nullable final String yarnDistributionServerUsername) {
-        this.yarnDistributionServerUsername = yarnDistributionServerUsername;
-        return this;
-    }
-
-    @Nonnull
-    public FrontendMapBuilder yarnDistributionServerPassword(@Nullable final String yarnDistributionServerPassword) {
-        this.yarnDistributionServerPassword = yarnDistributionServerPassword;
-        return this;
-    }
-
-    @Nonnull
-    public FrontendMapBuilder yarnInstallDirectory(@Nullable final Path yarnInstallDirectory) {
-        this.yarnInstallDirectory = yarnInstallDirectory;
         return this;
     }
 
@@ -308,26 +247,8 @@ public final class FrontendMapBuilder {
         if (yarnEnabled != null) {
             properties.put("yarnEnabled", yarnEnabled);
         }
-        if (yarnDistributionProvided != null) {
-            properties.put("yarnDistributionProvided", yarnDistributionProvided);
-        }
         if (yarnVersion != null) {
             properties.put("yarnVersion", yarnVersion);
-        }
-        if (yarnDistributionUrlRoot != null) {
-            properties.put("yarnDistributionUrlRoot", yarnDistributionUrlRoot);
-        }
-        if (yarnDistributionUrlPathPattern != null) {
-            properties.put("yarnDistributionUrlPathPattern", yarnDistributionUrlPathPattern);
-        }
-        if (yarnDistributionServerUsername != null) {
-            properties.put("yarnDistributionServerUsername", yarnDistributionServerUsername);
-        }
-        if (yarnDistributionServerPassword != null) {
-            properties.put("yarnDistributionServerPassword", yarnDistributionServerPassword);
-        }
-        if (yarnInstallDirectory != null) {
-            properties.put("yarnInstallDirectory", yarnInstallDirectory);
         }
         if (installScript != null) {
             properties.put("installScript", installScript);

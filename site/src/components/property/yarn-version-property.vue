@@ -3,7 +3,7 @@
         name="yarnVersion"
         type="java.lang.String"
         :required="false"
-        example="1.22.10"
+        example="3.0.0"
         :tasks="['installYarn']"
     >
         <p>

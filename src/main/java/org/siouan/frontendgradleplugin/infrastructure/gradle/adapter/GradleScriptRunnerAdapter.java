@@ -35,7 +35,7 @@ public class GradleScriptRunnerAdapter {
     public void execute(@Nonnull final ScriptProperties scriptProperties) throws ExecutableNotFoundException {
         final ExecutionSettings executionSettings = resolveExecutionSettings.execute(
             scriptProperties.getPackageJsonDirectoryPath(), scriptProperties.getExecutableType(),
-            scriptProperties.getNodeInstallDirectory(), scriptProperties.getYarnInstallDirectory(),
+            scriptProperties.getNodeInstallDirectory(),
             scriptProperties.getPlatform(), scriptProperties.getScript());
         logger.debug("Execution settings: {}", executionSettings);
 

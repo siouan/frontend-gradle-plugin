@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -37,8 +38,6 @@ public class SystemSettingsProviderImpl implements SystemSettingsProvider {
 
     private final Provider<String> nodejsHomePath;
 
-    private final Provider<String> yarnHomePath;
-
     private final int defaultHttpProxyPort;
 
     private final int defaultHttpsProxyPort;
@@ -53,7 +52,6 @@ public class SystemSettingsProviderImpl implements SystemSettingsProvider {
         this.jvmArch = systemExtension.getJvmArch();
         this.osName = systemExtension.getOsName();
         this.nodejsHomePath = systemExtension.getNodejsHomePath();
-        this.yarnHomePath = systemExtension.getYarnHomePath();
         this.defaultHttpProxyPort = defaultHttpProxyPort;
         this.defaultHttpsProxyPort = defaultHttpsProxyPort;
     }
@@ -114,12 +112,6 @@ public class SystemSettingsProviderImpl implements SystemSettingsProvider {
     @Override
     public Path getNodejsHomePath() {
         return toPath(nodejsHomePath.getOrNull());
-    }
-
-    @Nullable
-    @Override
-    public Path getYarnHomePath() {
-        return toPath(yarnHomePath.getOrNull());
     }
 
     /**

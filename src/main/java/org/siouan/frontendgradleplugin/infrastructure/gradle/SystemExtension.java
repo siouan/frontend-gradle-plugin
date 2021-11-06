@@ -1,5 +1,7 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
+import javax.annotation.Nonnull;
+
 import org.gradle.api.provider.Provider;
 import org.gradle.api.provider.ProviderFactory;
 import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
@@ -40,18 +42,15 @@ public class SystemExtension {
 
     private final Provider<String> nodejsHomePath;
 
-    private final Provider<String> yarnHomePath;
-
-    public SystemExtension(final ProviderFactory providerFactory) {
-        httpProxyHost = providerFactory.systemProperty(SystemProperty.HTTP_PROXY_HOST);
-        httpProxyPort = providerFactory.systemProperty(SystemProperty.HTTP_PROXY_PORT);
-        httpsProxyHost = providerFactory.systemProperty(SystemProperty.HTTPS_PROXY_HOST);
-        httpsProxyPort = providerFactory.systemProperty(SystemProperty.HTTPS_PROXY_PORT);
-        nonProxyHosts = providerFactory.systemProperty(SystemProperty.NON_PROXY_HOSTS);
-        jvmArch = providerFactory.systemProperty(SystemProperty.JVM_ARCH_PROPERTY);
-        osName = providerFactory.systemProperty(SystemProperty.OS_NAME_PROPERTY);
-        nodejsHomePath = providerFactory.environmentVariable(FrontendGradlePlugin.NODEJS_HOME_ENV_VAR);
-        yarnHomePath = providerFactory.environmentVariable(FrontendGradlePlugin.YARN_HOME_ENV_VAR);
+    public SystemExtension(@Nonnull final ProviderFactory providerFactory) {
+        this.httpProxyHost = providerFactory.systemProperty(SystemProperty.HTTP_PROXY_HOST);
+        this.httpProxyPort = providerFactory.systemProperty(SystemProperty.HTTP_PROXY_PORT);
+        this.httpsProxyHost = providerFactory.systemProperty(SystemProperty.HTTPS_PROXY_HOST);
+        this.httpsProxyPort = providerFactory.systemProperty(SystemProperty.HTTPS_PROXY_PORT);
+        this.nonProxyHosts = providerFactory.systemProperty(SystemProperty.NON_PROXY_HOSTS);
+        this.jvmArch = providerFactory.systemProperty(SystemProperty.JVM_ARCH_PROPERTY);
+        this.osName = providerFactory.systemProperty(SystemProperty.OS_NAME_PROPERTY);
+        this.nodejsHomePath = providerFactory.environmentVariable(FrontendGradlePlugin.NODEJS_HOME_ENV_VAR);
     }
 
     public Provider<String> getHttpProxyHost() {
@@ -84,9 +83,5 @@ public class SystemExtension {
 
     public Provider<String> getNodejsHomePath() {
         return nodejsHomePath;
-    }
-
-    public Provider<String> getYarnHomePath() {
-        return yarnHomePath;
     }
 }

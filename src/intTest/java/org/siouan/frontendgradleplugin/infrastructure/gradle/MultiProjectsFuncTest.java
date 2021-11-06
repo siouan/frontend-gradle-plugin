@@ -15,7 +15,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.gradle.api.logging.LogLevel;
 import org.gradle.api.plugins.BasePlugin;
 import org.gradle.api.publish.plugins.PublishingPlugin;
 import org.gradle.language.base.plugins.LifecycleBasePlugin;
@@ -30,10 +29,9 @@ import org.siouan.frontendgradleplugin.test.util.FrontendMapBuilder;
  * and installed by one sub-project, and used as provided distributions by a second sub-project. The project layout is:
  * <pre>
  * node/                        Node install directory, shall be created by sub-project-1
- * sub-project-1/
- *      yarn/                   Yarn install directory, shall be created by sub-project-1
+ * sub-project-1/               Yarn 1.x sub-project
  *      build.gradle            Installs Node and Yarn distributions
- * sub-project-2/
+ * sub-project-2/               Yarn 2+ sub-project
  *      build.gradle            Uses distributions provided by sub-project-1
  * build.gradle                 Declares plugin, but doesn't apply it
  * settings.gradle
@@ -63,8 +61,7 @@ class MultiProjectsFuncTest {
             .nodeInstallDirectory(nodeInstallDirectory)
             .nodeDistributionUrl(getResourceUrl("node-v14.17.3.zip"))
             .yarnEnabled(true)
-            .yarnVersion("1.22.10")
-            .yarnDistributionUrl(getResourceUrl("yarn-v1.22.10.tar.gz"))
+            .yarnVersion("1.22.11")
             .installScript("run install1")
             .cleanScript("run clean1")
             .assembleScript("run assemble1")
@@ -80,8 +77,7 @@ class MultiProjectsFuncTest {
             .nodeDistributionProvided(true)
             .nodeInstallDirectory(nodeInstallDirectory)
             .yarnEnabled(true)
-            .yarnDistributionProvided(true)
-            .yarnInstallDirectory(subProject1Path.resolve("yarn"))
+            .yarnVersion("3.0.0")
             .installScript("run install2")
             .cleanScript("run clean2")
             .assembleScript("run assemble2")
@@ -92,25 +88,31 @@ class MultiProjectsFuncTest {
             "tasks.named('installFrontend').configure {" + "dependsOn project(':" + SUB_PROJECT_1_NAME
                 + "').installNode\ndependsOn project(':" + SUB_PROJECT_1_NAME + "').installYarn\n}");
 
-        final BuildResult result1 = runGradle(projectDirectoryPath, LogLevel.LIFECYCLE, BasePlugin.CLEAN_TASK_NAME,
+        final BuildResult result1 = runGradle(projectDirectoryPath, BasePlugin.CLEAN_TASK_NAME,
             LifecycleBasePlugin.BUILD_TASK_NAME, PublishingPlugin.PUBLISH_LIFECYCLE_TASK_NAME);
 
         assertTaskIgnored(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        assertTaskIgnored(result1, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
+        assertTaskIgnored(result1, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
         assertTaskIgnored(result1, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
-        assertTaskIgnored(result1, FrontendGradlePlugin.INSTALL_TASK_NAME);
+        assertTaskIgnored(result1, FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME);
         assertTaskIgnored(result1, FrontendGradlePlugin.CLEAN_TASK_NAME);
         assertTaskIgnored(result1, FrontendGradlePlugin.ASSEMBLE_TASK_NAME);
         assertTaskIgnored(result1, FrontendGradlePlugin.CHECK_TASK_NAME);
         assertTaskIgnored(result1, FrontendGradlePlugin.PUBLISH_TASK_NAME);
 
         assertTaskSuccess(result1, SUB_PROJECT_1_NAME, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        assertTaskSuccess(result1, SUB_PROJECT_1_NAME, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
+        assertTaskSuccess(result1, SUB_PROJECT_1_NAME, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
         assertTaskSuccess(result1, SUB_PROJECT_1_NAME, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
-        assertTaskSuccess(result1, SUB_PROJECT_1_NAME, FrontendGradlePlugin.INSTALL_TASK_NAME);
+        assertTaskSuccess(result1, SUB_PROJECT_1_NAME, FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME);
         assertTaskSuccess(result1, SUB_PROJECT_1_NAME, FrontendGradlePlugin.CLEAN_TASK_NAME);
         assertTaskSuccess(result1, SUB_PROJECT_1_NAME, BasePlugin.CLEAN_TASK_NAME);
         assertTaskSkipped(result1, SUB_PROJECT_2_NAME, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
-        assertTaskSkipped(result1, SUB_PROJECT_2_NAME, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
-        assertTaskSuccess(result1, SUB_PROJECT_2_NAME, FrontendGradlePlugin.INSTALL_TASK_NAME);
+        assertTaskSuccess(result1, SUB_PROJECT_1_NAME, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
+        assertTaskSuccess(result1, SUB_PROJECT_1_NAME, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
+        assertTaskSuccess(result1, SUB_PROJECT_2_NAME, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
+        assertTaskSuccess(result1, SUB_PROJECT_2_NAME, FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME);
         assertTaskSuccess(result1, SUB_PROJECT_2_NAME, FrontendGradlePlugin.CLEAN_TASK_NAME);
         assertTaskUpToDate(result1, SUB_PROJECT_2_NAME, BasePlugin.CLEAN_TASK_NAME);
 
@@ -130,25 +132,31 @@ class MultiProjectsFuncTest {
         assertTaskSuccess(result1, SUB_PROJECT_2_NAME, FrontendGradlePlugin.PUBLISH_TASK_NAME);
         assertTaskSuccess(result1, SUB_PROJECT_2_NAME, PublishingPlugin.PUBLISH_LIFECYCLE_TASK_NAME);
 
-        final BuildResult result2 = runGradle(projectDirectoryPath, LogLevel.LIFECYCLE, BasePlugin.CLEAN_TASK_NAME,
+        final BuildResult result2 = runGradle(projectDirectoryPath, BasePlugin.CLEAN_TASK_NAME,
             LifecycleBasePlugin.BUILD_TASK_NAME, PublishingPlugin.PUBLISH_LIFECYCLE_TASK_NAME);
 
         assertTaskIgnored(result2, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        assertTaskIgnored(result2, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
+        assertTaskIgnored(result2, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
         assertTaskIgnored(result2, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
-        assertTaskIgnored(result2, FrontendGradlePlugin.INSTALL_TASK_NAME);
+        assertTaskIgnored(result2, FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME);
         assertTaskIgnored(result2, FrontendGradlePlugin.CLEAN_TASK_NAME);
         assertTaskIgnored(result2, FrontendGradlePlugin.ASSEMBLE_TASK_NAME);
         assertTaskIgnored(result2, FrontendGradlePlugin.CHECK_TASK_NAME);
         assertTaskIgnored(result2, FrontendGradlePlugin.PUBLISH_TASK_NAME);
 
         assertTaskUpToDate(result2, SUB_PROJECT_1_NAME, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
-        assertTaskUpToDate(result2, SUB_PROJECT_1_NAME, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
-        assertTaskSuccess(result2, SUB_PROJECT_1_NAME, FrontendGradlePlugin.INSTALL_TASK_NAME);
+        assertTaskSuccess(result2, SUB_PROJECT_1_NAME, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
+        assertTaskSuccess(result2, SUB_PROJECT_1_NAME, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
+        assertTaskSuccess(result2, SUB_PROJECT_1_NAME, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
+        assertTaskSuccess(result2, SUB_PROJECT_1_NAME, FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME);
         assertTaskSuccess(result2, SUB_PROJECT_1_NAME, FrontendGradlePlugin.CLEAN_TASK_NAME);
         assertTaskUpToDate(result2, SUB_PROJECT_1_NAME, BasePlugin.CLEAN_TASK_NAME);
         assertTaskSkipped(result2, SUB_PROJECT_2_NAME, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
-        assertTaskSkipped(result2, SUB_PROJECT_2_NAME, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
-        assertTaskSuccess(result2, SUB_PROJECT_2_NAME, FrontendGradlePlugin.INSTALL_TASK_NAME);
+        assertTaskSuccess(result2, SUB_PROJECT_2_NAME, FrontendGradlePlugin.INSTALL_YARN_GLOBALLY_TASK_NAME);
+        assertTaskSuccess(result2, SUB_PROJECT_2_NAME, FrontendGradlePlugin.ENABLE_YARN_BERRY_TASK_NAME);
+        assertTaskSuccess(result2, SUB_PROJECT_2_NAME, FrontendGradlePlugin.YARN_INSTALL_TASK_NAME);
+        assertTaskSuccess(result2, SUB_PROJECT_2_NAME, FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME);
         assertTaskSuccess(result2, SUB_PROJECT_2_NAME, FrontendGradlePlugin.CLEAN_TASK_NAME);
         assertTaskUpToDate(result2, SUB_PROJECT_2_NAME, BasePlugin.CLEAN_TASK_NAME);
 

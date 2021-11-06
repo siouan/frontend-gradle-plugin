@@ -37,7 +37,6 @@ class SystemSettingsProviderImplTest {
         when(systemExtension.getNodejsHomePath()).thenReturn(stringProvider);
         when(systemExtension.getNonProxyHosts()).thenReturn(stringProvider);
         when(systemExtension.getOsName()).thenReturn(stringProvider);
-        when(systemExtension.getYarnHomePath()).thenReturn(stringProvider);
         systemSettingsProvider = new SystemSettingsProviderImpl(systemExtension, DEFAULT_HTTP_PROXY_PORT,
             DEFAULT_HTTPS_PROXY_PORT);
     }

@@ -17,9 +17,9 @@ import org.siouan.frontendgradleplugin.domain.exception.ExecutableNotFoundExcept
 import org.siouan.frontendgradleplugin.domain.model.ExecutableType;
 import org.siouan.frontendgradleplugin.domain.model.ExecutionSettings;
 import org.siouan.frontendgradleplugin.domain.model.Platform;
-import org.siouan.frontendgradleplugin.test.fixture.SystemPropertyFixture;
 import org.siouan.frontendgradleplugin.test.fixture.PathFixture;
 import org.siouan.frontendgradleplugin.test.fixture.PlatformFixture;
+import org.siouan.frontendgradleplugin.test.fixture.SystemPropertyFixture;
 
 @ExtendWith(MockitoExtension.class)
 class ResolveExecutionSettingsTest {
@@ -27,8 +27,6 @@ class ResolveExecutionSettingsTest {
     private static final Path PACKAGE_JSON_DIRECTORY_PATH = PathFixture.ANY_PATH.resolve("frontend");
 
     private static final Path NODE_INSTALL_DIRECTORY_PATH = PathFixture.ANY_PATH.resolve("node");
-
-    private static final Path YARN_INSTALL_DIRECTORY_PATH = PathFixture.ANY_PATH.resolve("yarn");
 
     private static final String SCRIPT = " run script ";
 
@@ -48,7 +46,7 @@ class ResolveExecutionSettingsTest {
         when(getNodeExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenThrow(expectedException);
 
         assertThatThrownBy(
-            () -> usecase.execute(PACKAGE_JSON_DIRECTORY_PATH, ExecutableType.NODE, NODE_INSTALL_DIRECTORY_PATH, null,
+            () -> usecase.execute(PACKAGE_JSON_DIRECTORY_PATH, ExecutableType.NODE, NODE_INSTALL_DIRECTORY_PATH,
                 platform, SCRIPT)).isEqualTo(expectedException);
 
         verifyNoMoreInteractions(getNodeExecutablePath, resolveExecutablePath);
@@ -57,16 +55,15 @@ class ResolveExecutionSettingsTest {
     @Test
     void shouldFailResolvingExecSettingsWhenExecutablePathCannotBeFound() throws ExecutableNotFoundException {
         final Platform platform = PlatformFixture.LOCAL_PLATFORM;
-        when(getNodeExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenReturn(
-            NODE_INSTALL_DIRECTORY_PATH.resolve("node"));
+        when(getNodeExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform))
+            .thenReturn(NODE_INSTALL_DIRECTORY_PATH.resolve("node"));
         final Exception expectedException = new ExecutableNotFoundException(Paths.get("yarn"));
-        when(
-            resolveExecutablePath.execute(ExecutableType.YARN, NODE_INSTALL_DIRECTORY_PATH, YARN_INSTALL_DIRECTORY_PATH,
-                platform)).thenThrow(expectedException);
+        when(resolveExecutablePath.execute(ExecutableType.YARN, NODE_INSTALL_DIRECTORY_PATH, platform))
+            .thenThrow(expectedException);
 
         assertThatThrownBy(
             () -> usecase.execute(PACKAGE_JSON_DIRECTORY_PATH, ExecutableType.YARN, NODE_INSTALL_DIRECTORY_PATH,
-                YARN_INSTALL_DIRECTORY_PATH, platform, SCRIPT)).isEqualTo(expectedException);
+                platform, SCRIPT)).isEqualTo(expectedException);
 
         verifyNoMoreInteractions(getNodeExecutablePath, resolveExecutablePath);
     }
@@ -77,16 +74,17 @@ class ResolveExecutionSettingsTest {
         final Platform platform = PlatformFixture.aPlatform(SystemPropertyFixture.getSystemJvmArch(), "Windows NT");
         final Path nodeExecutablePath = Paths.get("node");
         when(getNodeExecutablePath.execute(null, platform)).thenReturn(nodeExecutablePath);
-        when(resolveExecutablePath.execute(ExecutableType.NODE, null, null, platform)).thenReturn(nodeExecutablePath);
+        when(resolveExecutablePath.execute(ExecutableType.NODE, null, platform)).thenReturn(nodeExecutablePath);
 
         final ExecutionSettings executionSettings = usecase.execute(PACKAGE_JSON_DIRECTORY_PATH, ExecutableType.NODE,
-            null, null, platform, SCRIPT);
+            null, platform, SCRIPT);
 
         assertThat(executionSettings.getWorkingDirectoryPath()).isEqualTo(PACKAGE_JSON_DIRECTORY_PATH);
         assertThat(executionSettings.getAdditionalExecutablePaths()).isEmpty();
         assertThat(executionSettings.getExecutablePath()).isEqualTo(ResolveExecutionSettings.WINDOWS_EXECUTABLE_PATH);
-        assertThat(executionSettings.getArguments()).containsExactly(
-            ResolveExecutionSettings.WINDOWS_EXECUTABLE_AUTOEXIT_FLAG, nodeExecutablePath + " run script");
+        assertThat(executionSettings.getArguments())
+            .containsExactly(ResolveExecutionSettings.WINDOWS_EXECUTABLE_AUTOEXIT_FLAG,
+                nodeExecutablePath + " run script");
         verifyNoMoreInteractions(getNodeExecutablePath, resolveExecutablePath);
     }
 
@@ -96,18 +94,18 @@ class ResolveExecutionSettingsTest {
         final Platform platform = PlatformFixture.aPlatform(SystemPropertyFixture.getSystemJvmArch(), "Windows NT");
         final Path nodeExecutablePath = NODE_INSTALL_DIRECTORY_PATH.resolve("node");
         when(getNodeExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenReturn(nodeExecutablePath);
-        when(
-            resolveExecutablePath.execute(ExecutableType.NODE, NODE_INSTALL_DIRECTORY_PATH, null, platform)).thenReturn(
-            nodeExecutablePath);
+        when(resolveExecutablePath.execute(ExecutableType.NODE, NODE_INSTALL_DIRECTORY_PATH, platform))
+            .thenReturn(nodeExecutablePath);
 
         final ExecutionSettings executionSettings = usecase.execute(PACKAGE_JSON_DIRECTORY_PATH, ExecutableType.NODE,
-            NODE_INSTALL_DIRECTORY_PATH, null, platform, SCRIPT);
+            NODE_INSTALL_DIRECTORY_PATH, platform, SCRIPT);
 
         assertThat(executionSettings.getWorkingDirectoryPath()).isEqualTo(PACKAGE_JSON_DIRECTORY_PATH);
         assertThat(executionSettings.getAdditionalExecutablePaths()).isEmpty();
         assertThat(executionSettings.getExecutablePath()).isEqualTo(ResolveExecutionSettings.WINDOWS_EXECUTABLE_PATH);
-        assertThat(executionSettings.getArguments()).containsExactly(
-            ResolveExecutionSettings.WINDOWS_EXECUTABLE_AUTOEXIT_FLAG, "\"" + nodeExecutablePath + "\" run script");
+        assertThat(executionSettings.getArguments())
+            .containsExactly(ResolveExecutionSettings.WINDOWS_EXECUTABLE_AUTOEXIT_FLAG,
+                "\"" + nodeExecutablePath + "\" run script");
         verifyNoMoreInteractions(getNodeExecutablePath, resolveExecutablePath);
     }
 
@@ -118,17 +116,18 @@ class ResolveExecutionSettingsTest {
         final Path nodeExecutablePath = NODE_INSTALL_DIRECTORY_PATH.resolve("node");
         final Path npmExecutablePath = NODE_INSTALL_DIRECTORY_PATH.resolve("npm");
         when(getNodeExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenReturn(nodeExecutablePath);
-        when(resolveExecutablePath.execute(ExecutableType.NPM, NODE_INSTALL_DIRECTORY_PATH, null, platform)).thenReturn(
-            npmExecutablePath);
+        when(resolveExecutablePath.execute(ExecutableType.NPM, NODE_INSTALL_DIRECTORY_PATH, platform))
+            .thenReturn(npmExecutablePath);
 
         final ExecutionSettings executionSettings = usecase.execute(PACKAGE_JSON_DIRECTORY_PATH, ExecutableType.NPM,
-            NODE_INSTALL_DIRECTORY_PATH, null, platform, SCRIPT);
+            NODE_INSTALL_DIRECTORY_PATH, platform, SCRIPT);
 
         assertThat(executionSettings.getWorkingDirectoryPath()).isEqualTo(PACKAGE_JSON_DIRECTORY_PATH);
         assertThat(executionSettings.getAdditionalExecutablePaths()).containsExactly(nodeExecutablePath.getParent());
         assertThat(executionSettings.getExecutablePath()).isEqualTo(ResolveExecutionSettings.WINDOWS_EXECUTABLE_PATH);
-        assertThat(executionSettings.getArguments()).containsExactly(
-            ResolveExecutionSettings.WINDOWS_EXECUTABLE_AUTOEXIT_FLAG, "\"" + npmExecutablePath + "\" run script");
+        assertThat(executionSettings.getArguments())
+            .containsExactly(ResolveExecutionSettings.WINDOWS_EXECUTABLE_AUTOEXIT_FLAG,
+                "\"" + npmExecutablePath + "\" run script");
         verifyNoMoreInteractions(getNodeExecutablePath, resolveExecutablePath);
     }
 
@@ -139,59 +138,61 @@ class ResolveExecutionSettingsTest {
         final Path nodeExecutablePath = NODE_INSTALL_DIRECTORY_PATH.resolve("node");
         final Path npxExecutablePath = NODE_INSTALL_DIRECTORY_PATH.resolve("npx");
         when(getNodeExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenReturn(nodeExecutablePath);
-        when(resolveExecutablePath.execute(ExecutableType.NPX, NODE_INSTALL_DIRECTORY_PATH, null, platform)).thenReturn(
-            npxExecutablePath);
+        when(resolveExecutablePath.execute(ExecutableType.NPX, NODE_INSTALL_DIRECTORY_PATH, platform))
+            .thenReturn(npxExecutablePath);
 
         final ExecutionSettings executionSettings = usecase.execute(PACKAGE_JSON_DIRECTORY_PATH, ExecutableType.NPX,
-            NODE_INSTALL_DIRECTORY_PATH, null, platform, SCRIPT);
+            NODE_INSTALL_DIRECTORY_PATH, platform, SCRIPT);
 
         assertThat(executionSettings.getWorkingDirectoryPath()).isEqualTo(PACKAGE_JSON_DIRECTORY_PATH);
         assertThat(executionSettings.getAdditionalExecutablePaths()).containsExactly(nodeExecutablePath.getParent());
         assertThat(executionSettings.getExecutablePath()).isEqualTo(ResolveExecutionSettings.WINDOWS_EXECUTABLE_PATH);
-        assertThat(executionSettings.getArguments()).containsExactly(
-            ResolveExecutionSettings.WINDOWS_EXECUTABLE_AUTOEXIT_FLAG, "\"" + npxExecutablePath + "\" run script");
+        assertThat(executionSettings.getArguments())
+            .containsExactly(ResolveExecutionSettings.WINDOWS_EXECUTABLE_AUTOEXIT_FLAG,
+                "\"" + npxExecutablePath + "\" run script");
         verifyNoMoreInteractions(getNodeExecutablePath, resolveExecutablePath);
     }
 
     @Test
-    void shouldResolveExecSettingsWithWindowsCmdWhenExecutableIsYarnInDistributionAndNodeIsInDistributionAndOsIsWindows()
+    void shouldResolveExecSettingsWithWindowsCmdWhenNodeAndYarnExecutablesAreInInstallDirectoryAndOsIsWindows()
         throws ExecutableNotFoundException {
         final Platform platform = PlatformFixture.aPlatform(SystemPropertyFixture.getSystemJvmArch(), "Windows NT");
         final Path nodeExecutablePath = NODE_INSTALL_DIRECTORY_PATH.resolve("node");
-        final Path yarnExecutablePath = YARN_INSTALL_DIRECTORY_PATH.resolve("yarn");
+        final Path yarnExecutablePath = NODE_INSTALL_DIRECTORY_PATH.resolve("yarn");
         when(getNodeExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenReturn(nodeExecutablePath);
-        when(
-            resolveExecutablePath.execute(ExecutableType.YARN, NODE_INSTALL_DIRECTORY_PATH, YARN_INSTALL_DIRECTORY_PATH,
-                platform)).thenReturn(yarnExecutablePath);
+        when(resolveExecutablePath.execute(ExecutableType.YARN, NODE_INSTALL_DIRECTORY_PATH, platform))
+            .thenReturn(yarnExecutablePath);
 
         final ExecutionSettings executionSettings = usecase.execute(PACKAGE_JSON_DIRECTORY_PATH, ExecutableType.YARN,
-            NODE_INSTALL_DIRECTORY_PATH, YARN_INSTALL_DIRECTORY_PATH, platform, SCRIPT);
+            NODE_INSTALL_DIRECTORY_PATH, platform, SCRIPT);
 
         assertThat(executionSettings.getWorkingDirectoryPath()).isEqualTo(PACKAGE_JSON_DIRECTORY_PATH);
         assertThat(executionSettings.getAdditionalExecutablePaths()).containsOnly(nodeExecutablePath.getParent());
         assertThat(executionSettings.getExecutablePath()).isEqualTo(ResolveExecutionSettings.WINDOWS_EXECUTABLE_PATH);
-        assertThat(executionSettings.getArguments()).containsExactly(
-            ResolveExecutionSettings.WINDOWS_EXECUTABLE_AUTOEXIT_FLAG, "\"" + yarnExecutablePath + "\" run script");
+        assertThat(executionSettings.getArguments())
+            .containsExactly(ResolveExecutionSettings.WINDOWS_EXECUTABLE_AUTOEXIT_FLAG,
+                "\"" + yarnExecutablePath + "\" run script");
         verifyNoMoreInteractions(getNodeExecutablePath, resolveExecutablePath);
     }
 
     @Test
-    void shouldResolveExecSettingsWithWindowsCmdWhenExecutableIsYarnInPathAndNodeIsInPathAndOsIsWindows()
+    void shouldResolveExecSettingsWithWindowsCmdWhenNodeAndYarnExecutablesAreInPathAndOsIsWindows()
         throws ExecutableNotFoundException {
         final Platform platform = PlatformFixture.aPlatform(SystemPropertyFixture.getSystemJvmArch(), "Windows NT");
         final Path nodeExecutablePath = Paths.get("node");
         final Path yarnExecutablePath = Paths.get("yarn");
         when(getNodeExecutablePath.execute(null, platform)).thenReturn(nodeExecutablePath);
-        when(resolveExecutablePath.execute(ExecutableType.YARN, null, null, platform)).thenReturn(yarnExecutablePath);
+        when(resolveExecutablePath.execute(ExecutableType.YARN, null, platform)).thenReturn(yarnExecutablePath);
 
         final ExecutionSettings executionSettings = usecase.execute(PACKAGE_JSON_DIRECTORY_PATH, ExecutableType.YARN,
-            null, null, platform, SCRIPT);
+            null, platform, SCRIPT);
 
         assertThat(executionSettings.getWorkingDirectoryPath()).isEqualTo(PACKAGE_JSON_DIRECTORY_PATH);
         assertThat(executionSettings.getAdditionalExecutablePaths()).isEmpty();
         assertThat(executionSettings.getExecutablePath()).isEqualTo(ResolveExecutionSettings.WINDOWS_EXECUTABLE_PATH);
-        assertThat(executionSettings.getArguments()).containsExactly(
-            ResolveExecutionSettings.WINDOWS_EXECUTABLE_AUTOEXIT_FLAG, yarnExecutablePath + " run script");
+        assertThat(executionSettings.getArguments())
+            .containsExactly(ResolveExecutionSettings.WINDOWS_EXECUTABLE_AUTOEXIT_FLAG,
+                yarnExecutablePath + " run script");
         verifyNoMoreInteractions(getNodeExecutablePath, resolveExecutablePath);
     }
 
@@ -201,18 +202,18 @@ class ResolveExecutionSettingsTest {
         final Platform platform = PlatformFixture.aPlatform(SystemPropertyFixture.getSystemJvmArch(), "Linux");
         final Path nodeExecutablePath = NODE_INSTALL_DIRECTORY_PATH.resolve("node");
         when(getNodeExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenReturn(nodeExecutablePath);
-        when(
-            resolveExecutablePath.execute(ExecutableType.NODE, NODE_INSTALL_DIRECTORY_PATH, null, platform)).thenReturn(
-            nodeExecutablePath);
+        when(resolveExecutablePath.execute(ExecutableType.NODE, NODE_INSTALL_DIRECTORY_PATH, platform))
+            .thenReturn(nodeExecutablePath);
 
         final ExecutionSettings executionSettings = usecase.execute(PACKAGE_JSON_DIRECTORY_PATH, ExecutableType.NODE,
-            NODE_INSTALL_DIRECTORY_PATH, null, platform, SCRIPT);
+            NODE_INSTALL_DIRECTORY_PATH, platform, SCRIPT);
 
         assertThat(executionSettings.getWorkingDirectoryPath()).isEqualTo(PACKAGE_JSON_DIRECTORY_PATH);
         assertThat(executionSettings.getAdditionalExecutablePaths()).isEmpty();
         assertThat(executionSettings.getExecutablePath()).isEqualTo(ResolveExecutionSettings.UNIX_EXECUTABLE_PATH);
-        assertThat(executionSettings.getArguments()).containsExactly(
-            ResolveExecutionSettings.UNIX_EXECUTABLE_AUTOEXIT_FLAG, "\"" + nodeExecutablePath + "\" run script");
+        assertThat(executionSettings.getArguments())
+            .containsExactly(ResolveExecutionSettings.UNIX_EXECUTABLE_AUTOEXIT_FLAG,
+                "\"" + nodeExecutablePath + "\" run script");
         verifyNoMoreInteractions(getNodeExecutablePath, resolveExecutablePath);
     }
 
@@ -223,17 +224,18 @@ class ResolveExecutionSettingsTest {
         final Path nodeExecutablePath = NODE_INSTALL_DIRECTORY_PATH.resolve("node");
         final Path npmExecutablePath = nodeExecutablePath.resolveSibling("npm");
         when(getNodeExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenReturn(nodeExecutablePath);
-        when(resolveExecutablePath.execute(ExecutableType.NPM, NODE_INSTALL_DIRECTORY_PATH, null, platform)).thenReturn(
-            npmExecutablePath);
+        when(resolveExecutablePath.execute(ExecutableType.NPM, NODE_INSTALL_DIRECTORY_PATH, platform))
+            .thenReturn(npmExecutablePath);
 
         final ExecutionSettings executionSettings = usecase.execute(PACKAGE_JSON_DIRECTORY_PATH, ExecutableType.NPM,
-            NODE_INSTALL_DIRECTORY_PATH, null, platform, SCRIPT);
+            NODE_INSTALL_DIRECTORY_PATH, platform, SCRIPT);
 
         assertThat(executionSettings.getWorkingDirectoryPath()).isEqualTo(PACKAGE_JSON_DIRECTORY_PATH);
         assertThat(executionSettings.getAdditionalExecutablePaths()).containsExactly(nodeExecutablePath.getParent());
         assertThat(executionSettings.getExecutablePath()).isEqualTo(ResolveExecutionSettings.UNIX_EXECUTABLE_PATH);
-        assertThat(executionSettings.getArguments()).containsExactly(
-            ResolveExecutionSettings.UNIX_EXECUTABLE_AUTOEXIT_FLAG, "\"" + npmExecutablePath + "\" run script");
+        assertThat(executionSettings.getArguments())
+            .containsExactly(ResolveExecutionSettings.UNIX_EXECUTABLE_AUTOEXIT_FLAG,
+                "\"" + npmExecutablePath + "\" run script");
         verifyNoMoreInteractions(getNodeExecutablePath, resolveExecutablePath);
     }
 
@@ -244,39 +246,40 @@ class ResolveExecutionSettingsTest {
         final Path nodeExecutablePath = NODE_INSTALL_DIRECTORY_PATH.resolve("node");
         final Path npxExecutablePath = nodeExecutablePath.resolveSibling("npx");
         when(getNodeExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenReturn(nodeExecutablePath);
-        when(resolveExecutablePath.execute(ExecutableType.NPX, NODE_INSTALL_DIRECTORY_PATH, null, platform)).thenReturn(
-            npxExecutablePath);
+        when(resolveExecutablePath.execute(ExecutableType.NPX, NODE_INSTALL_DIRECTORY_PATH, platform))
+            .thenReturn(npxExecutablePath);
 
         final ExecutionSettings executionSettings = usecase.execute(PACKAGE_JSON_DIRECTORY_PATH, ExecutableType.NPX,
-            NODE_INSTALL_DIRECTORY_PATH, null, platform, SCRIPT);
+            NODE_INSTALL_DIRECTORY_PATH, platform, SCRIPT);
 
         assertThat(executionSettings.getWorkingDirectoryPath()).isEqualTo(PACKAGE_JSON_DIRECTORY_PATH);
         assertThat(executionSettings.getAdditionalExecutablePaths()).containsExactly(nodeExecutablePath.getParent());
         assertThat(executionSettings.getExecutablePath()).isEqualTo(ResolveExecutionSettings.UNIX_EXECUTABLE_PATH);
-        assertThat(executionSettings.getArguments()).containsExactly(
-            ResolveExecutionSettings.UNIX_EXECUTABLE_AUTOEXIT_FLAG, "\"" + npxExecutablePath + "\" run script");
+        assertThat(executionSettings.getArguments())
+            .containsExactly(ResolveExecutionSettings.UNIX_EXECUTABLE_AUTOEXIT_FLAG,
+                "\"" + npxExecutablePath + "\" run script");
         verifyNoMoreInteractions(getNodeExecutablePath, resolveExecutablePath);
     }
 
     @Test
-    void shouldResolveExecSettingsWithUnixShellWhenExecutableIsYarnInPathAndOsIsNotWindows()
+    void shouldResolveExecSettingsWithUnixShellWhenNodeAndYarnExecutablesAreInInstallDirectoryAndOsIsNotWindows()
         throws ExecutableNotFoundException {
         final Platform platform = PlatformFixture.aPlatform(SystemPropertyFixture.getSystemJvmArch(), "Linux");
         final Path nodeExecutablePath = NODE_INSTALL_DIRECTORY_PATH.resolve("node");
-        final Path yarnExecutablePath = YARN_INSTALL_DIRECTORY_PATH.resolve("yarn");
+        final Path yarnExecutablePath = NODE_INSTALL_DIRECTORY_PATH.resolve("yarn");
         when(getNodeExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenReturn(nodeExecutablePath);
-        when(
-            resolveExecutablePath.execute(ExecutableType.YARN, NODE_INSTALL_DIRECTORY_PATH, YARN_INSTALL_DIRECTORY_PATH,
-                platform)).thenReturn(yarnExecutablePath);
+        when(resolveExecutablePath.execute(ExecutableType.YARN, NODE_INSTALL_DIRECTORY_PATH, platform))
+            .thenReturn(yarnExecutablePath);
 
         final ExecutionSettings executionSettings = usecase.execute(PACKAGE_JSON_DIRECTORY_PATH, ExecutableType.YARN,
-            NODE_INSTALL_DIRECTORY_PATH, YARN_INSTALL_DIRECTORY_PATH, platform, SCRIPT);
+            NODE_INSTALL_DIRECTORY_PATH, platform, SCRIPT);
 
         assertThat(executionSettings.getWorkingDirectoryPath()).isEqualTo(PACKAGE_JSON_DIRECTORY_PATH);
         assertThat(executionSettings.getAdditionalExecutablePaths()).containsExactly(nodeExecutablePath.getParent());
         assertThat(executionSettings.getExecutablePath()).isEqualTo(ResolveExecutionSettings.UNIX_EXECUTABLE_PATH);
-        assertThat(executionSettings.getArguments()).containsExactly(
-            ResolveExecutionSettings.UNIX_EXECUTABLE_AUTOEXIT_FLAG, "\"" + yarnExecutablePath + "\" run script");
+        assertThat(executionSettings.getArguments())
+            .containsExactly(ResolveExecutionSettings.UNIX_EXECUTABLE_AUTOEXIT_FLAG,
+                "\"" + yarnExecutablePath + "\" run script");
         verifyNoMoreInteractions(getNodeExecutablePath, resolveExecutablePath);
     }
 }

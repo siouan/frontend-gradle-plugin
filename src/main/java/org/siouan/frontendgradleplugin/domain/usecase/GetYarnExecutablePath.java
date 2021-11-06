@@ -24,7 +24,7 @@ public class GetYarnExecutablePath extends AbstractGetExecutablePath {
     /**
      * Relative executable path on Windows O/S.
      */
-    public static final Path WINDOWS_EXECUTABLE_FILE_PATH = Paths.get("bin").resolve(WINDOWS_EXECUTABLE_FILE_NAME);
+    public static final Path WINDOWS_EXECUTABLE_FILE_PATH = WINDOWS_EXECUTABLE_FILE_NAME;
 
     /**
      * Relative executable path on non-Windows O/S.
@@ -69,6 +69,6 @@ public class GetYarnExecutablePath extends AbstractGetExecutablePath {
     @Nonnull
     @Override
     protected Optional<Path> getInstallDirectoryFromEnvironment(@Nonnull final Platform platform) {
-        return Optional.ofNullable(platform.getEnvironment().getYarnInstallDirectoryPath());
+        return Optional.ofNullable(platform.getEnvironment().getNodeInstallDirectoryPath());
     }
 }

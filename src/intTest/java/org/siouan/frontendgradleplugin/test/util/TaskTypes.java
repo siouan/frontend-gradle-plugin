@@ -7,13 +7,15 @@ import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNode;
-import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpmYarn;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpm;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpx;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.RunYarn;
 
 /**
  * Class providing static utilities only to build custom tasks.
@@ -47,20 +49,37 @@ public final class TaskTypes {
     }
 
     @Nonnull
-    public static String buildNpmYarnTaskDefinition(@Nonnull final String taskName, @Nullable final String script) {
-        return buildTaskDefinition(taskName, RunNpmYarn.class, emptySet(), script);
+    public static String buildNpmTaskDefinition(@Nonnull final String taskName, @Nullable final String script) {
+        return buildTaskDefinition(taskName, RunNpm.class, emptySet(), script);
     }
 
     @Nonnull
-    public static String buildNpmYarnTaskDefinition(@Nonnull final String taskName,
+    public static String buildNpmTaskDefinition(@Nonnull final String taskName, @Nonnull final String dependsOnTaskName,
+        @Nullable final String script) {
+        return buildTaskDefinition(taskName, RunNpm.class, singleton(dependsOnTaskName), script);
+    }
+
+    @Nonnull
+    public static String buildNpmTaskDefinition(@Nonnull final String taskName,
+        @Nonnull final Set<String> dependsOnTaskNames, @Nullable final String script) {
+        return buildTaskDefinition(taskName, RunNpm.class, dependsOnTaskNames, script);
+    }
+
+    @Nonnull
+    public static String buildYarnTaskDefinition(@Nonnull final String taskName, @Nullable final String script) {
+        return buildTaskDefinition(taskName, RunYarn.class, emptySet(), script);
+    }
+
+    @Nonnull
+    public static String buildYarnTaskDefinition(@Nonnull final String taskName,
         @Nonnull final String dependsOnTaskName, @Nullable final String script) {
-        return buildTaskDefinition(taskName, RunNpmYarn.class, singleton(dependsOnTaskName), script);
+        return buildTaskDefinition(taskName, RunYarn.class, singleton(dependsOnTaskName), script);
     }
 
     @Nonnull
-    public static String buildNpmYarnTaskDefinition(@Nonnull final String taskName,
-        @Nonnull final Iterable<String> dependsOnTaskNames, @Nullable final String script) {
-        return buildTaskDefinition(taskName, RunNpmYarn.class, dependsOnTaskNames, script);
+    public static String buildYarnTaskDefinition(@Nonnull final String taskName,
+        @Nonnull final Set<String> dependsOnTaskNames, @Nullable final String script) {
+        return buildTaskDefinition(taskName, RunYarn.class, dependsOnTaskNames, script);
     }
 
     @Nonnull
@@ -73,7 +92,7 @@ public final class TaskTypes {
 
     @Nonnull
     private static String buildTaskDefinition(@Nonnull final String taskName, @Nonnull final Class<?> taskTypeClass,
-        @Nonnull final Iterable<String> dependsOnTaskNames, @Nullable final String script) {
+        @Nonnull final Set<String> dependsOnTaskNames, @Nullable final String script) {
         final StringBuilder definition = new StringBuilder();
         definition.append("tasks.register('");
         definition.append(taskName);
