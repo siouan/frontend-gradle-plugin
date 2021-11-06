@@ -4,7 +4,7 @@ _Note_: this example uses Groovy syntax, but can be easily translated to the Kot
 introduced [here][dsl-reference]. This example shall be customized to match exactly the developer needs and contraints.
 
 This example demonstrates the following feature:
-- Definition of a frontend application build using [npm][npm] or [Yarn][classic-yarn].
+- Definition of a frontend application build using [npm][npm] or [Yarn][yarn].
 
 ### Requirements
 
