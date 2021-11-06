@@ -24,8 +24,6 @@ class ResolveExecutablePathTest {
 
     private static final Path NODE_INSTALL_DIRECTORY_PATH = PathFixture.ANY_PATH.resolve("node");
 
-    private static final Path YARN_INSTALL_DIRECTORY_PATH = PathFixture.ANY_PATH.resolve("yarn");
-
     @Mock
     private GetNodeExecutablePath getNodeExecutablePath;
 
@@ -47,9 +45,8 @@ class ResolveExecutablePathTest {
         final Exception expectedException = new ExecutableNotFoundException(Paths.get("node"));
         when(getNodeExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenThrow(expectedException);
 
-        assertThatThrownBy(
-            () -> usecase.execute(ExecutableType.NODE, NODE_INSTALL_DIRECTORY_PATH, null, platform)).isEqualTo(
-            expectedException);
+        assertThatThrownBy(() -> usecase.execute(ExecutableType.NODE, NODE_INSTALL_DIRECTORY_PATH, platform))
+            .isEqualTo(expectedException);
 
         verifyNoMoreInteractions(getNodeExecutablePath, getNpmExecutablePath, getNpxExecutablePath,
             getYarnExecutablePath);
@@ -61,9 +58,8 @@ class ResolveExecutablePathTest {
         final Exception expectedException = new ExecutableNotFoundException(Paths.get("npm"));
         when(getNpmExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenThrow(expectedException);
 
-        assertThatThrownBy(
-            () -> usecase.execute(ExecutableType.NPM, NODE_INSTALL_DIRECTORY_PATH, null, platform)).isEqualTo(
-            expectedException);
+        assertThatThrownBy(() -> usecase.execute(ExecutableType.NPM, NODE_INSTALL_DIRECTORY_PATH, platform))
+            .isEqualTo(expectedException);
 
         verifyNoMoreInteractions(getNodeExecutablePath, getNpmExecutablePath, getNpxExecutablePath,
             getYarnExecutablePath);
@@ -75,9 +71,8 @@ class ResolveExecutablePathTest {
         final Exception expectedException = new ExecutableNotFoundException(Paths.get("npx"));
         when(getNpxExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenThrow(expectedException);
 
-        assertThatThrownBy(
-            () -> usecase.execute(ExecutableType.NPX, NODE_INSTALL_DIRECTORY_PATH, null, platform)).isEqualTo(
-            expectedException);
+        assertThatThrownBy(() -> usecase.execute(ExecutableType.NPX, NODE_INSTALL_DIRECTORY_PATH, platform))
+            .isEqualTo(expectedException);
 
         verifyNoMoreInteractions(getNodeExecutablePath, getNpmExecutablePath, getNpxExecutablePath,
             getYarnExecutablePath);
@@ -87,11 +82,10 @@ class ResolveExecutablePathTest {
     void shouldFailResolvingExecutablePathWhenYarnExecutableCannotBeFound() throws ExecutableNotFoundException {
         final Platform platform = PlatformFixture.aPlatform();
         final Exception expectedException = new ExecutableNotFoundException(Paths.get("yarn"));
-        when(getYarnExecutablePath.execute(YARN_INSTALL_DIRECTORY_PATH, platform)).thenThrow(expectedException);
+        when(getYarnExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenThrow(expectedException);
 
-        assertThatThrownBy(
-            () -> usecase.execute(ExecutableType.YARN, NODE_INSTALL_DIRECTORY_PATH, YARN_INSTALL_DIRECTORY_PATH,
-                platform)).isEqualTo(expectedException);
+        assertThatThrownBy(() -> usecase.execute(ExecutableType.YARN, NODE_INSTALL_DIRECTORY_PATH, platform))
+            .isEqualTo(expectedException);
 
         verifyNoMoreInteractions(getNodeExecutablePath, getNpmExecutablePath, getNpxExecutablePath,
             getYarnExecutablePath);
@@ -103,8 +97,8 @@ class ResolveExecutablePathTest {
         final Path nodeExecutablePath = Paths.get("node");
         when(getNodeExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenReturn(nodeExecutablePath);
 
-        assertThat(usecase.execute(ExecutableType.NODE, NODE_INSTALL_DIRECTORY_PATH, null, platform)).isEqualTo(
-            nodeExecutablePath);
+        assertThat(usecase.execute(ExecutableType.NODE, NODE_INSTALL_DIRECTORY_PATH, platform))
+            .isEqualTo(nodeExecutablePath);
 
         verifyNoMoreInteractions(getNodeExecutablePath, getNpmExecutablePath, getNpxExecutablePath,
             getYarnExecutablePath);
@@ -116,8 +110,8 @@ class ResolveExecutablePathTest {
         final Path nodeExecutablePath = Paths.get("node");
         when(getNpmExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenReturn(nodeExecutablePath);
 
-        assertThat(usecase.execute(ExecutableType.NPM, NODE_INSTALL_DIRECTORY_PATH, null, platform)).isEqualTo(
-            nodeExecutablePath);
+        assertThat(usecase.execute(ExecutableType.NPM, NODE_INSTALL_DIRECTORY_PATH, platform))
+            .isEqualTo(nodeExecutablePath);
 
         verifyNoMoreInteractions(getNodeExecutablePath, getNpmExecutablePath, getNpxExecutablePath,
             getYarnExecutablePath);
@@ -129,8 +123,8 @@ class ResolveExecutablePathTest {
         final Path nodeExecutablePath = Paths.get("node");
         when(getNpxExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenReturn(nodeExecutablePath);
 
-        assertThat(usecase.execute(ExecutableType.NPX, NODE_INSTALL_DIRECTORY_PATH, null, platform)).isEqualTo(
-            nodeExecutablePath);
+        assertThat(usecase.execute(ExecutableType.NPX, NODE_INSTALL_DIRECTORY_PATH, platform))
+            .isEqualTo(nodeExecutablePath);
 
         verifyNoMoreInteractions(getNodeExecutablePath, getNpmExecutablePath, getNpxExecutablePath,
             getYarnExecutablePath);
@@ -140,10 +134,10 @@ class ResolveExecutablePathTest {
     void shouldResolveYarnExecutablePath() throws ExecutableNotFoundException {
         final Platform platform = PlatformFixture.aPlatform();
         final Path yarnExecutablePath = Paths.get("yarn");
-        when(getYarnExecutablePath.execute(YARN_INSTALL_DIRECTORY_PATH, platform)).thenReturn(yarnExecutablePath);
+        when(getYarnExecutablePath.execute(NODE_INSTALL_DIRECTORY_PATH, platform)).thenReturn(yarnExecutablePath);
 
-        assertThat(usecase.execute(ExecutableType.YARN, NODE_INSTALL_DIRECTORY_PATH, YARN_INSTALL_DIRECTORY_PATH,
-            platform)).isEqualTo(yarnExecutablePath);
+        assertThat(usecase.execute(ExecutableType.YARN, NODE_INSTALL_DIRECTORY_PATH, platform))
+            .isEqualTo(yarnExecutablePath);
 
         verifyNoMoreInteractions(getNodeExecutablePath, getNpmExecutablePath, getNpxExecutablePath,
             getYarnExecutablePath);
@@ -153,8 +147,8 @@ class ResolveExecutablePathTest {
     void shouldFailResolvingExecutablePathWhenExecutableTypeIsUnknown() {
         final Platform platform = PlatformFixture.aPlatform();
 
-        assertThatThrownBy(() -> usecase.execute("JAVAC", NODE_INSTALL_DIRECTORY_PATH, null, platform)).isInstanceOf(
-            IllegalArgumentException.class);
+        assertThatThrownBy(() -> usecase.execute("JAVAC", NODE_INSTALL_DIRECTORY_PATH, platform))
+            .isInstanceOf(IllegalArgumentException.class);
 
         verifyNoMoreInteractions(getNodeExecutablePath, getNpmExecutablePath, getNpxExecutablePath,
             getYarnExecutablePath);

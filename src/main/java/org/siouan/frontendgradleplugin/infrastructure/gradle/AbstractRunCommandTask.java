@@ -15,6 +15,7 @@ import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.process.ExecOperations;
 import org.siouan.frontendgradleplugin.domain.exception.ExecutableNotFoundException;
+import org.siouan.frontendgradleplugin.domain.exception.NonRunnableTaskException;
 import org.siouan.frontendgradleplugin.domain.model.Environment;
 import org.siouan.frontendgradleplugin.domain.model.Platform;
 import org.siouan.frontendgradleplugin.domain.model.SystemSettingsProvider;
@@ -54,11 +55,6 @@ public abstract class AbstractRunCommandTask extends DefaultTask {
     final Property<Boolean> yarnEnabled;
 
     /**
-     * Directory where the Yarn distribution is installed.
-     */
-    final DirectoryProperty yarnInstallDirectory;
-
-    /**
      * The command to execute.
      */
     final Property<String> script;
@@ -70,7 +66,6 @@ public abstract class AbstractRunCommandTask extends DefaultTask {
         this.packageJsonDirectory = objectFactory.property(File.class);
         this.nodeInstallDirectory = objectFactory.directoryProperty();
         this.yarnEnabled = objectFactory.property(Boolean.class);
-        this.yarnInstallDirectory = objectFactory.directoryProperty();
         this.script = objectFactory.property(String.class);
         final FrontendExtension extension;
         try {
@@ -81,9 +76,6 @@ public abstract class AbstractRunCommandTask extends DefaultTask {
         this.packageJsonDirectory.set(extension.getPackageJsonDirectory());
         this.nodeInstallDirectory.set(extension.getNodeInstallDirectory());
         this.yarnEnabled.set(extension.getYarnEnabled());
-        if (extension.getYarnEnabled().get()) {
-            this.yarnInstallDirectory.set(extension.getYarnInstallDirectory());
-        }
     }
 
     @Input
@@ -98,36 +90,42 @@ public abstract class AbstractRunCommandTask extends DefaultTask {
     }
 
     @Internal
-    public DirectoryProperty getYarnInstallDirectory() {
-        return yarnInstallDirectory;
-    }
-
-    @Internal
     protected abstract String getExecutableType();
+
+    /**
+     * Asserts this task is runnable.
+     *
+     * @throws NonRunnableTaskException When the task is not runnable.
+     */
+    protected void assertThatTaskIsRunnable() throws NonRunnableTaskException {
+        if (!script.isPresent()) {
+            throw new NonRunnableTaskException("Missing property 'script'.");
+        }
+    }
 
     /**
      * Executes the task. If a command has been provided, it is run with the selected type of executable. Otherwise, the
      * task does nothing.
      *
+     * @throws NonRunnableTaskException When the task is not runnable.
      * @throws ExecutableNotFoundException When the executable cannot be found (Node, npx, npm, Yarn).
      * @throws BeanRegistryException If a component cannot be instanciated.
      */
     @TaskAction
-    public void execute() throws ExecutableNotFoundException, BeanRegistryException {
-        if (script.isPresent()) {
-            Beans.getBean(beanRegistryId, TaskLoggerConfigurer.class).initLoggerAdapter(this);
+    public void execute() throws NonRunnableTaskException, ExecutableNotFoundException, BeanRegistryException {
+        assertThatTaskIsRunnable();
 
-            final SystemSettingsProvider systemSettingsProvider = Beans.getBean(beanRegistryId,
-                SystemSettingsProvider.class);
-            final Platform platform = new Platform(systemSettingsProvider.getSystemJvmArch(),
-                systemSettingsProvider.getSystemOsName(),
-                new Environment(systemSettingsProvider.getNodejsHomePath(), systemSettingsProvider.getYarnHomePath()));
-            getLogger().debug("Platform: {}", platform);
-            Beans
-                .getBean(beanRegistryId, GradleScriptRunnerAdapter.class)
-                .execute(new ScriptProperties(execOperations, packageJsonDirectory.map(File::toPath).get(),
-                    getExecutableType(), nodeInstallDirectory.getAsFile().map(File::toPath).getOrNull(),
-                    yarnInstallDirectory.getAsFile().map(File::toPath).getOrNull(), script.get(), platform));
-        }
+        Beans.getBean(beanRegistryId, TaskLoggerConfigurer.class).initLoggerAdapter(this);
+
+        final SystemSettingsProvider systemSettingsProvider = Beans.getBean(beanRegistryId,
+            SystemSettingsProvider.class);
+        final Platform platform = new Platform(systemSettingsProvider.getSystemJvmArch(),
+            systemSettingsProvider.getSystemOsName(), new Environment(systemSettingsProvider.getNodejsHomePath()));
+        getLogger().debug("Platform: {}", platform);
+        Beans
+            .getBean(beanRegistryId, GradleScriptRunnerAdapter.class)
+            .execute(
+                new ScriptProperties(execOperations, packageJsonDirectory.map(File::toPath).get(), getExecutableType(),
+                    nodeInstallDirectory.getAsFile().map(File::toPath).getOrNull(), script.get(), platform));
     }
 }

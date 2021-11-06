@@ -68,7 +68,6 @@ public class ResolveExecutionSettings {
      * @param packageJsonDirectoryPath Path to the {@code package.json} file, used as the working directory.
      * @param executableType Type of executable.
      * @param nodeInstallDirectoryPath Path to the Node install directory.
-     * @param yarnInstallDirectoryPath Path to the Yarn install directory.
      * @param platform Underlying platform.
      * @param script Script.
      * @return Appropriate settings to run the script on the given platform.
@@ -77,11 +76,11 @@ public class ResolveExecutionSettings {
      */
     @Nonnull
     public ExecutionSettings execute(@Nonnull final Path packageJsonDirectoryPath, @Nonnull final String executableType,
-        @Nullable final Path nodeInstallDirectoryPath, @Nullable final Path yarnInstallDirectoryPath,
-        @Nonnull final Platform platform, @Nonnull final String script) throws ExecutableNotFoundException {
+        @Nullable final Path nodeInstallDirectoryPath, @Nonnull final Platform platform, @Nonnull final String script)
+        throws ExecutableNotFoundException {
         final Path nodeExecutablePath = getNodeExecutablePath.execute(nodeInstallDirectoryPath, platform);
         final Path scriptExecutablePath = resolveExecutablePath.execute(executableType, nodeInstallDirectoryPath,
-            yarnInstallDirectoryPath, platform);
+            platform);
 
         final Path executable;
         final List<String> args = new ArrayList<>();

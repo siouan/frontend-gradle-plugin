@@ -54,13 +54,12 @@ class GradleScriptRunnerAdapterTest {
     @Test
     void shouldFailResolvingExecSettingsWhenExecutableIsNotFound() throws ExecutableNotFoundException {
         final ScriptProperties scriptProperties = new ScriptProperties(execOperations,
-            PathFixture.ANY_PATH.resolve("frontend"), ExecutableType.NPM, PathFixture.ANY_PATH.resolve("node"),
-            PathFixture.ANY_PATH.resolve("yarn"), SCRIPT, PlatformFixture.LOCAL_PLATFORM);
+            PathFixture.ANY_PATH.resolve("frontend"), ExecutableType.NPM, PathFixture.ANY_PATH.resolve("node"), SCRIPT,
+            PlatformFixture.LOCAL_PLATFORM);
         final ExecutableNotFoundException expectedException = new ExecutableNotFoundException(Paths.get("exe"));
         when(resolveExecutionSettings.execute(scriptProperties.getPackageJsonDirectoryPath(),
             scriptProperties.getExecutableType(), scriptProperties.getNodeInstallDirectory(),
-            scriptProperties.getYarnInstallDirectory(), scriptProperties.getPlatform(), scriptProperties.getScript()))
-            .thenThrow(expectedException);
+            scriptProperties.getPlatform(), scriptProperties.getScript())).thenThrow(expectedException);
 
         assertThatThrownBy(() -> adapter.execute(scriptProperties)).isEqualTo(expectedException);
 
@@ -71,16 +70,15 @@ class GradleScriptRunnerAdapterTest {
     void shouldRunScriptWhenSettingsAreResolved() throws ExecutableNotFoundException {
         final Path nodeInstallationDirectory = PathFixture.ANY_PATH.resolve("node");
         final ScriptProperties scriptProperties = new ScriptProperties(execOperations,
-            PathFixture.ANY_PATH.resolve("frontend"), ExecutableType.NPM, nodeInstallationDirectory,
-            PathFixture.ANY_PATH.resolve("yarn"), SCRIPT, PlatformFixture.LOCAL_PLATFORM);
+            PathFixture.ANY_PATH.resolve("frontend"), ExecutableType.NPM, nodeInstallationDirectory, SCRIPT,
+            PlatformFixture.LOCAL_PLATFORM);
         final Set<Path> executablePaths = emptySet();
         final List<String> arguments = emptyList();
         final ExecutionSettings executionSettings = new ExecutionSettings(PathFixture.ANY_PATH.resolve("work"),
             executablePaths, nodeInstallationDirectory.resolve("npm"), arguments);
         when(resolveExecutionSettings.execute(scriptProperties.getPackageJsonDirectoryPath(),
             scriptProperties.getExecutableType(), scriptProperties.getNodeInstallDirectory(),
-            scriptProperties.getYarnInstallDirectory(), scriptProperties.getPlatform(), scriptProperties.getScript()))
-            .thenReturn(executionSettings);
+            scriptProperties.getPlatform(), scriptProperties.getScript())).thenReturn(executionSettings);
         final ExecResult execResult = mock(ExecResult.class);
         when(execOperations.exec(
             argThat(new ExecSpecActionMatcher(new ExecSpecAction(executionSettings, execSpec -> {})))))
