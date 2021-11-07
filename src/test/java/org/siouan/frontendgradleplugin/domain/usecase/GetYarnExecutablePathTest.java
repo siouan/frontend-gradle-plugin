@@ -23,7 +23,7 @@ class GetYarnExecutablePathTest {
 
     @Test
     void shouldReturnTwoExecutableWhenOsIsWindows() {
-        assertThat(usecase.getWindowsRelativeExecutablePath()).isEqualTo(Paths.get("bin", "yarn.cmd"));
+        assertThat(usecase.getWindowsRelativeExecutablePath()).isEqualTo(Paths.get("yarn.cmd"));
 
         verifyNoMoreInteractions(fileManager);
     }

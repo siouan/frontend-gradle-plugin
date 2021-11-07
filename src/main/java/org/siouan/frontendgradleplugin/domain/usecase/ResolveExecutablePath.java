@@ -37,7 +37,6 @@ public class ResolveExecutablePath {
      *
      * @param executableType Type of executable.
      * @param nodeInstallDirectoryPath Path to the Node install directory.
-     * @param yarnInstallDirectoryPath Path to the Yarn install directory.
      * @param platform Underlying platform.
      * @return Executable path.
      * @throws ExecutableNotFoundException If the executable is not found in one of the install directories.
@@ -45,8 +44,7 @@ public class ResolveExecutablePath {
      */
     @Nonnull
     public Path execute(@Nonnull final String executableType, @Nullable final Path nodeInstallDirectoryPath,
-        @Nullable final Path yarnInstallDirectoryPath, @Nonnull final Platform platform)
-        throws ExecutableNotFoundException {
+        @Nonnull final Platform platform) throws ExecutableNotFoundException {
         switch (executableType) {
         case ExecutableType.NODE:
             return getNodeExecutablePath.execute(nodeInstallDirectoryPath, platform);
@@ -55,7 +53,7 @@ public class ResolveExecutablePath {
         case ExecutableType.NPX:
             return getNpxExecutablePath.execute(nodeInstallDirectoryPath, platform);
         case ExecutableType.YARN:
-            return getYarnExecutablePath.execute(yarnInstallDirectoryPath, platform);
+            return getYarnExecutablePath.execute(nodeInstallDirectoryPath, platform);
         default:
             throw new IllegalArgumentException("Unsupported type of execution: " + executableType);
         }

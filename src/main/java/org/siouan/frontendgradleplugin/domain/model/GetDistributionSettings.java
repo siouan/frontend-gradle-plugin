@@ -11,8 +11,6 @@ import javax.annotation.Nullable;
  */
 public class GetDistributionSettings {
 
-    private final String distributionId;
-
     private final String version;
 
     private final Platform platform;
@@ -30,7 +28,6 @@ public class GetDistributionSettings {
     /**
      * Builds settings to get a distribution.
      *
-     * @param distributionId Distribution ID.
      * @param platform Underlying platform.
      * @param version Version.
      * @param distributionUrlRoot URL root part to build the exact URL to download the distribution.
@@ -38,13 +35,11 @@ public class GetDistributionSettings {
      * @param distributionServerCredentials Credentials to authenticate on the distribution server before download.
      * @param proxySettings Proxy settings used for downloads.
      * @param temporaryDirectoryPath Path to a temporary directory.
-     * @see DistributionId
      */
-    public GetDistributionSettings(@Nonnull String distributionId, @Nonnull final Platform platform,
-        @Nonnull final String version, @Nonnull final String distributionUrlRoot,
-        @Nonnull final String distributionUrlPathPattern, @Nullable final Credentials distributionServerCredentials,
-        @Nullable final ProxySettings proxySettings, @Nonnull final Path temporaryDirectoryPath) {
-        this.distributionId = distributionId;
+    public GetDistributionSettings(@Nonnull final Platform platform, @Nonnull final String version,
+        @Nonnull final String distributionUrlRoot, @Nonnull final String distributionUrlPathPattern,
+        @Nullable final Credentials distributionServerCredentials, @Nullable final ProxySettings proxySettings,
+        @Nonnull final Path temporaryDirectoryPath) {
         this.platform = platform;
         this.version = version;
         this.distributionUrlRoot = distributionUrlRoot;
@@ -52,16 +47,6 @@ public class GetDistributionSettings {
         this.distributionServerCredentials = distributionServerCredentials;
         this.proxySettings = proxySettings;
         this.temporaryDirectoryPath = temporaryDirectoryPath;
-    }
-
-    /**
-     * Gets the distribution ID.
-     *
-     * @return ID.
-     */
-    @Nonnull
-    public String getDistributionId() {
-        return distributionId;
     }
 
     /**

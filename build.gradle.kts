@@ -11,6 +11,7 @@ val fgpVcsUrl: String by extra
 val fgpGradlePluginPortalTags: String by extra
 
 plugins {
+    id("idea")
     id("java-gradle-plugin")
     id("jacoco")
     id("com.gradle.plugin-publish")
@@ -51,15 +52,15 @@ configurations["intTestRuntimeOnly"]
 
 dependencies {
     implementation(gradleApi())
-    implementation("org.apache.httpcomponents.client5:httpclient5:5.1")
+    implementation("org.apache.httpcomponents.client5:httpclient5:5.1.1")
     implementation("org.apache.commons:commons-compress:1.21")
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.2")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.7.2")
-    testImplementation("org.mockito:mockito-core:3.11.2")
-    testImplementation("org.mockito:mockito-junit-jupiter:3.11.2")
-    testImplementation("org.assertj:assertj-core:3.20.2")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.8.1")
+    testImplementation("org.mockito:mockito-core:4.0.0")
+    testImplementation("org.mockito:mockito-junit-jupiter:4.0.0")
+    testImplementation("org.assertj:assertj-core:3.21.0")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
 
     intTestImplementation("com.github.tomakehurst:wiremock:2.27.2")
 }
@@ -73,7 +74,10 @@ tasks.register<Test>("integrationTest") {
     group = "verification"
     testClassesDirs = sourceSets["intTest"].output.classesDirs
     classpath = sourceSets["intTest"].runtimeClasspath
+    // Yarn immutable installs prevents failures in integration tests due to missing yarn.lock file.
+    environment["YARN_ENABLE_IMMUTABLE_INSTALLS"] = "false"
     shouldRunAfter("test")
+    outputs.upToDateWhen { false }
 }
 
 tasks.withType<Test> {
@@ -85,15 +89,34 @@ tasks.named<Task>("check") {
 }
 
 tasks.named<JacocoReport>("jacocoTestReport") {
-    dependsOn(tasks.named("integrationTest"))
-    executionData.setFrom(file("${project.buildDir}/jacoco/test.exec"), file("${project.buildDir}/jacoco/integrationTest.exec"))
+    dependsOn(tasks.named("test"), tasks.named("integrationTest"))
+    executionData.setFrom(
+        file("${project.buildDir}/jacoco/test.exec"),
+        file("${project.buildDir}/jacoco/integrationTest.exec")
+    )
     reports {
-        xml.isEnabled = true
-        xml.destination = file("${buildDir}/reports/jacoco/report.xml")
+        xml.required.set(true)
+        xml.outputLocation.set(file("${buildDir}/reports/jacoco/report.xml"))
     }
 }
 
 gradle.addListener(GradleTestListener(logger))
+
+idea {
+    module {
+        // Force integration test source set as test folder
+        val testSrcDirs = testSourceDirs
+        testSrcDirs.addAll(project.sourceSets.getByName("intTest").java.srcDirs)
+        testSourceDirs = testSrcDirs
+        val testResDirs = testResourceDirs
+        testResDirs.addAll(project.sourceSets.getByName("intTest").resources.srcDirs)
+        testResourceDirs = testResDirs
+    }
+}
+
+jacoco {
+    toolVersion = "0.8.7"
+}
 
 gradlePlugin {
     plugins {
@@ -123,7 +146,7 @@ sonarqube {
         property("sonar.organization", "siouan")
         property("sonar.projectKey", "siouan_frontend-gradle-plugin")
         property("sonar.projectName", "frontend-gradle-plugin")
-        property("sonar.projectVersion", "5.3.0")
+        property("sonar.projectVersion", fgpVersion)
 
         property("sonar.links.homepage", "https://github.com/siouan/frontend-gradle-plugin")
         property("sonar.links.ci", "https://travis-ci.com/siouan/frontend-gradle-plugin")
@@ -136,10 +159,13 @@ sonarqube {
         property("sonar.java.binaries", "build/classes/java/main")
         property("sonar.java.test.binaries", "build/classes/java/test,build/classes/java/intTest")
         property("sonar.junit.reportPaths", "build/test-results/test/,build/test-results/integrationTest/")
-        property("sonar.coverage.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco/report.xml")
+        property("sonar.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco/report.xml")
+        property("sonar.verbose", true)
 
         // Unrelevant duplications detected on task inputs
-        property("sonar.cpd.exclusions", "**/org/siouan/frontendgradleplugin/domain/model/*.java,**/org/siouan/frontendgradleplugin/domain/usecase/Get*ExecutablePath.java")
-
+        property(
+            "sonar.cpd.exclusions",
+            "**/org/siouan/frontendgradleplugin/domain/model/*.java,**/org/siouan/frontendgradleplugin/domain/usecase/Get*ExecutablePath.java"
+        )
     }
 }

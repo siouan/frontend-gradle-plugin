@@ -17,16 +17,16 @@ Hi,
 
 **Description**
 
-- What I am trying to do?
-- What's wrong?
-- Do I have a workaround to share?
+What I am trying to do: ...
+Expected results: ...
+Actual results: ...
 
 **Environment**
  
 - OS: [e.g. Ubuntu 18.04.1, Windows 10 Pro, Mac OS X]
 - JDK: [e.g. Oracle JDK 11 64 bits]
 - Gradle: [e.g. Gradle 6.8]
-- Frontend Gradle plugin: [e.g. 5.3.0 JDK 11]
+- Frontend Gradle plugin: [e.g. 6.0.0 JDK 11]
 
 Settings in `build.gradle[.kts]` file:
 ```groovy

@@ -27,6 +27,8 @@
             <fgp-sub-sub-title>Built-in tasks</fgp-sub-sub-title>
 
             <fgp-install-node-task />
+            <fgp-install-global-yarn-task />
+            <fgp-enable-yarn-berry-task />
             <fgp-install-yarn-task />
             <fgp-install-frontend-task />
             <fgp-clean-frontend-task />
@@ -39,8 +41,9 @@
             <fgp-sub-sub-title>Additional types</fgp-sub-sub-title>
 
             <fgp-run-node-task-type />
-            <fgp-run-npm-yarn-task-type />
+            <fgp-run-npm-task-type />
             <fgp-run-npx-task-type />
+            <fgp-run-yarn-task-type />
         </section>
 
         <section>
@@ -137,16 +140,19 @@ import fgpCheckFrontendTask from "../components/task/check-frontend-task";
 import fgpCleanFrontendTask from "../components/task/clean-frontend-task";
 import fgpCodeComment from "../components/code-comment";
 import fgpDependencyTree from "../components/task/dependency-tree";
+import fgpEnableYarnBerryTask from "../components/task/enable-yarn-berry-task";
 import fgpGradleScripts from "../components/gradle-scripts";
 import fgpInstallFrontendTask from "../components/task/install-frontend-task";
 import fgpInstallNodeTask from "../components/task/install-node-task";
+import fgpInstallGlobalYarnTask from "../components/task/install-global-yarn-task";
 import fgpInstallYarnTask from "../components/task/install-yarn-task";
 import fgpMainTitle from "../components/main-title";
 import fgpPageMeta from "../mixin/page-meta";
 import fgpPublishFrontendTask from "../components/task/publish-frontend-task";
 import fgpRunNodeTaskType from "../components/task/run-node-task-type";
-import fgpRunNpmYarnTaskType from "../components/task/run-npm-yarn-task-type";
+import fgpRunNpmTaskType from "../components/task/run-npm-task-type";
 import fgpRunNpxTaskType from "../components/task/run-npx-task-type";
+import fgpRunYarnTaskType from "../components/task/run-yarn-task-type";
 import fgpSubSubTitle from "../components/sub-sub-title";
 import fgpSubTitle from "../components/sub-title";
 
@@ -157,15 +163,18 @@ export default Vue.component("fgp-node-npm-npx-yarn-tasks", {
         fgpCleanFrontendTask,
         fgpCodeComment,
         fgpDependencyTree,
+        fgpEnableYarnBerryTask,
         fgpGradleScripts,
         fgpInstallFrontendTask,
+        fgpInstallGlobalYarnTask,
         fgpInstallNodeTask,
         fgpInstallYarnTask,
         fgpMainTitle,
         fgpPublishFrontendTask,
         fgpRunNodeTaskType,
-        fgpRunNpmYarnTaskType,
+        fgpRunNpmTaskType,
         fgpRunNpxTaskType,
+        fgpRunYarnTaskType,
         fgpSubSubTitle,
         fgpSubTitle
     },

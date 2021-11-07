@@ -15,7 +15,7 @@
         <fgp-sub-title>Supported distributions</fgp-sub-title>
         <ul>
             <li><fgp-nodejs-link /> 6.2.1+</li>
-            <li><fgp-yarn-link /> 1.0+ (<fgp-yarn-link :version="2" /> initial support planned in release 6.0.0)</li>
+            <li><fgp-yarn-link /> 1.0+</li>
         </ul>
 
         <fgp-sub-title>Steps</fgp-sub-title>
@@ -23,7 +23,7 @@
             Starting from release <fgp-repo-link path="/releases/tag/v3.0.1">3.0.1</fgp-repo-link>, ID
             <fgp-code>org.siouan.frontend</fgp-code> and classpath
             <fgp-code>org.siouan:frontend-gradle-plugin:&lt;version></fgp-code> are deprecated. If you are already using
-            the plugin, we recommend <fgp-repo-link path="/releases/tag/v5.3.0">upgrading</fgp-repo-link> to the latest
+            the plugin, we recommend <fgp-repo-link path="/releases/tag/v6.0.0">upgrading</fgp-repo-link> to the latest
             release as soon as possible.
         </fgp-info>
         <ol>
@@ -41,17 +41,17 @@
                             <template v-slot:groovy>
 <pre><fgp-code>plugins {
     <fgp-code-comment>// For JDK 11+</fgp-code-comment>
-    id 'org.siouan.frontend-jdk11' version '5.3.0'
+    id 'org.siouan.frontend-jdk11' version '6.0.0'
     <fgp-code-comment>// For JDK 8+</fgp-code-comment>
-    id 'org.siouan.frontend-jdk8' version '5.3.0'
+    id 'org.siouan.frontend-jdk8' version '6.0.0'
 }</fgp-code></pre>
                             </template>
                             <template v-slot:kotlin>
 <pre><fgp-code>plugins {
     <fgp-code-comment>// For JDK 11+</fgp-code-comment>
-    id("org.siouan.frontend-jdk11") version "5.3.0"
+    id("org.siouan.frontend-jdk11") version "6.0.0"
     <fgp-code-comment>// For JDK 8+</fgp-code-comment>
-    id("org.siouan.frontend-jdk8") version "5.3.0"
+    id("org.siouan.frontend-jdk8") version "6.0.0"
 }</fgp-code></pre>
                             </template>
                         </fgp-gradle-scripts>
@@ -70,9 +70,9 @@
     }
     dependencies {
         <fgp-code-comment>// For JDK 11+</fgp-code-comment>
-        classpath 'org.siouan:frontend-gradle-plugin-jdk11:5.3.0'
+        classpath 'org.siouan:frontend-gradle-plugin-jdk11:6.0.0'
         <fgp-code-comment>// For JDK 8+</fgp-code-comment>
-        classpath 'org.siouan:frontend-gradle-plugin-jdk8:5.3.0'
+        classpath 'org.siouan:frontend-gradle-plugin-jdk8:6.0.0'
     }
 }
 
@@ -88,9 +88,9 @@ apply plugin: 'org.siouan.frontend-jdk8'</fgp-code></pre>
     }
     dependencies {
         <fgp-code-comment>// For JDK 11+</fgp-code-comment>
-        classpath("org.siouan:frontend-gradle-plugin-jdk11:5.3.0")
+        classpath("org.siouan:frontend-gradle-plugin-jdk11:6.0.0")
         <fgp-code-comment>// For JDK 8+</fgp-code-comment>
-        classpath("org.siouan:frontend-gradle-plugin-jdk8:5.3.0")
+        classpath("org.siouan:frontend-gradle-plugin-jdk8:6.0.0")
     }
 }
 
@@ -156,7 +156,7 @@ export default Vue.component("fgp-getting-started", {
     mixins: [fgpAppConfig, fgpPageMeta],
     data() {
         return {
-            htmlTitle: "Getting started: building a Javascript application with Gradle and Node.js",
+            htmlTitle: "Getting started: building a Javascript application with the Gradle Node plugin",
             linkCanonicalHref: process.env.FGP_WEBSITE_URL + 'getting-started/',
             metaDescription: "Guide to get started with the plugin: requirements, supported Node.js and Yarn distributions, installation steps."
         }

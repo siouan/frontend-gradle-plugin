@@ -68,6 +68,4 @@ public interface SystemSettingsProvider {
     String getSystemOsName();
 
     Path getNodejsHomePath();
-
-    Path getYarnHomePath();
 }

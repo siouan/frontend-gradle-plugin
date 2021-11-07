@@ -1,6 +1,6 @@
 <h2 align="center">Frontend Gradle plugin - Integrated <a href="https://nodejs.org/" title="Node.js">Node.js</a>, <a href="https://www.npmjs.com/" title="npm">npm</a>, <a href="https://yarnpkg.com/" title="Yarn">Yarn</a> builds</h2> 
 <p align="center">
-    <a href="https://github.com/siouan/frontend-gradle-plugin/releases/tag/v5.3.0"><img src="https://img.shields.io/badge/Latest%20release-5.3.0-blue.svg" alt="Latest release 5.3.0"/></a>
+    <a href="https://github.com/siouan/frontend-gradle-plugin/releases/tag/v6.0.0"><img src="https://img.shields.io/badge/Latest%20release-6.0.0-blue.svg" alt="Latest release 6.0.0"/></a>
     <a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-green.svg" alt="License Apache 2.0"/></a>
     <br/>
     <a href="https://github.com/siouan/frontend-gradle-plugin/actions/workflows/build.yml"><img src="https://github.com/siouan/frontend-gradle-plugin/actions/workflows/build.yml/badge.svg?branch=master" alt="Build status"/></a>
@@ -56,6 +56,7 @@ With their feedback, plugin improvement is possible. Special thanks to:
 @[napstr](https://github.com/napstr),
 @[nitzan-n](https://github.com/nitzan-n),
 @[nuth](https://github.com/nuth),
+@[pmwmedia](https://github.com/pmwmedia),
 @[rolaca11](https://github.com/rolaca11),
 @[stephanebastian](https://github.com/stephanebastian),
 @[TapaiBalazs](https://github.com/TapaiBalazs),

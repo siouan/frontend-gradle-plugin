@@ -1,7 +1,5 @@
 <template>
-    <fgp-link :href="yarnUrls[version - 1]" :title="$t(`navigation.yarn${version}.title`)">{{
-        $t(`navigation.yarn${version}.label`)
-    }}</fgp-link>
+    <fgp-link href="https://yarnpkg.com/" :title="$t('navigation.yarnBerry.title')">{{ label }}</fgp-link>
 </template>
 
 <script>
@@ -11,15 +9,15 @@ import fgpLink from "./link";
 export default Vue.component("fgp-yarn-link", {
     components: { fgpLink },
     props: {
-        version: {
-            type: Number,
-            default: 1
+        labelKey: {
+            type: String,
+            default: 'navigation.yarnBerry.label'
         }
     },
-    data() {
-        return {
-            yarnUrls: ["https://classic.yarnpkg.com/", "https://yarnpkg.com/"]
-        };
+    computed: {
+        label() {
+            return this.$t(this.labelKey);
+        }
     }
 });
 </script>

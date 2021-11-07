@@ -53,7 +53,7 @@ export default Vue.component("fgp-faqs", {
     data() {
         return {
             htmlTitle: "Frequently asked questions",
-            metaDescription: "Using node, npm, npx, yarn executables provided in downloaded distributions.",
+            metaDescription: "Using node, npm, npx, yarn executables apart from Gradle and resolving common issues.",
             linkCanonicalHref: process.env.FGP_WEBSITE_URL + 'faqs/'
         }
     }

@@ -1,0 +1,1 @@
+__NUXT_JSONP__("manifest.js", {routes:["\u002Fconfiguration","\u002F","\u002Fnot-found","\u002Ffaqs","\u002Fnode-npm-npx-yarn-tasks","\u002Fgetting-started"]})

@@ -20,13 +20,15 @@
     <fgp-property-link name="nodeInstallDirectory" /> = file("${projectDir}/node")
 
     <fgp-property-link name="yarnEnabled" /> = false
+    <fgp-property-link name="yarnVersion" /> = '3.0.0'
+    <fgp-code-comment>// REMOVED PROPERTIES - PRIOR TO RELEASE 6.0.0</fgp-code-comment>
     <fgp-property-link name="yarnDistributionProvided" /> = false
-    <fgp-property-link name="yarnVersion" /> = '1.22.10'
     <fgp-property-link name="yarnDistributionUrlRoot" /> = 'https://github.com/yarnpkg/yarn/releases/download/'
     <fgp-property-link name="yarnDistributionUrlPathPattern" /> = 'vVERSION/yarn-vVERSION.tar.gz'
     <fgp-property-link name="yarnDistributionServerUsername" /> = 'username'
     <fgp-property-link name="yarnDistributionServerPassword" /> = 'password'
     <fgp-property-link name="yarnInstallDirectory" /> = file("${projectDir}/yarn")
+    <fgp-code-comment>// END OF REMOVED PROPERTIES</fgp-code-comment>
 
     <fgp-property-link name="installScript" /> = 'install'
     <fgp-property-link name="cleanScript" /> = 'run clean'
@@ -57,13 +59,15 @@
     <fgp-property-link name="nodeInstallDirectory" />.set(project.layout.projectDirectory.dir("node"))
 
     <fgp-property-link name="yarnEnabled" />.set(false)
+    <fgp-property-link name="yarnVersion" />.set("3.0.0")
+    <fgp-code-comment>// REMOVED PROPERTIES - PRIOR TO RELEASE 6.0.0</fgp-code-comment>
     <fgp-property-link name="yarnDistributionProvided" />.set(false)
-    <fgp-property-link name="yarnVersion" />.set("1.22.10")
     <fgp-property-link name="yarnDistributionUrlRoot" />.set("https://github.com/yarnpkg/yarn/releases/download/")
     <fgp-property-link name="yarnDistributionUrlPathPattern" />.set("vVERSION/yarn-vVERSION.tar.gz")
     <fgp-property-link name="yarnDistributionServerUsername" />.set("username")
     <fgp-property-link name="yarnDistributionServerPassword" />.set("password")
     <fgp-property-link name="yarnInstallDirectory" />.set(project.layout.projectDirectory.dir("yarn"))
+    <fgp-code-comment>// END OF REMOVED PROPERTIES</fgp-code-comment>
 
     <fgp-property-link name="installScript" />.set("install")
     <fgp-property-link name="cleanScript" />.set("run clean")
@@ -326,8 +330,8 @@ export default Vue.component("fgp-configuration", {
     mixins: [fgpPageMeta],
     data() {
         return {
-            htmlTitle: "Configuring Gradle to build a frontend application with node",
-            metaDescription: "Choose pre-installed packages or request Node.js/Yarn distributions download, plug scripts from a package.json file to build/test/publish frontend artifacts with Gradle.",
+            htmlTitle: "Configuring Gradle to build a Javascript application with node",
+            metaDescription: "Choose pre-installed packages or request Node.js distributions download, plug scripts from a package.json file to build/test/publish frontend artifacts with Gradle.",
             linkCanonicalHref: process.env.FGP_WEBSITE_URL + 'configuration/'
         }
     }
