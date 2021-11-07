@@ -7,8 +7,7 @@ module.exports = {
     parserOptions: {
         parser: "babel-eslint",
     },
-    extends: ["plugin:vue/recommended", "eslint:recommended", "prettier/vue"],
-    // extends: ['@nuxtjs', 'prettier', 'prettier/vue', 'plugin:prettier/recommended', 'plugin:nuxt/recommended'],
+    extends: ["plugin:vue/recommended", "eslint:recommended", "prettier"],
     plugins: ["vue", "prettier"],
     // add your custom rules here
     rules: {
