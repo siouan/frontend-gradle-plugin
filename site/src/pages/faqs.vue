@@ -16,11 +16,17 @@
                         downloaded by the plugin?
                     </fgp-site-link>
                 </li>
+                <li>
+                    <fgp-site-link path="#unsupported-platform-exception">
+                        What should I do when error <fgp-code>UnsupportedPlatformException</fgp-code> occurs?
+                    </fgp-site-link>
+                </li>
             </ul>
         </nav>
 
         <fgp-node-npm-npx-direct-use-faq id="node-npm-npx-direct-use" />
         <fgp-yarn-direct-use-faq id="yarn-direct-use" />
+        <fgp-unsupported-platform-exception-faq id="unsupported-platform-exception" />
     </section>
 </template>
 
@@ -31,6 +37,7 @@ import fgpMainTitle from "../components/main-title";
 import fgpNodeNpmNpxDirectUseFaq from "../components/faq/node-npm-npx-direct-use-faq";
 import fgpPageMeta from "../mixin/page-meta";
 import fgpSiteLink from "../components/link/site-link";
+import fgpUnsupportedPlatformExceptionFaq from "../components/faq/unsupported-platform-exception-faq";
 import fgpYarnDirectUseFaq from "../components/faq/yarn-direct-use-faq";
 
 export default Vue.component("fgp-faqs", {
@@ -39,6 +46,7 @@ export default Vue.component("fgp-faqs", {
         fgpMainTitle,
         fgpNodeNpmNpxDirectUseFaq,
         fgpSiteLink,
+        fgpUnsupportedPlatformExceptionFaq,
         fgpYarnDirectUseFaq
     },
     mixins: [fgpPageMeta],
