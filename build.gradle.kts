@@ -11,6 +11,7 @@ val fgpVcsUrl: String by extra
 val fgpGradlePluginPortalTags: String by extra
 
 plugins {
+    id("idea")
     id("java-gradle-plugin")
     id("jacoco")
     id("com.gradle.plugin-publish")
@@ -73,7 +74,10 @@ tasks.register<Test>("integrationTest") {
     group = "verification"
     testClassesDirs = sourceSets["intTest"].output.classesDirs
     classpath = sourceSets["intTest"].runtimeClasspath
+    // Yarn immutable installs prevents failures in integration tests due to missing yarn.lock file.
+    environment["YARN_ENABLE_IMMUTABLE_INSTALLS"] = "false"
     shouldRunAfter("test")
+    outputs.upToDateWhen { false }
 }
 
 tasks.withType<Test> {
@@ -85,8 +89,11 @@ tasks.named<Task>("check") {
 }
 
 tasks.named<JacocoReport>("jacocoTestReport") {
-    dependsOn(tasks.named("integrationTest"))
-    executionData.setFrom(file("${project.buildDir}/jacoco/test.exec"), file("${project.buildDir}/jacoco/integrationTest.exec"))
+    dependsOn(tasks.named("test"), tasks.named("integrationTest"))
+    executionData.setFrom(
+        file("${project.buildDir}/jacoco/test.exec"),
+        file("${project.buildDir}/jacoco/integrationTest.exec")
+    )
     reports {
         xml.required.set(true)
         xml.outputLocation.set(file("${buildDir}/reports/jacoco/report.xml"))
@@ -94,6 +101,22 @@ tasks.named<JacocoReport>("jacocoTestReport") {
 }
 
 gradle.addListener(GradleTestListener(logger))
+
+idea {
+    module {
+        // Force integration test source set as test folder
+        val testSrcDirs = testSourceDirs
+        testSrcDirs.addAll(project.sourceSets.getByName("intTest").java.srcDirs)
+        testSourceDirs = testSrcDirs
+        val testResDirs = testResourceDirs
+        testResDirs.addAll(project.sourceSets.getByName("intTest").resources.srcDirs)
+        testResourceDirs = testResDirs
+    }
+}
+
+jacoco {
+    toolVersion = "0.8.7"
+}
 
 gradlePlugin {
     plugins {
@@ -136,9 +159,13 @@ sonarqube {
         property("sonar.java.binaries", "build/classes/java/main")
         property("sonar.java.test.binaries", "build/classes/java/test,build/classes/java/intTest")
         property("sonar.junit.reportPaths", "build/test-results/test/,build/test-results/integrationTest/")
-        property("sonar.coverage.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco/report.xml")
+        property("sonar.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco/report.xml")
+        property("sonar.verbose", true)
 
         // Unrelevant duplications detected on task inputs
-        property("sonar.cpd.exclusions", "**/org/siouan/frontendgradleplugin/domain/model/*.java,**/org/siouan/frontendgradleplugin/domain/usecase/Get*ExecutablePath.java")
+        property(
+            "sonar.cpd.exclusions",
+            "**/org/siouan/frontendgradleplugin/domain/model/*.java,**/org/siouan/frontendgradleplugin/domain/usecase/Get*ExecutablePath.java"
+        )
     }
 }

@@ -150,7 +150,6 @@ public final class GradleHelper {
         arguments.addAll(asList(additionalArguments));
         final Map<String, String> originalEnvironment = System.getenv();
         final Map<String, String> additionalEnvironment = new HashMap<>();
-        additionalEnvironment.put("YARN_ENABLE_IMMUTABLE_INSTALLS", "false");
         if (nodejsHomePath != null) {
             if (Files.isDirectory(nodejsHomePath)) {
                 additionalEnvironment.put(FrontendGradlePlugin.NODEJS_HOME_ENV_VAR, nodejsHomePath.toString());
