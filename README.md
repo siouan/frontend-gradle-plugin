@@ -1,4 +1,4 @@
-<h2 align="center">Frontend Gradle plugin - Integrated <a href="https://nodejs.org/" title="Node.js">Node.js</a>, <a href="https://www.npmjs.com/" title="npm">npm</a>, <a href="https://yarnpkg.com/" title="Yarn">Yarn</a> builds</h2> 
+<h2 align="center">Frontend Gradle plugin<br />Integrated <a href="https://nodejs.org/" title="Node.js">Node.js</a>, <a href="https://www.npmjs.com/" title="npm">npm</a>, <a href="https://yarnpkg.com/" title="Yarn 2+">Yarn Berry</a>, <a href="https://classic.yarnpkg.com/" title="Yarn 1">Yarn Classic</a> builds</h2> 
 <p align="center">
     <a href="https://github.com/siouan/frontend-gradle-plugin/releases/tag/v6.0.0"><img src="https://img.shields.io/badge/Latest%20release-6.0.0-blue.svg" alt="Latest release 6.0.0"/></a>
     <a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-green.svg" alt="License Apache 2.0"/></a>
