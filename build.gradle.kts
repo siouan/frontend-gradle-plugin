@@ -52,15 +52,15 @@ configurations["intTestRuntimeOnly"]
 
 dependencies {
     implementation(gradleApi())
-    implementation("org.apache.httpcomponents.client5:httpclient5:5.1.1")
+    implementation("org.apache.httpcomponents.client5:httpclient5:5.1.3")
     implementation("org.apache.commons:commons-compress:1.21")
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.8.1")
-    testImplementation("org.mockito:mockito-core:4.0.0")
-    testImplementation("org.mockito:mockito-junit-jupiter:4.0.0")
-    testImplementation("org.assertj:assertj-core:3.21.0")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.0")
+    testImplementation("org.mockito:mockito-core:4.8.0")
+    testImplementation("org.mockito:mockito-junit-jupiter:4.8.0")
+    testImplementation("org.assertj:assertj-core:3.23.1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.0")
 
     intTestImplementation("com.github.tomakehurst:wiremock:2.27.2")
 }
@@ -115,7 +115,7 @@ idea {
 }
 
 jacoco {
-    toolVersion = "0.8.7"
+    toolVersion = "0.8.8"
 }
 
 gradlePlugin {
@@ -162,7 +162,7 @@ sonarqube {
         property("sonar.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco/report.xml")
         property("sonar.verbose", true)
 
-        // Unrelevant duplications detected on task inputs
+        // Irrelevant duplications detected on task inputs
         property(
             "sonar.cpd.exclusions",
             "**/org/siouan/frontendgradleplugin/domain/model/*.java,**/org/siouan/frontendgradleplugin/domain/usecase/Get*ExecutablePath.java"

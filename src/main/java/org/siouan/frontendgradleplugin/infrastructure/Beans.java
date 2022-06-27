@@ -24,7 +24,7 @@ public final class Beans {
     }
 
     /**
-     * Instanciates and initializes a new bean registry. If a registry already exists with the given ID, it is reset.
+     * Instantiates and initializes a new bean registry. If a registry already exists with the given ID, it is reset.
      *
      * @param registryId Registry ID.
      */
