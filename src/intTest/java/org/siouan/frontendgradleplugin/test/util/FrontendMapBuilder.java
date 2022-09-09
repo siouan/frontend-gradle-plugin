@@ -29,10 +29,6 @@ public final class FrontendMapBuilder {
 
     private Path nodeInstallDirectory;
 
-    private Boolean yarnEnabled;
-
-    private String yarnVersion;
-
     private String installScript;
 
     private String cleanScript;
@@ -115,18 +111,6 @@ public final class FrontendMapBuilder {
     @Nonnull
     public FrontendMapBuilder nodeInstallDirectory(@Nullable final Path nodeInstallDirectory) {
         this.nodeInstallDirectory = nodeInstallDirectory;
-        return this;
-    }
-
-    @Nonnull
-    public FrontendMapBuilder yarnEnabled(@Nullable final Boolean yarnEnabled) {
-        this.yarnEnabled = yarnEnabled;
-        return this;
-    }
-
-    @Nonnull
-    public FrontendMapBuilder yarnVersion(@Nullable final String yarnVersion) {
-        this.yarnVersion = yarnVersion;
         return this;
     }
 
@@ -243,12 +227,6 @@ public final class FrontendMapBuilder {
         }
         if (nodeInstallDirectory != null) {
             properties.put("nodeInstallDirectory", nodeInstallDirectory);
-        }
-        if (yarnEnabled != null) {
-            properties.put("yarnEnabled", yarnEnabled);
-        }
-        if (yarnVersion != null) {
-            properties.put("yarnVersion", yarnVersion);
         }
         if (installScript != null) {
             properties.put("installScript", installScript);

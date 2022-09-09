@@ -12,8 +12,4 @@ public class ResourceDownloadException extends FrontendException {
     public ResourceDownloadException(@Nonnull final String message) {
         super(message);
     }
-
-    public ResourceDownloadException(@Nonnull final HttpClientException e) {
-        super(e);
-    }
 }

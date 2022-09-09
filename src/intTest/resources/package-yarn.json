@@ -4,11 +4,10 @@
   "description": "Empty project to test frontend scripts integration in a Gradle build with npm",
   "private": true,
   "license": "UNLICENSED",
+  "packageManager": "yarn@3.0.0",
   "cacheDirectories": [
     "node_modules"
   ],
-  "dependencies": {
-  },
   "scripts": {
     "another-script": "node -v && yarn -v && echo 'Another frontend script executed' && yarn run check",
     "assemble": "echo 'Frontend assembled'",

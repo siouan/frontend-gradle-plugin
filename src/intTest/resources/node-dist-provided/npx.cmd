@@ -1,5 +1,7 @@
 @ECHO off
-ECHO %~f0: PATH=%PATH%
-SET "NPM_EXE=%~dp0npm"
-ECHO %~f0 %*
-"%NPM_EXE%" %*
+ECHO %~0 %*
+@IF EXIST "%~dp0\node.exe" (
+    "%~dp0\node.exe" %*
+) ELSE (
+    node %*
+)

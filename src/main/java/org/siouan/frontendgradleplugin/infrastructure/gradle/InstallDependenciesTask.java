@@ -13,7 +13,7 @@ import org.gradle.process.ExecOperations;
  * This task installs frontend dependencies (by executing a {@code npm/yarn} command). Optionally, the command may be
  * customized to pass other parameter (e.g. {@code npm ci} command).
  */
-public class InstallDependenciesTask extends AbstractRunPredefinedCommandTask {
+public class InstallDependenciesTask extends AbstractRunCommandTask {
 
     @Inject
     public InstallDependenciesTask(@Nonnull final ProjectLayout projectLayout,

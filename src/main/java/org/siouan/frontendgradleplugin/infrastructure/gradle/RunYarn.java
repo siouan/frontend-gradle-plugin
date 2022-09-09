@@ -8,6 +8,7 @@ import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.process.ExecOperations;
+import org.siouan.frontendgradleplugin.domain.model.ExecutableType;
 
 /**
  * Task type allowing developers to implement custom task and run a {@code yarn} command. To do so, the {@code script}
@@ -25,12 +26,13 @@ import org.gradle.process.ExecOperations;
  *
  * @since 6.0.0
  */
-public class RunYarn extends AbstractRunYarnTask {
+public class RunYarn extends AbstractRunCommandTaskType {
 
     @Inject
     public RunYarn(@Nonnull final ProjectLayout projectLayout, @Nonnull final ObjectFactory objectFactory,
         @Nonnull final ExecOperations execOperations) {
         super(projectLayout, objectFactory, execOperations);
+        executableType.set(ExecutableType.YARN);
     }
 
     @Input

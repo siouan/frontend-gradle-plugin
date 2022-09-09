@@ -23,6 +23,7 @@
     "@babel/eslint-parser": "^7.16.0",
     "@nuxtjs/eslint-config": "^7.0.0",
     "@nuxtjs/eslint-module": "^3.0.2",
+    "babel-eslint": "^10.1.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-nuxt": "^3.0.0",
@@ -32,5 +33,6 @@
     "prettier": "^2.4.1",
     "sass": "^1.43.4",
     "sass-loader": "^10.2.0"
-  }
+  },
+  "packageManager": "yarn@1.22.19"
 }

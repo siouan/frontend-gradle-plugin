@@ -7,9 +7,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.nio.file.CopyOption;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
+import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -18,6 +20,7 @@ import java.util.EnumSet;
 import java.util.Set;
 import java.util.stream.Stream;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.siouan.frontendgradleplugin.domain.model.Platform;
 import org.siouan.frontendgradleplugin.domain.provider.FileManager;
@@ -127,6 +130,12 @@ public class FileManagerImpl implements FileManager {
         deleteFileTree(sourcePath, true);
     }
 
+    @Nonnull
+    @Override
+    public String readString(@Nonnull final Path path, @Nonnull final Charset charset) throws IOException {
+        return Files.readString(path, charset);
+    }
+
     @Override
     public boolean setFileExecutable(@Nonnull final Path path, @Nonnull final Platform platform) throws IOException {
         final boolean touched;
@@ -143,6 +152,13 @@ public class FileManagerImpl implements FileManager {
     public Path setPosixFilePermissions(@Nonnull final Path path, @Nonnull final Set<PosixFilePermission> permissions)
         throws IOException {
         return Files.setPosixFilePermissions(path, permissions);
+    }
+
+    @Override
+    @Nonnull
+    public Path writeString(@Nonnull final Path path, @Nonnull final CharSequence charSequence,
+        final @Nonnull Charset charset, @Nullable final OpenOption... openOptions) throws IOException {
+        return Files.writeString(path, charSequence, charset, openOptions);
     }
 
     /**

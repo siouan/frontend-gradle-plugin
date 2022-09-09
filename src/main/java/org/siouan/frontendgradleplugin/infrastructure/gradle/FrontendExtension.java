@@ -1,9 +1,9 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
-import java.io.File;
 import javax.annotation.Nonnull;
 
 import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
 
@@ -58,65 +58,34 @@ public class FrontendExtension {
     private final Property<String> nodeDistributionServerPassword;
 
     /**
-     * Whether a Yarn distribution shall be downloaded, installed, and used by the plugin instead of NPM.
-     */
-    private final Property<Boolean> yarnEnabled;
-
-    /**
-     * Version of the distribution to download.
-     */
-    private final Property<String> yarnVersion;
-
-    /**
-     * The Yarn script to install a Yarn Classic 1.x distribution globally.
-     *
-     * @since 6.0.0
-     */
-    private final Property<String> yarnGlobalInstallScript;
-
-    /**
-     * The Yarn script to enable Yarn Berry in the current (sub-)project.
-     *
-     * @since 6.0.0
-     */
-    private final Property<String> yarnBerryEnableScript;
-
-    /**
-     * The Yarn script to install a Yarn distribution in the current (sub-)project.
-     *
-     * @since 6.0.0
-     */
-    private final Property<String> yarnInstallScript;
-
-    /**
-     * The npm/Yarn script installing frontend dependencies.
+     * Script provided as argument of the package manager executable to install frontend dependencies.
      */
     private final Property<String> installScript;
 
     /**
-     * The npm/Yarn script cleaning frontend resources.
+     * Script provided as argument of the package manager executable to clean frontend artifacts.
      */
     private final Property<String> cleanScript;
 
     /**
-     * The npm/Yarn script assembling frontend artifacts.
+     * Script provided as argument of the package manager executable to assemble frontend artifacts.
      */
     private final Property<String> assembleScript;
 
     /**
-     * The npm/Yarn script to execute to check the frontend.
+     * Script provided as argument of the package manager executable to check frontend project.
      */
     private final Property<String> checkScript;
 
     /**
-     * The npm/Yarn script publishing frontend artifacts.
+     * Script provided as argument of the package manager executable to publish frontend artifacts.
      */
     private final Property<String> publishScript;
 
     /**
-     * Directory where the 'package.json' file is located.
+     * Directory where the {@code package.json} file is located.
      */
-    private final Property<File> packageJsonDirectory;
+    private final DirectoryProperty packageJsonDirectory;
 
     /**
      * Proxy host used to download resources with HTTP protocol.
@@ -175,6 +144,39 @@ public class FrontendExtension {
     private final Property<String> httpsProxyPassword;
 
     /**
+     * Directory where the plugin caches some common files for multiple tasks.
+     *
+     * @since 7.0.0
+     */
+    private final DirectoryProperty cacheDirectory;
+
+    /**
+     * WARNING: THIS IS AN INTERNAL PROPERTY, WHICH MUST NOT BE USED/OVERRIDDEN IN GRADLE BUILD FILES.
+     * <p>The {@code package.json} file derived from the {@link #packageJsonDirectory} property.</p>
+     *
+     * @since 7.0.0
+     */
+    private final RegularFileProperty internalMetadataFile;
+
+    /**
+     * WARNING: THIS IS AN INTERNAL PROPERTY, WHICH MUST NOT BE USED/OVERRIDDEN IN GRADLE BUILD FILES.
+     * <p>File derived from the {@link #cacheDirectory} property where task "resolvePackageManager" stores the name of
+     * the package manager.</p>
+     *
+     * @since 7.0.0
+     */
+    private final RegularFileProperty internalPackageManagerNameFile;
+
+    /**
+     * WARNING: THIS IS AN INTERNAL PROPERTY, WHICH MUST NOT BE USED/OVERRIDDEN IN GRADLE BUILD FILES.
+     * <p>File derived from the {@link #cacheDirectory} property where task "resolvePackageManager" stores the path of
+     * the package manager executable.</p>
+     *
+     * @since 7.0.0
+     */
+    private final RegularFileProperty internalPackageManagerExecutablePathFile;
+
+    /**
      * Whether verbose mode is enabled.
      *
      * @since 2.0.0
@@ -189,17 +191,12 @@ public class FrontendExtension {
         nodeDistributionUrlPathPattern = objectFactory.property(String.class);
         nodeDistributionServerUsername = objectFactory.property(String.class);
         nodeDistributionServerPassword = objectFactory.property(String.class);
-        yarnEnabled = objectFactory.property(Boolean.class);
-        yarnVersion = objectFactory.property(String.class);
-        yarnGlobalInstallScript = objectFactory.property(String.class);
-        yarnBerryEnableScript = objectFactory.property(String.class);
-        yarnInstallScript = objectFactory.property(String.class);
         installScript = objectFactory.property(String.class);
         cleanScript = objectFactory.property(String.class);
         assembleScript = objectFactory.property(String.class);
         checkScript = objectFactory.property(String.class);
         publishScript = objectFactory.property(String.class);
-        packageJsonDirectory = objectFactory.property(File.class);
+        packageJsonDirectory = objectFactory.directoryProperty();
         httpProxyHost = objectFactory.property(String.class);
         httpProxyPort = objectFactory.property(Integer.class);
         httpProxyUsername = objectFactory.property(String.class);
@@ -208,6 +205,10 @@ public class FrontendExtension {
         httpsProxyPort = objectFactory.property(Integer.class);
         httpsProxyUsername = objectFactory.property(String.class);
         httpsProxyPassword = objectFactory.property(String.class);
+        cacheDirectory = objectFactory.directoryProperty();
+        internalMetadataFile = objectFactory.fileProperty();
+        internalPackageManagerNameFile = objectFactory.fileProperty();
+        internalPackageManagerExecutablePathFile = objectFactory.fileProperty();
         verboseModeEnabled = objectFactory.property(Boolean.class);
     }
 
@@ -239,26 +240,6 @@ public class FrontendExtension {
         return nodeDistributionServerPassword;
     }
 
-    public Property<Boolean> getYarnEnabled() {
-        return yarnEnabled;
-    }
-
-    public Property<String> getYarnVersion() {
-        return yarnVersion;
-    }
-
-    public Property<String> getYarnGlobalInstallScript() {
-        return yarnGlobalInstallScript;
-    }
-
-    public Property<String> getYarnBerryEnableScript() {
-        return yarnBerryEnableScript;
-    }
-
-    public Property<String> getYarnInstallScript() {
-        return yarnInstallScript;
-    }
-
     public Property<String> getInstallScript() {
         return installScript;
     }
@@ -279,7 +260,7 @@ public class FrontendExtension {
         return publishScript;
     }
 
-    public Property<File> getPackageJsonDirectory() {
+    public DirectoryProperty getPackageJsonDirectory() {
         return packageJsonDirectory;
     }
 
@@ -313,6 +294,22 @@ public class FrontendExtension {
 
     public Property<String> getHttpsProxyPassword() {
         return httpsProxyPassword;
+    }
+
+    public DirectoryProperty getCacheDirectory() {
+        return cacheDirectory;
+    }
+
+    public RegularFileProperty getInternalMetadataFile() {
+        return internalMetadataFile;
+    }
+
+    public RegularFileProperty getInternalPackageManagerNameFile() {
+        return internalPackageManagerNameFile;
+    }
+
+    public RegularFileProperty getInternalPackageManagerExecutablePathFile() {
+        return internalPackageManagerExecutablePathFile;
     }
 
     public Property<Boolean> getVerboseModeEnabled() {

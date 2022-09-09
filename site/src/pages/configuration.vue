@@ -19,8 +19,10 @@
     <fgp-property-link name="nodeDistributionServerPassword" /> = 'password'
     <fgp-property-link name="nodeInstallDirectory" /> = file("${projectDir}/node")
 
+    <fgp-code-comment>// REMOVED PROPERTIES - PRIOR TO RELEASE 7.0.0</fgp-code-comment>
     <fgp-property-link name="yarnEnabled" /> = false
     <fgp-property-link name="yarnVersion" /> = '3.0.0'
+    <fgp-code-comment>// END OF REMOVED PROPERTIES</fgp-code-comment>
     <fgp-code-comment>// REMOVED PROPERTIES - PRIOR TO RELEASE 6.0.0</fgp-code-comment>
     <fgp-property-link name="yarnDistributionProvided" /> = false
     <fgp-property-link name="yarnDistributionUrlRoot" /> = 'https://github.com/yarnpkg/yarn/releases/download/'
@@ -46,6 +48,7 @@
     <fgp-property-link name="httpProxyUsername" /> = 'username'
     <fgp-property-link name="httpProxyPassword" /> = 'password'
     <fgp-property-link name="verboseModeEnabled" /> = false
+    <fgp-property-link name="cacheDirectory" /> = file("${buildDir}/frontend-gradle-plugin")
 }</fgp-code></pre>
             </template>
             <template v-slot:kotlin>
@@ -58,8 +61,10 @@
     <fgp-property-link name="nodeDistributionServerPassword" />.set("password")
     <fgp-property-link name="nodeInstallDirectory" />.set(project.layout.projectDirectory.dir("node"))
 
+    <fgp-code-comment>// REMOVED PROPERTIES - PRIOR TO RELEASE 7.0.0</fgp-code-comment>
     <fgp-property-link name="yarnEnabled" />.set(false)
     <fgp-property-link name="yarnVersion" />.set("3.0.0")
+    <fgp-code-comment>// END OF REMOVED PROPERTIES</fgp-code-comment>
     <fgp-code-comment>// REMOVED PROPERTIES - PRIOR TO RELEASE 6.0.0</fgp-code-comment>
     <fgp-property-link name="yarnDistributionProvided" />.set(false)
     <fgp-property-link name="yarnDistributionUrlRoot" />.set("https://github.com/yarnpkg/yarn/releases/download/")
@@ -85,6 +90,7 @@
     <fgp-property-link name="httpProxyUsername" />.set("username")
     <fgp-property-link name="httpProxyPassword" />.set("password")
     <fgp-property-link name="verboseModeEnabled" />.set(false)
+    <fgp-property-link name="cacheDirectory" />.set(project.layout.buildDirectory.dir("frontend-gradle-plugin"))
 }</fgp-code></pre>
             </template>
         </fgp-gradle-scripts>
@@ -119,18 +125,26 @@
         <section>
             <fgp-sub-sub-title id="script-settings">Script settings</fgp-sub-sub-title>
             <p>
-                Depending on the value of the <fgp-property-link name="yarnEnabled" /> property, the value for each
-                property hereafter is provided as argument either of the <fgp-code>npm</fgp-code> executable or the
-                <fgp-code>yarn</fgp-code> executable. Under Unix-like O/S, white space characters
-                <fgp-code>' '</fgp-code> in an argument value must be escaped with a backslash character
-                <fgp-code>'\'</fgp-code>. Under Windows O/S, the whole argument must be enclosed between double-quotes.
+                Starting from release 7.0.0, the value for each property hereafter is provided as arguments of the
+                package manager executable.
+            </p>
+            <p>
+                Before release 7.0.0, Depending on the value of the <fgp-property-link name="yarnEnabled" /> property,
+                the value for each property hereafter is provided as argument either of the <fgp-code>npm</fgp-code>
+                executable or the <fgp-code>yarn</fgp-code> executable.
+            </p>
+            <p>
+                Under Unix-like O/S, white space characters <fgp-code>' '</fgp-code> in an argument value must be
+                escaped with a backslash character <fgp-code>'\'</fgp-code>. Under Windows O/S, the whole argument must
+                be enclosed between double-quotes.
             </p>
             <ul>
                 <li>Example on Unix-like O/S: <fgp-code>assembleScript = 'run assemble single\ argument'</fgp-code></li>
                 <li>Example on Windows O/S: <fgp-code>assembleScript = 'run assemble "single argument"'</fgp-code></li>
             </ul>
             <p>
-                Design of the plugin's tasks running a <fgp-code>npm</fgp-code>/<fgp-code>yarn</fgp-code> executable
+                Design of the plugin's tasks running a
+                <fgp-code>npm</fgp-code>/<fgp-code>pnpm</fgp-code>/<fgp-code>yarn</fgp-code> executable
                 (e.g. <fgp-task-link name="assembleFrontend" /> task) rely on the assumption the
                 <fgp-code>package.json</fgp-code> file contains all script definitions, and is the single resource
                 defining how to build the frontend application, execute unit tests, lint source code, run a development
@@ -185,6 +199,7 @@ assembleScript.set("run build")
             <fgp-http-proxy-username-property />
             <fgp-http-proxy-password-property />
             <fgp-verbose-mode-enabled-property />
+            <fgp-cache-directory-property />
         </section>
 
         <section>
@@ -247,6 +262,7 @@ assembleScript.set("run build")
 <script>
 import Vue from "vue";
 import fgpAssembleScriptProperty from "../components/property/assemble-script-property";
+import fgpCacheDirectoryProperty from "../components/property/cache-directory-property";
 import fgpCheckScriptProperty from "../components/property/check-script-property";
 import fgpCleanScriptProperty from "../components/property/clean-script-property";
 import fgpCode from "../components/code";
@@ -289,6 +305,7 @@ import fgpYarnInstallDirectoryProperty from "../components/property/yarn-install
 export default Vue.component("fgp-configuration", {
     components: {
         fgpAssembleScriptProperty,
+        fgpCacheDirectoryProperty,
         fgpCheckScriptProperty,
         fgpCleanScriptProperty,
         fgpCode,

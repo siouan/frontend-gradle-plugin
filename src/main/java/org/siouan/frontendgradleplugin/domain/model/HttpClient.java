@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.net.URL;
 import javax.annotation.Nonnull;
 
-import org.siouan.frontendgradleplugin.domain.exception.HttpClientException;
-
 /**
  * This class represents a HTTP client used to download resources.
  *
@@ -24,9 +22,8 @@ public interface HttpClient {
      * processing is completed).
      * @throws IOException If an error occurs while sending the request, during connection, or when the response is
      * received.
-     * @throws HttpClientException If an error occurs during a client opertion.
      */
     @Nonnull
     HttpResponse sendGetRequest(URL resourceUrl, Credentials credentials, ProxySettings proxySettings)
-        throws IOException, HttpClientException;
+        throws IOException;
 }

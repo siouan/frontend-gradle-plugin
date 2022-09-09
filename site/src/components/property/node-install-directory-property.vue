@@ -2,9 +2,9 @@
     <fgp-property
         name="nodeInstallDirectory"
         type="java.io.File"
-        :required="false"
+        :required="true"
         default-value='file("${projectDir}/node")'
-        :tasks="['installNode']"
+        :tasks="['installNode', 'resolvePackageManager', 'installPackageManager']"
     >
         <p>
             Directory where the downloaded distribution shall be installed, or where a provided distribution is located

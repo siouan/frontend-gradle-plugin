@@ -7,7 +7,6 @@ import java.nio.file.Paths;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.siouan.frontendgradleplugin.domain.exception.HttpClientException;
 import org.siouan.frontendgradleplugin.domain.model.Credentials;
 import org.siouan.frontendgradleplugin.domain.model.HttpClient;
 import org.siouan.frontendgradleplugin.domain.model.HttpResponse;
@@ -25,7 +24,7 @@ public abstract class AbstractHttpClient implements HttpClient {
     @Override
     @Nonnull
     public HttpResponse sendGetRequest(@Nonnull final URL resourceUrl, @Nullable final Credentials credentials,
-        @Nullable final ProxySettings proxySettings) throws IOException, HttpClientException {
+        @Nullable final ProxySettings proxySettings) throws IOException {
         if (resourceUrl.getProtocol().equals(LocalFileHttpResponse.PROTOCOL)) {
             return getLocalResource(resourceUrl);
         }
@@ -57,9 +56,7 @@ public abstract class AbstractHttpClient implements HttpClient {
      * processing is completed).
      * @throws IOException If an error occurs while sending the request, during connection, or when the response is
      * received.
-     * @throws HttpClientException If an error occurs during a client opertion.
      */
     protected abstract HttpResponse getRemoteResource(@Nonnull final URL resourceUrl,
-        @Nullable final Credentials credentials, @Nullable final ProxySettings proxySettings)
-        throws IOException, HttpClientException;
+        @Nullable final Credentials credentials, @Nullable final ProxySettings proxySettings) throws IOException;
 }

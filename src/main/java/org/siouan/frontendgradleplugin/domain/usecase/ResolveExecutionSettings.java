@@ -7,11 +7,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
-import org.siouan.frontendgradleplugin.domain.exception.ExecutableNotFoundException;
 import org.siouan.frontendgradleplugin.domain.model.ExecutableType;
 import org.siouan.frontendgradleplugin.domain.model.ExecutionSettings;
+import org.siouan.frontendgradleplugin.domain.model.GetExecutablePathQuery;
 import org.siouan.frontendgradleplugin.domain.model.Platform;
 import org.siouan.frontendgradleplugin.domain.util.StringSplitter;
 
@@ -54,12 +53,12 @@ public class ResolveExecutionSettings {
 
     private final GetNodeExecutablePath getNodeExecutablePath;
 
-    private final ResolveExecutablePath resolveExecutablePath;
+    private final GetExecutablePath getExecutablePath;
 
     public ResolveExecutionSettings(final GetNodeExecutablePath getNodeExecutablePath,
-        final ResolveExecutablePath resolveExecutablePath) {
+        final GetExecutablePath getExecutablePath) {
         this.getNodeExecutablePath = getNodeExecutablePath;
-        this.resolveExecutablePath = resolveExecutablePath;
+        this.getExecutablePath = getExecutablePath;
     }
 
     /**
@@ -71,16 +70,15 @@ public class ResolveExecutionSettings {
      * @param platform Underlying platform.
      * @param script Script.
      * @return Appropriate settings to run the script on the given platform.
-     * @throws ExecutableNotFoundException If the executable is not found in one of the install directories.
      * @see ExecutableType
      */
     @Nonnull
-    public ExecutionSettings execute(@Nonnull final Path packageJsonDirectoryPath, @Nonnull final String executableType,
-        @Nullable final Path nodeInstallDirectoryPath, @Nonnull final Platform platform, @Nonnull final String script)
-        throws ExecutableNotFoundException {
+    public ExecutionSettings execute(@Nonnull final Path packageJsonDirectoryPath,
+        @Nonnull final ExecutableType executableType, @Nonnull final Path nodeInstallDirectoryPath,
+        @Nonnull final Platform platform, @Nonnull final String script) {
         final Path nodeExecutablePath = getNodeExecutablePath.execute(nodeInstallDirectoryPath, platform);
-        final Path scriptExecutablePath = resolveExecutablePath.execute(executableType, nodeInstallDirectoryPath,
-            platform);
+        final Path executablePath = getExecutablePath.execute(
+            new GetExecutablePathQuery(executableType, nodeInstallDirectoryPath, platform));
 
         final Path executable;
         final List<String> args = new ArrayList<>();
@@ -89,20 +87,15 @@ public class ResolveExecutionSettings {
             args.add(WINDOWS_EXECUTABLE_AUTOEXIT_FLAG);
             // The command that must be executed in the terminal must be a single argument on itself (like if it was
             // quoted).
-            if (scriptExecutablePath.getParent() == null) {
-                // The path to the executable is only the executable name, which means we rely on the PATH environment
-                // variable.
-                args.add(scriptExecutablePath.toString() + ' ' + script.trim());
-            } else {
-                args.add(escapeWhitespacesFromCommandLineToken(scriptExecutablePath) + " " + script.trim());
-            }
+            args.add(escapeWhitespacesFromCommandLineToken(executablePath) + " " + script.trim());
         } else {
             executable = UNIX_EXECUTABLE_PATH;
             args.add(UNIX_EXECUTABLE_AUTOEXIT_FLAG);
-            args.add(escapeWhitespacesFromCommandLineToken(scriptExecutablePath) + UNIX_SCRIPT_ARG_SEPARATOR_CHAR
-                + String.join(Character.toString(UNIX_SCRIPT_ARG_SEPARATOR_CHAR),
-                new StringSplitter(UNIX_SCRIPT_ARG_SEPARATOR_CHAR, UNIX_SCRIPT_ARG_ESCAPE_CHAR).execute(
-                    script.trim())));
+            args.add(
+                escapeWhitespacesFromCommandLineToken(executablePath) + UNIX_SCRIPT_ARG_SEPARATOR_CHAR + String.join(
+                    Character.toString(UNIX_SCRIPT_ARG_SEPARATOR_CHAR),
+                    new StringSplitter(UNIX_SCRIPT_ARG_SEPARATOR_CHAR, UNIX_SCRIPT_ARG_ESCAPE_CHAR).execute(
+                        script.trim())));
         }
 
         final Set<Path> executablePaths = new HashSet<>();

@@ -67,5 +67,12 @@ public interface SystemSettingsProvider {
     @Nonnull
     String getSystemOsName();
 
+    /**
+     * Gets the value of the plugin environment variable that may indicate the location of a global Node.js
+     * distribution.
+     *
+     * @return Path to a Node.js distribution.
+     */
+    @Nullable
     Path getNodejsHomePath();
 }

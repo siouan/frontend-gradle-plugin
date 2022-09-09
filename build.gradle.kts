@@ -54,6 +54,7 @@ dependencies {
     implementation(gradleApi())
     implementation("org.apache.httpcomponents.client5:httpclient5:5.1.3")
     implementation("org.apache.commons:commons-compress:1.21")
+    implementation("org.json:json:20230227")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.0")

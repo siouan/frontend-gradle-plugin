@@ -2,12 +2,9 @@ package org.siouan.frontendgradleplugin.domain.usecase;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Optional;
 import javax.annotation.Nonnull;
 
 import org.siouan.frontendgradleplugin.domain.model.Logger;
-import org.siouan.frontendgradleplugin.domain.model.Platform;
-import org.siouan.frontendgradleplugin.domain.provider.FileManager;
 
 /**
  * Gets the path to a npm executable given an install directory and a platform.
@@ -38,8 +35,8 @@ public class GetNpmExecutablePath extends AbstractGetExecutablePath {
         .get("bin")
         .resolve(NON_WINDOWS_EXECUTABLE_FILE_NAME);
 
-    public GetNpmExecutablePath(final FileManager fileManager, final Logger logger) {
-        super(fileManager, logger);
+    public GetNpmExecutablePath(final Logger logger) {
+        super(logger);
     }
 
     @Override
@@ -52,12 +49,6 @@ public class GetNpmExecutablePath extends AbstractGetExecutablePath {
     @Nonnull
     protected Path getNonWindowsRelativeExecutablePath() {
         return NON_WINDOWS_EXECUTABLE_FILE_PATH;
-    }
-
-    @Nonnull
-    @Override
-    protected Optional<Path> getInstallDirectoryFromEnvironment(@Nonnull final Platform platform) {
-        return Optional.ofNullable(platform.getEnvironment().getNodeInstallDirectoryPath());
     }
 
     @Nonnull

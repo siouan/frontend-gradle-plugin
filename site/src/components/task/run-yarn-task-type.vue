@@ -1,34 +1,32 @@
 <template>
     <fgp-task name="RunYarn" :type="true">
-        <template v-slot:title
-            >Run a custom command with <fgp-code>yarn</fgp-code></template
-        >
+        <template v-slot:title>Run a custom command with <fgp-code>yarn</fgp-code></template>
         <template v-slot:description>
             <p>
-                The plugin provides the task type
-                <fgp-code>org.siouan.frontendgradleplugin.infrastructure.gradle.RunYarn</fgp-code> that allows
-                creating a custom task to run a frontend script. The <fgp-code>script</fgp-code> property must be set
-                with the corresponding command. The <fgp-property-link name="yarnEnabled" /> property must be set to
-                <fgp-code>true</fgp-code>. Then, choose the appropriate task dependency: make the task either depends
-                on <fgp-task-link name="installNode" /> task or on <fgp-task-link name="installFrontend" /> task. The
-                code hereafter shows the configuration required to run end-to-end tests:
+                The plugin provides task type
+                <fgp-code>org.siouan.frontendgradleplugin.infrastructure.gradle.RunYarn</fgp-code> that allows creating
+                a custom task to run a <fgp-code>yarn</fgp-code> command. The <fgp-code>script</fgp-code> property must
+                be set with the corresponding command. Then, choose whether additional dependencies located in the
+                <fgp-code>package.json</fgp-code> file should be installed: make the task either depends on
+                <fgp-task-link name="installPackageManager" /> task or on <fgp-task-link name="installFrontend" /> task.
+                The code hereafter shows the configuration required to output the version of <fgp-code>yarn</fgp-code>:
             </p>
 
-            <fgp-gradle-scripts id="run-npm-yarn-example" class="my-3">
+            <fgp-gradle-scripts id="run-yarn-example" class="my-3">
                 <template v-slot:groovy>
                     <pre><fgp-code>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunYarn
-tasks.register('e2e', RunYarn) {
-    <fgp-code-comment>// dependsOn tasks.named('installNode')
+tasks.register('yarnVersion', RunYarn) {
+    <fgp-code-comment>// dependsOn tasks.named('installPackageManager')
     // dependsOn tasks.named('installFrontend')</fgp-code-comment>
-    script = 'run e2e'
+    script = '--version'
 }</fgp-code></pre>
                 </template>
                 <template v-slot:kotlin>
                     <pre><fgp-code>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunYarn
-tasks.register&lt;RunYarn&gt;("e2e") {
-    <fgp-code-comment>// dependsOn(tasks.named("installNode"))
+tasks.register&lt;RunYarn&gt;("yarnVersion") {
+    <fgp-code-comment>// dependsOn(tasks.named("installPackageManager"))
     // dependsOn(tasks.named("installFrontend"))</fgp-code-comment>
-    script.set("run e2e")
+    script.set("--version")
 }</fgp-code></pre>
                 </template>
             </fgp-gradle-scripts>

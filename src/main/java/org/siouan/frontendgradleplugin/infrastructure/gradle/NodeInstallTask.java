@@ -1,17 +1,17 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
+import java.nio.file.Paths;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 
-import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.ProjectLayout;
+import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Internal;
-import org.gradle.api.tasks.Optional;
-import org.gradle.api.tasks.OutputDirectory;
+import org.gradle.api.tasks.OutputFile;
 import org.siouan.frontendgradleplugin.domain.model.Credentials;
 import org.siouan.frontendgradleplugin.domain.model.InstallSettings;
 import org.siouan.frontendgradleplugin.domain.model.Platform;
@@ -31,7 +31,7 @@ public class NodeInstallTask extends AbstractDistributionInstallTask {
     /**
      * Directory where the Node distribution shall be installed.
      */
-    private final DirectoryProperty nodeInstallDirectory;
+    private final Property<String> nodeInstallDirectory;
 
     /**
      * URL root part to build the exact URL to download the Node.js distribution.
@@ -61,15 +61,23 @@ public class NodeInstallTask extends AbstractDistributionInstallTask {
      */
     private final Property<String> nodeDistributionServerPassword;
 
+    /**
+     * Node executable to be used once the distribution is installed.
+     *
+     * @since 7.0.0
+     */
+    private final RegularFileProperty nodeExecutableFile;
+
     @Inject
     public NodeInstallTask(@Nonnull final ProjectLayout projectLayout, @Nonnull final ObjectFactory objectFactory) {
         super(projectLayout, objectFactory);
         this.nodeVersion = objectFactory.property(String.class);
-        this.nodeInstallDirectory = objectFactory.directoryProperty();
+        this.nodeInstallDirectory = objectFactory.property(String.class);
         this.nodeDistributionUrlRoot = objectFactory.property(String.class);
         this.nodeDistributionUrlPathPattern = objectFactory.property(String.class);
         this.nodeDistributionServerUsername = objectFactory.property(String.class);
         this.nodeDistributionServerPassword = objectFactory.property(String.class);
+        this.nodeExecutableFile = objectFactory.fileProperty();
     }
 
     @Input
@@ -87,9 +95,8 @@ public class NodeInstallTask extends AbstractDistributionInstallTask {
         return nodeDistributionUrlPathPattern;
     }
 
-    @OutputDirectory
-    @Optional
-    public DirectoryProperty getNodeInstallDirectory() {
+    @Input
+    public Property<String> getNodeInstallDirectory() {
         return nodeInstallDirectory;
     }
 
@@ -101,6 +108,11 @@ public class NodeInstallTask extends AbstractDistributionInstallTask {
     @Internal
     public Property<String> getNodeDistributionServerPassword() {
         return nodeDistributionServerPassword;
+    }
+
+    @OutputFile
+    public RegularFileProperty getNodeExecutableFile() {
+        return nodeExecutableFile;
     }
 
     @Override
@@ -130,6 +142,6 @@ public class NodeInstallTask extends AbstractDistributionInstallTask {
         @Nullable final Credentials distributionServerCredentials, @Nullable final ProxySettings proxySettings) {
         return new InstallSettings(platform, nodeVersion.get(), nodeDistributionUrlRoot.get(),
             nodeDistributionUrlPathPattern.get(), distributionServerCredentials, proxySettings,
-            getTemporaryDir().toPath(), nodeInstallDirectory.getAsFile().get().toPath());
+            getTemporaryDir().toPath(), nodeInstallDirectory.map(Paths::get).get());
     }
 }

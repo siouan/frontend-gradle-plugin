@@ -1,4 +1,8 @@
 @ECHO off
-ECHO %~f0: PATH=%PATH%
-ECHO %~f0 %*
-node %*
+ECHO %~dp0 %*
+@IF EXIST "%~dp0\node.exe" (
+    "%~dp0\node.exe" %*
+) ELSE (
+    node %*
+)
+

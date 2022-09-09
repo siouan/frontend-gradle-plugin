@@ -13,7 +13,7 @@ import org.gradle.process.ExecOperations;
 /**
  * This task executes frontend tests.
  */
-public class CheckTask extends AbstractRunPredefinedCommandTask {
+public class CheckTask extends AbstractRunCommandTask {
 
     @Inject
     public CheckTask(@Nonnull final ProjectLayout projectLayout, @Nonnull final ObjectFactory objectFactory,

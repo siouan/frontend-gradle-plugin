@@ -3,7 +3,7 @@
         name="packageJsonDirectory"
         type="java.lang.String"
         default-value="$projectDir"
-        :tasks="['installFrontend', 'cleanFrontend', 'assembleFrontend', 'checkFrontend', 'publishFrontend']"
+        :tasks="['resolvePackageManager', 'installPackageManager', 'installFrontend', 'cleanFrontend', 'assembleFrontend', 'checkFrontend', 'publishFrontend']"
     >
         <p>
             Location of the directory containing the <fgp-code>package.json</fgp-code> file. By default, this file is

@@ -2,7 +2,6 @@ package org.siouan.frontendgradleplugin.infrastructure.gradle.adapter;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -10,7 +9,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
 
@@ -22,7 +20,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.siouan.frontendgradleplugin.domain.exception.ExecutableNotFoundException;
 import org.siouan.frontendgradleplugin.domain.model.ExecutableType;
 import org.siouan.frontendgradleplugin.domain.model.ExecutionSettings;
 import org.siouan.frontendgradleplugin.domain.model.Logger;
@@ -52,22 +49,7 @@ class GradleScriptRunnerAdapterTest {
     }
 
     @Test
-    void shouldFailResolvingExecSettingsWhenExecutableIsNotFound() throws ExecutableNotFoundException {
-        final ScriptProperties scriptProperties = new ScriptProperties(execOperations,
-            PathFixture.ANY_PATH.resolve("frontend"), ExecutableType.NPM, PathFixture.ANY_PATH.resolve("node"), SCRIPT,
-            PlatformFixture.LOCAL_PLATFORM);
-        final ExecutableNotFoundException expectedException = new ExecutableNotFoundException(Paths.get("exe"));
-        when(resolveExecutionSettings.execute(scriptProperties.getPackageJsonDirectoryPath(),
-            scriptProperties.getExecutableType(), scriptProperties.getNodeInstallDirectory(),
-            scriptProperties.getPlatform(), scriptProperties.getScript())).thenThrow(expectedException);
-
-        assertThatThrownBy(() -> adapter.execute(scriptProperties)).isEqualTo(expectedException);
-
-        verifyNoMoreInteractions(resolveExecutionSettings, execOperations);
-    }
-
-    @Test
-    void shouldRunScriptWhenSettingsAreResolved() throws ExecutableNotFoundException {
+    void shouldRunScriptWhenSettingsAreResolved() {
         final Path nodeInstallationDirectory = PathFixture.ANY_PATH.resolve("node");
         final ScriptProperties scriptProperties = new ScriptProperties(execOperations,
             PathFixture.ANY_PATH.resolve("frontend"), ExecutableType.NPM, nodeInstallationDirectory, SCRIPT,
@@ -77,12 +59,12 @@ class GradleScriptRunnerAdapterTest {
         final ExecutionSettings executionSettings = new ExecutionSettings(PathFixture.ANY_PATH.resolve("work"),
             executablePaths, nodeInstallationDirectory.resolve("npm"), arguments);
         when(resolveExecutionSettings.execute(scriptProperties.getPackageJsonDirectoryPath(),
-            scriptProperties.getExecutableType(), scriptProperties.getNodeInstallDirectory(),
+            scriptProperties.getExecutableType(), scriptProperties.getNodeInstallDirectoryPath(),
             scriptProperties.getPlatform(), scriptProperties.getScript())).thenReturn(executionSettings);
         final ExecResult execResult = mock(ExecResult.class);
         when(execOperations.exec(
-            argThat(new ExecSpecActionMatcher(new ExecSpecAction(executionSettings, execSpec -> {})))))
-            .thenReturn(execResult);
+            argThat(new ExecSpecActionMatcher(new ExecSpecAction(executionSettings, execSpec -> {}))))).thenReturn(
+            execResult);
         when(execResult.rethrowFailure()).thenReturn(execResult);
 
         adapter.execute(scriptProperties);

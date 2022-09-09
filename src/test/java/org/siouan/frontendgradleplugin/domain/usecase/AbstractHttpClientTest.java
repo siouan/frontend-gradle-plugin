@@ -14,7 +14,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.siouan.frontendgradleplugin.domain.exception.HttpClientException;
 import org.siouan.frontendgradleplugin.domain.model.Credentials;
 import org.siouan.frontendgradleplugin.domain.model.HttpClient;
 import org.siouan.frontendgradleplugin.domain.model.HttpResponse;
@@ -38,13 +37,13 @@ class AbstractHttpClientTest {
     }
 
     @Test
-    void shouldReturnLocalFileHttpResponseWhenProtocolIsFile() throws IOException, HttpClientException {
+    void shouldReturnLocalFileHttpResponseWhenProtocolIsFile() throws IOException {
         assertThat(httpClient.sendGetRequest(temporaryDirectoryPath.toUri().toURL(), null, null)).isInstanceOf(
             LocalFileHttpResponse.class);
     }
 
     @Test
-    void shouldReturnRealHttpResponseWhenProtocolIsNotFile() throws IOException, HttpClientException {
+    void shouldReturnRealHttpResponseWhenProtocolIsNotFile() throws IOException {
         assertThat(httpClient.sendGetRequest(new URL("http://localhost"), null, null)).isEqualTo(httpResponse);
     }
 

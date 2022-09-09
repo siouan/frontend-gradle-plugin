@@ -3,7 +3,7 @@
         <template v-slot:title>Run a custom command with <fgp-code>node</fgp-code></template>
         <template v-slot:description>
             <p>
-                The plugin provides the task type
+                The plugin provides task type
                 <fgp-code>org.siouan.frontendgradleplugin.infrastructure.gradle.RunNode</fgp-code> that allows creating
                 a custom task to run a JS script. The <fgp-code>script</fgp-code> property must be set with the
                 corresponding command. Then, choose whether <fgp-nodejs-link /> only is required, or if additional

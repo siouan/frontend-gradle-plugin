@@ -10,8 +10,4 @@ public abstract class FrontendException extends Exception {
     protected FrontendException(@Nonnull final String message) {
         super(message);
     }
-
-    protected FrontendException(@Nonnull final Throwable cause) {
-        super(cause);
-    }
 }
