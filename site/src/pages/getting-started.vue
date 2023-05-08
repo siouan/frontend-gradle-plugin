@@ -8,14 +8,14 @@
         </p>
         <ul>
             <li><fgp-gradle-link /> 6.1+</li>
-            <li>JDK 8+ 64 bits</li>
+            <li>JDK 11+ 64 bits</li>
         </ul>
         <p>
             The plugin is built and tested on Linux, Mac OS, Windows (see the list of build environments used in
             the <fgp-repo-link path="/blob/master/CONTRIBUTING.md">contributing notes</fgp-repo-link>).
         </p>
 
-        <fgp-sub-title>Supported distributions</fgp-sub-title>*
+        <fgp-sub-title>Supported distributions</fgp-sub-title>
         <ul>
             <li><fgp-nodejs-link />: releases ^14.19.0, &ge;16.9.0</li>
             <li><fgp-npm-link />: any release</li>
