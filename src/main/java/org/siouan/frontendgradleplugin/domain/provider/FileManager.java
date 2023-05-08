@@ -4,12 +4,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.nio.file.CopyOption;
+import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.Set;
 import java.util.stream.Stream;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.siouan.frontendgradleplugin.domain.model.Platform;
 
@@ -189,6 +192,9 @@ public interface FileManager {
      */
     void moveFileTree(@Nonnull Path sourcePath, @Nonnull Path targetPath) throws IOException;
 
+    @Nonnull
+    String readString(@Nonnull Path path, @Nonnull Charset charset) throws IOException;
+
     /**
      * Marks the file as executable. This method does nothing under Windows.
      *
@@ -210,4 +216,8 @@ public interface FileManager {
      */
     @Nonnull
     Path setPosixFilePermissions(@Nonnull Path path, @Nonnull Set<PosixFilePermission> permissions) throws IOException;
+
+    @Nonnull
+    Path writeString(@Nonnull Path path, @Nonnull CharSequence charSequence, @Nonnull Charset charset,
+        @Nullable OpenOption... openOptions) throws IOException;
 }

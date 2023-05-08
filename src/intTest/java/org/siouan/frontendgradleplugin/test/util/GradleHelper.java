@@ -2,8 +2,6 @@ package org.siouan.frontendgradleplugin.test.util;
 
 import static java.util.Arrays.asList;
 
-import java.io.File;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,7 +21,7 @@ import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
  */
 public final class GradleHelper {
 
-    private static final String MINIMAL_GRADLE_VERSION = "6.1";
+    private static final String MINIMAL_GRADLE_VERSION = "6.6";
 
     private GradleHelper() {
     }
@@ -48,8 +46,8 @@ public final class GradleHelper {
      */
     @Nonnull
     public static BuildResult runGradle(@Nonnull final Path projectDirectory, @Nullable final Path nodejsHomePath,
-        @Nullable final Path nodejsEnvPath, @Nonnull final String... additionalArguments) {
-        return runGradle(projectDirectory, LogLevel.LIFECYCLE, nodejsHomePath, nodejsEnvPath, additionalArguments);
+        @Nonnull final String... additionalArguments) {
+        return runGradle(projectDirectory, LogLevel.LIFECYCLE, nodejsHomePath, additionalArguments);
     }
 
     /**
@@ -61,7 +59,7 @@ public final class GradleHelper {
     @Nonnull
     public static BuildResult runGradle(@Nonnull final Path projectDirectory, @Nonnull final LogLevel loggingLevel,
         @Nonnull final String... additionalArguments) {
-        return runGradle(projectDirectory, loggingLevel, null, null, additionalArguments);
+        return runGradle(projectDirectory, loggingLevel, null, additionalArguments);
     }
 
     /**
@@ -72,10 +70,8 @@ public final class GradleHelper {
      */
     @Nonnull
     public static BuildResult runGradle(@Nonnull final Path projectDirectory, @Nonnull final LogLevel loggingLevel,
-        @Nullable final Path nodejsHomePath, @Nullable final Path nodejsEnvPath,
-        @Nonnull final String... additionalArguments) {
-        return createGradleRunner(projectDirectory, loggingLevel, nodejsHomePath, nodejsEnvPath, additionalArguments)
-            .build();
+        @Nullable final Path nodejsHomePath, @Nonnull final String... additionalArguments) {
+        return createGradleRunner(projectDirectory, loggingLevel, nodejsHomePath, additionalArguments).build();
     }
 
     /**
@@ -99,7 +95,7 @@ public final class GradleHelper {
     @Nonnull
     public static BuildResult runGradleAndExpectFailure(@Nonnull final Path projectDirectory,
         @Nonnull final LogLevel loggingLevel, @Nonnull final String... additionalArguments) {
-        return runGradleAndExpectFailure(projectDirectory, loggingLevel, null, null, additionalArguments);
+        return runGradleAndExpectFailure(projectDirectory, loggingLevel, null, additionalArguments);
     }
 
     /**
@@ -110,10 +106,8 @@ public final class GradleHelper {
      */
     @Nonnull
     public static BuildResult runGradleAndExpectFailure(@Nonnull final Path projectDirectory,
-        @Nullable final Path nodejsHomePath, @Nullable final Path nodejsEnvPath,
-        @Nonnull final String... additionalArguments) {
-        return runGradleAndExpectFailure(projectDirectory, LogLevel.LIFECYCLE, nodejsHomePath, nodejsEnvPath,
-            additionalArguments);
+        @Nullable final Path nodejsHomePath, @Nonnull final String... additionalArguments) {
+        return runGradleAndExpectFailure(projectDirectory, LogLevel.LIFECYCLE, nodejsHomePath, additionalArguments);
     }
 
     /**
@@ -124,10 +118,9 @@ public final class GradleHelper {
      */
     @Nonnull
     public static BuildResult runGradleAndExpectFailure(@Nonnull final Path projectDirectory,
-        @Nonnull final LogLevel loggingLevel, @Nullable final Path nodejsHomePath, @Nullable final Path nodejsEnvPath,
+        @Nonnull final LogLevel loggingLevel, @Nullable final Path nodejsHomePath,
         @Nonnull final String... additionalArguments) {
-        return createGradleRunner(projectDirectory, loggingLevel, nodejsHomePath, nodejsEnvPath, additionalArguments)
-            .buildAndFail();
+        return createGradleRunner(projectDirectory, loggingLevel, nodejsHomePath, additionalArguments).buildAndFail();
     }
 
     /**
@@ -137,35 +130,21 @@ public final class GradleHelper {
      * @param loggingLevel Gradle logging level.
      * @param nodejsHomePath Optional path to set the {@link FrontendGradlePlugin#NODEJS_HOME_ENV_VAR} environment
      * variable.
-     * @param nodejsEnvPath Optional path to preprend to the {@code PATH} environment variable.
      * @return The Gradle runner.
      */
     @Nonnull
     private static GradleRunner createGradleRunner(@Nonnull final Path projectDirectory,
-        @Nonnull final LogLevel loggingLevel, @Nullable final Path nodejsHomePath, @Nullable final Path nodejsEnvPath,
+        @Nonnull final LogLevel loggingLevel, @Nullable final Path nodejsHomePath,
         @Nonnull final String... additionalArguments) {
         final List<String> arguments = new ArrayList<>();
         arguments.add("-s");
+        arguments.add("--warning-mode=all");
         toLoggingLevelProperty(loggingLevel).ifPresent(arguments::add);
         arguments.addAll(asList(additionalArguments));
         final Map<String, String> originalEnvironment = System.getenv();
         final Map<String, String> additionalEnvironment = new HashMap<>();
         if (nodejsHomePath != null) {
-            if (Files.isDirectory(nodejsHomePath)) {
-                additionalEnvironment.put(FrontendGradlePlugin.NODEJS_HOME_ENV_VAR, nodejsHomePath.toString());
-            } else if (Files.isRegularFile(nodejsHomePath)) {
-                additionalEnvironment.put(FrontendGradlePlugin.NODEJS_HOME_ENV_VAR,
-                    nodejsHomePath.getParent().toString());
-            }
-        }
-        if (nodejsEnvPath != null) {
-            final String pathEnvironmentVariable = originalEnvironment.get("PATH");
-            if (Files.isDirectory(nodejsEnvPath)) {
-                additionalEnvironment.put("PATH", nodejsEnvPath + File.pathSeparator + pathEnvironmentVariable);
-            } else if (Files.isRegularFile(nodejsEnvPath)) {
-                additionalEnvironment.put("PATH",
-                    nodejsEnvPath.getParent() + File.pathSeparator + pathEnvironmentVariable);
-            }
+            additionalEnvironment.put(FrontendGradlePlugin.NODEJS_HOME_ENV_VAR, nodejsHomePath.toString());
         }
         final GradleRunner gradleRunner = GradleRunner
             .create()

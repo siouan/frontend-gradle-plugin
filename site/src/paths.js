@@ -3,5 +3,5 @@ export default {
     faqs: "/faqs",
     gettingStarted: "/getting-started",
     overview: "/",
-    tasks: "/node-npm-npx-yarn-tasks"
+    tasks: "/node-corepack-npm-pnpm-yarn-tasks"
 };

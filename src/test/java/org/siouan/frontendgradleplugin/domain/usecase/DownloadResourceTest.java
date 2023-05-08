@@ -28,7 +28,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.exceptions.verification.NoInteractionsWanted;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.siouan.frontendgradleplugin.domain.exception.HttpClientException;
 import org.siouan.frontendgradleplugin.domain.exception.ResourceDownloadException;
 import org.siouan.frontendgradleplugin.domain.model.DownloadSettings;
 import org.siouan.frontendgradleplugin.domain.model.HttpClient;
@@ -41,9 +40,9 @@ import org.siouan.frontendgradleplugin.domain.provider.HttpClientProvider;
 
 /**
  * <b>Note on verifications</b>: exhaustive verification of interactions on the resource output channel is not possible
- * with this version of Mockito: it throws a {@link NoInteractionsWanted} exception because the {@link
- * FileChannel#close()} method call has not been verified. However, this method being declared final, it can not be
- * verified by definition.
+ * with this version of Mockito: it throws a {@link NoInteractionsWanted} exception because the
+ * {@link FileChannel#close()} method call has not been verified. However, this method being declared final, it can not
+ * be verified by definition.
  */
 @ExtendWith(MockitoExtension.class)
 class DownloadResourceTest {
@@ -83,22 +82,7 @@ class DownloadResourceTest {
     }
 
     @Test
-    void shouldFailWhenHttpClientFails() throws IOException, HttpClientException {
-        final DownloadSettings downloadSettings = buildDownloadParameters(Paths.get("/y45y97@p"));
-        final HttpClientException expectedException = mock(HttpClientException.class);
-        when(httpClient.sendGetRequest(downloadSettings.getResourceUrl(), downloadSettings.getServerCredentials(),
-            downloadSettings.getProxySettings())).thenThrow(expectedException);
-
-        assertThatThrownBy(() -> usecase.execute(downloadSettings))
-            .isInstanceOf(ResourceDownloadException.class)
-            .hasCause(expectedException);
-
-        verify(fileManager).deleteIfExists(downloadSettings.getTemporaryFilePath());
-        verifyNoMoreInteractions(fileManager, channelProvider, httpClientProvider, httpClient);
-    }
-
-    @Test
-    void shouldFailWhenHttpRequestFails() throws IOException, HttpClientException {
+    void shouldFailWhenHttpRequestFails() throws IOException {
         final DownloadSettings downloadSettings = buildDownloadParameters(Paths.get("/y45y97@p"));
         final IOException expectedException = new IOException();
         when(httpClient.sendGetRequest(downloadSettings.getResourceUrl(), downloadSettings.getServerCredentials(),
@@ -111,7 +95,7 @@ class DownloadResourceTest {
     }
 
     @Test
-    void shouldFailWhenResourceCannotBeDownloaded() throws IOException, HttpClientException {
+    void shouldFailWhenResourceCannotBeDownloaded() throws IOException {
         final DownloadSettings downloadSettings = buildDownloadParameters(Paths.get("/,èjtt(é"));
         when(httpClient.sendGetRequest(downloadSettings.getResourceUrl(), downloadSettings.getServerCredentials(),
             downloadSettings.getProxySettings())).thenReturn(httpResponse);
@@ -126,7 +110,7 @@ class DownloadResourceTest {
     }
 
     @Test
-    void shouldFailWhenTemporaryFileCannotBeCreated() throws IOException, HttpClientException {
+    void shouldFailWhenTemporaryFileCannotBeCreated() throws IOException {
         final DownloadSettings downloadSettings = buildDownloadParameters(Paths.get("/volezp", "gixkkle"));
         when(httpClient.sendGetRequest(downloadSettings.getResourceUrl(), downloadSettings.getServerCredentials(),
             downloadSettings.getProxySettings())).thenReturn(httpResponse);
@@ -147,7 +131,7 @@ class DownloadResourceTest {
     }
 
     @Test
-    void shouldFailWhenHttpResponseIsNotOk() throws IOException, HttpClientException {
+    void shouldFailWhenHttpResponseIsNotOk() throws IOException {
         final DownloadSettings downloadSettings = buildDownloadParameters(Paths.get("/htrsgvrqehjynjt"));
         when(httpClient.sendGetRequest(downloadSettings.getResourceUrl(), downloadSettings.getServerCredentials(),
             downloadSettings.getProxySettings())).thenReturn(httpResponse);
@@ -169,7 +153,7 @@ class DownloadResourceTest {
     }
 
     @Test
-    void shouldFailWhenDataTransferFails() throws IOException, HttpClientException {
+    void shouldFailWhenDataTransferFails() throws IOException {
         final DownloadSettings downloadSettings = buildDownloadParameters(Paths.get("/volezp", "gixkkle"));
         when(httpClient.sendGetRequest(downloadSettings.getResourceUrl(), downloadSettings.getServerCredentials(),
             downloadSettings.getProxySettings())).thenReturn(httpResponse);
@@ -193,7 +177,7 @@ class DownloadResourceTest {
     }
 
     @Test
-    void shouldFailWhenTemporaryFileCannotBeMovedToDestinationFile() throws IOException, HttpClientException {
+    void shouldFailWhenTemporaryFileCannotBeMovedToDestinationFile() throws IOException {
         final DownloadSettings downloadSettings = buildDownloadParameters(Paths.get("/volhrts '4"));
         when(httpClient.sendGetRequest(downloadSettings.getResourceUrl(), downloadSettings.getServerCredentials(),
             downloadSettings.getProxySettings())).thenReturn(httpResponse);
@@ -218,7 +202,7 @@ class DownloadResourceTest {
     }
 
     @Test
-    void shouldDownloadResource() throws IOException, ResourceDownloadException, HttpClientException {
+    void shouldDownloadResource() throws IOException, ResourceDownloadException {
         final Path destinationDirectoryPath = temporaryDirectoryPath.resolve("install");
         final Path destinationFilePath = destinationDirectoryPath.resolve(RESOURCE_NAME);
         final DownloadSettings downloadSettings = buildDownloadParameters(destinationFilePath,

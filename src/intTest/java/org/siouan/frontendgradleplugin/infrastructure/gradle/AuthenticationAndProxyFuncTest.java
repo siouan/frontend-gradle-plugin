@@ -1,6 +1,7 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static org.siouan.frontendgradleplugin.test.util.GradleBuildAssertions.assertTaskOutcome;
 
 import java.io.IOException;
 import java.net.URL;
@@ -17,15 +18,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
 import org.siouan.frontendgradleplugin.test.util.FrontendMapBuilder;
-import org.siouan.frontendgradleplugin.test.util.GradleBuildAssertions;
 import org.siouan.frontendgradleplugin.test.util.GradleBuildFiles;
 import org.siouan.frontendgradleplugin.test.util.GradleHelper;
+import org.siouan.frontendgradleplugin.test.util.PluginTaskOutcome;
 import org.siouan.frontendgradleplugin.test.util.ServerConfigurator;
 
 /**
- * Functional tests to verify authentication and integration of a proxy server with the {@link NodeInstallTask} task and
- * the {@link YarnGlobalInstallTask} task. Test cases uses a mock server, acting either as the distribution server, or
- * as the proxy server, and fake Node.js/Yarn distributions, to avoid the download overhead.
+ * Functional tests to verify authentication and integration of a proxy server with the {@link NodeInstallTask} task.
+ * Test cases uses a mock server, acting either as the distribution server, or as the proxy server, and fake
+ * Node.js/Yarn distributions, to avoid the download overhead.
  */
 class AuthenticationAndProxyFuncTest {
 
@@ -84,10 +85,10 @@ class AuthenticationAndProxyFuncTest {
         final FrontendMapBuilder frontendMapBuilder = configureNodeServerAndPluginWithDirectConnection("AYr2n{VF");
         GradleBuildFiles.createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
-        final BuildResult result1 = GradleHelper.runGradleAndExpectFailure(projectDirectoryPath,
+        final BuildResult result = GradleHelper.runGradleAndExpectFailure(projectDirectoryPath,
             FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
 
-        GradleBuildAssertions.assertTaskFailed(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        assertTaskOutcome(result, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, PluginTaskOutcome.FAILED);
     }
 
     // Same test as above, just use the exact password.
@@ -100,10 +101,10 @@ class AuthenticationAndProxyFuncTest {
             DISTRIBUTION_SERVER_PASSWORD);
         GradleBuildFiles.createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
-        final BuildResult result1 = GradleHelper.runGradle(projectDirectoryPath,
+        final BuildResult result = GradleHelper.runGradle(projectDirectoryPath,
             FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
 
-        GradleBuildAssertions.assertTaskSuccess(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        assertTaskOutcome(result, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, PluginTaskOutcome.SUCCESS);
     }
 
     @Test
@@ -119,10 +120,10 @@ class AuthenticationAndProxyFuncTest {
         GradleBuildFiles.createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         // The build should fail with a java.net.ConnectException because the proxy server is not reachable.
-        final BuildResult result1 = GradleHelper.runGradleAndExpectFailure(projectDirectoryPath,
+        final BuildResult result = GradleHelper.runGradleAndExpectFailure(projectDirectoryPath,
             FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
 
-        GradleBuildAssertions.assertTaskFailed(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        assertTaskOutcome(result, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, PluginTaskOutcome.FAILED);
     }
 
     // Same test as above, just use the exact proxy server port.
@@ -134,10 +135,10 @@ class AuthenticationAndProxyFuncTest {
         final FrontendMapBuilder frontendMapBuilder = configureNodeServerAndPluginWithProxyConnection();
         GradleBuildFiles.createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
-        final BuildResult result1 = GradleHelper.runGradle(projectDirectoryPath,
+        final BuildResult result = GradleHelper.runGradle(projectDirectoryPath,
             FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
 
-        GradleBuildAssertions.assertTaskSuccess(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        assertTaskOutcome(result, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, PluginTaskOutcome.SUCCESS);
     }
 
     @Test
@@ -148,10 +149,10 @@ class AuthenticationAndProxyFuncTest {
         final FrontendMapBuilder frontendMapBuilder = configureNodeServerAndPluginWithProxyConnection("xE!s67O?");
         GradleBuildFiles.createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
-        final BuildResult result1 = GradleHelper.runGradleAndExpectFailure(projectDirectoryPath,
+        final BuildResult result = GradleHelper.runGradleAndExpectFailure(projectDirectoryPath,
             FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
 
-        GradleBuildAssertions.assertTaskFailed(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        assertTaskOutcome(result, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, PluginTaskOutcome.FAILED);
     }
 
     // Same test as above, just use the exact password.
@@ -164,10 +165,10 @@ class AuthenticationAndProxyFuncTest {
             PROXY_SERVER_PASSWORD);
         GradleBuildFiles.createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
-        final BuildResult result1 = GradleHelper.runGradle(projectDirectoryPath,
+        final BuildResult result = GradleHelper.runGradle(projectDirectoryPath,
             FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
 
-        GradleBuildAssertions.assertTaskSuccess(result1, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+        assertTaskOutcome(result, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, PluginTaskOutcome.SUCCESS);
     }
 
     @Nonnull
@@ -214,7 +215,7 @@ class AuthenticationAndProxyFuncTest {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder().verboseModeEnabled(false);
         if (nodeDistributionUrlRoot != null) {
             frontendMapBuilder
-                .nodeVersion("14.17.3")
+                .nodeVersion("18.16.0")
                 .nodeDistributionUrlRoot(nodeDistributionUrlRoot)
                 .nodeDistributionUrlPathPattern(nodeDistributionUrlPathPattern);
             distributionServerConfigurator.withNodeDistribution();
@@ -225,7 +226,6 @@ class AuthenticationAndProxyFuncTest {
                 distributionServerConfigurator.withAuth(DISTRIBUTION_SERVER_USERNAME, DISTRIBUTION_SERVER_PASSWORD);
             }
         }
-        frontendMapBuilder.yarnEnabled(true).yarnVersion("3.0.0");
         if (httpProxyHost != null) {
             frontendMapBuilder.httpProxyHost(httpProxyHost).httpProxyPort(httpProxyPort);
             if (httpProxyUsername != null) {

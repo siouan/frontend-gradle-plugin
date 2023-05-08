@@ -8,7 +8,6 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import javax.annotation.Nonnull;
 
-import org.siouan.frontendgradleplugin.domain.exception.HttpClientException;
 import org.siouan.frontendgradleplugin.domain.exception.ResourceDownloadException;
 import org.siouan.frontendgradleplugin.domain.model.DownloadSettings;
 import org.siouan.frontendgradleplugin.domain.model.HttpResponse;
@@ -74,13 +73,10 @@ public class DownloadResource {
                 response.getReasonPhrase());
             if (response.getStatusCode() != 200) {
                 throw new ResourceDownloadException(
-                    "Unexpected HTTP response: " + response.getProtocol() + '/' + response.getVersion() + ' ' + response
-                        .getStatusCode() + ' ' + response.getReasonPhrase());
+                    "Unexpected HTTP response: " + response.getProtocol() + '/' + response.getVersion() + ' '
+                        + response.getStatusCode() + ' ' + response.getReasonPhrase());
             }
             resourceOutputChannel.transferFrom(resourceInputChannel, 0, Long.MAX_VALUE);
-        } catch (final HttpClientException e) {
-            fileManager.deleteIfExists(downloadSettings.getTemporaryFilePath());
-            throw new ResourceDownloadException(e);
         } catch (final IOException | ResourceDownloadException e) {
             fileManager.deleteIfExists(downloadSettings.getTemporaryFilePath());
             throw e;

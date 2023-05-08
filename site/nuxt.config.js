@@ -82,5 +82,8 @@ export default {
         FGP_WEBSITE_NAME: "Frontend Gradle plugin",
         FGP_WEBSITE_URL: "https://siouan.github.io/frontend-gradle-plugin/",
         FGP_FEATURE_I18N_ENABLED: false
+    },
+    eslint: {
+        cache: false
     }
 };

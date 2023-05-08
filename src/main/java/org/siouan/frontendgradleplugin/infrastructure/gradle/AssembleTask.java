@@ -13,7 +13,7 @@ import org.gradle.process.ExecOperations;
 /**
  * This task assembles frontend artifacts.
  */
-public class AssembleTask extends AbstractRunPredefinedCommandTask {
+public class AssembleTask extends AbstractRunCommandTask {
 
     @Inject
     public AssembleTask(@Nonnull final ProjectLayout projectLayout, @Nonnull final ObjectFactory objectFactory,

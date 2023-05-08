@@ -1,6 +1,2 @@
-#!/bin/sh
+#!/usr/bin/env node
 
-echo "$0: PATH=$PATH"
-parent_dirname=$(/usr/bin/dirname "$0")
-echo $0 $*
-$parent_dirname/node $*

@@ -15,6 +15,9 @@ export default {
         tasks: "Tasks"
     },
     navigation: {
+        corepack: {
+            label: "Corepack"
+        },
         gradle: {
             label: "Gradle"
         },
@@ -25,8 +28,8 @@ export default {
         npm: {
             label: "npm"
         },
-        npx: {
-            label: "npx"
+        pnpm: {
+            label: "pnpm"
         },
         repository: {
             releases: {

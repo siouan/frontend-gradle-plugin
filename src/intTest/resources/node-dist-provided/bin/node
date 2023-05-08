@@ -1,4 +1,3 @@
 #!/bin/sh
 
-echo "$0: PATH=$PATH"
-echo $0 $*
+echo "$0 $*"

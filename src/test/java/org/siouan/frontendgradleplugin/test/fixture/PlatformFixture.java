@@ -20,10 +20,10 @@ public final class PlatformFixture {
     }
 
     public static Platform aPlatform() {
-        return aPlatform(SystemPropertyFixture.getSystemJvmArch(), "Linux");
+        return new Platform(SystemPropertyFixture.getSystemJvmArch(), "Linux");
     }
 
     public static Platform aPlatform(@Nonnull final String jvmArch, @Nonnull final String osName) {
-        return new Platform(jvmArch, osName, EnvironmentFixture.EMPTY_ENVIRONMENT);
+        return new Platform(jvmArch, osName);
     }
 }

@@ -2,7 +2,6 @@ package org.siouan.frontendgradleplugin.infrastructure.gradle.adapter;
 
 import java.nio.file.Path;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.gradle.process.ExecOperations;
 import org.siouan.frontendgradleplugin.domain.model.ExecutableType;
@@ -28,7 +27,7 @@ public class ScriptProperties {
     /**
      * Executable use to run the script.
      */
-    private final String executableType;
+    private final ExecutableType executableType;
 
     /**
      * Directory where the Node distribution is installed.
@@ -57,8 +56,8 @@ public class ScriptProperties {
      * @see ExecutableType
      */
     public ScriptProperties(@Nonnull final ExecOperations execOperations, @Nonnull final Path packageJsonDirectoryPath,
-        @Nonnull final String executableType, @Nullable final Path nodeInstallDirectory, @Nonnull final String script,
-        @Nonnull final Platform platform) {
+        @Nonnull final ExecutableType executableType, @Nonnull final Path nodeInstallDirectory,
+        @Nonnull final String script, @Nonnull final Platform platform) {
         this.execOperations = execOperations;
         this.packageJsonDirectoryPath = packageJsonDirectoryPath;
         this.executableType = executableType;
@@ -78,12 +77,12 @@ public class ScriptProperties {
     }
 
     @Nonnull
-    public String getExecutableType() {
+    public ExecutableType getExecutableType() {
         return executableType;
     }
 
-    @Nullable
-    public Path getNodeInstallDirectory() {
+    @Nonnull
+    public Path getNodeInstallDirectoryPath() {
         return nodeInstallDirectory;
     }
 

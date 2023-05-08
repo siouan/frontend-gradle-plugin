@@ -22,15 +22,29 @@ class GetNodeExecutablePathTest {
     private GetNodeExecutablePath usecase;
 
     @Test
-    void shouldReturnTwoExecutableWhenOsIsWindows() {
+    void should_return_relative_executable_path_when_os_is_windows() {
         assertThat(usecase.getWindowsRelativeExecutablePath()).isEqualTo(Paths.get("node.exe"));
 
         verifyNoMoreInteractions(fileManager);
     }
 
     @Test
-    void shouldReturnTwoExecutableWhenOsIsNotWindows() {
+    void should_return_relative_executable_path_when_os_is_not_windows() {
         assertThat(usecase.getNonWindowsRelativeExecutablePath()).isEqualTo(Paths.get("bin", "node"));
+
+        verifyNoMoreInteractions(fileManager);
+    }
+
+    @Test
+    void should_return_executable_file_name_when_os_is_windows() {
+        assertThat(usecase.getWindowsExecutableFileName()).isEqualTo(Paths.get("node.exe"));
+
+        verifyNoMoreInteractions(fileManager);
+    }
+
+    @Test
+    void should_return_executable_file_name_when_os_is_not_windows() {
+        assertThat(usecase.getNonWindowsExecutableFileName()).isEqualTo(Paths.get("node"));
 
         verifyNoMoreInteractions(fileManager);
     }

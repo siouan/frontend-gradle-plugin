@@ -1,26 +1,22 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
 import java.io.File;
+import java.nio.file.Paths;
 import javax.annotation.Nonnull;
 
 import org.gradle.api.DefaultTask;
-import org.gradle.api.GradleException;
-import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.ProjectLayout;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
-import org.gradle.api.tasks.Internal;
-import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.process.ExecOperations;
-import org.siouan.frontendgradleplugin.domain.exception.ExecutableNotFoundException;
-import org.siouan.frontendgradleplugin.domain.exception.NonRunnableTaskException;
-import org.siouan.frontendgradleplugin.domain.model.Environment;
+import org.siouan.frontendgradleplugin.domain.model.ExecutableType;
 import org.siouan.frontendgradleplugin.domain.model.Platform;
-import org.siouan.frontendgradleplugin.domain.model.SystemSettingsProvider;
+import org.siouan.frontendgradleplugin.domain.model.PlatformProvider;
 import org.siouan.frontendgradleplugin.infrastructure.BeanRegistryException;
 import org.siouan.frontendgradleplugin.infrastructure.Beans;
+import org.siouan.frontendgradleplugin.infrastructure.exception.NonRunnableTaskException;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.adapter.GradleScriptRunnerAdapter;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.adapter.ScriptProperties;
 
@@ -47,12 +43,12 @@ public abstract class AbstractRunCommandTask extends DefaultTask {
     /**
      * Directory where the Node distribution is installed.
      */
-    final DirectoryProperty nodeInstallDirectory;
+    final Property<String> nodeInstallDirectory;
 
     /**
-     * Whether a Yarn distribution shall be downloaded and installed.
+     * Type of executable to run.
      */
-    final Property<Boolean> yarnEnabled;
+    final Property<ExecutableType> executableType;
 
     /**
      * The command to execute.
@@ -64,33 +60,25 @@ public abstract class AbstractRunCommandTask extends DefaultTask {
         this.execOperations = execOperations;
         this.beanRegistryId = Beans.getBeanRegistryId(projectLayout.getProjectDirectory().toString());
         this.packageJsonDirectory = objectFactory.property(File.class);
-        this.nodeInstallDirectory = objectFactory.directoryProperty();
-        this.yarnEnabled = objectFactory.property(Boolean.class);
+        this.nodeInstallDirectory = objectFactory.property(String.class);
+        this.executableType = objectFactory.property(ExecutableType.class);
         this.script = objectFactory.property(String.class);
-        final FrontendExtension extension;
-        try {
-            extension = Beans.getBean(beanRegistryId, FrontendExtension.class);
-        } catch (final BeanRegistryException e) {
-            throw new GradleException("Frontend plugin's bean registry failed", e);
-        }
-        this.packageJsonDirectory.set(extension.getPackageJsonDirectory());
-        this.nodeInstallDirectory.set(extension.getNodeInstallDirectory());
-        this.yarnEnabled.set(extension.getYarnEnabled());
     }
 
     @Input
-    @Optional
+    public Property<ExecutableType> getExecutableType() {
+        return executableType;
+    }
+
+    @Input
     public Property<File> getPackageJsonDirectory() {
         return packageJsonDirectory;
     }
 
-    @Internal
-    public DirectoryProperty getNodeInstallDirectory() {
+    @Input
+    public Property<String> getNodeInstallDirectory() {
         return nodeInstallDirectory;
     }
-
-    @Internal
-    protected abstract String getExecutableType();
 
     /**
      * Asserts this task is runnable.
@@ -108,24 +96,20 @@ public abstract class AbstractRunCommandTask extends DefaultTask {
      * task does nothing.
      *
      * @throws NonRunnableTaskException When the task is not runnable.
-     * @throws ExecutableNotFoundException When the executable cannot be found (Node, npx, npm, Yarn).
      * @throws BeanRegistryException If a component cannot be instanciated.
      */
     @TaskAction
-    public void execute() throws NonRunnableTaskException, ExecutableNotFoundException, BeanRegistryException {
+    public void execute() throws NonRunnableTaskException, BeanRegistryException {
         assertThatTaskIsRunnable();
 
         Beans.getBean(beanRegistryId, TaskLoggerConfigurer.class).initLoggerAdapter(this);
 
-        final SystemSettingsProvider systemSettingsProvider = Beans.getBean(beanRegistryId,
-            SystemSettingsProvider.class);
-        final Platform platform = new Platform(systemSettingsProvider.getSystemJvmArch(),
-            systemSettingsProvider.getSystemOsName(), new Environment(systemSettingsProvider.getNodejsHomePath()));
+        final Platform platform = Beans.getBean(beanRegistryId, PlatformProvider.class).getPlatform();
         getLogger().debug("Platform: {}", platform);
         Beans
             .getBean(beanRegistryId, GradleScriptRunnerAdapter.class)
             .execute(
-                new ScriptProperties(execOperations, packageJsonDirectory.map(File::toPath).get(), getExecutableType(),
-                    nodeInstallDirectory.getAsFile().map(File::toPath).getOrNull(), script.get(), platform));
+                new ScriptProperties(execOperations, packageJsonDirectory.map(File::toPath).get(), executableType.get(),
+                    nodeInstallDirectory.map(Paths::get).get(), script.get(), platform));
     }
 }

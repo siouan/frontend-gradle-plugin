@@ -15,7 +15,7 @@ import org.gradle.process.ExecOperations;
  *
  * @since 1.4.0
  */
-public class PublishTask extends AbstractRunPredefinedCommandTask {
+public class PublishTask extends AbstractRunCommandTask {
 
     @Inject
     public PublishTask(@Nonnull final ProjectLayout projectLayout, @Nonnull final ObjectFactory objectFactory,

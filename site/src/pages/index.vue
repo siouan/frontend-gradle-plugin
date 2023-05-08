@@ -3,7 +3,7 @@
         <fgp-main-title class="text-center">
             Frontend Gradle plugin
             <small class="text-muted">
-                - Integrated <fgp-nodejs-link />, <fgp-npm-link />, <fgp-yarn-link />
+                - Integrated <fgp-nodejs-link />, <fgp-npm-link />, <fgp-pnpm-link />, <fgp-yarn-link />
                 builds
             </small>
             <fgp-image-link
@@ -16,9 +16,9 @@
 
         <p>
             This plugin allows to integrate into <fgp-gradle-link /> a build based on
-            <fgp-nodejs-link />/<fgp-npm-link />/<fgp-yarn-link />. It is inspired by the philosophy of the
-            <fgp-link href="https://github.com/eirslett/frontend-maven-plugin">Frontend Maven plugin</fgp-link>, an
-            equivalent plugin for
+            <fgp-nodejs-link />/<fgp-npm-link />/<fgp-pnpm-link />/<fgp-yarn-link />. It is inspired by the philosophy
+            of the <fgp-link href="https://github.com/eirslett/frontend-maven-plugin">Frontend Maven plugin</fgp-link>,
+            an equivalent plugin for
             <fgp-link href="https://maven.apache.org" title="Apache Maven Project">Maven</fgp-link>. Follow the
             <fgp-site-link :path="fgp.paths.gettingStarted">quick start guide</fgp-site-link>, and build your frontend
             application. Take a look at the
@@ -30,15 +30,19 @@
 
         <fgp-sub-title>Features</fgp-sub-title>
 
-        <fgp-feature-card title="Distribution management" icon-class="fas fa-dice-d6 text-primary">
-            The plugin downloads and installs a <fgp-nodejs-link /> distribution. When required, the plugin may also
-            trigger the install of a Yarn distribution relying on the
-            <fgp-yarn-link label-key="navigation.yarnBerry.originalName" /> baseline. This means that both
-            <fgp-yarn1-link /> and <fgp-yarn2-link /> distributions are supported. Optionally, a
-            shared/global <fgp-nodejs-link /> distribution may be used instead to avoid network overhead and
-            duplication. The plugin may also use a HTTP proxy server when downloading the <fgp-nodejs-link />
-            distribution, to take advantage of any caching facility, and submit to the organization's security rules.
-            Basic authentication scheme is supported for both distribution and proxy servers.
+        <fgp-feature-card title="Distribution management" icon-class="fa fa-cloud-download-alt text-primary">
+            By default, the plugin downloads and installs a <fgp-nodejs-link /> distribution. Multiple Gradle
+            (sub-)projects may use the distribution downloaded by one of them, or even use a distribution already
+            installed in the workstation to avoid network overhead and duplication. The plugin may also use a HTTP proxy
+            server when downloading the <fgp-nodejs-link /> distribution, to take advantage of any caching facility, and
+            submit to the organization's security rules. Basic authentication scheme is supported for both distribution
+            and proxy servers.
+        </fgp-feature-card>
+        <fgp-feature-card title="Support of multiple package managers" icon-class="fas fa-dice-d6">
+            The plugin delegates installation of your favorite package manager to <fgp-corepack-link />. Choose your
+            package manager among <fgp-npm-link />, <fgp-pnpm-link />, <fgp-yarn-link />, set the
+            <fgp-code>packageManager</fgp-code> property in your <fgp-code>package.json</fgp-code> file, and
+            <fgp-corepack-link /> downloads and activates the distribution expected for each (sub-)project.
         </fgp-feature-card>
         <fgp-feature-card title="Configurable dependencies installation" icon-class="fa fa-cogs text-secondary">
             Depending on the environment, installing frontend dependencies using the
@@ -56,7 +60,7 @@
         </fgp-feature-card>
         <fgp-feature-card title="Customization" icon-class="fa fa-code-branch text-warning">
             For more complex use cases, the plugin provides types to create tasks and run custom commands with
-            <fgp-nodejs-link />, <fgp-npm-link />, <fgp-npx-link />, <fgp-yarn-link />.
+            <fgp-nodejs-link />, <fgp-corepack-link />, <fgp-npm-link />, <fgp-pnpm-link />, <fgp-yarn-link />.
         </fgp-feature-card>
 
         <div class="card my-3">
@@ -86,6 +90,7 @@
 import Vue from "vue";
 import fgpAppConfig from "../mixin/app-config";
 import fgpCode from "../components/code";
+import fgpCorepackLink from "../components/link/corepack-link";
 import fgpFeatureCard from "../components/feature-card";
 import fgpGradleDocsLink from "../components/link/gradle-docs-link";
 import fgpGradleLink from "../components/link/gradle-link";
@@ -94,18 +99,17 @@ import fgpLink from "../components/link/link";
 import fgpMainTitle from "../components/main-title";
 import fgpNodejsLink from "../components/link/nodejs-link";
 import fgpNpmLink from "../components/link/npm-link";
-import fgpNpxLink from "../components/link/npx-link";
 import fgpPageMeta from "../mixin/page-meta";
+import fgpPnpmLink from "../components/link/pnpm-link";
 import fgpRepoLink from "../components/link/repo-link";
 import fgpSiteLink from "../components/link/site-link";
 import fgpSubTitle from "../components/sub-title";
 import fgpYarnLink from "../components/link/yarn-link";
-import fgpYarn1Link from "../components/link/yarn1-link";
-import fgpYarn2Link from "../components/link/yarn2-link";
 
 export default Vue.component("fgp-index", {
     components: {
         fgpCode,
+        fgpCorepackLink,
         fgpFeatureCard,
         fgpGradleDocsLink,
         fgpGradleLink,
@@ -114,13 +118,11 @@ export default Vue.component("fgp-index", {
         fgpMainTitle,
         fgpNodejsLink,
         fgpNpmLink,
-        fgpNpxLink,
+        fgpPnpmLink,
         fgpRepoLink,
         fgpSiteLink,
         fgpSubTitle,
-        fgpYarnLink,
-        fgpYarn1Link,
-        fgpYarn2Link
+        fgpYarnLink
     },
     mixins: [fgpAppConfig, fgpPageMeta],
     data() {

@@ -3,19 +3,24 @@
         <fgp-main-title>Getting started</fgp-main-title>
 
         <fgp-sub-title>Requirements</fgp-sub-title>
+        <p>
+            The following tools must be installed to use the plugin:
+        </p>
         <ul>
             <li><fgp-gradle-link /> 6.1+</li>
             <li>JDK 8+ 64 bits</li>
-            <li>
-                The plugin is built and tested on Linux, Mac OS, Windows (see the list of build environments used in
-                the <fgp-repo-link path="/blob/master/CONTRIBUTING.md">contributing notes</fgp-repo-link>).
-            </li>
         </ul>
+        <p>
+            The plugin is built and tested on Linux, Mac OS, Windows (see the list of build environments used in
+            the <fgp-repo-link path="/blob/master/CONTRIBUTING.md">contributing notes</fgp-repo-link>).
+        </p>
 
-        <fgp-sub-title>Supported distributions</fgp-sub-title>
+        <fgp-sub-title>Supported distributions</fgp-sub-title>*
         <ul>
-            <li><fgp-nodejs-link /> 6.2.1+</li>
-            <li><fgp-yarn-link /> 1.0+</li>
+            <li><fgp-nodejs-link />: releases ^14.19.0, &ge;16.9.0</li>
+            <li><fgp-npm-link />: any release</li>
+            <li><fgp-pnpm-link />: any release</li>
+            <li><fgp-yarn-link />: any release</li>
         </ul>
 
         <fgp-sub-title>Steps</fgp-sub-title>
@@ -111,11 +116,9 @@ apply(plugin = "org.siouan.frontend-jdk8")</fgp-code></pre>
             <li>Run <fgp-code>gradlew build</fgp-code>.</li>
             <li>
                 If you need to run
-                <fgp-code>node</fgp-code>/<fgp-code>npm</fgp-code>/<fgp-code>npx</fgp-code>/<fgp-code
-            >yarn</fgp-code
-            >
-                executables from a command line (e.g. to start a development server), take a look at the
-                <fgp-site-link :path="fgp.paths.faqs">FAQ</fgp-site-link>.
+                <fgp-code>node</fgp-code>/<fgp-code>corepack</fgp-code>/<fgp-code>npm</fgp-code>/<fgp-code
+                >pnpm</fgp-code>/<fgp-code>yarn</fgp-code> executables from a command line (e.g. to start a development
+                server), take a look at the <fgp-site-link :path="fgp.paths.faqs">FAQ</fgp-site-link>.
             </li>
         </ol>
     </section>
@@ -132,6 +135,8 @@ import fgpGradleScripts from "../components/gradle-scripts";
 import fgpInfo from "../components/info";
 import fgpMainTitle from "../components/main-title";
 import fgpNodejsLink from "../components/link/nodejs-link";
+import fgpNpmLink from "../components/link/npm-link";
+import fgpPnpmLink from "../components/link/pnpm-link";
 import fgpPageMeta from "../mixin/page-meta";
 import fgpRepoLink from "../components/link/repo-link";
 import fgpSiteLink from "../components/link/site-link";
@@ -148,6 +153,8 @@ export default Vue.component("fgp-getting-started", {
         fgpInfo,
         fgpMainTitle,
         fgpNodejsLink,
+        fgpNpmLink,
+        fgpPnpmLink,
         fgpRepoLink,
         fgpSiteLink,
         fgpSubTitle,

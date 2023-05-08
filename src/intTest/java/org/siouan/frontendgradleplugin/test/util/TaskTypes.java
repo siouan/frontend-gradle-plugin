@@ -12,9 +12,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.RunCorepack;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNode;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpm;
-import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpx;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.RunPnpm;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.RunYarn;
 
 /**
@@ -23,6 +24,17 @@ import org.siouan.frontendgradleplugin.infrastructure.gradle.RunYarn;
 public final class TaskTypes {
 
     private TaskTypes() {
+    }
+
+    @Nonnull
+    public static String buildCorepackTaskDefinition(@Nonnull final String taskName, @Nullable final String script) {
+        return buildTaskDefinition(taskName, RunCorepack.class, emptySet(), script);
+    }
+
+    @Nonnull
+    public static String buildCorepackTaskDefinition(@Nonnull final String taskName,
+        @Nullable final String dependsOnTaskName, @Nullable final String script) {
+        return buildTaskDefinition(taskName, RunCorepack.class, singleton(dependsOnTaskName), script);
     }
 
     @Nonnull
@@ -35,17 +47,6 @@ public final class TaskTypes {
         @Nullable final String dependsOnTaskName, @Nullable final String script) {
         return buildTaskDefinition(taskName, RunNode.class,
             (dependsOnTaskName == null) ? emptySet() : singleton(dependsOnTaskName), script);
-    }
-
-    @Nonnull
-    public static String buildNpxTaskDefinition(@Nonnull final String taskName, @Nullable final String script) {
-        return buildTaskDefinition(taskName, RunNpx.class, emptySet(), script);
-    }
-
-    @Nonnull
-    public static String buildNpxTaskDefinition(@Nonnull final String taskName, @Nonnull final String dependsOnTaskName,
-        @Nullable final String script) {
-        return buildTaskDefinition(taskName, RunNpx.class, singleton(dependsOnTaskName), script);
     }
 
     @Nonnull
@@ -63,6 +64,23 @@ public final class TaskTypes {
     public static String buildNpmTaskDefinition(@Nonnull final String taskName,
         @Nonnull final Set<String> dependsOnTaskNames, @Nullable final String script) {
         return buildTaskDefinition(taskName, RunNpm.class, dependsOnTaskNames, script);
+    }
+
+    @Nonnull
+    public static String buildPnpmTaskDefinition(@Nonnull final String taskName, @Nullable final String script) {
+        return buildTaskDefinition(taskName, RunPnpm.class, emptySet(), script);
+    }
+
+    @Nonnull
+    public static String buildPnpmTaskDefinition(@Nonnull final String taskName,
+        @Nonnull final String dependsOnTaskName, @Nullable final String script) {
+        return buildTaskDefinition(taskName, RunPnpm.class, singleton(dependsOnTaskName), script);
+    }
+
+    @Nonnull
+    public static String buildPnpmTaskDefinition(@Nonnull final String taskName,
+        @Nonnull final Set<String> dependsOnTaskNames, @Nullable final String script) {
+        return buildTaskDefinition(taskName, RunPnpm.class, dependsOnTaskNames, script);
     }
 
     @Nonnull

@@ -16,17 +16,17 @@ import org.siouan.frontendgradleplugin.test.fixture.PlatformFixture;
 class FileManagerImplTest {
 
     @InjectMocks
-    private FileManagerImpl fileProvider;
+    private FileManagerImpl fileManager;
 
     @Test
     void shouldNotTouchFilePermissionsWhenOsIsWindows() throws IOException {
-        assertThat(fileProvider.setFileExecutable(Paths.get("afile"),
+        assertThat(fileManager.setFileExecutable(Paths.get("afile"),
             PlatformFixture.aPlatform(SystemPropertyFixture.getSystemJvmArch(), "Windows NT"))).isFalse();
     }
 
     @Test
     void shouldNotTouchFilePermissionsWhenFileNotFound() throws IOException {
-        assertThat(fileProvider.setFileExecutable(Paths.get("afile"),
+        assertThat(fileManager.setFileExecutable(Paths.get("afile"),
             PlatformFixture.aPlatform(SystemPropertyFixture.getSystemJvmArch(), "Linux"))).isFalse();
     }
 }

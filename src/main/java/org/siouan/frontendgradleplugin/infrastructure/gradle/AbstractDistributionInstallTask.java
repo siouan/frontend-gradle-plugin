@@ -19,11 +19,10 @@ import org.siouan.frontendgradleplugin.domain.exception.ResourceDownloadExceptio
 import org.siouan.frontendgradleplugin.domain.exception.UnsupportedDistributionArchiveException;
 import org.siouan.frontendgradleplugin.domain.exception.UnsupportedPlatformException;
 import org.siouan.frontendgradleplugin.domain.model.Credentials;
-import org.siouan.frontendgradleplugin.domain.model.Environment;
 import org.siouan.frontendgradleplugin.domain.model.InstallSettings;
 import org.siouan.frontendgradleplugin.domain.model.Platform;
+import org.siouan.frontendgradleplugin.domain.model.PlatformProvider;
 import org.siouan.frontendgradleplugin.domain.model.ProxySettings;
-import org.siouan.frontendgradleplugin.domain.model.SystemSettingsProvider;
 import org.siouan.frontendgradleplugin.domain.usecase.InstallNodeDistribution;
 import org.siouan.frontendgradleplugin.domain.usecase.ResolveProxySettingsByUrl;
 import org.siouan.frontendgradleplugin.infrastructure.BeanRegistryException;
@@ -39,63 +38,63 @@ public abstract class AbstractDistributionInstallTask extends DefaultTask {
      *
      * @since 5.2.0
      */
-    private final String beanRegistryId;
+    protected final String beanRegistryId;
 
     /**
      * Proxy host used to download resources with HTTP protocol.
      *
      * @since 5.0.0
      */
-    private final Property<String> httpProxyHost;
+    protected final Property<String> httpProxyHost;
 
     /**
      * Proxy port used to download resources with HTTP protocol.
      *
      * @since 5.0.0
      */
-    private final Property<Integer> httpProxyPort;
+    protected final Property<Integer> httpProxyPort;
 
     /**
      * Username to authenticate on the proxy server for HTTP requests.
      *
      * @since 5.0.0
      */
-    private final Property<String> httpProxyUsername;
+    protected final Property<String> httpProxyUsername;
 
     /**
      * Password to authenticate on the proxy server for HTTP requests.
      *
      * @since 5.0.0
      */
-    private final Property<String> httpProxyPassword;
+    protected final Property<String> httpProxyPassword;
 
     /**
      * Proxy host used to download resources with HTTPS protocol.
      *
      * @since 2.1.0
      */
-    private final Property<String> httpsProxyHost;
+    protected final Property<String> httpsProxyHost;
 
     /**
      * Proxy port used to download resources with HTTPS protocol.
      *
      * @since 2.1.0
      */
-    private final Property<Integer> httpsProxyPort;
+    protected final Property<Integer> httpsProxyPort;
 
     /**
      * Username to authenticate on the proxy server for HTTPS requests.
      *
      * @since 3.0.0
      */
-    private final Property<String> httpsProxyUsername;
+    protected final Property<String> httpsProxyUsername;
 
     /**
      * Password to authenticate on the proxy server for HTTPS requests.
      *
      * @since 3.0.0
      */
-    private final Property<String> httpsProxyPassword;
+    protected final Property<String> httpsProxyPassword;
 
     protected AbstractDistributionInstallTask(@Nonnull final ProjectLayout projectLayout,
         @Nonnull final ObjectFactory objectFactory) {
@@ -174,18 +173,17 @@ public abstract class AbstractDistributionInstallTask extends DefaultTask {
             .map(username -> new Credentials(username, httpsProxyPassword.get()))
             .getOrNull();
 
-        final SystemSettingsProvider systemSettingsProvider = Beans.getBean(beanRegistryId,
-            SystemSettingsProvider.class);
-        final Platform platform = new Platform(systemSettingsProvider.getSystemJvmArch(),
-            systemSettingsProvider.getSystemOsName(), new Environment(systemSettingsProvider.getNodejsHomePath()));
+        final Platform platform = Beans.getBean(beanRegistryId, PlatformProvider.class).getPlatform();
         getLogger().debug("Platform: {}", platform);
-        Beans
-            .getBean(beanRegistryId, getInstallDistributionClass())
-            .execute(getInstallSettings(platform, distributionServerCredentials, Beans
-                .getBean(beanRegistryId, ResolveProxySettingsByUrl.class)
-                .execute(httpProxyHost.getOrNull(), httpProxyPort.get(), httpProxyCredentials,
-                    httpsProxyHost.getOrNull(), httpsProxyPort.get(), httpsProxyCredentials,
-                    new URL(getDistributionUrlRoot()))));
+        executeInstaller(getInstallSettings(platform, distributionServerCredentials, Beans
+            .getBean(beanRegistryId, ResolveProxySettingsByUrl.class)
+            .execute(httpProxyHost.getOrNull(), httpProxyPort.get(), httpProxyCredentials, httpsProxyHost.getOrNull(),
+                httpsProxyPort.get(), httpsProxyCredentials, new URL(getDistributionUrlRoot()))));
+    }
+
+    protected void executeInstaller(@Nonnull final InstallSettings installSettings)
+        throws BeanRegistryException, IOException, FrontendException {
+        Beans.getBean(beanRegistryId, getInstallDistributionClass()).execute(installSettings);
     }
 
     /**

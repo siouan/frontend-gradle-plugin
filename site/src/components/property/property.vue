@@ -13,8 +13,7 @@
                 <li v-if="tasks.length > 0">
                     Related tasks:
                     <span v-for="(taskName, index) in tasks" :key="taskName">
-                        <fgp-task-link :name="taskName" />
-                        <template v-if="index < tasks.length - 1">, </template>
+                        <fgp-task-link :name="taskName" /><template v-if="index < tasks.length - 1">, </template>
                     </span>
                 </li>
                 <li>

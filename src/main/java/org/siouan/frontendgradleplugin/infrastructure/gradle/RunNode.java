@@ -26,21 +26,17 @@ import org.siouan.frontendgradleplugin.domain.model.ExecutableType;
  *
  * @since 1.2.0
  */
-public class RunNode extends AbstractRunCommandTask {
+public class RunNode extends AbstractRunCommandTaskType {
 
     @Inject
     public RunNode(@Nonnull final ProjectLayout projectLayout, @Nonnull final ObjectFactory objectFactory,
         @Nonnull final ExecOperations execOperations) {
         super(projectLayout, objectFactory, execOperations);
+        executableType.set(ExecutableType.NODE);
     }
 
     @Input
     public Property<String> getScript() {
         return script;
-    }
-
-    @Override
-    protected String getExecutableType() {
-        return ExecutableType.NODE;
     }
 }

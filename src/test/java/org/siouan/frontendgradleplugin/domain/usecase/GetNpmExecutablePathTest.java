@@ -22,15 +22,29 @@ class GetNpmExecutablePathTest {
     private GetNpmExecutablePath usecase;
 
     @Test
-    void shouldReturnTwoExecutableWhenOsIsWindows() {
+    void should_return_relative_executable_path_when_os_is_windows() {
         assertThat(usecase.getWindowsRelativeExecutablePath()).isEqualTo(Paths.get("npm.cmd"));
 
         verifyNoMoreInteractions(fileManager);
     }
 
     @Test
-    void shouldReturnTwoExecutableWhenOsIsNotWindows() {
+    void should_return_relative_executable_path_when_os_is_not_windows() {
         assertThat(usecase.getNonWindowsRelativeExecutablePath()).isEqualTo(Paths.get("bin", "npm"));
+
+        verifyNoMoreInteractions(fileManager);
+    }
+
+    @Test
+    void should_return_executable_file_name_when_os_is_windows() {
+        assertThat(usecase.getWindowsExecutableFileName()).isEqualTo(Paths.get("npm.cmd"));
+
+        verifyNoMoreInteractions(fileManager);
+    }
+
+    @Test
+    void should_return_executable_file_name_when_os_is_not_windows() {
+        assertThat(usecase.getNonWindowsExecutableFileName()).isEqualTo(Paths.get("npm"));
 
         verifyNoMoreInteractions(fileManager);
     }

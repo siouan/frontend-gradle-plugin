@@ -13,7 +13,7 @@ import org.gradle.process.ExecOperations;
 /**
  * This task cleans frontend resources, using a custom script.
  */
-public class CleanTask extends AbstractRunPredefinedCommandTask {
+public class CleanTask extends AbstractRunCommandTask {
 
     @Inject
     public CleanTask(@Nonnull final ProjectLayout projectLayout, @Nonnull final ObjectFactory objectFactory,

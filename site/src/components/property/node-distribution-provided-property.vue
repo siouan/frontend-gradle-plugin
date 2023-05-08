@@ -16,7 +16,6 @@
                     <li>
                         The directory pointed by the <fgp-code>FGP_NODEJS_HOME</fgp-code> environment variable, if set.
                     </li>
-                    <li>Any directory in the <fgp-code>PATH</fgp-code> environment variable.</li>
                 </ol>
                 Other <fgp-code>node*</fgp-code> properties should not be used for clarity.
             </li>

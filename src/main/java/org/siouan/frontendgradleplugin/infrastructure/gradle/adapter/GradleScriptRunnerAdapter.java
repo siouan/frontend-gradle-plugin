@@ -3,7 +3,6 @@ package org.siouan.frontendgradleplugin.infrastructure.gradle.adapter;
 import javax.annotation.Nonnull;
 
 import org.gradle.process.ExecSpec;
-import org.siouan.frontendgradleplugin.domain.exception.ExecutableNotFoundException;
 import org.siouan.frontendgradleplugin.domain.model.ExecutionSettings;
 import org.siouan.frontendgradleplugin.domain.model.Logger;
 import org.siouan.frontendgradleplugin.domain.usecase.ResolveExecutionSettings;
@@ -30,13 +29,12 @@ public class GradleScriptRunnerAdapter {
      * exception if the script execution fails, or does not terminate with a non-zero exit value.
      *
      * @param scriptProperties Script properties.
-     * @throws ExecutableNotFoundException When a executable required is not found.
      */
-    public void execute(@Nonnull final ScriptProperties scriptProperties) throws ExecutableNotFoundException {
+    public void execute(@Nonnull final ScriptProperties scriptProperties) {
         final ExecutionSettings executionSettings = resolveExecutionSettings.execute(
             scriptProperties.getPackageJsonDirectoryPath(), scriptProperties.getExecutableType(),
-            scriptProperties.getNodeInstallDirectory(),
-            scriptProperties.getPlatform(), scriptProperties.getScript());
+            scriptProperties.getNodeInstallDirectoryPath(), scriptProperties.getPlatform(),
+            scriptProperties.getScript());
         logger.debug("Execution settings: {}", executionSettings);
 
         scriptProperties
