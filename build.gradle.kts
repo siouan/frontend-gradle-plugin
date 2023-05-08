@@ -52,16 +52,16 @@ configurations["intTestRuntimeOnly"]
 
 dependencies {
     implementation(gradleApi())
-    implementation("org.apache.httpcomponents.client5:httpclient5:5.1.3")
-    implementation("org.apache.commons:commons-compress:1.21")
+    implementation("org.apache.httpcomponents.client5:httpclient5:5.2.1")
+    implementation("org.apache.commons:commons-compress:1.23.0")
     implementation("org.json:json:20230227")
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.0")
-    testImplementation("org.mockito:mockito-core:4.8.0")
-    testImplementation("org.mockito:mockito-junit-jupiter:4.8.0")
-    testImplementation("org.assertj:assertj-core:3.23.1")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.3")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.3")
+    testImplementation("org.mockito:mockito-core:5.3.1")
+    testImplementation("org.mockito:mockito-junit-jupiter:5.3.1")
+    testImplementation("org.assertj:assertj-core:3.24.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.3")
 
     intTestImplementation("com.github.tomakehurst:wiremock:2.27.2")
 }
@@ -106,37 +106,25 @@ gradle.addListener(GradleTestListener(logger))
 idea {
     module {
         // Force integration test source set as test folder
-        val testSrcDirs = testSourceDirs
-        testSrcDirs.addAll(project.sourceSets.getByName("intTest").java.srcDirs)
-        testSourceDirs = testSrcDirs
-        val testResDirs = testResourceDirs
-        testResDirs.addAll(project.sourceSets.getByName("intTest").resources.srcDirs)
-        testResourceDirs = testResDirs
+        testSources.from(project.sourceSets.getByName("intTest").java.srcDirs)
+        testResources.from(project.sourceSets.getByName("intTest").resources.srcDirs)
     }
 }
 
 jacoco {
-    toolVersion = "0.8.8"
+    toolVersion = "0.8.10"
 }
 
 gradlePlugin {
+    website.set(fgpWebsiteUrl)
+    vcsUrl.set(fgpVcsUrl)
     plugins {
         create("frontendPlugin") {
             id = fgpPluginId
             implementationClass = fgpImplementationClass
-        }
-    }
-}
-
-pluginBundle {
-    website = fgpWebsiteUrl
-    vcsUrl = fgpVcsUrl
-
-    (plugins) {
-        "frontendPlugin" {
             displayName = fgpDisplayName
             description = fgpDescription
-            tags = fgpGradlePluginPortalTags.split(",")
+            tags.set(fgpGradlePluginPortalTags.split(","))
         }
     }
 }
