@@ -15,7 +15,7 @@
 
             <fgp-block-quote>
                 Execution failed for task ':installNode'.
-                > org.siouan.frontendgradleplugin.domain.exception.UnsupportedPlatformException: This platform is not
+                > org.siouan.frontendgradleplugin.domain.UnsupportedPlatformException: This platform is not
                 supported yet: Platform {jvmArch=&lt;os.name&gt;, osName=&lt;os.arch&gt;, environment=...}
             </fgp-block-quote>
 

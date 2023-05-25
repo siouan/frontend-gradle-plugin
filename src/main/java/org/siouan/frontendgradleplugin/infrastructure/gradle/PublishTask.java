@@ -1,6 +1,5 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
-import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
 import org.gradle.api.file.ProjectLayout;
@@ -18,8 +17,8 @@ import org.gradle.process.ExecOperations;
 public class PublishTask extends AbstractRunCommandTask {
 
     @Inject
-    public PublishTask(@Nonnull final ProjectLayout projectLayout, @Nonnull final ObjectFactory objectFactory,
-        @Nonnull final ExecOperations execOperations) {
+    public PublishTask(final ProjectLayout projectLayout, final ObjectFactory objectFactory,
+        final ExecOperations execOperations) {
         super(projectLayout, objectFactory, execOperations);
     }
 

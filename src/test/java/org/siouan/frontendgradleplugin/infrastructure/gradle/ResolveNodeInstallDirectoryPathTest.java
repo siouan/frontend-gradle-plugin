@@ -23,9 +23,6 @@ class ResolveNodeInstallDirectoryPathTest {
     private Provider<Path> primaryNodeInstallDirectoryPath;
 
     @Mock
-    private Provider<Path> primaryNodeInstallDirectoryPath2;
-
-    @Mock
     private Provider<Path> defaultNodeInstallDirectoryPath;
 
     @Mock
@@ -39,12 +36,16 @@ class ResolveNodeInstallDirectoryPathTest {
         when(primaryNodeInstallDirectoryPath.orElse(DEFAULT_NODE_INSTALL_DIRECTORY_PATH)).thenReturn(
             primaryNodeInstallDirectoryPath);
 
-        assertThat(resolveNodeInstallDirectoryPath.execute(false, primaryNodeInstallDirectoryPath,
-            DEFAULT_NODE_INSTALL_DIRECTORY_PATH, nodeInstallDirectoryPathFromEnvironment)).isEqualTo(
-            primaryNodeInstallDirectoryPath);
+        assertThat(resolveNodeInstallDirectoryPath.execute(ResolveNodeInstallDirectoryPathCommand
+            .builder()
+            .userPath(primaryNodeInstallDirectoryPath)
+            .nodeDistributionProvided(false)
+            .environmentPath(nodeInstallDirectoryPathFromEnvironment)
+            .defaultPath(DEFAULT_NODE_INSTALL_DIRECTORY_PATH)
+            .build())).isEqualTo(primaryNodeInstallDirectoryPath);
 
-        verifyNoMoreInteractions(primaryNodeInstallDirectoryPath, primaryNodeInstallDirectoryPath2,
-            defaultNodeInstallDirectoryPath, nodeInstallDirectoryPathFromEnvironment);
+        verifyNoMoreInteractions(primaryNodeInstallDirectoryPath, defaultNodeInstallDirectoryPath,
+            nodeInstallDirectoryPathFromEnvironment);
     }
 
     @Test
@@ -52,12 +53,16 @@ class ResolveNodeInstallDirectoryPathTest {
         when(primaryNodeInstallDirectoryPath.orElse(DEFAULT_NODE_INSTALL_DIRECTORY_PATH)).thenReturn(
             defaultNodeInstallDirectoryPath);
 
-        assertThat(resolveNodeInstallDirectoryPath.execute(false, primaryNodeInstallDirectoryPath,
-            DEFAULT_NODE_INSTALL_DIRECTORY_PATH, nodeInstallDirectoryPathFromEnvironment)).isEqualTo(
-            defaultNodeInstallDirectoryPath);
+        assertThat(resolveNodeInstallDirectoryPath.execute(ResolveNodeInstallDirectoryPathCommand
+            .builder()
+            .userPath(primaryNodeInstallDirectoryPath)
+            .nodeDistributionProvided(false)
+            .environmentPath(nodeInstallDirectoryPathFromEnvironment)
+            .defaultPath(DEFAULT_NODE_INSTALL_DIRECTORY_PATH)
+            .build())).isEqualTo(defaultNodeInstallDirectoryPath);
 
-        verifyNoMoreInteractions(primaryNodeInstallDirectoryPath, primaryNodeInstallDirectoryPath2,
-            defaultNodeInstallDirectoryPath, nodeInstallDirectoryPathFromEnvironment);
+        verifyNoMoreInteractions(primaryNodeInstallDirectoryPath, defaultNodeInstallDirectoryPath,
+            nodeInstallDirectoryPathFromEnvironment);
     }
 
     @Test
@@ -67,12 +72,16 @@ class ResolveNodeInstallDirectoryPathTest {
         when(primaryNodeInstallDirectoryPath.orElse(DEFAULT_NODE_INSTALL_DIRECTORY_PATH)).thenReturn(
             primaryNodeInstallDirectoryPath);
 
-        assertThat(resolveNodeInstallDirectoryPath.execute(true, primaryNodeInstallDirectoryPath,
-            DEFAULT_NODE_INSTALL_DIRECTORY_PATH, nodeInstallDirectoryPathFromEnvironment)).isEqualTo(
-            primaryNodeInstallDirectoryPath);
+        assertThat(resolveNodeInstallDirectoryPath.execute(ResolveNodeInstallDirectoryPathCommand
+            .builder()
+            .userPath(primaryNodeInstallDirectoryPath)
+            .nodeDistributionProvided(true)
+            .environmentPath(nodeInstallDirectoryPathFromEnvironment)
+            .defaultPath(DEFAULT_NODE_INSTALL_DIRECTORY_PATH)
+            .build())).isEqualTo(primaryNodeInstallDirectoryPath);
 
-        verifyNoMoreInteractions(primaryNodeInstallDirectoryPath, primaryNodeInstallDirectoryPath2,
-            defaultNodeInstallDirectoryPath, nodeInstallDirectoryPathFromEnvironment);
+        verifyNoMoreInteractions(primaryNodeInstallDirectoryPath, defaultNodeInstallDirectoryPath,
+            nodeInstallDirectoryPathFromEnvironment);
     }
 
     @Test
@@ -82,12 +91,16 @@ class ResolveNodeInstallDirectoryPathTest {
         when(nodeInstallDirectoryPathFromEnvironment.orElse(DEFAULT_NODE_INSTALL_DIRECTORY_PATH)).thenReturn(
             nodeInstallDirectoryPathFromEnvironment);
 
-        assertThat(resolveNodeInstallDirectoryPath.execute(true, primaryNodeInstallDirectoryPath,
-            DEFAULT_NODE_INSTALL_DIRECTORY_PATH, nodeInstallDirectoryPathFromEnvironment)).isEqualTo(
-            nodeInstallDirectoryPathFromEnvironment);
+        assertThat(resolveNodeInstallDirectoryPath.execute(ResolveNodeInstallDirectoryPathCommand
+            .builder()
+            .userPath(primaryNodeInstallDirectoryPath)
+            .nodeDistributionProvided(true)
+            .environmentPath(nodeInstallDirectoryPathFromEnvironment)
+            .defaultPath(DEFAULT_NODE_INSTALL_DIRECTORY_PATH)
+            .build())).isEqualTo(nodeInstallDirectoryPathFromEnvironment);
 
-        verifyNoMoreInteractions(primaryNodeInstallDirectoryPath, primaryNodeInstallDirectoryPath2,
-            defaultNodeInstallDirectoryPath, nodeInstallDirectoryPathFromEnvironment);
+        verifyNoMoreInteractions(primaryNodeInstallDirectoryPath, defaultNodeInstallDirectoryPath,
+            nodeInstallDirectoryPathFromEnvironment);
     }
 
     @Test
@@ -97,11 +110,15 @@ class ResolveNodeInstallDirectoryPathTest {
         when(nodeInstallDirectoryPathFromEnvironment.orElse(DEFAULT_NODE_INSTALL_DIRECTORY_PATH)).thenReturn(
             defaultNodeInstallDirectoryPath);
 
-        assertThat(resolveNodeInstallDirectoryPath.execute(true, primaryNodeInstallDirectoryPath,
-            DEFAULT_NODE_INSTALL_DIRECTORY_PATH, nodeInstallDirectoryPathFromEnvironment)).isEqualTo(
-            defaultNodeInstallDirectoryPath);
+        assertThat(resolveNodeInstallDirectoryPath.execute(ResolveNodeInstallDirectoryPathCommand
+            .builder()
+            .userPath(primaryNodeInstallDirectoryPath)
+            .nodeDistributionProvided(true)
+            .environmentPath(nodeInstallDirectoryPathFromEnvironment)
+            .defaultPath(DEFAULT_NODE_INSTALL_DIRECTORY_PATH)
+            .build())).isEqualTo(defaultNodeInstallDirectoryPath);
 
-        verifyNoMoreInteractions(primaryNodeInstallDirectoryPath, primaryNodeInstallDirectoryPath2,
-            defaultNodeInstallDirectoryPath, nodeInstallDirectoryPathFromEnvironment);
+        verifyNoMoreInteractions(primaryNodeInstallDirectoryPath, defaultNodeInstallDirectoryPath,
+            nodeInstallDirectoryPathFromEnvironment);
     }
 }

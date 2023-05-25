@@ -6,17 +6,23 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.function.Consumer;
-import javax.annotation.Nonnull;
 
+import lombok.Builder;
+import lombok.Getter;
 import org.gradle.api.Action;
 import org.gradle.process.ExecSpec;
-import org.siouan.frontendgradleplugin.domain.model.ExecutionSettings;
+import org.siouan.frontendgradleplugin.domain.ExecutionSettings;
 
 /**
  * Action that configures a {@link ExecSpec} instance to run a script with Gradle.
  */
+@Builder
+@Getter
 public class ExecSpecAction implements Action<ExecSpec> {
 
+    /**
+     * Execution settings.
+     */
     private final ExecutionSettings executionSettings;
 
     /**
@@ -25,32 +31,12 @@ public class ExecSpecAction implements Action<ExecSpec> {
     private final Consumer<ExecSpec> afterConfiguredConsumer;
 
     /**
-     * Builds an action to execute the given settings, and call the consumer after configuration.
-     *
-     * @param executionSettings Execution settings.
-     * @param afterConfiguredConsumer Consumer called after the action is configured.
-     */
-    public ExecSpecAction(@Nonnull final ExecutionSettings executionSettings,
-        @Nonnull final Consumer<ExecSpec> afterConfiguredConsumer) {
-        this.executionSettings = executionSettings;
-        this.afterConfiguredConsumer = afterConfiguredConsumer;
-    }
-
-    public ExecutionSettings getExecutionSettings() {
-        return executionSettings;
-    }
-
-    public Consumer<ExecSpec> getAfterConfiguredConsumer() {
-        return afterConfiguredConsumer;
-    }
-
-    /**
      * Configures an execute specification to run the script with a npm/Yarn command line.
      *
      * @param execSpec Execute specification.
      */
     @Override
-    public void execute(@Nonnull final ExecSpec execSpec) {
+    public void execute(final ExecSpec execSpec) {
         execSpec.setWorkingDir(executionSettings.getWorkingDirectoryPath().toString());
 
         // Prepend directories containing the Node and Yarn executables to the 'PATH' environment variable.

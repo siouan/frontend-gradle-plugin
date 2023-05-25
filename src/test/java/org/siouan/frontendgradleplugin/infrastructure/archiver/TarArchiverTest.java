@@ -7,7 +7,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.siouan.frontendgradleplugin.test.util.Resources.getResourcePath;
+import static org.siouan.frontendgradleplugin.test.Resources.getResourcePath;
+import static org.siouan.frontendgradleplugin.test.fixture.PlatformFixture.LOCAL_PLATFORM;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,11 +23,9 @@ import org.junit.jupiter.api.io.TempDir;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.siouan.frontendgradleplugin.domain.model.ExplodeSettings;
-import org.siouan.frontendgradleplugin.domain.provider.FileManager;
-import org.siouan.frontendgradleplugin.infrastructure.exception.UnexpectedEofException;
-import org.siouan.frontendgradleplugin.infrastructure.provider.FileManagerImpl;
-import org.siouan.frontendgradleplugin.test.fixture.PlatformFixture;
+import org.siouan.frontendgradleplugin.domain.FileManager;
+import org.siouan.frontendgradleplugin.domain.installer.archiver.ExplodeCommand;
+import org.siouan.frontendgradleplugin.infrastructure.system.FileManagerImpl;
 
 /**
  * Due to the fact it is not possible to control the Apache Commons Compress library (ACC), and its internal
@@ -46,12 +45,16 @@ class TarArchiverTest {
     private TarArchiver archiver;
 
     @Test
-    void shouldFailInitializingContextWhenTarArchiveDoesNotExist() throws IOException {
+    void should_fail_initializing_context_when_tar_archive_does_not_exist() throws IOException {
         final Path archiveFilePath = targetDirectoryPath.resolve("archive");
         final Exception expectedException = new IOException();
         when(fileManager.newInputStream(archiveFilePath)).thenThrow(expectedException);
-        final ExplodeSettings settings = new ExplodeSettings(PlatformFixture.LOCAL_PLATFORM, archiveFilePath,
-            targetDirectoryPath);
+        final ExplodeCommand settings = ExplodeCommand
+            .builder()
+            .platform(LOCAL_PLATFORM)
+            .archiveFilePath(archiveFilePath)
+            .targetDirectoryPath(targetDirectoryPath)
+            .build();
 
         assertThatThrownBy(() -> archiver.initializeContext(settings)).isInstanceOf(IOException.class);
 
@@ -59,27 +62,36 @@ class TarArchiverTest {
     }
 
     @Test
-    void shouldFailInitializingContextWhenUncompressingErrorOccurs() throws IOException {
+    void should_fail_initializing_context_when_uncompressing_error_occurs() throws IOException {
         final Path archiveFilePath = getResourcePath("archive.tar");
         final InputStream inputStream = mock(InputStream.class);
         when(fileManager.newInputStream(archiveFilePath)).thenReturn(inputStream);
-        final ExplodeSettings settings = new ExplodeSettings(PlatformFixture.LOCAL_PLATFORM, archiveFilePath,
-            targetDirectoryPath);
+        final ExplodeCommand settings = ExplodeCommand
+            .builder()
+            .platform(LOCAL_PLATFORM)
+            .archiveFilePath(archiveFilePath)
+            .targetDirectoryPath(targetDirectoryPath)
+            .build();
         final IOException expectedException = new IOException();
 
-        assertThatThrownBy(() -> new TarArchiverWithFailure(fileManager, expectedException).initializeContext(settings))
-            .isEqualTo(expectedException);
+        assertThatThrownBy(
+            () -> new TarArchiverWithFailure(fileManager, expectedException).initializeContext(settings)).isEqualTo(
+            expectedException);
 
         verify(inputStream).close();
         verifyNoMoreInteractions(inputStream, fileManager);
     }
 
     @Test
-    void shouldFailGettingEntryWhenTarArchiveIsInvalid() throws IOException {
+    void should_fail_getting_entry_when_tar_archive_is_invalid() throws IOException {
         final Path archiveFilePath = getResourcePath("invalid-archive.unknown");
         when(fileManager.newInputStream(archiveFilePath)).thenCallRealMethod();
-        final ExplodeSettings settings = new ExplodeSettings(PlatformFixture.LOCAL_PLATFORM, archiveFilePath,
-            targetDirectoryPath);
+        final ExplodeCommand settings = ExplodeCommand
+            .builder()
+            .platform(LOCAL_PLATFORM)
+            .archiveFilePath(archiveFilePath)
+            .targetDirectoryPath(targetDirectoryPath)
+            .build();
 
         try (final TarArchiverContext context = archiver.initializeContext(settings)) {
             assertThatThrownBy(() -> archiver.getNextEntry(context)).isInstanceOf(IOException.class);
@@ -89,13 +101,17 @@ class TarArchiverTest {
     }
 
     @Test
-    void shouldFailWritingFileEntryWhenUnexpectedEofAppears() throws IOException {
+    void should_fail_writing_file_entry_when_unexpected_eof_appears() throws IOException {
         final Path archiveFilePath = getResourcePath("archive.tar");
         when(fileManager.newInputStream(archiveFilePath)).thenCallRealMethod();
         final Path entryFilePath = targetDirectoryPath.resolve("aFile");
         when(fileManager.newOutputStream(entryFilePath)).thenCallRealMethod();
-        final ExplodeSettings settings = new ExplodeSettings(PlatformFixture.LOCAL_PLATFORM, archiveFilePath,
-            targetDirectoryPath);
+        final ExplodeCommand settings = ExplodeCommand
+            .builder()
+            .platform(LOCAL_PLATFORM)
+            .archiveFilePath(archiveFilePath)
+            .targetDirectoryPath(targetDirectoryPath)
+            .build();
 
         assertThatThrownBy(() -> {
             final TarArchiver archiver = new TarArchiverWithFailure(fileManager);
@@ -116,13 +132,17 @@ class TarArchiverTest {
     }
 
     @Test
-    void shouldCheckTarGzArchive() throws IOException {
+    void should_check_tar_gz_archive() throws IOException {
         final Path archiveFilePath = getResourcePath("archive.tar.gz");
         when(fileManager.newInputStream(archiveFilePath)).thenCallRealMethod();
         final Path entryFilePath = targetDirectoryPath.resolve("aFile");
         when(fileManager.newOutputStream(entryFilePath)).thenCallRealMethod();
-        final ExplodeSettings settings = new ExplodeSettings(PlatformFixture.LOCAL_PLATFORM, archiveFilePath,
-            targetDirectoryPath);
+        final ExplodeCommand settings = ExplodeCommand
+            .builder()
+            .platform(LOCAL_PLATFORM)
+            .archiveFilePath(archiveFilePath)
+            .targetDirectoryPath(targetDirectoryPath)
+            .build();
 
         int count = 0;
         try (final TarArchiverContext context = archiver.initializeContext(settings)) {
@@ -146,14 +166,18 @@ class TarArchiverTest {
     }
 
     @Test
-    void shouldCheckTarArchive() throws IOException {
+    void should_check_tar_archive() throws IOException {
         final Path archiveFilePath = getResourcePath("archive.tar");
         when(fileManager.newInputStream(archiveFilePath)).thenCallRealMethod();
         final Path entryFilePath = targetDirectoryPath.resolve("aFile");
         when(fileManager.newOutputStream(entryFilePath)).thenCallRealMethod();
         String symbolicLinkTarget = null;
-        final ExplodeSettings settings = new ExplodeSettings(PlatformFixture.LOCAL_PLATFORM, archiveFilePath,
-            targetDirectoryPath);
+        final ExplodeCommand settings = ExplodeCommand
+            .builder()
+            .platform(LOCAL_PLATFORM)
+            .archiveFilePath(archiveFilePath)
+            .targetDirectoryPath(targetDirectoryPath)
+            .build();
 
         int count = 0;
         try (final TarArchiverContext context = archiver.initializeContext(settings)) {
@@ -196,10 +220,10 @@ class TarArchiverTest {
         }
 
         @Override
-        InputStream uncompressInputStream(final ExplodeSettings settings, final InputStream compressedInputStream)
+        InputStream uncompressInputStream(final ExplodeCommand command, final InputStream compressedInputStream)
             throws IOException {
             if (uncompressException == null) {
-                return super.uncompressInputStream(settings, compressedInputStream);
+                return super.uncompressInputStream(command, compressedInputStream);
             } else {
                 throw uncompressException;
             }

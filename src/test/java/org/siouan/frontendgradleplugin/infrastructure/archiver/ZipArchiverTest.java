@@ -7,7 +7,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.siouan.frontendgradleplugin.test.util.Resources.getResourcePath;
+import static org.siouan.frontendgradleplugin.test.Resources.getResourcePath;
+import static org.siouan.frontendgradleplugin.test.fixture.PlatformFixture.LOCAL_PLATFORM;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,11 +23,10 @@ import org.junit.jupiter.api.io.TempDir;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.siouan.frontendgradleplugin.domain.model.ExplodeSettings;
-import org.siouan.frontendgradleplugin.domain.model.Platform;
-import org.siouan.frontendgradleplugin.domain.provider.FileManager;
-import org.siouan.frontendgradleplugin.infrastructure.provider.FileManagerImpl;
-import org.siouan.frontendgradleplugin.test.fixture.PlatformFixture;
+import org.siouan.frontendgradleplugin.domain.FileManager;
+import org.siouan.frontendgradleplugin.domain.Platform;
+import org.siouan.frontendgradleplugin.domain.installer.archiver.ExplodeCommand;
+import org.siouan.frontendgradleplugin.infrastructure.system.FileManagerImpl;
 
 /**
  * Due to the fact it is not possible to control the Apache Commons Compress library (ACC), and its internal
@@ -46,10 +46,14 @@ class ZipArchiverTest {
     private ZipArchiver archiver;
 
     @Test
-    void shouldFailInitializingContextWhenZipArchiveDoesNotExist() {
+    void should_fail_initializing_context_when_zip_archive_does_not_exist() {
         final Path archiveFile = temporaryDirectoryPath.resolve("archive");
-        final ExplodeSettings settings = new ExplodeSettings(PlatformFixture.LOCAL_PLATFORM, archiveFile,
-            temporaryDirectoryPath);
+        final ExplodeCommand settings = ExplodeCommand
+            .builder()
+            .platform(LOCAL_PLATFORM)
+            .archiveFilePath(archiveFile)
+            .targetDirectoryPath(temporaryDirectoryPath)
+            .build();
 
         assertThatThrownBy(() -> archiver.initializeContext(settings)).isInstanceOf(IOException.class);
 
@@ -57,10 +61,14 @@ class ZipArchiverTest {
     }
 
     @Test
-    void shouldFailInitializingContextWhenZipArchiveIsInvalid() {
+    void should_fail_initializing_context_when_zip_archive_is_invalid() {
         final Path archiveFile = getResourcePath("invalid-archive.unknown");
-        final ExplodeSettings settings = new ExplodeSettings(PlatformFixture.LOCAL_PLATFORM, archiveFile,
-            temporaryDirectoryPath);
+        final ExplodeCommand settings = ExplodeCommand
+            .builder()
+            .platform(LOCAL_PLATFORM)
+            .archiveFilePath(archiveFile)
+            .targetDirectoryPath(temporaryDirectoryPath)
+            .build();
 
         assertThatThrownBy(() -> archiver.initializeContext(settings)).isInstanceOf(IOException.class);
 
@@ -68,10 +76,14 @@ class ZipArchiverTest {
     }
 
     @Test
-    void shouldFailReadingSymbolicLinkTarget() throws IOException {
+    void should_fail_reading_symbolic_link_target() throws IOException {
         final Path archiveFile = getResourcePath("archive-linux.zip");
-        final ExplodeSettings settings = new ExplodeSettings(PlatformFixture.LOCAL_PLATFORM, archiveFile,
-            temporaryDirectoryPath);
+        final ExplodeCommand settings = ExplodeCommand
+            .builder()
+            .platform(LOCAL_PLATFORM)
+            .archiveFilePath(archiveFile)
+            .targetDirectoryPath(temporaryDirectoryPath)
+            .build();
 
         final IOException expectedException = new IOException();
         final ZipArchiver archiver = new ZipArchiverWithSymbolicLinkFailure(fileManager, expectedException);
@@ -94,12 +106,12 @@ class ZipArchiverTest {
     }
 
     @Test
-    void shouldCheckZipArchiveOnWindows() throws IOException {
+    void should_check_zip_archive_on_windows() throws IOException {
         final Path targetFilePath = temporaryDirectoryPath.resolve("aFile");
         String symbolicLinkTarget = null;
         final String archiveFileName;
         final int expectedCount;
-        final Platform platform = PlatformFixture.LOCAL_PLATFORM;
+        final Platform platform = LOCAL_PLATFORM;
         if (platform.isWindowsOs()) {
             archiveFileName = "archive-win.zip";
             expectedCount = 1;
@@ -109,7 +121,12 @@ class ZipArchiverTest {
         }
         final Path archiveFilePath = getResourcePath(archiveFileName);
         when(fileManager.copy(any(InputStream.class), eq(targetFilePath))).thenCallRealMethod();
-        final ExplodeSettings settings = new ExplodeSettings(platform, archiveFilePath, temporaryDirectoryPath);
+        final ExplodeCommand settings = ExplodeCommand
+            .builder()
+            .platform(platform)
+            .archiveFilePath(archiveFilePath)
+            .targetDirectoryPath(temporaryDirectoryPath)
+            .build();
 
         int count = 0;
         try (final ZipArchiverContext context = archiver.initializeContext(settings)) {

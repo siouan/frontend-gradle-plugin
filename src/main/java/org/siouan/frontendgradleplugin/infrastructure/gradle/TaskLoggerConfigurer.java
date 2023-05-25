@@ -1,11 +1,8 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
-import javax.annotation.Nonnull;
-
 import org.gradle.api.Task;
 import org.gradle.api.logging.LogLevel;
 import org.gradle.api.logging.LoggingManager;
-import org.siouan.frontendgradleplugin.infrastructure.gradle.adapter.GradleLoggerAdapter;
 
 /**
  * Class injecting in the bean registry a logger forwarding messages to the logger of a Gradle task.
@@ -27,7 +24,7 @@ public class TaskLoggerConfigurer {
         this.gradleSettings = gradleSettings;
     }
 
-    public void initLoggerAdapter(@Nonnull final Task task) {
+    public void initLoggerAdapter(final Task task) {
         task
             .getLogger()
             .debug("Configuring logger for task '{}': verboseModeEnabled={}", task.getName(),
@@ -45,8 +42,7 @@ public class TaskLoggerConfigurer {
      * @param task Task.
      * @return Logging level.
      */
-    @Nonnull
-    private LogLevel resolveLogLevel(@Nonnull final Task task) {
+    private LogLevel resolveLogLevel(final Task task) {
         LogLevel loggingLevel = task.getLogging().getLevel();
         if (loggingLevel != null) {
             return loggingLevel;

@@ -1,20 +1,19 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
-import static org.siouan.frontendgradleplugin.test.util.GradleBuildAssertions.assertTaskFailed;
-import static org.siouan.frontendgradleplugin.test.util.GradleBuildAssertions.assertTaskOutcomes;
-import static org.siouan.frontendgradleplugin.test.util.GradleBuildFiles.createBuildFile;
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.runGradle;
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.runGradleAndExpectFailure;
-import static org.siouan.frontendgradleplugin.test.util.Resources.getResourcePath;
-import static org.siouan.frontendgradleplugin.test.util.TaskTypes.buildCorepackTaskDefinition;
-import static org.siouan.frontendgradleplugin.test.util.TaskTypes.buildNodeTaskDefinition;
-import static org.siouan.frontendgradleplugin.test.util.TaskTypes.buildNpmTaskDefinition;
-import static org.siouan.frontendgradleplugin.test.util.TaskTypes.buildPnpmTaskDefinition;
-import static org.siouan.frontendgradleplugin.test.util.TaskTypes.buildYarnTaskDefinition;
-import static org.siouan.frontendgradleplugin.test.util.TaskTypes.createJavascriptFile;
+import static org.siouan.frontendgradleplugin.test.GradleBuildAssertions.assertTaskFailed;
+import static org.siouan.frontendgradleplugin.test.GradleBuildAssertions.assertTaskOutcomes;
+import static org.siouan.frontendgradleplugin.test.GradleBuildFiles.createBuildFile;
+import static org.siouan.frontendgradleplugin.test.GradleHelper.runGradle;
+import static org.siouan.frontendgradleplugin.test.GradleHelper.runGradleAndExpectFailure;
+import static org.siouan.frontendgradleplugin.test.Resources.getResourcePath;
+import static org.siouan.frontendgradleplugin.test.TaskTypes.buildCorepackTaskDefinition;
+import static org.siouan.frontendgradleplugin.test.TaskTypes.buildNodeTaskDefinition;
+import static org.siouan.frontendgradleplugin.test.TaskTypes.buildNpmTaskDefinition;
+import static org.siouan.frontendgradleplugin.test.TaskTypes.buildPnpmTaskDefinition;
+import static org.siouan.frontendgradleplugin.test.TaskTypes.buildYarnTaskDefinition;
+import static org.siouan.frontendgradleplugin.test.TaskTypes.createJavascriptFile;
 
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -25,8 +24,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
-import org.siouan.frontendgradleplugin.test.util.FrontendMapBuilder;
-import org.siouan.frontendgradleplugin.test.util.PluginTaskOutcome;
+import org.siouan.frontendgradleplugin.test.FrontendMapBuilder;
+import org.siouan.frontendgradleplugin.test.PluginTaskOutcome;
 
 /**
  * Functional tests to verify task types {@link RunNode}, {@link RunNpm}, {@link RunPnpm},  {@link RunYarn} in a Gradle
@@ -115,7 +114,7 @@ class TaskTypesWithDownloadedDistributionsFuncTest {
             .packageJsonDirectory(packageJsonDirectoryPath)
             .verboseModeEnabled(false);
         final String runCorepackTaskDefinition = buildCorepackTaskDefinition(RUN_COREPACK_TASK_NAME,
-            FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, "-v");
+            FrontendGradlePlugin.INSTALL_NODE_TASK_NAME, "-v");
         final String runNodeTaskDefinition = buildNodeTaskDefinition(RUN_NODE_TASK_NAME,
             temporaryScriptPath.toString().replace("\\", "\\\\"));
         final String runNpmTaskDefinition = buildNpmTaskDefinition(RUN_NPM_TASK_NAME,
@@ -123,7 +122,7 @@ class TaskTypesWithDownloadedDistributionsFuncTest {
         final String runPnpmTaskDefinition = buildPnpmTaskDefinition(RUN_PNPM_TASK_NAME,
             FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME, "run another-script");
         final String runYarnTaskDefinition = buildYarnTaskDefinition(RUN_YARN_TASK_NAME,
-            Set.of(FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME),
+            Set.of(FrontendGradlePlugin.INSTALL_NODE_TASK_NAME, FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME),
             "run another-script");
         final String additionalContent = String.join("\n", runCorepackTaskDefinition, runNodeTaskDefinition,
             runNpmTaskDefinition, runPnpmTaskDefinition, runYarnTaskDefinition);

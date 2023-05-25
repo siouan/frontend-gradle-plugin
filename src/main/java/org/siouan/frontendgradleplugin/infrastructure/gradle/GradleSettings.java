@@ -1,8 +1,5 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.gradle.api.logging.LogLevel;
 
 /**
@@ -16,17 +13,15 @@ public class GradleSettings {
 
     private final LogLevel commandLineLogLevel;
 
-    public GradleSettings(@Nullable final LogLevel projectLogLevel, @Nonnull final LogLevel commandLineLogLevel) {
+    public GradleSettings(final LogLevel projectLogLevel, final LogLevel commandLineLogLevel) {
         this.projectLogLevel = projectLogLevel;
         this.commandLineLogLevel = commandLineLogLevel;
     }
 
-    @Nullable
     public LogLevel getProjectLogLevel() {
         return projectLogLevel;
     }
 
-    @Nonnull
     public LogLevel getCommandLineLogLevel() {
         return commandLineLogLevel;
     }

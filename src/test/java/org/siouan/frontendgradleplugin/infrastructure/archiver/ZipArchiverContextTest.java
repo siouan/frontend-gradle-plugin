@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.siouan.frontendgradleplugin.domain.model.ExplodeSettings;
+import org.siouan.frontendgradleplugin.domain.installer.archiver.ExplodeCommand;
 
 /**
  * Unit tests for the {@link ZipArchiverContext} class.
@@ -31,13 +31,13 @@ class ZipArchiverContextTest {
     ZipFile zipFile;
 
     @Mock
-    private ExplodeSettings settings;
+    private ExplodeCommand settings;
 
     @Mock
     private Enumeration<ZipArchiveEntry> entries;
 
     @Test
-    void shouldFailWhenClosingContextWithIOException() throws IOException {
+    void should_fail_when_closing_context_with_io_exception() throws IOException {
         when(zipFile.getEntries()).thenReturn(entries);
         final Exception expectedException = mock(IOException.class);
         doThrow(expectedException).when(zipFile).close();
@@ -45,20 +45,20 @@ class ZipArchiverContextTest {
 
         assertThatThrownBy(context::close).isEqualTo(expectedException);
 
-        assertThat(context.getSettings()).isEqualTo(settings);
+        assertThat(context.getExplodeCommand()).isEqualTo(settings);
         assertThat(context.getEntries()).isEqualTo(entries);
         assertThat(context.getZipFile()).isEqualTo(zipFile);
         verifyNoMoreInteractions(zipFile);
     }
 
     @Test
-    void shouldCloseContext() throws IOException {
+    void should_close_context() throws IOException {
         when(zipFile.getEntries()).thenReturn(entries);
         final ZipArchiverContext context = new ZipArchiverContext(settings, zipFile);
 
         context.close();
 
-        assertThat(context.getSettings()).isEqualTo(settings);
+        assertThat(context.getExplodeCommand()).isEqualTo(settings);
         assertThat(context.getEntries()).isEqualTo(entries);
         assertThat(context.getZipFile()).isEqualTo(zipFile);
         verify(zipFile).close();

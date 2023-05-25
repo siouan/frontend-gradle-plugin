@@ -12,7 +12,7 @@
             <template v-slot:groovy>
                 <pre><fgp-code>frontend {
     <fgp-property-link name="nodeDistributionProvided" /> = false
-    <fgp-property-link name="nodeVersion" /> = '14.17.3'
+    <fgp-property-link name="nodeVersion" /> = '18.16.0'
     <fgp-property-link name="nodeDistributionUrlRoot" /> = 'https://nodejs.org/dist/'
     <fgp-property-link name="nodeDistributionUrlPathPattern" /> = 'vVERSION/node-vVERSION-ARCH.TYPE'
     <fgp-property-link name="nodeDistributionServerUsername" /> = 'username'
@@ -21,7 +21,7 @@
 
     <fgp-code-comment>// REMOVED PROPERTIES - PRIOR TO RELEASE 7.0.0</fgp-code-comment>
     <fgp-property-link name="yarnEnabled" /> = false
-    <fgp-property-link name="yarnVersion" /> = '3.0.0'
+    <fgp-property-link name="yarnVersion" /> = '3.5.1'
     <fgp-code-comment>// END OF REMOVED PROPERTIES</fgp-code-comment>
     <fgp-code-comment>// REMOVED PROPERTIES - PRIOR TO RELEASE 6.0.0</fgp-code-comment>
     <fgp-property-link name="yarnDistributionProvided" /> = false
@@ -54,7 +54,7 @@
             <template v-slot:kotlin>
                 <pre><fgp-code>frontend {
     <fgp-property-link name="nodeDistributionProvided" />.set(false)
-    <fgp-property-link name="nodeVersion" />.set("14.17.3")
+    <fgp-property-link name="nodeVersion" />.set("18.16.0")
     <fgp-property-link name="nodeDistributionUrlRoot" />.set("https://nodejs.org/dist/")
     <fgp-property-link name="nodeDistributionUrlPathPattern" />.set("vVERSION/node-vVERSION-ARCH.TYPE")
     <fgp-property-link name="nodeDistributionServerUsername" />.set("username")
@@ -63,7 +63,7 @@
 
     <fgp-code-comment>// REMOVED PROPERTIES - PRIOR TO RELEASE 7.0.0</fgp-code-comment>
     <fgp-property-link name="yarnEnabled" />.set(false)
-    <fgp-property-link name="yarnVersion" />.set("3.0.0")
+    <fgp-property-link name="yarnVersion" />.set("3.5.1")
     <fgp-code-comment>// END OF REMOVED PROPERTIES</fgp-code-comment>
     <fgp-code-comment>// REMOVED PROPERTIES - PRIOR TO RELEASE 6.0.0</fgp-code-comment>
     <fgp-property-link name="yarnDistributionProvided" />.set(false)

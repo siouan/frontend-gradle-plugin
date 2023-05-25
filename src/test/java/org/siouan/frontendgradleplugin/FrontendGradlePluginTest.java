@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.Objects;
-import javax.annotation.Nonnull;
 
 import org.gradle.api.Project;
 import org.gradle.api.plugins.BasePlugin;
@@ -21,8 +20,8 @@ import org.siouan.frontendgradleplugin.infrastructure.gradle.CheckTask;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.CleanTask;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.FrontendExtension;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.InstallDependenciesTask;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.InstallNodeTask;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.InstallPackageManagerTask;
-import org.siouan.frontendgradleplugin.infrastructure.gradle.NodeInstallTask;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.PublishTask;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.ResolvePackageManagerTask;
 
@@ -124,37 +123,36 @@ class FrontendGradlePluginTest {
         assertThatTasksAreConfigured(project, extension);
     }
 
-    private void assertThatTasksAreConfigured(@Nonnull final Project project,
-        @Nonnull final FrontendExtension extension) {
+    private void assertThatTasksAreConfigured(final Project project, final FrontendExtension extension) {
 
-        final NodeInstallTask nodeInstallTask = project
+        final InstallNodeTask installNodeTask = project
             .getTasks()
-            .named(FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, NodeInstallTask.class)
+            .named(FrontendGradlePlugin.INSTALL_NODE_TASK_NAME, InstallNodeTask.class)
             .get();
-        assertThat(nodeInstallTask.getNodeVersion().getOrNull()).isEqualTo(extension.getNodeVersion().getOrNull());
-        assertThat(nodeInstallTask.getNodeDistributionUrlRoot().get()).isEqualTo(
+        assertThat(installNodeTask.getNodeVersion().getOrNull()).isEqualTo(extension.getNodeVersion().getOrNull());
+        assertThat(installNodeTask.getNodeDistributionUrlRoot().get()).isEqualTo(
             extension.getNodeDistributionUrlRoot().get());
-        assertThat(nodeInstallTask.getNodeDistributionUrlPathPattern().get()).isEqualTo(
+        assertThat(installNodeTask.getNodeDistributionUrlPathPattern().get()).isEqualTo(
             extension.getNodeDistributionUrlPathPattern().get());
-        assertThat(nodeInstallTask.getNodeDistributionServerUsername().getOrNull()).isEqualTo(
+        assertThat(installNodeTask.getNodeDistributionServerUsername().getOrNull()).isEqualTo(
             extension.getNodeDistributionServerUsername().getOrNull());
-        assertThat(nodeInstallTask.getNodeDistributionServerPassword().getOrNull()).isEqualTo(
+        assertThat(installNodeTask.getNodeDistributionServerPassword().getOrNull()).isEqualTo(
             extension.getNodeDistributionServerPassword().getOrNull());
-        assertThat(nodeInstallTask.getNodeInstallDirectory().isPresent()).isTrue();
-        assertThat(nodeInstallTask.getHttpProxyHost().getOrNull()).isEqualTo(extension.getHttpProxyHost().getOrNull());
-        assertThat(nodeInstallTask.getHttpProxyPort().get()).isEqualTo(extension.getHttpProxyPort().get());
-        assertThat(nodeInstallTask.getHttpProxyUsername().getOrNull()).isEqualTo(
+        assertThat(installNodeTask.getNodeInstallDirectory().isPresent()).isTrue();
+        assertThat(installNodeTask.getHttpProxyHost().getOrNull()).isEqualTo(extension.getHttpProxyHost().getOrNull());
+        assertThat(installNodeTask.getHttpProxyPort().get()).isEqualTo(extension.getHttpProxyPort().get());
+        assertThat(installNodeTask.getHttpProxyUsername().getOrNull()).isEqualTo(
             extension.getHttpProxyUsername().getOrNull());
-        assertThat(nodeInstallTask.getHttpProxyPassword().getOrNull()).isEqualTo(
+        assertThat(installNodeTask.getHttpProxyPassword().getOrNull()).isEqualTo(
             extension.getHttpProxyPassword().getOrNull());
-        assertThat(nodeInstallTask.getHttpsProxyHost().getOrNull()).isEqualTo(
+        assertThat(installNodeTask.getHttpsProxyHost().getOrNull()).isEqualTo(
             extension.getHttpsProxyHost().getOrNull());
-        assertThat(nodeInstallTask.getHttpsProxyPort().get()).isEqualTo(extension.getHttpsProxyPort().get());
-        assertThat(nodeInstallTask.getHttpsProxyUsername().getOrNull()).isEqualTo(
+        assertThat(installNodeTask.getHttpsProxyPort().get()).isEqualTo(extension.getHttpsProxyPort().get());
+        assertThat(installNodeTask.getHttpsProxyUsername().getOrNull()).isEqualTo(
             extension.getHttpsProxyUsername().getOrNull());
-        assertThat(nodeInstallTask.getHttpsProxyPassword().getOrNull()).isEqualTo(
+        assertThat(installNodeTask.getHttpsProxyPassword().getOrNull()).isEqualTo(
             extension.getHttpsProxyPassword().getOrNull());
-        assertThat(nodeInstallTask.getDependsOn()).isEmpty();
+        assertThat(installNodeTask.getDependsOn()).isEmpty();
 
         final ResolvePackageManagerTask resolvePackageManagerTask = project
             .getTasks()
@@ -167,9 +165,9 @@ class FrontendGradlePluginTest {
             extension.getInternalPackageManagerNameFile().getAsFile().get());
         assertThat(resolvePackageManagerTask.getPackageManagerExecutablePathFile().getAsFile().get()).isEqualTo(
             extension.getInternalPackageManagerExecutablePathFile().getAsFile().get());
-        assertThat(nodeInstallTask.getDependsOn()).isEmpty();
+        assertThat(installNodeTask.getDependsOn()).isEmpty();
         assertThat(resolvePackageManagerTask.getDependsOn()).containsExactlyInAnyOrder(
-            FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+            FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
 
         final InstallPackageManagerTask installPackageManagerTask = project
             .getTasks()
@@ -180,7 +178,7 @@ class FrontendGradlePluginTest {
         assertThat(installPackageManagerTask.getNodeInstallDirectory().isPresent()).isTrue();
         assertThat(installPackageManagerTask.getPackageManagerNameFile().getAsFile().get()).isEqualTo(
             extension.getInternalPackageManagerNameFile().getAsFile().get());
-        assertThat(installPackageManagerTask.getDependsOn()).containsExactlyInAnyOrder(nodeInstallTask.getName(),
+        assertThat(installPackageManagerTask.getDependsOn()).containsExactlyInAnyOrder(installNodeTask.getName(),
             resolvePackageManagerTask.getName());
 
         final InstallDependenciesTask installDependenciesTask = project

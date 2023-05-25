@@ -1,8 +1,6 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptySet;
-import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toCollection;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -15,6 +13,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -24,7 +23,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.siouan.frontendgradleplugin.domain.model.ExecutionSettings;
+import org.siouan.frontendgradleplugin.domain.ExecutionSettings;
 
 @ExtendWith(MockitoExtension.class)
 class ExecSpecActionTest {
@@ -46,12 +45,16 @@ class ExecSpecActionTest {
     private Consumer<ExecSpec> afterConfigured;
 
     @Test
-    void shouldConfigureExecSpecWithUppercasePathVariableAndWithoutExecutablePaths() {
-        final ExecutionSettings executionSettings = new ExecutionSettings(WORKING_DIRECTORY_PATH, emptySet(),
-            EXECUTABLE_FILE_PATH, ARGUMENTS);
+    void should_configure_exec_spec_with_uppercase_path_variable_and_without_executable_paths() {
+        final ExecutionSettings executionSettings = ExecutionSettings
+            .builder()
+            .workingDirectoryPath(WORKING_DIRECTORY_PATH)
+            .additionalExecutablePaths(Set.of())
+            .executablePath(EXECUTABLE_FILE_PATH)
+            .arguments(ARGUMENTS)
+            .build();
         final ExecSpecAction action = new ExecSpecAction(executionSettings, afterConfigured);
-        when(execSpec.getEnvironment()).thenReturn(
-            singletonMap("PATH", String.join(File.pathSeparator, EXECUTABLE_PATHS)));
+        when(execSpec.getEnvironment()).thenReturn(Map.of("PATH", String.join(File.pathSeparator, EXECUTABLE_PATHS)));
 
         action.execute(execSpec);
 
@@ -59,15 +62,19 @@ class ExecSpecActionTest {
     }
 
     @Test
-    void shouldConfigureExecSpecWithLowercasePathVariableAndExecutablePaths() {
+    void should_configure_exec_spec_with_lowercase_path_variable_and_executable_paths() {
         final Set<Path> executablePaths = new HashSet<>();
         executablePaths.add(Paths.get("\\Program Files\\node\\bin"));
         executablePaths.add(Paths.get("/opt/yarn"));
-        final ExecutionSettings executionSettings = new ExecutionSettings(WORKING_DIRECTORY_PATH, executablePaths,
-            EXECUTABLE_FILE_PATH, ARGUMENTS);
+        final ExecutionSettings executionSettings = ExecutionSettings
+            .builder()
+            .workingDirectoryPath(WORKING_DIRECTORY_PATH)
+            .additionalExecutablePaths(executablePaths)
+            .executablePath(EXECUTABLE_FILE_PATH)
+            .arguments(ARGUMENTS)
+            .build();
         final ExecSpecAction action = new ExecSpecAction(executionSettings, afterConfigured);
-        when(execSpec.getEnvironment()).thenReturn(
-            singletonMap("Path", String.join(File.pathSeparator, EXECUTABLE_PATHS)));
+        when(execSpec.getEnvironment()).thenReturn(Map.of("Path", String.join(File.pathSeparator, EXECUTABLE_PATHS)));
 
         action.execute(execSpec);
 

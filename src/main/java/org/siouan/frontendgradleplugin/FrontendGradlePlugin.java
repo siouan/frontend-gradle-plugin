@@ -6,7 +6,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import javax.annotation.Nonnull;
 
 import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
@@ -19,21 +18,22 @@ import org.gradle.api.provider.ProviderFactory;
 import org.gradle.api.publish.plugins.PublishingPlugin;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.language.base.plugins.LifecycleBasePlugin;
-import org.siouan.frontendgradleplugin.domain.model.PackageManagerType;
-import org.siouan.frontendgradleplugin.domain.model.PlatformProvider;
-import org.siouan.frontendgradleplugin.domain.model.SystemSettingsProvider;
-import org.siouan.frontendgradleplugin.domain.provider.FileManager;
-import org.siouan.frontendgradleplugin.domain.usecase.GetNodeExecutablePath;
-import org.siouan.frontendgradleplugin.infrastructure.BeanInstanciationException;
-import org.siouan.frontendgradleplugin.infrastructure.Beans;
-import org.siouan.frontendgradleplugin.infrastructure.TooManyCandidateBeansException;
-import org.siouan.frontendgradleplugin.infrastructure.ZeroOrMultiplePublicConstructorsException;
+import org.siouan.frontendgradleplugin.domain.FileManager;
+import org.siouan.frontendgradleplugin.domain.PackageManagerType;
+import org.siouan.frontendgradleplugin.domain.PlatformProvider;
+import org.siouan.frontendgradleplugin.domain.ResolveGlobalExecutablePathCommand;
+import org.siouan.frontendgradleplugin.domain.ResolveGlobalNodeExecutablePath;
+import org.siouan.frontendgradleplugin.domain.SystemSettingsProvider;
+import org.siouan.frontendgradleplugin.infrastructure.archiver.ArchiverProviderImpl;
+import org.siouan.frontendgradleplugin.infrastructure.bean.BeanInstanciationException;
+import org.siouan.frontendgradleplugin.infrastructure.bean.Beans;
+import org.siouan.frontendgradleplugin.infrastructure.bean.TooManyCandidateBeansException;
+import org.siouan.frontendgradleplugin.infrastructure.bean.ZeroOrMultiplePublicConstructorsException;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.*;
-import org.siouan.frontendgradleplugin.infrastructure.gradle.adapter.GradleLoggerAdapter;
-import org.siouan.frontendgradleplugin.infrastructure.provider.ArchiverProviderImpl;
-import org.siouan.frontendgradleplugin.infrastructure.provider.ChannelProviderImpl;
-import org.siouan.frontendgradleplugin.infrastructure.provider.FileManagerImpl;
-import org.siouan.frontendgradleplugin.infrastructure.provider.HttpClientProviderImpl;
+import org.siouan.frontendgradleplugin.infrastructure.httpclient.HttpClientProviderImpl;
+import org.siouan.frontendgradleplugin.infrastructure.system.ChannelProviderImpl;
+import org.siouan.frontendgradleplugin.infrastructure.system.FileManagerImpl;
+import org.siouan.frontendgradleplugin.infrastructure.system.PlatformProviderImpl;
 
 /**
  * Main plugin class that bootstraps the plugin by declaring its DSL and its tasks.
@@ -134,7 +134,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
     /**
      * Name of the task that installs a Node distribution.
      */
-    public static final String NODE_INSTALL_TASK_NAME = "installNode";
+    public static final String INSTALL_NODE_TASK_NAME = "installNode";
 
     /**
      * Name of the environment variable providing the path to a global Node.js installation.
@@ -166,43 +166,62 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      */
     private static final String TASK_GROUP = "Frontend";
 
+    @Override
     public void apply(final Project project) {
         project.getPluginManager().apply(BasePlugin.class);
         project.getPluginManager().apply(PublishingPlugin.class);
 
         final SystemExtension systemExtension = new SystemExtension(project.getProviders());
-
-        final FrontendExtension extension = project
+        final FrontendExtension frontendExtension = project
             .getExtensions()
             .create(EXTENSION_NAME, FrontendExtension.class, project.getObjects());
 
-        extension.getNodeDistributionProvided().convention(false);
-        extension.getNodeDistributionUrlRoot().convention(DEFAULT_NODE_DISTRIBUTION_URL_ROOT);
-        extension.getNodeDistributionUrlPathPattern().convention(DEFAULT_NODE_DISTRIBUTION_URL_PATH_PATTERN);
-        extension.getInstallScript().convention(DEFAULT_INSTALL_SCRIPT);
-        extension.getPackageJsonDirectory().convention(project.getLayout().getProjectDirectory());
-        extension.getHttpProxyPort().convention(DEFAULT_HTTP_PROXY_PORT);
-        extension.getHttpsProxyPort().convention(DEFAULT_HTTPS_PROXY_PORT);
-        extension
+        // Set default configuration.
+        frontendExtension.getNodeDistributionProvided().convention(false);
+        frontendExtension.getNodeDistributionUrlRoot().convention(DEFAULT_NODE_DISTRIBUTION_URL_ROOT);
+        frontendExtension.getNodeDistributionUrlPathPattern().convention(DEFAULT_NODE_DISTRIBUTION_URL_PATH_PATTERN);
+        frontendExtension.getInstallScript().convention(DEFAULT_INSTALL_SCRIPT);
+        frontendExtension.getPackageJsonDirectory().convention(project.getLayout().getProjectDirectory());
+        frontendExtension.getHttpProxyPort().convention(DEFAULT_HTTP_PROXY_PORT);
+        frontendExtension.getHttpsProxyPort().convention(DEFAULT_HTTPS_PROXY_PORT);
+        frontendExtension
             .getCacheDirectory()
             .convention(project.getLayout().getBuildDirectory().dir(DEFAULT_CACHE_DIRECTORY_NAME));
-        extension
+        frontendExtension
             .getInternalMetadataFile()
-            .fileProvider(extension.getPackageJsonDirectory().file(METADATA_FILE_NAME).map(RegularFile::getAsFile));
-        extension
+            .fileProvider(
+                frontendExtension.getPackageJsonDirectory().file(METADATA_FILE_NAME).map(RegularFile::getAsFile));
+        frontendExtension
             .getInternalPackageManagerNameFile()
-            .convention(extension
+            .convention(frontendExtension
                 .getCacheDirectory()
                 .dir(RESOLVE_PACKAGE_MANAGER_TASK_NAME)
                 .map(directory -> directory.file(PACKAGE_MANAGER_NAME_FILE_NAME)));
-        extension
+        frontendExtension
             .getInternalPackageManagerExecutablePathFile()
-            .convention(extension
+            .convention(frontendExtension
                 .getCacheDirectory()
                 .dir(RESOLVE_PACKAGE_MANAGER_TASK_NAME)
                 .map(directory -> directory.file(PACKAGE_MANAGER_EXECUTABLE_PATH_FILE_NAME)));
-        extension.getVerboseModeEnabled().convention(false);
+        frontendExtension.getVerboseModeEnabled().convention(false);
 
+        // Create bean registry and register concrete base implementations.
+        final String beanRegistryId = configureBeanRegistry(project, systemExtension, frontendExtension);
+
+        // Create and configure all tasks.
+        configureTasks(project, beanRegistryId);
+    }
+
+    /**
+     * Creates a bean registry and registers concrete implementations for injection.
+     *
+     * @param project Project.
+     * @param systemExtension Extension providing system properties.
+     * @param frontendExtension Extension providing frontend properties.
+     * @return ID of the bean registry.
+     */
+    protected String configureBeanRegistry(final Project project, final SystemExtension systemExtension,
+        final FrontendExtension frontendExtension) {
         final String beanRegistryId = Beans.getBeanRegistryId(project.getLayout().getProjectDirectory().toString());
         final SystemSettingsProvider systemSettingsProvider = new SystemSettingsProviderImpl(systemExtension,
             DEFAULT_HTTP_PROXY_PORT, DEFAULT_HTTPS_PROXY_PORT);
@@ -210,11 +229,22 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         final GradleSettings gradleSettings = new GradleSettings(project.getLogging().getLevel(),
             project.getGradle().getStartParameter().getLogLevel());
         final ProviderFactory providerFactory = project.getProviders();
-        final TaskContext taskContext = new TaskContext(
-            project.getLayout().getProjectDirectory().getAsFile().toPath().resolve(DEFAULT_NODE_INSTALL_DIRECTORY_NAME),
-            providerFactory.environmentVariable(NODEJS_HOME_ENV_VAR).map(Paths::get), extension);
+        final TaskContext taskContext = TaskContext.builder()
+            // This default install directory must not be applied with a convention on the related extension property,
+            // because, when null, it allows to know whether the install directory must be resolved from an environment
+            // variable.
+            .defaultNodeInstallDirectoryPath(project
+                .getLayout()
+                .getProjectDirectory()
+                .getAsFile()
+                .toPath()
+                .resolve(DEFAULT_NODE_INSTALL_DIRECTORY_NAME))
+            .nodeInstallDirectoryFromEnvironment(
+                providerFactory.environmentVariable(NODEJS_HOME_ENV_VAR).map(Paths::get))
+            .extension(frontendExtension)
+            .build();
         Beans.initBeanRegistry(beanRegistryId);
-        Beans.registerBean(beanRegistryId, extension);
+        Beans.registerBean(beanRegistryId, frontendExtension);
         Beans.registerBean(beanRegistryId, systemSettingsProvider);
         Beans.registerBean(beanRegistryId, platformProvider);
         Beans.registerBean(beanRegistryId, gradleSettings);
@@ -226,10 +256,20 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         Beans.registerBean(beanRegistryId, ChannelProviderImpl.class);
         Beans.registerBean(beanRegistryId, ArchiverProviderImpl.class);
         Beans.registerBean(beanRegistryId, HttpClientProviderImpl.class);
+        return beanRegistryId;
+    }
 
+    /**
+     * Registers plugin tasks.
+     *
+     * @param project Project.
+     * @param beanRegistryId Bean registry ID.
+     */
+    protected void configureTasks(final Project project, final String beanRegistryId) {
         final TaskContainer taskContainer = project.getTasks();
-        taskContainer.register(NODE_INSTALL_TASK_NAME, NodeInstallTask.class,
-            task -> configureNodeInstallTask(task, beanRegistryId, taskContext));
+        final TaskContext taskContext = getBeanOrFail(beanRegistryId, TaskContext.class);
+        taskContainer.register(INSTALL_NODE_TASK_NAME, InstallNodeTask.class,
+            task -> configureInstallNodeTask(task, beanRegistryId, taskContext));
         taskContainer.register(RESOLVE_PACKAGE_MANAGER_TASK_NAME, ResolvePackageManagerTask.class,
             task -> configureResolvePackageManagerTask(task, beanRegistryId, taskContainer, taskContext));
         taskContainer.register(INSTALL_PACKAGE_MANAGER_TASK_NAME, InstallPackageManagerTask.class,
@@ -245,6 +285,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         taskContainer.register(PUBLISH_TASK_NAME, PublishTask.class,
             task -> configurePublishTask(task, beanRegistryId, taskContainer, taskContext));
 
+        // Configure dependencies with Gradle built-in tasks.
         configureDependency(taskContainer, GRADLE_CLEAN_TASK_NAME, CLEAN_TASK_NAME, CleanTask.class);
         configureDependency(taskContainer, GRADLE_ASSEMBLE_TASK_NAME, ASSEMBLE_TASK_NAME, AssembleTask.class);
         configureDependency(taskContainer, GRADLE_CHECK_TASK_NAME, CHECK_TASK_NAME, CheckTask.class);
@@ -255,14 +296,15 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      * Configures the given task with the plugin extension.
      *
      * @param task Task.
+     * @param beanRegistryId Bean registry ID.
      * @param taskContext Configuration context.
      */
-    private void configureNodeInstallTask(final NodeInstallTask task, final String beanRegistryId,
+    protected void configureInstallNodeTask(final InstallNodeTask task, final String beanRegistryId,
         final TaskContext taskContext) {
         final FrontendExtension extension = taskContext.getExtension();
 
         task.setGroup(TASK_GROUP);
-        task.setDescription("Downloads and installs a Node distribution.");
+        task.setDescription("Downloads and installs a Node.js distribution.");
         task.getNodeVersion().set(extension.getNodeVersion());
         task.getNodeDistributionUrlRoot().set(extension.getNodeDistributionUrlRoot());
         task.getNodeDistributionUrlPathPattern().set(extension.getNodeDistributionUrlPathPattern());
@@ -288,18 +330,13 @@ public class FrontendGradlePlugin implements Plugin<Project> {
                 .getNodeInstallDirectory()
                 .map(directory -> directory.getAsFile().toPath())
                 .orElse(taskContext.getDefaultNodeInstallDirectoryPath())
-                .map(nodeInstallDirectoryPath -> {
-                    try {
-                        return Beans
-                            .getBean(beanRegistryId, GetNodeExecutablePath.class)
-                            .execute(nodeInstallDirectoryPath,
-                                Beans.getBean(beanRegistryId, PlatformProvider.class).getPlatform())
-                            .toFile();
-                    } catch (final BeanInstanciationException | TooManyCandidateBeansException |
-                        ZeroOrMultiplePublicConstructorsException e) {
-                        throw new GradleException(e.getClass().getName() + ": " + e.getMessage(), e);
-                    }
-                }));
+                .map(nodeInstallDirectoryPath -> getBeanOrFail(beanRegistryId, ResolveGlobalNodeExecutablePath.class)
+                    .execute(ResolveGlobalExecutablePathCommand
+                        .builder()
+                        .nodeInstallDirectoryPath(nodeInstallDirectoryPath)
+                        .platform(getBeanOrFail(beanRegistryId, PlatformProvider.class).getPlatform())
+                        .build())
+                    .toFile()));
         task.setOnlyIf(t -> !extension.getNodeDistributionProvided().get());
     }
 
@@ -307,9 +344,11 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      * Configures the given task with the plugin extension.
      *
      * @param task Task.
+     * @param beanRegistryId Bean registry ID.
+     * @param taskContainer Gradle task container.
      * @param taskContext Configuration context.
      */
-    private void configureResolvePackageManagerTask(final ResolvePackageManagerTask task, final String beanRegistryId,
+    protected void configureResolvePackageManagerTask(final ResolvePackageManagerTask task, final String beanRegistryId,
         final TaskContainer taskContainer, final TaskContext taskContext) {
         final FrontendExtension extension = taskContext.getExtension();
 
@@ -319,17 +358,20 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.getNodeInstallDirectory().set(resolveNodeInstallDirectory(beanRegistryId, taskContext));
         task.getPackageManagerNameFile().set(extension.getInternalPackageManagerNameFile());
         task.getPackageManagerExecutablePathFile().set(extension.getInternalPackageManagerExecutablePathFile());
-        task.setOnlyIf(t -> extension.getInternalMetadataFile().getAsFile().map(File::toPath).map(Files::exists).getOrElse(false));
-        configureDependency(taskContainer, task, NODE_INSTALL_TASK_NAME, NodeInstallTask.class);
+        task.setOnlyIf(
+            t -> extension.getInternalMetadataFile().getAsFile().map(File::toPath).map(Files::exists).getOrElse(false));
+        configureDependency(taskContainer, task, INSTALL_NODE_TASK_NAME, InstallNodeTask.class);
     }
 
     /**
      * Configures the given task with the plugin extension.
      *
      * @param task Task.
+     * @param beanRegistryId Bean registry ID.
+     * @param taskContainer Task container.
      * @param taskContext Configuration context.
      */
-    private void configureInstallPackageManagerTask(final InstallPackageManagerTask task, final String beanRegistryId,
+    protected void configureInstallPackageManagerTask(final InstallPackageManagerTask task, final String beanRegistryId,
         final TaskContainer taskContainer, final TaskContext taskContext) {
         final FrontendExtension extension = taskContext.getExtension();
 
@@ -348,19 +390,22 @@ public class FrontendGradlePlugin implements Plugin<Project> {
                         return null;
                     }
                     try {
-                        return Beans
-                            .getBean(beanRegistryId, FileManager.class)
-                            .readString(f.getAsFile().toPath(), StandardCharsets.UTF_8);
-                    } catch (final IOException | BeanInstanciationException | TooManyCandidateBeansException |
-                        ZeroOrMultiplePublicConstructorsException e) {
+                        return getBeanOrFail(beanRegistryId, FileManager.class).readString(f.getAsFile().toPath(),
+                            StandardCharsets.UTF_8);
+                    } catch (final IOException e) {
                         throw new GradleException(e.getClass().getName() + ": " + e.getMessage(), e);
                     }
                 })
                 .map(packageManagerExecutablePathFilePath -> () -> Paths
                     .get(packageManagerExecutablePathFilePath)
                     .toFile()));
-        task.setOnlyIf(t -> extension.getInternalPackageManagerExecutablePathFile().getAsFile().map(File::toPath).map(Files::exists).getOrElse(false));
-        configureDependency(taskContainer, task, NODE_INSTALL_TASK_NAME, NodeInstallTask.class);
+        task.setOnlyIf(t -> extension
+            .getInternalPackageManagerExecutablePathFile()
+            .getAsFile()
+            .map(File::toPath)
+            .map(Files::exists)
+            .getOrElse(false));
+        configureDependency(taskContainer, task, INSTALL_NODE_TASK_NAME, InstallNodeTask.class);
         configureDependency(taskContainer, task, RESOLVE_PACKAGE_MANAGER_TASK_NAME, ResolvePackageManagerTask.class);
     }
 
@@ -368,9 +413,11 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      * Configures the given task with the plugin extension.
      *
      * @param task Task.
+     * @param beanRegistryId Bean registry ID.
+     * @param taskContainer Task container.
      * @param taskContext Configuration context.
      */
-    private void configureInstallTask(final InstallDependenciesTask task, final String beanRegistryId,
+    protected void configureInstallTask(final InstallDependenciesTask task, final String beanRegistryId,
         final TaskContainer taskContainer, final TaskContext taskContext) {
         final FrontendExtension extension = taskContext.getExtension();
 
@@ -387,18 +434,21 @@ public class FrontendGradlePlugin implements Plugin<Project> {
                 .map(f -> {
                     try {
                         return PackageManagerType
-                            .fromPackageName(Beans
-                                .getBean(beanRegistryId, FileManager.class)
-                                .readString(f.toPath(), StandardCharsets.UTF_8))
+                            .fromPackageName(getBeanOrFail(beanRegistryId, FileManager.class).readString(f.toPath(),
+                                StandardCharsets.UTF_8))
                             .map(PackageManagerType::getExecutableType)
                             .orElseThrow();
-                    } catch (final IOException | BeanInstanciationException | TooManyCandidateBeansException |
-                        ZeroOrMultiplePublicConstructorsException e) {
+                    } catch (final IOException e) {
                         throw new GradleException(e.getClass().getName() + ": " + e.getMessage(), e);
                     }
                 }));
         task.getInstallScript().set(extension.getInstallScript());
-        task.setOnlyIf(t -> extension.getInternalPackageManagerNameFile().getAsFile().map(File::toPath).map(Files::exists).getOrElse(false));
+        task.setOnlyIf(t -> extension
+            .getInternalPackageManagerNameFile()
+            .getAsFile()
+            .map(File::toPath)
+            .map(Files::exists)
+            .getOrElse(false));
         configureDependency(taskContainer, task, RESOLVE_PACKAGE_MANAGER_TASK_NAME, ResolvePackageManagerTask.class);
         configureDependency(taskContainer, task, INSTALL_PACKAGE_MANAGER_TASK_NAME, InstallPackageManagerTask.class);
     }
@@ -407,9 +457,11 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      * Configures the given task with the plugin extension.
      *
      * @param task Task.
+     * @param beanRegistryId Bean registry ID.
+     * @param taskContainer Task container.
      * @param taskContext Configuration context.
      */
-    private void configureCleanTask(final CleanTask task, final String beanRegistryId,
+    protected void configureCleanTask(final CleanTask task, final String beanRegistryId,
         final TaskContainer taskContainer, final TaskContext taskContext) {
         final FrontendExtension extension = taskContext.getExtension();
 
@@ -426,13 +478,11 @@ public class FrontendGradlePlugin implements Plugin<Project> {
                 .map(f -> {
                     try {
                         return PackageManagerType
-                            .fromPackageName(Beans
-                                .getBean(beanRegistryId, FileManager.class)
-                                .readString(f.toPath(), StandardCharsets.UTF_8))
+                            .fromPackageName(getBeanOrFail(beanRegistryId, FileManager.class).readString(f.toPath(),
+                                StandardCharsets.UTF_8))
                             .map(PackageManagerType::getExecutableType)
                             .orElseThrow();
-                    } catch (final IOException | BeanInstanciationException | TooManyCandidateBeansException |
-                        ZeroOrMultiplePublicConstructorsException e) {
+                    } catch (final IOException e) {
                         throw new GradleException(e.getClass().getName() + ": " + e.getMessage(), e);
                     }
                 }));
@@ -446,9 +496,11 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      * Configures the given task with the plugin extension.
      *
      * @param task Task.
+     * @param beanRegistryId Bean registry ID.
+     * @param taskContainer Task container.
      * @param taskContext Configuration context.
      */
-    private void configureCheckTask(final CheckTask task, final String beanRegistryId,
+    protected void configureCheckTask(final CheckTask task, final String beanRegistryId,
         final TaskContainer taskContainer, final TaskContext taskContext) {
         final FrontendExtension extension = taskContext.getExtension();
 
@@ -465,13 +517,11 @@ public class FrontendGradlePlugin implements Plugin<Project> {
                 .map(f -> {
                     try {
                         return PackageManagerType
-                            .fromPackageName(Beans
-                                .getBean(beanRegistryId, FileManager.class)
-                                .readString(f.toPath(), StandardCharsets.UTF_8))
+                            .fromPackageName(getBeanOrFail(beanRegistryId, FileManager.class).readString(f.toPath(),
+                                StandardCharsets.UTF_8))
                             .map(PackageManagerType::getExecutableType)
                             .orElseThrow();
-                    } catch (final IOException | BeanInstanciationException | TooManyCandidateBeansException |
-                        ZeroOrMultiplePublicConstructorsException e) {
+                    } catch (final IOException e) {
                         throw new GradleException(e.getClass().getName() + ": " + e.getMessage(), e);
                     }
                 }));
@@ -485,9 +535,11 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      * Configures the given task with the plugin extension.
      *
      * @param task Task.
+     * @param beanRegistryId Bean registry ID.
+     * @param taskContainer Task container.
      * @param taskContext Configuration context.
      */
-    private void configureAssembleTask(final AssembleTask task, final String beanRegistryId,
+    protected void configureAssembleTask(final AssembleTask task, final String beanRegistryId,
         final TaskContainer taskContainer, final TaskContext taskContext) {
         final FrontendExtension extension = taskContext.getExtension();
 
@@ -504,13 +556,11 @@ public class FrontendGradlePlugin implements Plugin<Project> {
                 .map(f -> {
                     try {
                         return PackageManagerType
-                            .fromPackageName(Beans
-                                .getBean(beanRegistryId, FileManager.class)
-                                .readString(f.toPath(), StandardCharsets.UTF_8))
+                            .fromPackageName(getBeanOrFail(beanRegistryId, FileManager.class).readString(f.toPath(),
+                                StandardCharsets.UTF_8))
                             .map(PackageManagerType::getExecutableType)
                             .orElseThrow();
-                    } catch (final IOException | BeanInstanciationException | TooManyCandidateBeansException |
-                        ZeroOrMultiplePublicConstructorsException e) {
+                    } catch (final IOException e) {
                         throw new GradleException(e.getClass().getName() + ": " + e.getMessage(), e);
                     }
                 }));
@@ -524,9 +574,11 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      * Configures the given task with the plugin extension.
      *
      * @param task Task.
+     * @param beanRegistryId Bean registry ID.
+     * @param taskContainer Task container.
      * @param taskContext Configuration context.
      */
-    private void configurePublishTask(final PublishTask task, final String beanRegistryId,
+    protected void configurePublishTask(final PublishTask task, final String beanRegistryId,
         final TaskContainer taskContainer, final TaskContext taskContext) {
         final FrontendExtension extension = taskContext.getExtension();
 
@@ -543,13 +595,11 @@ public class FrontendGradlePlugin implements Plugin<Project> {
                 .map(f -> {
                     try {
                         return PackageManagerType
-                            .fromPackageName(Beans
-                                .getBean(beanRegistryId, FileManager.class)
-                                .readString(f.toPath(), StandardCharsets.UTF_8))
+                            .fromPackageName(getBeanOrFail(beanRegistryId, FileManager.class).readString(f.toPath(),
+                                StandardCharsets.UTF_8))
                             .map(PackageManagerType::getExecutableType)
                             .orElseThrow();
-                    } catch (final IOException | BeanInstanciationException | TooManyCandidateBeansException |
-                        ZeroOrMultiplePublicConstructorsException e) {
+                    } catch (final IOException e) {
                         throw new GradleException(e.getClass().getName() + ": " + e.getMessage(), e);
                     }
                 }));
@@ -589,9 +639,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.dependsOn(taskContainer.named(dependsOnTaskName, dependsOnTaskClass).getName());
     }
 
-    @Nonnull
-    private Provider<String> resolveNodeInstallDirectory(@Nonnull final String beanRegistryId,
-        @Nonnull final TaskContext taskContext) {
+    private Provider<String> resolveNodeInstallDirectory(final String beanRegistryId, final TaskContext taskContext) {
         final FrontendExtension extension = taskContext.getExtension();
         final ResolveNodeInstallDirectoryPath resolveNodeInstallDirectoryPath;
         try {
@@ -603,9 +651,31 @@ public class FrontendGradlePlugin implements Plugin<Project> {
 
         return extension
             .getNodeDistributionProvided()
-            .flatMap(nodeDistributionProvided -> resolveNodeInstallDirectoryPath.execute(nodeDistributionProvided,
-                extension.getNodeInstallDirectory().getAsFile().map(File::toPath),
-                taskContext.getDefaultNodeInstallDirectoryPath(), taskContext.getNodeInstallDirectoryFromEnvironment()))
+            .flatMap(nodeDistributionProvided -> resolveNodeInstallDirectoryPath.execute(
+                ResolveNodeInstallDirectoryPathCommand
+                    .builder()
+                    .userPath(extension.getNodeInstallDirectory().getAsFile().map(File::toPath))
+                    .nodeDistributionProvided(nodeDistributionProvided)
+                    .environmentPath(taskContext.getNodeInstallDirectoryFromEnvironment())
+                    .defaultPath(taskContext.getDefaultNodeInstallDirectoryPath())
+                    .build()))
             .map(Path::toString);
+    }
+
+    /**
+     * Returns a bean from a registry of throws an error if no bean is registered or is instanciable.
+     *
+     * @param beanRegistryId ID of the bean registry.
+     * @param beanClass Class of the bean to be found/instanciated.
+     * @param <T> Type of bean.
+     * @return The bean.
+     */
+    private <T> T getBeanOrFail(final String beanRegistryId, final Class<T> beanClass) {
+        try {
+            return Beans.getBean(beanRegistryId, beanClass);
+        } catch (final BeanInstanciationException | TooManyCandidateBeansException |
+            ZeroOrMultiplePublicConstructorsException e) {
+            throw new GradleException(e.getClass().getName() + ": " + e.getMessage(), e);
+        }
     }
 }

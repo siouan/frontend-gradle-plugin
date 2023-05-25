@@ -2,36 +2,29 @@ package org.siouan.frontendgradleplugin.infrastructure.httpclient;
 
 import java.io.IOException;
 import java.io.InputStream;
-import javax.annotation.Nonnull;
 
+import lombok.Builder;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.HttpEntity;
-import org.siouan.frontendgradleplugin.domain.model.HttpResponse;
+import org.siouan.frontendgradleplugin.domain.installer.HttpResponse;
 
 /**
  * @since 4.0.1
  */
+@Builder
 public class ApacheHttpResponse implements HttpResponse {
 
     private final CloseableHttpClient httpClient;
 
-    private final CloseableHttpResponse httpResponse;
-
-    public ApacheHttpResponse(@Nonnull final CloseableHttpClient httpClient,
-        @Nonnull final CloseableHttpResponse httpResponse) {
-        this.httpClient = httpClient;
-        this.httpResponse = httpResponse;
-    }
+    private final ClassicHttpResponse httpResponse;
 
     @Override
-    @Nonnull
     public String getProtocol() {
         return httpResponse.getVersion().getProtocol();
     }
 
     @Override
-    @Nonnull
     public String getVersion() {
         return httpResponse.getVersion().getMajor() + "." + httpResponse.getVersion().getMinor();
     }
@@ -42,13 +35,11 @@ public class ApacheHttpResponse implements HttpResponse {
     }
 
     @Override
-    @Nonnull
     public String getReasonPhrase() {
         return httpResponse.getReasonPhrase();
     }
 
     @Override
-    @Nonnull
     public InputStream getInputStream() throws IOException {
         final HttpEntity httpEntity = httpResponse.getEntity();
         if (httpEntity == null) {

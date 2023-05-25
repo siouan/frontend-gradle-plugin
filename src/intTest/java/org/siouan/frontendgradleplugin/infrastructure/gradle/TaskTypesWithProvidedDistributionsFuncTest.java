@@ -1,15 +1,15 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
-import static org.siouan.frontendgradleplugin.test.util.GradleBuildAssertions.assertTaskOutcomes;
-import static org.siouan.frontendgradleplugin.test.util.GradleBuildFiles.createBuildFile;
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.runGradle;
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.runGradleAndExpectFailure;
-import static org.siouan.frontendgradleplugin.test.util.Resources.getResourcePath;
-import static org.siouan.frontendgradleplugin.test.util.TaskTypes.buildCorepackTaskDefinition;
-import static org.siouan.frontendgradleplugin.test.util.TaskTypes.buildNodeTaskDefinition;
-import static org.siouan.frontendgradleplugin.test.util.TaskTypes.buildNpmTaskDefinition;
-import static org.siouan.frontendgradleplugin.test.util.TaskTypes.buildPnpmTaskDefinition;
-import static org.siouan.frontendgradleplugin.test.util.TaskTypes.buildYarnTaskDefinition;
+import static org.siouan.frontendgradleplugin.test.GradleBuildAssertions.assertTaskOutcomes;
+import static org.siouan.frontendgradleplugin.test.GradleBuildFiles.createBuildFile;
+import static org.siouan.frontendgradleplugin.test.GradleHelper.runGradle;
+import static org.siouan.frontendgradleplugin.test.GradleHelper.runGradleAndExpectFailure;
+import static org.siouan.frontendgradleplugin.test.Resources.getResourcePath;
+import static org.siouan.frontendgradleplugin.test.TaskTypes.buildCorepackTaskDefinition;
+import static org.siouan.frontendgradleplugin.test.TaskTypes.buildNodeTaskDefinition;
+import static org.siouan.frontendgradleplugin.test.TaskTypes.buildNpmTaskDefinition;
+import static org.siouan.frontendgradleplugin.test.TaskTypes.buildPnpmTaskDefinition;
+import static org.siouan.frontendgradleplugin.test.TaskTypes.buildYarnTaskDefinition;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -20,8 +20,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
-import org.siouan.frontendgradleplugin.test.util.FrontendMapBuilder;
-import org.siouan.frontendgradleplugin.test.util.PluginTaskOutcome;
+import org.siouan.frontendgradleplugin.test.FrontendMapBuilder;
+import org.siouan.frontendgradleplugin.test.PluginTaskOutcome;
 
 /**
  * Functional tests to verify task types {@link RunNode}, {@link RunNpm},  {@link RunYarn} in a Gradle build, with a
@@ -60,7 +60,7 @@ class TaskTypesWithProvidedDistributionsFuncTest {
             .nodeDistributionProvided(true)
             .nodeInstallDirectory(getResourcePath("node-dist-without-node"));
         final String runCorepackTaskDefinition = buildCorepackTaskDefinition(RUN_COREPACK_TASK_NAME,
-            FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, "disable");
+            FrontendGradlePlugin.INSTALL_NODE_TASK_NAME, "disable");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap(), runCorepackTaskDefinition);
 
         final BuildResult result = runGradleAndExpectFailure(projectDirectoryPath, RUN_COREPACK_TASK_NAME);
@@ -139,7 +139,7 @@ class TaskTypesWithProvidedDistributionsFuncTest {
         final String runNodeTaskDefinition = buildNodeTaskDefinition(RUN_NODE_TASK_NAME,
             temporaryScriptPath.toString().replace("\\", "\\\\"));
         final String runCorepackTaskDefinition = buildCorepackTaskDefinition(RUN_COREPACK_TASK_NAME,
-            FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, "disable");
+            FrontendGradlePlugin.INSTALL_NODE_TASK_NAME, "disable");
         final String runNpmTaskDefinition = buildNpmTaskDefinition(RUN_NPM_TASK_NAME,
             FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME, "run npm-script");
         final String runPnpmTaskDefinition = buildPnpmTaskDefinition(RUN_PNPM_TASK_NAME,

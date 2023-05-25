@@ -1,13 +1,11 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
-import static org.siouan.frontendgradleplugin.test.util.GradleBuildAssertions.assertTaskOutcome;
+import static org.siouan.frontendgradleplugin.test.GradleBuildAssertions.assertTaskOutcome;
 
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import org.gradle.testkit.runner.BuildResult;
@@ -17,14 +15,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
-import org.siouan.frontendgradleplugin.test.util.FrontendMapBuilder;
-import org.siouan.frontendgradleplugin.test.util.GradleBuildFiles;
-import org.siouan.frontendgradleplugin.test.util.GradleHelper;
-import org.siouan.frontendgradleplugin.test.util.PluginTaskOutcome;
-import org.siouan.frontendgradleplugin.test.util.ServerConfigurator;
+import org.siouan.frontendgradleplugin.test.FrontendMapBuilder;
+import org.siouan.frontendgradleplugin.test.GradleBuildFiles;
+import org.siouan.frontendgradleplugin.test.GradleHelper;
+import org.siouan.frontendgradleplugin.test.PluginTaskOutcome;
+import org.siouan.frontendgradleplugin.test.ServerConfigurator;
 
 /**
- * Functional tests to verify authentication and integration of a proxy server with the {@link NodeInstallTask} task.
+ * Functional tests to verify authentication and integration of a proxy server with the {@link InstallNodeTask} task.
  * Test cases uses a mock server, acting either as the distribution server, or as the proxy server, and fake
  * Node.js/Yarn distributions, to avoid the download overhead.
  */
@@ -78,7 +76,7 @@ class AuthenticationAndProxyFuncTest {
     }
 
     @Test
-    void shouldFailInstallingNodeWhenAuthenticationFailsOnDistributionServer() throws IOException {
+    void should_fail_installing_node_when_authentication_fails_on_distribution_server() throws IOException {
         // Direct connection to the distribution server, i.e. the 'server' variable acts as the distribution server.
 
         // We use a HTTP address because proxying through HTTPS is not supported with WireMock.
@@ -86,14 +84,14 @@ class AuthenticationAndProxyFuncTest {
         GradleBuildFiles.createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result = GradleHelper.runGradleAndExpectFailure(projectDirectoryPath,
-            FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+            FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
 
-        assertTaskOutcome(result, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, PluginTaskOutcome.FAILED);
+        assertTaskOutcome(result, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME, PluginTaskOutcome.FAILED);
     }
 
     // Same test as above, just use the exact password.
     @Test
-    void shouldInstallNodeWhenAuthenticationSucceedsOnDistributionServer() throws IOException {
+    void should_install_node_when_authentication_succeeds_on_distribution_server() throws IOException {
         // Direct connection to the distribution server, i.e. the 'server' variable acts as the distribution server.
 
         // We use a HTTP address because proxying through HTTPS is not supported with WireMock.
@@ -102,13 +100,13 @@ class AuthenticationAndProxyFuncTest {
         GradleBuildFiles.createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result = GradleHelper.runGradle(projectDirectoryPath,
-            FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+            FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
 
-        assertTaskOutcome(result, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, PluginTaskOutcome.SUCCESS);
+        assertTaskOutcome(result, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME, PluginTaskOutcome.SUCCESS);
     }
 
     @Test
-    void shouldFailInstallingNodeWhenProxyServerIsNotReachable() throws IOException {
+    void should_fail_installing_node_when_proxy_server_is_not_reachable() throws IOException {
         // Connection through a proxy server, i.e. the 'server' variable acts as the proxy server.
 
         // Try to download the distribution through a proxy server, but the port used is not the same port than the
@@ -121,14 +119,14 @@ class AuthenticationAndProxyFuncTest {
 
         // The build should fail with a java.net.ConnectException because the proxy server is not reachable.
         final BuildResult result = GradleHelper.runGradleAndExpectFailure(projectDirectoryPath,
-            FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+            FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
 
-        assertTaskOutcome(result, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, PluginTaskOutcome.FAILED);
+        assertTaskOutcome(result, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME, PluginTaskOutcome.FAILED);
     }
 
     // Same test as above, just use the exact proxy server port.
     @Test
-    void shouldInstallNodeThroughProxyServer() throws IOException {
+    void should_install_node_through_proxy_server() throws IOException {
         // Connection through a proxy server, i.e. the 'server' variable acts as the proxy server.
 
         // We use a HTTP address because proxying through HTTPS is not supported with WireMock.
@@ -136,13 +134,13 @@ class AuthenticationAndProxyFuncTest {
         GradleBuildFiles.createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result = GradleHelper.runGradle(projectDirectoryPath,
-            FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+            FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
 
-        assertTaskOutcome(result, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, PluginTaskOutcome.SUCCESS);
+        assertTaskOutcome(result, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME, PluginTaskOutcome.SUCCESS);
     }
 
     @Test
-    void shouldFailInstallingNodeWhenAuthenticationFailsOnProxyServer() throws IOException {
+    void should_fail_installing_node_when_authentication_fails_on_proxy_server() throws IOException {
         // Connection through a proxy server, i.e. the 'server' variable acts as the proxy server.
 
         // We use a HTTP address because proxying through HTTPS is not supported with WireMock.
@@ -150,14 +148,14 @@ class AuthenticationAndProxyFuncTest {
         GradleBuildFiles.createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result = GradleHelper.runGradleAndExpectFailure(projectDirectoryPath,
-            FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+            FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
 
-        assertTaskOutcome(result, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, PluginTaskOutcome.FAILED);
+        assertTaskOutcome(result, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME, PluginTaskOutcome.FAILED);
     }
 
     // Same test as above, just use the exact password.
     @Test
-    void shouldInstallNodeWhenAuthenticationSucceedsOnProxyServer() throws IOException {
+    void should_install_node_when_authentication_succeeds_on_proxy_server() throws IOException {
         // Connection through a proxy server, i.e. the 'server' variable acts as the proxy server.
 
         // We use a HTTP address because proxying through HTTPS is not supported with WireMock.
@@ -166,45 +164,39 @@ class AuthenticationAndProxyFuncTest {
         GradleBuildFiles.createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result = GradleHelper.runGradle(projectDirectoryPath,
-            FrontendGradlePlugin.NODE_INSTALL_TASK_NAME);
+            FrontendGradlePlugin.INSTALL_NODE_TASK_NAME);
 
-        assertTaskOutcome(result, FrontendGradlePlugin.NODE_INSTALL_TASK_NAME, PluginTaskOutcome.SUCCESS);
+        assertTaskOutcome(result, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME, PluginTaskOutcome.SUCCESS);
     }
 
-    @Nonnull
-    private FrontendMapBuilder configureNodeServerAndPluginWithDirectConnection(
-        @Nonnull final String distributionServerPassword) throws IOException {
+    private FrontendMapBuilder configureNodeServerAndPluginWithDirectConnection(final String distributionServerPassword)
+        throws IOException {
         return configureServerAndPlugin(
             new URL("http", DISTRIBUTION_SERVER_HOST, DISTRIBUTION_SERVER_PORT, "/").toString(),
             NODE_DISTRIBUTION_URL_PATH_PATTERN, DISTRIBUTION_SERVER_USERNAME, distributionServerPassword, null, null,
             null, null);
     }
 
-    @Nonnull
     private FrontendMapBuilder configureNodeServerAndPluginWithProxyConnection() throws IOException {
         return configureNodeServerAndPluginWithProxyConnection(PROXY_SERVER_PORT);
     }
 
-    @Nonnull
     private FrontendMapBuilder configureNodeServerAndPluginWithProxyConnection(final int proxyServerPort)
         throws IOException {
         return configureServerAndPlugin(NODE_DISTRIBUTION_URL_ROOT, NODE_DISTRIBUTION_URL_PATH_PATTERN, null, null,
             PROXY_SERVER_HOST, proxyServerPort, null, null);
     }
 
-    @Nonnull
-    private FrontendMapBuilder configureNodeServerAndPluginWithProxyConnection(
-        @Nonnull final String proxyServerPassword) throws IOException {
+    private FrontendMapBuilder configureNodeServerAndPluginWithProxyConnection(final String proxyServerPassword)
+        throws IOException {
         return configureServerAndPlugin(NODE_DISTRIBUTION_URL_ROOT, NODE_DISTRIBUTION_URL_PATH_PATTERN, null, null,
             PROXY_SERVER_HOST, PROXY_SERVER_PORT, PROXY_SERVER_USERNAME, proxyServerPassword);
     }
 
-    @Nonnull
-    private FrontendMapBuilder configureServerAndPlugin(@Nullable final String nodeDistributionUrlRoot,
-        @Nullable final String nodeDistributionUrlPathPattern, @Nullable final String distributionServerUsername,
-        @Nullable final String distributionServerPassword, @Nullable final String httpProxyHost,
-        @Nullable final Integer httpProxyPort, @Nullable final String httpProxyUsername,
-        @Nullable final String httpProxyPassword) throws IOException {
+    private FrontendMapBuilder configureServerAndPlugin(final String nodeDistributionUrlRoot,
+        final String nodeDistributionUrlPathPattern, final String distributionServerUsername,
+        final String distributionServerPassword, final String httpProxyHost, final Integer httpProxyPort,
+        final String httpProxyUsername, final String httpProxyPassword) throws IOException {
 
         final ServerConfigurator proxyServerConfigurator = new ServerConfigurator(proxyServer,
             "http://" + DISTRIBUTION_SERVER_HOST + ':' + DISTRIBUTION_SERVER_PORT);

@@ -41,8 +41,9 @@
         <fgp-feature-card title="Support of multiple package managers" icon-class="fas fa-dice-d6">
             The plugin delegates installation of your favorite package manager to <fgp-corepack-link />. Choose your
             package manager among <fgp-npm-link />, <fgp-pnpm-link />, <fgp-yarn-link />, set the
-            <fgp-code>packageManager</fgp-code> property in your <fgp-code>package.json</fgp-code> file, and
-            <fgp-corepack-link /> downloads and activates the distribution expected for each (sub-)project.
+            <fgp-nodejs-link path="/api/packages.html#packagemanager" label="packageManager" /> property in your
+            <fgp-code>package.json</fgp-code> file, and <fgp-corepack-link /> downloads and activates the distribution
+            expected for each (sub-)project.
         </fgp-feature-card>
         <fgp-feature-card title="Configurable dependencies installation" icon-class="fa fa-cogs text-secondary">
             Depending on the environment, installing frontend dependencies using the

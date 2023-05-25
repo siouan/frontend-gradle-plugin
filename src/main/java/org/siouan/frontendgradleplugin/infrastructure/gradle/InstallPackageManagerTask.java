@@ -2,7 +2,6 @@ package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
 import org.gradle.api.GradleException;
@@ -12,10 +11,10 @@ import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.tasks.InputFile;
 import org.gradle.api.tasks.OutputFile;
 import org.gradle.process.ExecOperations;
-import org.siouan.frontendgradleplugin.domain.model.ExecutableType;
-import org.siouan.frontendgradleplugin.domain.provider.FileManager;
-import org.siouan.frontendgradleplugin.infrastructure.BeanRegistryException;
-import org.siouan.frontendgradleplugin.infrastructure.Beans;
+import org.siouan.frontendgradleplugin.domain.ExecutableType;
+import org.siouan.frontendgradleplugin.domain.FileManager;
+import org.siouan.frontendgradleplugin.infrastructure.bean.BeanRegistryException;
+import org.siouan.frontendgradleplugin.infrastructure.bean.Beans;
 
 /**
  * This task installs the relevant package manager for the current project (by executing command
@@ -38,8 +37,8 @@ public class InstallPackageManagerTask extends AbstractRunCommandTask {
     private final RegularFileProperty packageManagerExecutableFile;
 
     @Inject
-    public InstallPackageManagerTask(@Nonnull final ProjectLayout projectLayout,
-        @Nonnull final ObjectFactory objectFactory, @Nonnull final ExecOperations execOperations) {
+    public InstallPackageManagerTask(final ProjectLayout projectLayout, final ObjectFactory objectFactory,
+        final ExecOperations execOperations) {
         super(projectLayout, objectFactory, execOperations);
         this.packageManagerNameFile = objectFactory.fileProperty();
         this.executableType.set(ExecutableType.COREPACK);

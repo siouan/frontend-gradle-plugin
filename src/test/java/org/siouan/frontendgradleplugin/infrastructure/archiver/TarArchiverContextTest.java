@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.siouan.frontendgradleplugin.domain.model.ExplodeSettings;
+import org.siouan.frontendgradleplugin.domain.installer.archiver.ExplodeCommand;
 
 /**
  * Unit tests for the {@link TarArchiverContext} class.
@@ -24,31 +24,31 @@ import org.siouan.frontendgradleplugin.domain.model.ExplodeSettings;
 class TarArchiverContextTest {
 
     @Mock
-    private ExplodeSettings settings;
+    private ExplodeCommand settings;
 
     @Mock
     private TarArchiveInputStream inputStream;
 
     @Test
-    void shouldFailWhenClosingContextWithIOException() throws IOException {
+    void should_fail_when_closing_context_with_io_exception() throws IOException {
         final Exception expectedException = new IOException();
         doThrow(expectedException).when(inputStream).close();
         final TarArchiverContext context = new TarArchiverContext(settings, inputStream);
 
         assertThatThrownBy(context::close).isEqualTo(expectedException);
 
-        assertThat(context.getSettings()).isEqualTo(settings);
+        assertThat(context.getExplodeCommand()).isEqualTo(settings);
         assertThat(context.getInputStream()).isEqualTo(inputStream);
         verifyNoMoreInteractions(inputStream);
     }
 
     @Test
-    void shouldCloseContext() throws IOException {
+    void should_close_context() throws IOException {
         final TarArchiverContext context = new TarArchiverContext(settings, inputStream);
 
         context.close();
 
-        assertThat(context.getSettings()).isEqualTo(settings);
+        assertThat(context.getExplodeCommand()).isEqualTo(settings);
         assertThat(context.getInputStream()).isEqualTo(inputStream);
         verify(inputStream).close();
         verifyNoMoreInteractions(inputStream);

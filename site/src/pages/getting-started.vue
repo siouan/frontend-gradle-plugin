@@ -17,20 +17,13 @@
 
         <fgp-sub-title>Supported distributions</fgp-sub-title>
         <ul>
-            <li><fgp-nodejs-link />: releases ^14.19.0, &ge;16.9.0</li>
-            <li><fgp-npm-link />: any release</li>
-            <li><fgp-pnpm-link />: any release</li>
-            <li><fgp-yarn-link />: any release</li>
+            <li><fgp-nodejs-link />: ^14.19.0, &ge;16.9.0</li>
+            <li><fgp-npm-link />: any</li>
+            <li><fgp-pnpm-link />: ^5.0.0 (requires <fgp-nodejs-link /> 14), &ge;6.0.0</li>
+            <li><fgp-yarn-link />: &ge;1.0.0</li>
         </ul>
 
         <fgp-sub-title>Steps</fgp-sub-title>
-        <fgp-info>
-            Starting from release <fgp-repo-link path="/releases/tag/v3.0.1">3.0.1</fgp-repo-link>, ID
-            <fgp-code>org.siouan.frontend</fgp-code> and classpath
-            <fgp-code>org.siouan:frontend-gradle-plugin:&lt;version></fgp-code> are deprecated. If you are already using
-            the plugin, we recommend <fgp-repo-link path="/releases/tag/v7.0.0">upgrading</fgp-repo-link> to the latest
-            release as soon as possible.
-        </fgp-info>
         <ol>
             <li>
                 Install the plugin.
@@ -47,16 +40,12 @@
 <pre><fgp-code>plugins {
     <fgp-code-comment>// For JDK 11+</fgp-code-comment>
     id 'org.siouan.frontend-jdk11' version '7.0.0'
-    <fgp-code-comment>// For JDK 8+</fgp-code-comment>
-    id 'org.siouan.frontend-jdk8' version '7.0.0'
 }</fgp-code></pre>
                             </template>
                             <template v-slot:kotlin>
 <pre><fgp-code>plugins {
     <fgp-code-comment>// For JDK 11+</fgp-code-comment>
     id("org.siouan.frontend-jdk11") version "7.0.0"
-    <fgp-code-comment>// For JDK 8+</fgp-code-comment>
-    id("org.siouan.frontend-jdk8") version "7.0.0"
 }</fgp-code></pre>
                             </template>
                         </fgp-gradle-scripts>
@@ -76,15 +65,11 @@
     dependencies {
         <fgp-code-comment>// For JDK 11+</fgp-code-comment>
         classpath 'org.siouan:frontend-gradle-plugin-jdk11:7.0.0'
-        <fgp-code-comment>// For JDK 8+</fgp-code-comment>
-        classpath 'org.siouan:frontend-gradle-plugin-jdk8:7.0.0'
     }
 }
 
 <fgp-code-comment>// For JDK 11+</fgp-code-comment>
-apply plugin: 'org.siouan.frontend-jdk11'
-<fgp-code-comment>// For JDK 8+</fgp-code-comment>
-apply plugin: 'org.siouan.frontend-jdk8'</fgp-code></pre>
+apply plugin: 'org.siouan.frontend-jdk11'</fgp-code></pre>
                             </template>
                             <template v-slot:kotlin>
 <pre><fgp-code>buildscript {
@@ -94,19 +79,19 @@ apply plugin: 'org.siouan.frontend-jdk8'</fgp-code></pre>
     dependencies {
         <fgp-code-comment>// For JDK 11+</fgp-code-comment>
         classpath("org.siouan:frontend-gradle-plugin-jdk11:7.0.0")
-        <fgp-code-comment>// For JDK 8+</fgp-code-comment>
-        classpath("org.siouan:frontend-gradle-plugin-jdk8:7.0.0")
     }
 }
 
 <fgp-code-comment>// For JDK 11+</fgp-code-comment>
-apply(plugin = "org.siouan.frontend-jdk11")
-<fgp-code-comment>// For JDK 8+</fgp-code-comment>
-apply(plugin = "org.siouan.frontend-jdk8")</fgp-code></pre>
+apply(plugin = "org.siouan.frontend-jdk11")</fgp-code></pre>
                             </template>
                         </fgp-gradle-scripts>
                     </li>
                 </ul>
+            </li>
+            <li>
+                Define the <fgp-nodejs-link path="/api/packages.html#packagemanager" label="packageManager" />
+                property in the <fgp-code>package.json</fgp-code> file.
             </li>
             <li>
                 <fgp-site-link :path="fgp.paths.configuration">Configure</fgp-site-link> your project, optionally
@@ -132,7 +117,6 @@ import fgpCodeComment from "../components/code-comment";
 import fgpGradleDocsLink from "../components/link/gradle-docs-link";
 import fgpGradleLink from "../components/link/gradle-link";
 import fgpGradleScripts from "../components/gradle-scripts";
-import fgpInfo from "../components/info";
 import fgpMainTitle from "../components/main-title";
 import fgpNodejsLink from "../components/link/nodejs-link";
 import fgpNpmLink from "../components/link/npm-link";
@@ -150,7 +134,6 @@ export default Vue.component("fgp-getting-started", {
         fgpGradleDocsLink,
         fgpGradleLink,
         fgpGradleScripts,
-        fgpInfo,
         fgpMainTitle,
         fgpNodejsLink,
         fgpNpmLink,

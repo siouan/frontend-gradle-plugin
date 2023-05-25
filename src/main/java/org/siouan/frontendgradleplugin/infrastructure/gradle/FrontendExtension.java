@@ -1,7 +1,6 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
-import javax.annotation.Nonnull;
-
+import lombok.Getter;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.model.ObjectFactory;
@@ -10,6 +9,7 @@ import org.gradle.api.provider.Property;
 /**
  * Extension providing configuration properties for frontend tasks.
  */
+@Getter
 public class FrontendExtension {
 
     /**
@@ -183,7 +183,7 @@ public class FrontendExtension {
      */
     private final Property<Boolean> verboseModeEnabled;
 
-    public FrontendExtension(@Nonnull final ObjectFactory objectFactory) {
+    public FrontendExtension(final ObjectFactory objectFactory) {
         nodeDistributionProvided = objectFactory.property(Boolean.class);
         nodeVersion = objectFactory.property(String.class);
         nodeInstallDirectory = objectFactory.directoryProperty();
@@ -210,109 +210,5 @@ public class FrontendExtension {
         internalPackageManagerNameFile = objectFactory.fileProperty();
         internalPackageManagerExecutablePathFile = objectFactory.fileProperty();
         verboseModeEnabled = objectFactory.property(Boolean.class);
-    }
-
-    public Property<Boolean> getNodeDistributionProvided() {
-        return nodeDistributionProvided;
-    }
-
-    public Property<String> getNodeVersion() {
-        return nodeVersion;
-    }
-
-    public DirectoryProperty getNodeInstallDirectory() {
-        return nodeInstallDirectory;
-    }
-
-    public Property<String> getNodeDistributionUrlRoot() {
-        return nodeDistributionUrlRoot;
-    }
-
-    public Property<String> getNodeDistributionUrlPathPattern() {
-        return nodeDistributionUrlPathPattern;
-    }
-
-    public Property<String> getNodeDistributionServerUsername() {
-        return nodeDistributionServerUsername;
-    }
-
-    public Property<String> getNodeDistributionServerPassword() {
-        return nodeDistributionServerPassword;
-    }
-
-    public Property<String> getInstallScript() {
-        return installScript;
-    }
-
-    public Property<String> getCleanScript() {
-        return cleanScript;
-    }
-
-    public Property<String> getAssembleScript() {
-        return assembleScript;
-    }
-
-    public Property<String> getCheckScript() {
-        return checkScript;
-    }
-
-    public Property<String> getPublishScript() {
-        return publishScript;
-    }
-
-    public DirectoryProperty getPackageJsonDirectory() {
-        return packageJsonDirectory;
-    }
-
-    public Property<String> getHttpProxyHost() {
-        return httpProxyHost;
-    }
-
-    public Property<Integer> getHttpProxyPort() {
-        return httpProxyPort;
-    }
-
-    public Property<String> getHttpProxyUsername() {
-        return httpProxyUsername;
-    }
-
-    public Property<String> getHttpProxyPassword() {
-        return httpProxyPassword;
-    }
-
-    public Property<String> getHttpsProxyHost() {
-        return httpsProxyHost;
-    }
-
-    public Property<Integer> getHttpsProxyPort() {
-        return httpsProxyPort;
-    }
-
-    public Property<String> getHttpsProxyUsername() {
-        return httpsProxyUsername;
-    }
-
-    public Property<String> getHttpsProxyPassword() {
-        return httpsProxyPassword;
-    }
-
-    public DirectoryProperty getCacheDirectory() {
-        return cacheDirectory;
-    }
-
-    public RegularFileProperty getInternalMetadataFile() {
-        return internalMetadataFile;
-    }
-
-    public RegularFileProperty getInternalPackageManagerNameFile() {
-        return internalPackageManagerNameFile;
-    }
-
-    public RegularFileProperty getInternalPackageManagerExecutablePathFile() {
-        return internalPackageManagerExecutablePathFile;
-    }
-
-    public Property<Boolean> getVerboseModeEnabled() {
-        return verboseModeEnabled;
     }
 }
