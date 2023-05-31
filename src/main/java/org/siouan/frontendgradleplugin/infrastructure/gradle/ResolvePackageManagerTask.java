@@ -2,7 +2,6 @@ package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
 import org.gradle.api.DefaultTask;
@@ -14,15 +13,15 @@ import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFile;
 import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.TaskAction;
-import org.siouan.frontendgradleplugin.domain.exception.UnsupportedPackageManagerException;
-import org.siouan.frontendgradleplugin.domain.model.Platform;
-import org.siouan.frontendgradleplugin.domain.model.PlatformProvider;
-import org.siouan.frontendgradleplugin.domain.model.ResolvePackageManagerQuery;
-import org.siouan.frontendgradleplugin.domain.usecase.ResolvePackageManager;
-import org.siouan.frontendgradleplugin.infrastructure.BeanInstanciationException;
-import org.siouan.frontendgradleplugin.infrastructure.Beans;
-import org.siouan.frontendgradleplugin.infrastructure.TooManyCandidateBeansException;
-import org.siouan.frontendgradleplugin.infrastructure.ZeroOrMultiplePublicConstructorsException;
+import org.siouan.frontendgradleplugin.domain.Platform;
+import org.siouan.frontendgradleplugin.domain.PlatformProvider;
+import org.siouan.frontendgradleplugin.domain.ResolvePackageManager;
+import org.siouan.frontendgradleplugin.domain.ResolvePackageManagerCommand;
+import org.siouan.frontendgradleplugin.domain.UnsupportedPackageManagerException;
+import org.siouan.frontendgradleplugin.infrastructure.bean.BeanInstanciationException;
+import org.siouan.frontendgradleplugin.infrastructure.bean.Beans;
+import org.siouan.frontendgradleplugin.infrastructure.bean.TooManyCandidateBeansException;
+import org.siouan.frontendgradleplugin.infrastructure.bean.ZeroOrMultiplePublicConstructorsException;
 
 /**
  * This task resolves the name of the package manager applicable for the current project by parsing the
@@ -58,8 +57,7 @@ public class ResolvePackageManagerTask extends DefaultTask {
     private final RegularFileProperty packageManagerExecutablePathFile;
 
     @Inject
-    public ResolvePackageManagerTask(@Nonnull final ProjectLayout projectLayout,
-        @Nonnull final ObjectFactory objectFactory) {
+    public ResolvePackageManagerTask(final ProjectLayout projectLayout, final ObjectFactory objectFactory) {
         this.beanRegistryId = Beans.getBeanRegistryId(projectLayout.getProjectDirectory().toString());
         this.metadataFile = objectFactory.fileProperty();
         this.nodeInstallDirectory = objectFactory.property(String.class);
@@ -97,8 +95,13 @@ public class ResolvePackageManagerTask extends DefaultTask {
         getLogger().debug("Platform: {}", platform);
         Beans
             .getBean(beanRegistryId, ResolvePackageManager.class)
-            .execute(new ResolvePackageManagerQuery(metadataFile.getAsFile().get().toPath(),
-                nodeInstallDirectory.map(Paths::get).get(), platform, packageManagerNameFile.getAsFile().get().toPath(),
-                packageManagerExecutablePathFile.getAsFile().get().toPath()));
+            .execute(ResolvePackageManagerCommand
+                .builder()
+                .metadataFilePath(metadataFile.getAsFile().get().toPath())
+                .nodeInstallDirectoryPath(nodeInstallDirectory.map(Paths::get).get())
+                .platform(platform)
+                .packageManagerNameFilePath(packageManagerNameFile.getAsFile().get().toPath())
+                .packageManagerExecutablePathFilePath(packageManagerExecutablePathFile.getAsFile().get().toPath())
+                .build());
     }
 }

@@ -1,19 +1,31 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
 import java.nio.file.Path;
-import javax.annotation.Nonnull;
 
 import org.gradle.api.provider.Provider;
 
+/**
+ * Resolves the path to the Node.js distribution.
+ *
+ * @since 7.0.0
+ */
 public class ResolveNodeInstallDirectoryPath {
 
-    public Provider<Path> execute(final boolean nodeDistributionProvided,
-        @Nonnull final Provider<Path> primaryNodeInstallDirectoryPath,
-        @Nonnull final Path defaultNodeInstallDirectoryPath,
-        @Nonnull final Provider<Path> nodeInstallDirectoryPathFromEnvironment) {
+    /**
+     * Resolves the applicable path to the Node.js distribution just-in-time.
+     *
+     * @param command Command providing resolution parameters.
+     * @return A provider of the path to the install directory:
+     * <ul>
+     * <li>The directory given by a provider user-defined.</li>
+     * <li>Or the directory given by a provider scanning the environment if the distribution is already provided.</li>
+     * <li>Or a default directory.</li>
+     * </ul>
+     */
+    public Provider<Path> execute(final ResolveNodeInstallDirectoryPathCommand command) {
         final Provider<Path> nodeInstallDirectoryPath =
-            nodeDistributionProvided ? primaryNodeInstallDirectoryPath.orElse(nodeInstallDirectoryPathFromEnvironment)
-                : primaryNodeInstallDirectoryPath;
-        return nodeInstallDirectoryPath.orElse(defaultNodeInstallDirectoryPath);
+            command.isNodeDistributionProvided() ? command.getUserPath().orElse(command.getEnvironmentPath())
+                : command.getUserPath();
+        return nodeInstallDirectoryPath.orElse(command.getDefaultPath());
     }
 }

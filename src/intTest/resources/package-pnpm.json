@@ -4,7 +4,7 @@
   "description": "Empty project to test frontend scripts integration in a Gradle build with pnpm",
   "private": true,
   "license": "UNLICENSED",
-  "packageManager": "pnpm@8.4.0",
+  "packageManager": "pnpm@8.6.0",
   "cacheDirectories": [
     "node_modules"
   ],

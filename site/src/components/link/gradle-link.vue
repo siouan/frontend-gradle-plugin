@@ -4,7 +4,7 @@
 
 <script>
 import Vue from "vue";
-import fgpLink from "./link";
+import fgpLink from '@/components/link/link.vue';
 
 const GRADLE_BASE_URL = "https://gradle.org";
 
@@ -13,7 +13,7 @@ export default Vue.component("fgp-gradle-link", {
     props: {
         path: {
             type: String,
-            default: null
+            default: '/'
         }
     },
     computed: {

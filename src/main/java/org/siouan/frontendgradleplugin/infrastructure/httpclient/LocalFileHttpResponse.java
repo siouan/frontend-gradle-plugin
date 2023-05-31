@@ -4,23 +4,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
-import org.siouan.frontendgradleplugin.domain.model.HttpResponse;
+import lombok.Builder;
+import org.siouan.frontendgradleplugin.domain.installer.HttpResponse;
 
 /**
  * @since 4.0.1
  */
+@Builder
 public class LocalFileHttpResponse implements HttpResponse {
 
     public static final String PROTOCOL = "file";
 
     private final Path localFilePath;
-
-    public LocalFileHttpResponse(@Nonnull final Path localFilePath) {
-        this.localFilePath = localFilePath;
-    }
 
     @Override
     public String getProtocol() {
@@ -43,7 +39,6 @@ public class LocalFileHttpResponse implements HttpResponse {
     }
 
     @Override
-    @Nullable
     public InputStream getInputStream() throws IOException {
         return Files.newInputStream(localFilePath);
     }

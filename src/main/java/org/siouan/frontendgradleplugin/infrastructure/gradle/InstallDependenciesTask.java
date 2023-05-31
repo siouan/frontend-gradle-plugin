@@ -1,6 +1,5 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
-import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
 import org.gradle.api.file.ProjectLayout;
@@ -16,8 +15,8 @@ import org.gradle.process.ExecOperations;
 public class InstallDependenciesTask extends AbstractRunCommandTask {
 
     @Inject
-    public InstallDependenciesTask(@Nonnull final ProjectLayout projectLayout,
-        @Nonnull final ObjectFactory objectFactory, @Nonnull final ExecOperations execOperations) {
+    public InstallDependenciesTask(final ProjectLayout projectLayout, final ObjectFactory objectFactory,
+        final ExecOperations execOperations) {
         super(projectLayout, objectFactory, execOperations);
     }
 

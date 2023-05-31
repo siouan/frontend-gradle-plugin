@@ -4,8 +4,11 @@
         <template v-slot:description>
             <p>
                 The task identifies the package manager applicable to the project by parsing the
-                <fgp-code>packageManager</fgp-code> property located in the <fgp-code>package.json</fgp-code> file
-                (pointed by the <fgp-property-link name="packageJsonDirectory" /> property).
+                <fgp-nodejs-link path="/api/packages.html#packagemanager" label="packageManager" /> property located in
+                the <fgp-code>package.json</fgp-code> file (pointed by the
+                <fgp-property-link name="packageJsonDirectory" /> property). For example, if the
+                <fgp-code>package.json</fgp-code> file contains <fgp-code>"packageManager":&nbsp;"npm@9.6.6"</fgp-code>,
+                the task resolves <fgp-code>npm</fgp-code> as the package manager.
             </p>
             <p>
                 The task takes advantage of

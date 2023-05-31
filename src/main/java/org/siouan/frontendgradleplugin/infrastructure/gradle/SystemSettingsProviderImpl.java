@@ -1,17 +1,12 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.gradle.api.provider.Provider;
-import org.siouan.frontendgradleplugin.domain.model.SystemProperty;
-import org.siouan.frontendgradleplugin.domain.model.SystemSettingsProvider;
+import org.siouan.frontendgradleplugin.domain.SystemProperties;
+import org.siouan.frontendgradleplugin.domain.SystemSettingsProvider;
 
 /**
  * System-wide proxy settings.
@@ -34,13 +29,11 @@ public class SystemSettingsProviderImpl implements SystemSettingsProvider {
 
     private final Provider<String> osName;
 
-    private final Provider<String> nodejsHomePath;
-
     private final int defaultHttpProxyPort;
 
     private final int defaultHttpsProxyPort;
 
-    public SystemSettingsProviderImpl(@Nonnull final SystemExtension systemExtension, final int defaultHttpProxyPort,
+    public SystemSettingsProviderImpl(final SystemExtension systemExtension, final int defaultHttpProxyPort,
         final int defaultHttpsProxyPort) {
         this.httpProxyHost = systemExtension.getHttpProxyHost();
         this.httpProxyPort = systemExtension.getHttpProxyPort();
@@ -49,12 +42,10 @@ public class SystemSettingsProviderImpl implements SystemSettingsProvider {
         this.nonProxyHosts = systemExtension.getNonProxyHosts();
         this.jvmArch = systemExtension.getJvmArch();
         this.osName = systemExtension.getOsName();
-        this.nodejsHomePath = systemExtension.getNodejsHomePath();
         this.defaultHttpProxyPort = defaultHttpProxyPort;
         this.defaultHttpsProxyPort = defaultHttpsProxyPort;
     }
 
-    @Nullable
     @Override
     public String getHttpProxyHost() {
         return httpProxyHost.getOrNull();
@@ -69,7 +60,6 @@ public class SystemSettingsProviderImpl implements SystemSettingsProvider {
             .orElse(defaultHttpProxyPort);
     }
 
-    @Nullable
     @Override
     public String getHttpsProxyHost() {
         return httpsProxyHost.getOrNull();
@@ -84,43 +74,23 @@ public class SystemSettingsProviderImpl implements SystemSettingsProvider {
             .orElse(defaultHttpsProxyPort);
     }
 
-    @Nonnull
     @Override
     public Set<String> getNonProxyHosts() {
         return Optional
             .ofNullable(nonProxyHosts.getOrNull())
             .filter(Predicate.not(String::isBlank))
-            .map(hosts -> hosts.split(SystemProperty.NON_PROXY_HOSTS_SPLIT_PATTERN))
+            .map(hosts -> hosts.split(SystemProperties.NON_PROXY_HOSTS_SPLIT_PATTERN))
             .map(Set::of)
-            .orElseGet(Collections::emptySet);
+            .orElseGet(Set::of);
     }
 
-    @Nonnull
     @Override
     public String getSystemJvmArch() {
         return jvmArch.get();
     }
 
-    @Nonnull
     @Override
     public String getSystemOsName() {
         return osName.get();
-    }
-
-    @Nullable
-    @Override
-    public Path getNodejsHomePath() {
-        return toPath(nodejsHomePath.getOrNull());
-    }
-
-    /**
-     * Gets the value of an environment variable.
-     *
-     * @param value Value.
-     * @return Path
-     */
-    @Nullable
-    private Path toPath(@Nullable final String value) {
-        return Optional.ofNullable(value).filter(v -> !v.trim().isEmpty()).map(Paths::get).orElse(null);
     }
 }

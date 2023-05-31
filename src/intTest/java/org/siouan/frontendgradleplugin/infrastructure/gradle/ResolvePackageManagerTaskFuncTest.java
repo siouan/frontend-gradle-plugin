@@ -1,12 +1,12 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.siouan.frontendgradleplugin.test.util.GradleBuildAssertions.assertTaskOutcomes;
-import static org.siouan.frontendgradleplugin.test.util.GradleBuildFiles.createBuildFile;
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.runGradle;
-import static org.siouan.frontendgradleplugin.test.util.GradleHelper.runGradleAndExpectFailure;
-import static org.siouan.frontendgradleplugin.test.util.Resources.getResourcePath;
-import static org.siouan.frontendgradleplugin.test.util.Resources.getResourceUrl;
+import static org.siouan.frontendgradleplugin.test.GradleBuildAssertions.assertTaskOutcomes;
+import static org.siouan.frontendgradleplugin.test.GradleBuildFiles.createBuildFile;
+import static org.siouan.frontendgradleplugin.test.GradleHelper.runGradle;
+import static org.siouan.frontendgradleplugin.test.GradleHelper.runGradleAndExpectFailure;
+import static org.siouan.frontendgradleplugin.test.Resources.getResourcePath;
+import static org.siouan.frontendgradleplugin.test.Resources.getResourceUrl;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -19,9 +19,9 @@ import org.gradle.testkit.runner.BuildResult;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
-import org.siouan.frontendgradleplugin.domain.model.PackageManagerType;
-import org.siouan.frontendgradleplugin.test.util.FrontendMapBuilder;
-import org.siouan.frontendgradleplugin.test.util.PluginTaskOutcome;
+import org.siouan.frontendgradleplugin.domain.PackageManagerType;
+import org.siouan.frontendgradleplugin.test.FrontendMapBuilder;
+import org.siouan.frontendgradleplugin.test.PluginTaskOutcome;
 
 /**
  * Functional tests to verify the {@link ResolvePackageManagerTask} integration in a Gradle build.
@@ -37,7 +37,8 @@ class ResolvePackageManagerTaskFuncTest {
     void should_be_skipped_when_package_json_file_is_not_readable() throws IOException {
         createBuildFile(projectDirectoryPath, new FrontendMapBuilder().nodeDistributionProvided(true).toMap());
 
-        final BuildResult result = runGradle(projectDirectoryPath, FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME);
+        final BuildResult result = runGradle(projectDirectoryPath,
+            FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME);
 
         assertTaskOutcomes(result, PluginTaskOutcome.SKIPPED, PluginTaskOutcome.SKIPPED);
         assertThat(projectDirectoryPath.resolve(

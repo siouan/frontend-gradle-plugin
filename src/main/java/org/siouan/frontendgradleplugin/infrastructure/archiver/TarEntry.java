@@ -1,9 +1,9 @@
 package org.siouan.frontendgradleplugin.infrastructure.archiver;
 
-import javax.annotation.Nonnull;
-
+import lombok.Builder;
+import lombok.Getter;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
-import org.siouan.frontendgradleplugin.domain.model.ArchiveEntry;
+import org.siouan.frontendgradleplugin.domain.installer.archiver.ArchiveEntry;
 
 /**
  * This class acts as a bridge between this plugin's archive entry implementation, and Apache Commons Compress low-level
@@ -12,29 +12,15 @@ import org.siouan.frontendgradleplugin.domain.model.ArchiveEntry;
  *
  * @since 1.1.3
  */
+@Builder
+@Getter
 class TarEntry implements ArchiveEntry {
 
+    /**
+     * Low-level entry mapped to this entry.
+     */
     private final TarArchiveEntry lowLevelEntry;
 
-    /**
-     * Builds an entry mapped to a low-level entry.
-     *
-     * @param lowLevelEntry Low-level entry.
-     */
-    TarEntry(final TarArchiveEntry lowLevelEntry) {
-        this.lowLevelEntry = lowLevelEntry;
-    }
-
-    /**
-     * Gets the low-level entry this entry is mapped to.
-     *
-     * @return Entry.
-     */
-    TarArchiveEntry getLowLevelEntry() {
-        return lowLevelEntry;
-    }
-
-    @Nonnull
     @Override
     public String getName() {
         return lowLevelEntry.getName();

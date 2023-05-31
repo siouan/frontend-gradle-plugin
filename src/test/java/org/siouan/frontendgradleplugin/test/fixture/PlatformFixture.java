@@ -1,29 +1,28 @@
 package org.siouan.frontendgradleplugin.test.fixture;
 
-import javax.annotation.Nonnull;
+import static org.siouan.frontendgradleplugin.test.fixture.SystemPropertiesFixture.getSystemJvmArch;
+import static org.siouan.frontendgradleplugin.test.fixture.SystemPropertiesFixture.getSystemOsName;
 
-import org.siouan.frontendgradleplugin.domain.model.Platform;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import org.siouan.frontendgradleplugin.domain.Platform;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class PlatformFixture {
 
-    public static final Platform LOCAL_PLATFORM = aPlatform(SystemPropertyFixture.getSystemJvmArch(),
-        SystemPropertyFixture.getSystemOsName());
+    public static final Platform LOCAL_PLATFORM = aPlatform(getSystemJvmArch(), getSystemOsName());
 
-    public static final Platform ANY_WINDOWS_PLATFORM = aPlatform(SystemPropertyFixture.getSystemJvmArch(),
-        "Windows NT");
+    public static final Platform ANY_WINDOWS_PLATFORM = aPlatform(getSystemJvmArch(), "Windows NT");
 
-    public static final Platform ANY_UNIX_PLATFORM = aPlatform(SystemPropertyFixture.getSystemJvmArch(), "Linux");
+    public static final Platform ANY_UNIX_PLATFORM = aPlatform(getSystemJvmArch(), "Linux");
 
     public static final Platform ANY_NON_WINDOWS_PLATFORM = ANY_UNIX_PLATFORM;
 
-    private PlatformFixture() {
-    }
-
     public static Platform aPlatform() {
-        return new Platform(SystemPropertyFixture.getSystemJvmArch(), "Linux");
+        return aPlatform(getSystemJvmArch(), "Linux");
     }
 
-    public static Platform aPlatform(@Nonnull final String jvmArch, @Nonnull final String osName) {
-        return new Platform(jvmArch, osName);
+    public static Platform aPlatform(final String jvmArch, final String osName) {
+        return Platform.builder().jvmArch(jvmArch).osName(osName).build();
     }
 }

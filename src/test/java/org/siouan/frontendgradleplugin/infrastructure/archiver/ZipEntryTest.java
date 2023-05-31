@@ -25,7 +25,7 @@ class ZipEntryTest {
     private ZipArchiveEntry lowLevelEntry;
 
     @Test
-    void shouldMapEntryToDirectoryArchiveEntry() {
+    void should_map_entry_to_directory_archive_entry() {
         final String name = NAME;
         final int unixMode = UNIX_MODE;
         final boolean isDirectory = true;
@@ -46,7 +46,7 @@ class ZipEntryTest {
     }
 
     @Test
-    void shouldMapEntryToSymbolicLinkArchiveEntry() {
+    void should_map_entry_to_symbolic_link_archive_entry() {
         final String name = NAME;
         final int unixMode = UNIX_MODE;
         final boolean isDirectory = false;
@@ -67,7 +67,7 @@ class ZipEntryTest {
     }
 
     @Test
-    void shouldMapEntryToFileArchiveEntry() {
+    void should_map_entry_to_file_archive_entry() {
         final String name = NAME;
         final int unixMode = UNIX_MODE;
         final boolean isDirectory = false;

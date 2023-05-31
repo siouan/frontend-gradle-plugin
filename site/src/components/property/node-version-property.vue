@@ -8,10 +8,11 @@
         :tasks="['installNode']"
     >
         <p>
-            The version number is used to build the exact URL to download the distribution, as long as the
+            The version number is used to build the exact URL to download the distribution. Though it is not required,
+            it must be defined when
+            <fgp-property-link name="nodeDistributionProvided" /> property is <fgp-code>false</fgp-code> and
             <fgp-property-link name="nodeDistributionUrlPathPattern" /> property contains the
-            <fgp-code>VERSION</fgp-code> token. The property is required when the
-            <fgp-property-link name="nodeDistributionProvided" /> property is <fgp-code>false</fgp-code>.
+            <fgp-code>VERSION</fgp-code> token.
         </p>
     </fgp-property>
 </template>

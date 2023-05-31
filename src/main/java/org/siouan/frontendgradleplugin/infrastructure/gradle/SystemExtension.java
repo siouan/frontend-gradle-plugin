@@ -1,11 +1,8 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
-import javax.annotation.Nonnull;
-
 import org.gradle.api.provider.Provider;
 import org.gradle.api.provider.ProviderFactory;
-import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
-import org.siouan.frontendgradleplugin.domain.model.SystemProperty;
+import org.siouan.frontendgradleplugin.domain.SystemProperties;
 
 /**
  * Extension providing system settings.
@@ -40,17 +37,14 @@ public class SystemExtension {
 
     private final Provider<String> osName;
 
-    private final Provider<String> nodejsHomePath;
-
-    public SystemExtension(@Nonnull final ProviderFactory providerFactory) {
-        this.httpProxyHost = providerFactory.systemProperty(SystemProperty.HTTP_PROXY_HOST);
-        this.httpProxyPort = providerFactory.systemProperty(SystemProperty.HTTP_PROXY_PORT);
-        this.httpsProxyHost = providerFactory.systemProperty(SystemProperty.HTTPS_PROXY_HOST);
-        this.httpsProxyPort = providerFactory.systemProperty(SystemProperty.HTTPS_PROXY_PORT);
-        this.nonProxyHosts = providerFactory.systemProperty(SystemProperty.NON_PROXY_HOSTS);
-        this.jvmArch = providerFactory.systemProperty(SystemProperty.JVM_ARCH_PROPERTY);
-        this.osName = providerFactory.systemProperty(SystemProperty.OS_NAME_PROPERTY);
-        this.nodejsHomePath = providerFactory.environmentVariable(FrontendGradlePlugin.NODEJS_HOME_ENV_VAR);
+    public SystemExtension(final ProviderFactory providerFactory) {
+        this.httpProxyHost = providerFactory.systemProperty(SystemProperties.HTTP_PROXY_HOST);
+        this.httpProxyPort = providerFactory.systemProperty(SystemProperties.HTTP_PROXY_PORT);
+        this.httpsProxyHost = providerFactory.systemProperty(SystemProperties.HTTPS_PROXY_HOST);
+        this.httpsProxyPort = providerFactory.systemProperty(SystemProperties.HTTPS_PROXY_PORT);
+        this.nonProxyHosts = providerFactory.systemProperty(SystemProperties.NON_PROXY_HOSTS);
+        this.jvmArch = providerFactory.systemProperty(SystemProperties.JVM_ARCH_PROPERTY);
+        this.osName = providerFactory.systemProperty(SystemProperties.OS_NAME_PROPERTY);
     }
 
     public Provider<String> getHttpProxyHost() {
@@ -79,9 +73,5 @@ public class SystemExtension {
 
     public Provider<String> getOsName() {
         return osName;
-    }
-
-    public Provider<String> getNodejsHomePath() {
-        return nodejsHomePath;
     }
 }

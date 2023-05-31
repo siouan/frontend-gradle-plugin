@@ -2,7 +2,6 @@ package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
 import java.io.File;
 import java.nio.file.Paths;
-import javax.annotation.Nonnull;
 
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.ProjectLayout;
@@ -11,14 +10,11 @@ import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.process.ExecOperations;
-import org.siouan.frontendgradleplugin.domain.model.ExecutableType;
-import org.siouan.frontendgradleplugin.domain.model.Platform;
-import org.siouan.frontendgradleplugin.domain.model.PlatformProvider;
-import org.siouan.frontendgradleplugin.infrastructure.BeanRegistryException;
-import org.siouan.frontendgradleplugin.infrastructure.Beans;
-import org.siouan.frontendgradleplugin.infrastructure.exception.NonRunnableTaskException;
-import org.siouan.frontendgradleplugin.infrastructure.gradle.adapter.GradleScriptRunnerAdapter;
-import org.siouan.frontendgradleplugin.infrastructure.gradle.adapter.ScriptProperties;
+import org.siouan.frontendgradleplugin.domain.ExecutableType;
+import org.siouan.frontendgradleplugin.domain.Platform;
+import org.siouan.frontendgradleplugin.domain.PlatformProvider;
+import org.siouan.frontendgradleplugin.infrastructure.bean.BeanRegistryException;
+import org.siouan.frontendgradleplugin.infrastructure.bean.Beans;
 
 /**
  * This abstract class provides the reusable logic to run a command with an executable. Sub-classes must expose inputs
@@ -55,8 +51,8 @@ public abstract class AbstractRunCommandTask extends DefaultTask {
      */
     final Property<String> script;
 
-    AbstractRunCommandTask(@Nonnull final ProjectLayout projectLayout, @Nonnull final ObjectFactory objectFactory,
-        @Nonnull final ExecOperations execOperations) {
+    AbstractRunCommandTask(final ProjectLayout projectLayout, final ObjectFactory objectFactory,
+        final ExecOperations execOperations) {
         this.execOperations = execOperations;
         this.beanRegistryId = Beans.getBeanRegistryId(projectLayout.getProjectDirectory().toString());
         this.packageJsonDirectory = objectFactory.property(File.class);
@@ -108,8 +104,14 @@ public abstract class AbstractRunCommandTask extends DefaultTask {
         getLogger().debug("Platform: {}", platform);
         Beans
             .getBean(beanRegistryId, GradleScriptRunnerAdapter.class)
-            .execute(
-                new ScriptProperties(execOperations, packageJsonDirectory.map(File::toPath).get(), executableType.get(),
-                    nodeInstallDirectory.map(Paths::get).get(), script.get(), platform));
+            .execute(ScriptProperties
+                .builder()
+                .execOperations(execOperations)
+                .packageJsonDirectoryPath(packageJsonDirectory.map(File::toPath).get())
+                .executableType(executableType.get())
+                .nodeInstallDirectoryPath(nodeInstallDirectory.map(Paths::get).get())
+                .script(script.get())
+                .platform(platform)
+                .build());
     }
 }

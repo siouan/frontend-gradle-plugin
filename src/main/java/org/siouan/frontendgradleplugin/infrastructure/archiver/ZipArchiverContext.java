@@ -2,63 +2,46 @@ package org.siouan.frontendgradleplugin.infrastructure.archiver;
 
 import java.io.IOException;
 import java.util.Enumeration;
-import javax.annotation.Nonnull;
 
+import lombok.Getter;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
-import org.siouan.frontendgradleplugin.domain.model.ArchiverContext;
-import org.siouan.frontendgradleplugin.domain.model.ExplodeSettings;
+import org.siouan.frontendgradleplugin.domain.installer.archiver.ArchiverContext;
+import org.siouan.frontendgradleplugin.domain.installer.archiver.ExplodeCommand;
 
 /**
  * Context used to extract entries in a ZIP archive.
  *
  * @since 1.1.3
  */
+@Getter
 public class ZipArchiverContext implements ArchiverContext {
 
     /**
-     * Explode settings.
+     * Parameters to explode archive content.
      */
-    private final ExplodeSettings settings;
+    private final ExplodeCommand explodeCommand;
 
+    /**
+     * ZIP file.
+     */
     private final ZipFile zipFile;
 
+    /**
+     * Enumeration of entries in the ZIP file.
+     */
     private final Enumeration<ZipArchiveEntry> entries;
 
     /**
      * Builds a context providing explode settings, and archive entries.
      *
-     * @param settings Explode settings.
+     * @param explodeCommand Parameters to explode archive content.
      * @param zipFile ZIP file.
      */
-    public ZipArchiverContext(final ExplodeSettings settings, final ZipFile zipFile) {
-        this.settings = settings;
+    public ZipArchiverContext(final ExplodeCommand explodeCommand, final ZipFile zipFile) {
+        this.explodeCommand = explodeCommand;
         this.zipFile = zipFile;
         this.entries = this.zipFile.getEntries();
-    }
-
-    /**
-     * Gets the enumeration of entries in the archive.
-     *
-     * @return Enumeration of entries.
-     */
-    Enumeration<ZipArchiveEntry> getEntries() {
-        return entries;
-    }
-
-    @Nonnull
-    @Override
-    public ExplodeSettings getSettings() {
-        return settings;
-    }
-
-    /**
-     * Gets the archive file.
-     *
-     * @return File.
-     */
-    ZipFile getZipFile() {
-        return zipFile;
     }
 
     @Override

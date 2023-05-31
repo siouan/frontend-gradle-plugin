@@ -1,6 +1,5 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
-import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
 import org.gradle.api.file.ProjectLayout;
@@ -8,7 +7,7 @@ import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.process.ExecOperations;
-import org.siouan.frontendgradleplugin.domain.model.ExecutableType;
+import org.siouan.frontendgradleplugin.domain.ExecutableType;
 
 /**
  * Task type allowing developers to implement custom task and run a {@code pnpm} command. To do so, the {@code script}
@@ -29,8 +28,8 @@ import org.siouan.frontendgradleplugin.domain.model.ExecutableType;
 public class RunPnpm extends AbstractRunCommandTaskType {
 
     @Inject
-    public RunPnpm(@Nonnull final ProjectLayout projectLayout, @Nonnull final ObjectFactory objectFactory,
-        @Nonnull final ExecOperations execOperations) {
+    public RunPnpm(final ProjectLayout projectLayout, final ObjectFactory objectFactory,
+        final ExecOperations execOperations) {
         super(projectLayout, objectFactory, execOperations);
         executableType.set(ExecutableType.PNPM);
     }

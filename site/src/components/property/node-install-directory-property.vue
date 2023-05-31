@@ -4,7 +4,7 @@
         type="java.io.File"
         :required="true"
         default-value='file("${projectDir}/node")'
-        :tasks="['installNode', 'resolvePackageManager', 'installPackageManager']"
+        :tasks="['installNode', 'resolvePackageManager', 'installPackageManager', 'installFrontend', 'cleanFrontend', 'assembleFrontend', 'checkFrontend', 'publishFrontend']"
     >
         <p>
             Directory where the downloaded distribution shall be installed, or where a provided distribution is located

@@ -2,14 +2,20 @@ package org.siouan.frontendgradleplugin.test.fixture;
 
 import java.net.Proxy;
 
-import org.siouan.frontendgradleplugin.domain.model.ProxySettings;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import org.siouan.frontendgradleplugin.domain.installer.ProxySettings;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ProxySettingsFixture {
 
-    private ProxySettingsFixture() {
-    }
-
     public static ProxySettings someProxySettings() {
-        return new ProxySettings(Proxy.Type.HTTP, "example.org", 443, null);
+        return ProxySettings
+            .builder()
+            .proxyType(Proxy.Type.HTTP)
+            .proxyHost("example.com")
+            .proxyPort(443)
+            .credentials(null)
+            .build();
     }
 }
