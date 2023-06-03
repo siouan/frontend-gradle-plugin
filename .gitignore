@@ -1,12 +1,9 @@
-/buildSrc/.gradle/
-/buildSrc/build/
-/out/
+/plugin/out/
 /site/dist/
 /site/node/
 /site/node_modules/
 /site/.nuxt/
 /site/.pnp.*
-/site/.yarnrc.yml
 /site/.yarn/
 !/site/.yarn/patches
 !/site/.yarn/plugins

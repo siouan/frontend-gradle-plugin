@@ -1,7 +1,15 @@
 <template>
-    <fgp-task name="cleanFrontend">
-        <template v-slot:title>Clean frontend artifacts</template>
-        <template v-slot:description>
+    <fgp-task name="cleanFrontend" :inputs="inputs">
+        <template #title>Clean frontend artifacts</template>
+        <template #executableType>
+            type of executable derived from the package manager resolved by task
+            <fgp-task-link name="resolvePackageManager" /> in file
+            <fgp-property-link name="cacheDirectory" /><fgp-code>/resolvePackageManager/package-manager-name.txt</fgp-code>.
+        </template>
+        <template #skipConditions>
+            property <fgp-property-link name="cleanScript" /> is not <fgp-code>null</fgp-code>.
+        </template>
+        <template #description>
             <p>
                 This task does nothing by default, considering frontend artifacts (minimified Javascript, CSS, HTML
                 files...) are generated in the <fgp-code>${project.buildDir}</fgp-code> directory. If it is not the
@@ -20,18 +28,28 @@
 </template>
 
 <script>
-import Vue from "vue";
-import fgpCode from "../code";
-import fgpPropertyLink from "../link/property-link";
-import fgpTask from "./task";
-import fgpTaskLink from "../link/task-link";
+import Vue from 'vue';
+import fgpCode from '@/components/code';
+import fgpPropertyLink from '@/components/link/property-link';
+import fgpTask from '@/components/task/task';
+import fgpTaskLink from '@/components/link/task-link';
 
-export default Vue.component("fgp-clean-frontend-task", {
+export default Vue.component('fgp-clean-frontend-task', {
     components: {
         fgpCode,
         fgpPropertyLink,
         fgpTask,
         fgpTaskLink
+    },
+    data() {
+        return {
+            inputs: [
+                { name: 'executableType', type: 'ET', binding: 'C' },
+                { name: 'packageJsonDirectory', type: 'F', binding: 'P', property: 'packageJsonDirectory' },
+                { name: 'nodeInstallDirectory', type: 'F', binding: 'P', property: 'nodeInstallDirectory' },
+                { name: 'script', type: 'S', binding: 'P', property: 'cleanScript' }
+            ]
+        };
     }
 });
 </script>

@@ -1,57 +1,57 @@
 export default {
     lang: {
-        english: "English",
-        french: "Français"
+        english: 'English',
+        french: 'Français'
     },
     maintenance: {
-        inProgress: "Coming soon, thanks for your patience!"
+        inProgress: 'Coming soon, thanks for your patience!'
     },
     menu: {
-        configuration: "Configuration",
-        examples: "Examples",
-        faq: "FAQ",
-        overview: "Overview",
-        installation: "Get started",
-        tasks: "Tasks"
+        configuration: 'Configuration',
+        examples: 'Examples',
+        faq: 'FAQ',
+        overview: 'Overview',
+        installation: 'Get started',
+        tasks: 'Tasks'
     },
     navigation: {
         corepack: {
-            label: "Corepack"
+            label: 'Corepack'
         },
         gradle: {
-            label: "Gradle"
+            label: 'Gradle'
         },
         nodejs: {
-            label: "Node.js"
+            label: 'Node.js'
         },
-        notFound: "The page you requested was not found.",
+        notFound: 'The page you requested was not found.',
         npm: {
-            label: "npm"
+            label: 'npm'
         },
         pnpm: {
-            label: "pnpm"
+            label: 'pnpm'
         },
         repository: {
             releases: {
-                label: "Release notes"
+                label: 'Release notes'
             }
         },
         yarnBerry: {
-            label: "Yarn",
-            originalName: "Berry",
-            title: "Yarn Berry"
+            label: 'Yarn',
+            originalName: 'Berry',
+            title: 'Yarn Berry'
         },
         yarn1: {
-            label: "Yarn 1",
-            title: "Classic Yarn"
+            label: 'Yarn 1',
+            title: 'Classic Yarn'
         },
         yarn2: {
-            label: "Yarn 2+",
-            title: "Yarn"
+            label: 'Yarn 2+',
+            title: 'Yarn'
         }
     },
     siouan: {
-        organizationTooltip: "Siouan at GitHub.com",
-        projectTooltip: "Frontend Gradle plugin at GitHub.com"
+        organizationTooltip: 'Siouan at GitHub.com',
+        projectTooltip: 'Frontend Gradle plugin at GitHub.com'
     }
 };

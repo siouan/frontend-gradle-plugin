@@ -18,11 +18,11 @@ jobs:
     steps:
       - name: Init Ubuntu environment
         if: matrix.os == 'ubuntu-22.04'
-        run: sudo rm -f /usr/local/bin/node /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/yarn
+        run: sudo rm -f /usr/local/bin/node /usr/local/bin/npm /usr/local/bin/pnpm /usr/local/bin/yarn
 
       - name: Init MacOS environment
         if: matrix.os == 'macos-12'
-        run: sudo rm -f /usr/local/bin/node /usr/local/bin/npm /usr/local/bin/npx /usr/bin/yarn /Users/runner/.yarn/bin/yarn
+        run: sudo rm -f /usr/local/bin/node /usr/local/bin/npm /usr/local/bin/pnpm /usr/bin/yarn /Users/runner/.yarn/bin/yarn
 
       - name: Init Windows environment
         if: matrix.os == 'windows-2022'
@@ -68,25 +68,25 @@ jobs:
           key: ${{ runner.os }}-sonar-${{ hashFiles('**/*.gradle*') }}
 
       - name: Grant executable permission
-        run: chmod +x gradlew src/intTest/resources/*/bin/*
+        run: chmod +x gradlew plugin/src/intTest/resources/*/bin/*
 
       - name: Build plugin on Linux (with test coverage)
         if: matrix.os == 'ubuntu-22.04'
-        run: ./gradlew build jacocoTestReport --console=plain
+        run: ./gradlew :plugin:jacocoTestReport --console=plain
 
       - name: Build plugin on MacOS
         if: matrix.os == 'macos-12'
-        run: ./gradlew :build --console=plain
+        run: ./gradlew :plugin:build --console=plain
 
       - name: Build plugin on Windows
         if: matrix.os == 'windows-2022'
         run: |
           Remove-Item Env:npm_config_prefix
-          ./gradlew :build --console=plain
+          ./gradlew :plugin:build --console=plain
 
       - name: Scan source code and test results
         if: matrix.os == 'ubuntu-22.04'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew -i sonarqube --console=plain -Dorg.gradle.jvmargs=-Xmx512m
+        run: ./gradlew :plugin:sonar --console=plain -Dorg.gradle.jvmargs=-Xmx512m -Dsonar.verbose=true

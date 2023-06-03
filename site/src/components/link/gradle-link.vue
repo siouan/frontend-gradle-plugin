@@ -3,12 +3,12 @@
 </template>
 
 <script>
-import Vue from "vue";
+import Vue from 'vue';
 import fgpLink from '@/components/link/link.vue';
 
-const GRADLE_BASE_URL = "https://gradle.org";
+const GRADLE_BASE_URL = 'https://gradle.org';
 
-export default Vue.component("fgp-gradle-link", {
+export default Vue.component('fgp-gradle-link', {
     components: { fgpLink },
     props: {
         path: {

@@ -3,10 +3,10 @@
 </template>
 
 <script>
-import Vue from "vue";
-import fgpLink from "./link";
+import Vue from 'vue';
+import fgpLink from '@/components/link/link';
 
-export default Vue.component("fgp-gradle-guides-link", {
+export default Vue.component('fgp-gradle-guides-link', {
     components: { fgpLink },
     props: {
         path: {

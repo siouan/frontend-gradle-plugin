@@ -14,11 +14,11 @@
 </template>
 
 <script>
-import Vue from "vue";
-import fgpPropertyLink from "../link/property-link";
-import fgpProperty from "./property";
+import Vue from 'vue';
+import fgpPropertyLink from '@/components/link/property-link';
+import fgpProperty from '@/components/property/property';
 
-export default Vue.component("fgp-node-distribution-url-root-property", {
+export default Vue.component('fgp-node-distribution-url-root-property', {
     components: { fgpProperty, fgpPropertyLink }
 });
 </script>

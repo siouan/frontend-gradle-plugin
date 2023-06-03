@@ -1,11 +1,11 @@
 <template>
     <fgp-faq>
-        <template v-slot:question>
+        <template #question>
             What should I do when error
             <fgp-code>UnsupportedPlatformException</fgp-code>
             occurs?
         </template>
-        <template v-slot:answer>
+        <template #answer>
             By default, the plugin uses an automatic resolution process to "guess" the most relevant
             <fgp-nodejs-link />
             distribution applicable for your O/S and CPU architecture. Technically speaking, the plugin relies on
@@ -28,14 +28,14 @@
 </template>
 
 <script>
-import Vue from "vue";
-import fgpBlockQuote from "../block-quote";
-import fgpCode from "../code";
-import fgpFaq from "./faq";
-import fgpJavaSystemPropertiesLink from "../link/java-system-properties-link";
-import fgpNodejsLink from "../link/nodejs-link";
+import Vue from 'vue';
+import fgpBlockQuote from '@/components/block-quote';
+import fgpCode from '@/components/code';
+import fgpFaq from '@/components/faq/faq';
+import fgpJavaSystemPropertiesLink from '@/components/link/java-system-properties-link';
+import fgpNodejsLink from '@/components/link/nodejs-link';
 
-export default Vue.component("fgp-unsupported-platform-exception-faq", {
+export default Vue.component('fgp-unsupported-platform-exception-faq', {
     components: {
         fgpBlockQuote,
         fgpCode,

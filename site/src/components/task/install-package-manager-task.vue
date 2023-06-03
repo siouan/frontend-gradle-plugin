@@ -1,7 +1,18 @@
 <template>
-    <fgp-task name="installPackageManager">
-        <template v-slot:title>Install package manager</template>
-        <template v-slot:description>
+    <fgp-task name="installPackageManager" :inputs="inputs" :outputs="outputs">
+        <template #title>Install package manager</template>
+        <template #packageManagerNameFile>
+            <fgp-property-link name="cacheDirectory" /><fgp-code>/resolvePackageManager/package-manager-name.txt</fgp-code>
+        </template>
+        <template #packageManagerExecutableFile>
+            <fgp-property-link name="nodeInstallDirectory" /><fgp-code>/[npm|pnpm|yarn].cmd</fgp-code> or
+            <fgp-property-link name="nodeInstallDirectory" /><fgp-code>/bin/[npm|pnpm|yarn]</fgp-code> depending on the O/S.
+        </template>
+        <template #skipConditions>
+            file <fgp-property-link name="cacheDirectory" /><fgp-code
+            >/resolvePackageManager/package-manager-executable-path.txt</fgp-code> does not exist.
+        </template>
+        <template #description>
             <p>
                 The task installs the package manager resolved with task <fgp-task-link name="resolvePackageManager" />,
                 by executing command <fgp-code>corepack enable &lt;package-manager&gt;</fgp-code>.
@@ -22,13 +33,23 @@
 </template>
 
 <script>
-import Vue from "vue";
-import fgpCode from "../code";
-import fgpInfo from "../info";
-import fgpTask from "./task";
-import fgpTaskLink from "../link/task-link";
+import Vue from 'vue';
+import fgpCode from '@/components/code';
+import fgpInfo from '@/components/info';
+import fgpTask from '@/components/task/task';
+import fgpTaskLink from '@/components/link/task-link';
 
-export default Vue.component("fgp-install-package-manager-task", {
-    components: { fgpCode, fgpInfo, fgpTask, fgpTaskLink }
+export default Vue.component('fgp-install-package-manager-task', {
+    components: { fgpCode, fgpInfo, fgpTask, fgpTaskLink },
+    data() {
+        return {
+            inputs: [
+                { name: 'packageManagerNameFile', type: 'RF', binding: 'C' },
+            ],
+            outputs: [
+                { name: 'packageManagerExecutableFile', type: 'RF', binding: 'C' }
+            ]
+        };
+    }
 });
 </script>

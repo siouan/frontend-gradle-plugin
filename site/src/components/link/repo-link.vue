@@ -3,12 +3,12 @@
 </template>
 
 <script>
-import Vue from "vue";
-import fgpLink from "./link";
+import Vue from 'vue';
+import fgpLink from '@/components/link/link';
 
-const REPO_BASE_URL = "https://github.com/siouan/frontend-gradle-plugin";
+const REPO_BASE_URL = 'https://github.com/siouan/frontend-gradle-plugin';
 
-export default Vue.component("fgp-repo-link", {
+export default Vue.component('fgp-repo-link', {
     components: { fgpLink },
     props: {
         path: {

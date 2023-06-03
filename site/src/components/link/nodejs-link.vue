@@ -3,12 +3,12 @@
 </template>
 
 <script>
-import Vue from "vue";
+import Vue from 'vue';
 import fgpLink from '@/components/link/link.vue';
 
-const NODEJS_BASE_URL = "https://nodejs.org";
+const NODEJS_BASE_URL = 'https://nodejs.org';
 
-export default Vue.component("fgp-nodejs-link", {
+export default Vue.component('fgp-nodejs-link', {
     components: { fgpLink },
     props: {
         path: {

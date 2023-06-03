@@ -15,10 +15,10 @@
 </template>
 
 <script>
-import Vue from "vue";
-import fgpProperty from "../property/property";
+import Vue from 'vue';
+import fgpProperty from '@/components/property/property';
 
-export default Vue.component("fgp-cache-directory-property", {
+export default Vue.component('fgp-cache-directory-property', {
     components: { fgpProperty }
 });
 </script>

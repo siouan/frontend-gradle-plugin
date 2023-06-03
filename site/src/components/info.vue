@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import Vue from "vue";
+import Vue from 'vue';
 
-export default Vue.component("fgp-info", {});
+export default Vue.component('fgp-info', {});
 </script>

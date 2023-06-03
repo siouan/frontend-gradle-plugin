@@ -5,13 +5,17 @@ module.exports = {
         node: true,
     },
     parserOptions: {
-        parser: "babel-eslint",
+        parser: '@babel/eslint-parser',
+        requireConfigFile: false,
+        sourceType: 'module'
     },
-    extends: ["plugin:vue/recommended", "eslint:recommended", "prettier"],
-    plugins: ["vue", "prettier"],
+    extends: ['@nuxtjs/eslint-config', 'prettier'],
+    plugins: ['prettier'],
     // add your custom rules here
     rules: {
-        "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
-        "no-debugger": process.env.NODE_ENV === "production" ? "warn" : "off"
+        'vue/component-definition-name-casing': ['error', 'kebab-case'],
+        'quotes': ['error', 'single'],
+        'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+        'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off'
     }
 }

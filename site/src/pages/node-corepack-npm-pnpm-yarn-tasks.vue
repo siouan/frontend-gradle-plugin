@@ -63,7 +63,7 @@
                 implementation expected with simple cases:
             </p>
             <fgp-gradle-scripts id="lazy-configuration-examples" class="mt-3">
-                <template v-slot:groovy>
+                <template #groovy>
                     <pre><fgp-code><fgp-code-comment>// Configuring a predefined task.
 // FORMER SYNTAX: task 'installFrontend' is immediately created and configured, as well as task
 // 'otherTask', even if both tasks are not executed.</fgp-code-comment>
@@ -92,7 +92,7 @@ tasks.register('lazyTask') {
     dependsOn tasks.named('installFrontend')
 }</fgp-code></pre>
                 </template>
-                <template v-slot:kotlin>
+                <template #kotlin>
                     <pre><fgp-code><fgp-code-comment>// Configuring a predefined task.
 // FORMER SYNTAX: task 'installFrontend' is immediately created and configured, as well as task
 // 'otherTask', even if both tasks are not executed.</fgp-code-comment>
@@ -134,33 +134,35 @@ tasks.register("lazyTask") {
 </template>
 
 <script>
-import Vue from "vue";
-import fgpAssembleFrontendTask from "../components/task/assemble-frontend-task";
-import fgpCheckFrontendTask from "../components/task/check-frontend-task";
-import fgpCleanFrontendTask from "../components/task/clean-frontend-task";
-import fgpCodeComment from "../components/code-comment";
-import fgpDependencyTree from "../components/task/dependency-tree";
-import fgpGradleScripts from "../components/gradle-scripts";
-import fgpInstallFrontendTask from "../components/task/install-frontend-task";
-import fgpInstallNodeTask from "../components/task/install-node-task";
-import fgpInstallPackageManagerTask from "../components/task/install-package-manager-task";
-import fgpMainTitle from "../components/main-title";
-import fgpPageMeta from "../mixin/page-meta";
-import fgpPublishFrontendTask from "../components/task/publish-frontend-task";
-import fgpResolvePackageManagerTask from "../components/task/resolve-package-manager-task";
-import fgpRunCorepackTaskType from "../components/task/run-corepack-task-type";
-import fgpRunNodeTaskType from "../components/task/run-node-task-type";
-import fgpRunNpmTaskType from "../components/task/run-npm-task-type";
-import fgpRunPnpmTaskType from "../components/task/run-pnpm-task-type";
-import fgpRunYarnTaskType from "../components/task/run-yarn-task-type";
-import fgpSubSubTitle from "../components/sub-sub-title";
-import fgpSubTitle from "../components/sub-title";
+import Vue from 'vue';
+import fgpAssembleFrontendTask from '@/components/task/assemble-frontend-task';
+import fgpCheckFrontendTask from '@/components/task/check-frontend-task';
+import fgpCleanFrontendTask from '@/components/task/clean-frontend-task';
+import fgpCode from '@/components/code.vue';
+import fgpCodeComment from '@/components/code-comment';
+import fgpDependencyTree from '@/components/task/dependency-tree';
+import fgpGradleScripts from '@/components/gradle-scripts';
+import fgpInstallFrontendTask from '@/components/task/install-frontend-task';
+import fgpInstallNodeTask from '@/components/task/install-node-task';
+import fgpInstallPackageManagerTask from '@/components/task/install-package-manager-task';
+import fgpMainTitle from '@/components/main-title';
+import fgpPageMeta from '@/mixin/page-meta';
+import fgpPublishFrontendTask from '@/components/task/publish-frontend-task';
+import fgpResolvePackageManagerTask from '@/components/task/resolve-package-manager-task';
+import fgpRunCorepackTaskType from '@/components/task/run-corepack-task-type';
+import fgpRunNodeTaskType from '@/components/task/run-node-task-type';
+import fgpRunNpmTaskType from '@/components/task/run-npm-task-type';
+import fgpRunPnpmTaskType from '@/components/task/run-pnpm-task-type';
+import fgpRunYarnTaskType from '@/components/task/run-yarn-task-type';
+import fgpSubSubTitle from '@/components/sub-sub-title';
+import fgpSubTitle from '@/components/sub-title';
 
-export default Vue.component("fgp-node-corepack-npm-pnpm-yarn-tasks", {
+export default Vue.component('fgp-node-corepack-npm-pnpm-yarn-tasks', {
     components: {
         fgpAssembleFrontendTask,
         fgpCheckFrontendTask,
         fgpCleanFrontendTask,
+        fgpCode,
         fgpCodeComment,
         fgpDependencyTree,
         fgpGradleScripts,
@@ -181,8 +183,8 @@ export default Vue.component("fgp-node-corepack-npm-pnpm-yarn-tasks", {
     mixins: [fgpPageMeta],
     data() {
         return {
-            htmlTitle: "Gradle tasks to run node, npm, npx, yarn commands",
-            metaDescription: "Gradle tasks and types provided by the plugin to run node/npm/npx/yarn: integration, dependencies, customization, recommendations",
+            htmlTitle: 'Gradle tasks to run node, npm, npx, yarn commands',
+            metaDescription: 'Gradle tasks and types provided by the plugin to run node/npm/npx/yarn: integration, dependencies, customization, recommendations',
             linkCanonicalHref: process.env.FGP_WEBSITE_URL + 'node-corepack-npm-pnpm-yarn-tasks/'
         }
     }

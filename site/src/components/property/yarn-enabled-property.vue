@@ -21,13 +21,13 @@
 </template>
 
 <script>
-import Vue from "vue";
-import fgpCode from "../code";
-import fgpProperty from "./property";
-import fgpPropertyLink from "../link/property-link";
-import fgpYarnLink from "../link/yarn-link";
+import Vue from 'vue';
+import fgpCode from '@/components/code';
+import fgpProperty from '@/components/property/property';
+import fgpPropertyLink from '@/components/link/property-link';
+import fgpYarnLink from '@/components/link/yarn-link';
 
-export default Vue.component("fgp-yarn-enabled-property", {
+export default Vue.component('fgp-yarn-enabled-property', {
     components: { fgpCode, fgpProperty, fgpPropertyLink, fgpYarnLink }
 });
 </script>

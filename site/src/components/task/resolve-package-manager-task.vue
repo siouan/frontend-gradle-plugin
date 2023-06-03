@@ -1,7 +1,19 @@
 <template>
-    <fgp-task name="resolvePackageManager">
-        <template v-slot:title>Resolve package manager</template>
-        <template v-slot:description>
+    <fgp-task name="resolvePackageManager" :inputs="inputs" :outputs="outputs">
+        <template #title>Resolve package manager</template>
+        <template #metadataFile>
+            <fgp-property-link name="packageJsonDirectory" /><fgp-code>/package.json</fgp-code>
+        </template>
+        <template #packageManagerNameFile>
+            <fgp-property-link name="cacheDirectory" /><fgp-code>/resolvePackageManager/package-manager-name.txt</fgp-code>
+        </template>
+        <template #packageManagerExecutablePathFile>
+            <fgp-property-link name="cacheDirectory" /><fgp-code>/resolvePackageManager/package-manager-executable-path.txt</fgp-code>
+        </template>
+        <template #skipConditions>
+            file <fgp-property-link name="packageJsonDirectory" /><fgp-code>/package.json</fgp-code> does not exist.
+        </template>
+        <template #description>
             <p>
                 The task identifies the package manager applicable to the project by parsing the
                 <fgp-nodejs-link path="/api/packages.html#packagemanager" label="packageManager" /> property located in
@@ -27,12 +39,24 @@
 </template>
 
 <script>
-import Vue from "vue";
-import fgpCode from "../code";
-import fgpInfo from "../info";
-import fgpTask from "./task";
+import Vue from 'vue';
+import fgpCode from '@/components/code';
+import fgpInfo from '@/components/info';
+import fgpTask from '@/components/task/task';
 
-export default Vue.component("fgp-resolve-package-manager-task", {
-    components: { fgpCode, fgpInfo, fgpTask }
+export default Vue.component('fgp-resolve-package-manager-task', {
+    components: { fgpCode, fgpInfo, fgpTask },
+    data() {
+        return {
+            inputs: [
+                { name: 'metadataFile', type: 'RF', binding: 'C' },
+                { name: 'nodeInstallDirectory', type: 'F', binding: 'P', property: 'nodeInstallDirectory' }
+            ],
+            outputs: [
+                { name: 'packageManagerNameFile', type: 'RF', binding: 'C' },
+                { name: 'packageManagerExecutablePathFile', type: 'RF', binding: 'C' }
+            ]
+        };
+    }
 });
 </script>

@@ -3,9 +3,9 @@
 </template>
 
 <script>
-import Vue from "vue";
+import Vue from 'vue';
 
-export default Vue.component("fgp-image-link", {
+export default Vue.component('fgp-image-link', {
     props: {
         href: {
             type: String,

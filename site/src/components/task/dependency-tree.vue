@@ -200,11 +200,11 @@
 </template>
 
 <script>
-import Vue from "vue";
-import fgpSiteLink from "../link/site-link";
-import fgpAppConfig from "../../mixin/app-config";
+import Vue from 'vue';
+import fgpSiteLink from '@/components/link/site-link';
+import fgpAppConfig from '@/mixin/app-config';
 
-export default Vue.component("fgp-dependency-tree", {
+export default Vue.component('fgp-dependency-tree', {
     components: { fgpSiteLink },
     mixins: [fgpAppConfig]
 });

@@ -3,9 +3,9 @@
 </template>
 
 <script>
-import Vue from "vue";
+import Vue from 'vue';
 
-export default Vue.component("fgp-task-link-anchor", {
+export default Vue.component('fgp-task-link-anchor', {
     props: {
         name: {
             type: String,

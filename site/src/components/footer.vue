@@ -18,13 +18,13 @@
 </template>
 
 <script>
-import Vue from "vue";
-import fgpAppConfig from "../mixin/app-config";
-import fgpCode from "./code";
-import fgpLink from "./link/link";
-import fgpRepoLink from "./link/repo-link";
+import Vue from 'vue';
+import fgpAppConfig from '@/mixin/app-config';
+import fgpCode from '@/components/code';
+import fgpLink from '@/components/link/link';
+import fgpRepoLink from '@/components/link/repo-link';
 
-export default Vue.component("fgp-footer", {
+export default Vue.component('fgp-footer', {
     components: { fgpCode, fgpLink, fgpRepoLink },
     mixins: [fgpAppConfig]
 });

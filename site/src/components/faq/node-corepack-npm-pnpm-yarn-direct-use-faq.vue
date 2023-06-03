@@ -1,11 +1,11 @@
 <template>
     <fgp-faq>
-        <template v-slot:question>
+        <template #question>
             How to use <fgp-code>node</fgp-code>/<fgp-code>corepack</fgp-code>/<fgp-code>npm</fgp-code>/<fgp-code
             >pnpm</fgp-code>/<fgp-code>yarn</fgp-code> executables apart from Gradle when the <fgp-nodejs-link />
             distribution is downloaded by the plugin?
         </template>
-        <template v-slot:answer>
+        <template #answer>
             <ul>
                 <li>
                     Create a <fgp-code>NODEJS_HOME</fgp-code> environment variable (or a name of your choice) containing
@@ -24,13 +24,13 @@
 </template>
 
 <script>
-import Vue from "vue";
-import fgpCode from "../code";
-import fgpFaq from "./faq";
-import fgpNodejsLink from "../link/nodejs-link";
-import fgpPropertyLink from "../link/property-link";
+import Vue from 'vue';
+import fgpCode from '@/components/code';
+import fgpFaq from '@/components/faq/faq';
+import fgpNodejsLink from '@/components/link/nodejs-link';
+import fgpPropertyLink from '@/components/link/property-link';
 
-export default Vue.component("fgp-node-corepack-npm-pnpm-yarn-direct-use-faq", {
+export default Vue.component('fgp-node-corepack-npm-pnpm-yarn-direct-use-faq', {
     components: {
         fgpCode,
         fgpFaq,

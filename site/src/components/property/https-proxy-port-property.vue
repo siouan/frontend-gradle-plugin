@@ -8,11 +8,11 @@
 </template>
 
 <script>
-import Vue from "vue";
-import fgpProperty from "./property";
-import fgpPropertyLink from "../link/property-link";
+import Vue from 'vue';
+import fgpProperty from '@/components/property/property';
+import fgpPropertyLink from '@/components/link/property-link';
 
-export default Vue.component("fgp-https-proxy-port-property", {
+export default Vue.component('fgp-https-proxy-port-property', {
     components: { fgpProperty, fgpPropertyLink }
 });
 </script>

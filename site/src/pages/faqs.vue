@@ -25,15 +25,15 @@
 </template>
 
 <script>
-import Vue from "vue";
-import fgpCode from "../components/code";
-import fgpMainTitle from "../components/main-title";
-import fgpNodeCorepackNpmPnpmYarnDirectUseFaq from "../components/faq/node-corepack-npm-pnpm-yarn-direct-use-faq";
-import fgpPageMeta from "../mixin/page-meta";
-import fgpSiteLink from "../components/link/site-link";
-import fgpUnsupportedPlatformExceptionFaq from "../components/faq/unsupported-platform-exception-faq";
+import Vue from 'vue';
+import fgpCode from '@/components/code';
+import fgpMainTitle from '@/components/main-title';
+import fgpNodeCorepackNpmPnpmYarnDirectUseFaq from '@/components/faq/node-corepack-npm-pnpm-yarn-direct-use-faq';
+import fgpPageMeta from '@/mixin/page-meta';
+import fgpSiteLink from '@/components/link/site-link';
+import fgpUnsupportedPlatformExceptionFaq from '@/components/faq/unsupported-platform-exception-faq';
 
-export default Vue.component("fgp-faqs", {
+export default Vue.component('fgp-faqs', {
     components: {
         fgpCode,
         fgpMainTitle,
@@ -44,8 +44,8 @@ export default Vue.component("fgp-faqs", {
     mixins: [fgpPageMeta],
     data() {
         return {
-            htmlTitle: "Frequently asked questions",
-            metaDescription: "Using node, npm, npx, yarn executables apart from Gradle and resolving common issues.",
+            htmlTitle: 'Frequently asked questions',
+            metaDescription: 'Using node, npm, npx, yarn executables apart from Gradle and resolving common issues.',
             linkCanonicalHref: process.env.FGP_WEBSITE_URL + 'faqs/'
         }
     }

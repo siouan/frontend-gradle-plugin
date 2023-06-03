@@ -1,4 +1,4 @@
-import fgpPaths from "../paths";
+import fgpPaths from '@/paths';
 
 export default {
     data() {
