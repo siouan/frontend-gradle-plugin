@@ -1,7 +1,15 @@
 <template>
-    <fgp-task name="checkFrontend">
-        <template v-slot:title>Check frontend application</template>
-        <template v-slot:description>
+    <fgp-task name="checkFrontend" :inputs="inputs">
+        <template #title>Check frontend application</template>
+        <template #executableType>
+            type of executable derived from the package manager resolved by task
+            <fgp-task-link name="resolvePackageManager" /> in file
+            <fgp-property-link name="cacheDirectory" /><fgp-code>/resolvePackageManager/package-manager-name.txt</fgp-code>.
+        </template>
+        <template #skipConditions>
+            property <fgp-property-link name="checkScript" /> is not <fgp-code>null</fgp-code>.
+        </template>
+        <template #description>
             <p>
                 This task may be used to integrate a check script into a Gradle build. The check script shall be defined
                 in the <fgp-code>package.json</fgp-code> file, and the <fgp-property-link name="checkScript" /> property
@@ -19,18 +27,28 @@
 </template>
 
 <script>
-import Vue from "vue";
-import fgpCode from "../code";
-import fgpPropertyLink from "../link/property-link";
-import fgpTask from "./task";
-import fgpTaskLink from "../link/task-link";
+import Vue from 'vue';
+import fgpCode from '@/components/code';
+import fgpPropertyLink from '@/components/link/property-link';
+import fgpTask from '@/components/task/task';
+import fgpTaskLink from '@/components/link/task-link';
 
-export default Vue.component("fgp-check-frontend-task", {
+export default Vue.component('fgp-check-frontend-task', {
     components: {
         fgpCode,
         fgpPropertyLink,
         fgpTask,
         fgpTaskLink
+    },
+    data() {
+        return {
+            inputs: [
+                { name: 'executableType', type: 'ET', binding: 'C' },
+                { name: 'packageJsonDirectory', type: 'F', binding: 'P', property: 'packageJsonDirectory' },
+                { name: 'nodeInstallDirectory', type: 'F', binding: 'P', property: 'nodeInstallDirectory' },
+                { name: 'script', type: 'S', binding: 'P', property: 'checkScript' }
+            ]
+        };
     }
 });
 </script>

@@ -14,11 +14,11 @@
 </template>
 
 <script>
-import Vue from "vue";
-import fgpInfo from "../info";
-import fgpProperty from "./property";
+import Vue from 'vue';
+import fgpInfo from '@/components/info';
+import fgpProperty from '@/components/property/property';
 
-export default Vue.component("fgp-assemble-script-property", {
+export default Vue.component('fgp-assemble-script-property', {
     components: { fgpInfo, fgpProperty }
 });
 </script>

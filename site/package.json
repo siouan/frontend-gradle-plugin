@@ -3,6 +3,7 @@
   "description": "Frontend Gradle plugin's official site",
   "license": "Apache-2.0",
   "version": "7.0.0",
+  "packageManager": "yarn@3.6.0",
   "scripts": {
     "dev": "nuxt",
     "build": "nuxt build",
@@ -30,9 +31,10 @@
     "eslint-plugin-prettier": "~4",
     "fibers": "~5",
     "ncp": "~2",
+    "node-gyp": "~9",
     "prettier": "~2",
+    "rimraf": "~5",
     "sass": "~1",
     "sass-loader": "~10"
-  },
-  "packageManager": "yarn@1.22.19"
+  }
 }

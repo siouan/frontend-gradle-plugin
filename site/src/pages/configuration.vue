@@ -9,7 +9,7 @@
         </p>
 
         <fgp-gradle-scripts id="plugin-dsl">
-            <template v-slot:groovy>
+            <template #groovy>
                 <pre><fgp-code>frontend {
     <fgp-property-link name="nodeDistributionProvided" /> = false
     <fgp-property-link name="nodeVersion" /> = '18.16.0'
@@ -51,7 +51,7 @@
     <fgp-property-link name="cacheDirectory" /> = file("${buildDir}/frontend-gradle-plugin")
 }</fgp-code></pre>
             </template>
-            <template v-slot:kotlin>
+            <template #kotlin>
                 <pre><fgp-code>frontend {
     <fgp-property-link name="nodeDistributionProvided" />.set(false)
     <fgp-property-link name="nodeVersion" />.set("18.16.0")
@@ -155,7 +155,7 @@
                 <fgp-code>run &lt;script-name&gt;</fgp-code>, and nothing more. Example:
             </p>
             <fgp-gradle-scripts id="script-property-example" class="mt-3">
-                <template v-slot:groovy>
+                <template #groovy>
                     <pre><fgp-code><fgp-code-comment>// Instead of:</fgp-code-comment>
 assembleScript = 'run webpack &#45;&#45; &#45;&#45;config webpack.config.js &#45;&#45;profile'
 
@@ -166,7 +166,7 @@ assembleScript = 'run build'
 //   "build": "webpack &#45;&#45;config webpack/webpack.prod.js &#45;&#45;profile"
 // }</fgp-code-comment></fgp-code></pre>
                 </template>
-                <template v-slot:kotlin>
+                <template #kotlin>
                     <pre><fgp-code><fgp-code-comment>// Instead of:</fgp-code-comment>
 assembleScript.set("run webpack &#45;&#45; &#45;&#45;config webpack.config.js &#45;&#45;profile")
 
@@ -260,49 +260,49 @@ assembleScript.set("run build")
 </template>
 
 <script>
-import Vue from "vue";
-import fgpAssembleScriptProperty from "../components/property/assemble-script-property";
-import fgpCacheDirectoryProperty from "../components/property/cache-directory-property";
-import fgpCheckScriptProperty from "../components/property/check-script-property";
-import fgpCleanScriptProperty from "../components/property/clean-script-property";
-import fgpCode from "../components/code";
-import fgpCodeComment from "../components/code-comment";
-import fgpGradleScripts from "../components/gradle-scripts";
-import fgpInstallScriptProperty from "../components/property/install-script-property";
-import fgpJavaNetworkPropertiesLink from "../components/link/java-network-properties-link";
-import fgpMainTitle from "../components/main-title";
-import fgpNodeDistributionProvidedProperty from "../components/property/node-distribution-provided-property";
-import fgpNodeVersionProperty from "../components/property/node-version-property";
-import fgpNodeDistributionUrlRootProperty from "../components/property/node-distribution-url-root-property";
-import fgpNodeDistributionUrlPathPatternProperty from "../components/property/node-distribution-url-path-pattern-property";
-import fgpNodeDistributionServerUsernameProperty from "../components/property/node-distribution-server-username-property";
-import fgpNodeDistributionServerPasswordProperty from "../components/property/node-distribution-server-password-property";
-import fgpNodeInstallDirectoryProperty from "../components/property/node-install-directory-property";
-import fgpPageMeta from "../mixin/page-meta";
-import fgpPackageJsonDirectoryProperty from "../components/property/package-json-directory-property";
-import fgpPropertyLink from "../components/link/property-link";
-import fgpHttpProxyHostProperty from "../components/property/http-proxy-host-property";
-import fgpHttpProxyPasswordProperty from "../components/property/http-proxy-password-property";
-import fgpHttpProxyPortProperty from "../components/property/http-proxy-port-property";
-import fgpHttpProxyUsernameProperty from "../components/property/http-proxy-username-property";
-import fgpHttpsProxyHostProperty from "../components/property/https-proxy-host-property";
-import fgpHttpsProxyPasswordProperty from "../components/property/https-proxy-password-property";
-import fgpHttpsProxyPortProperty from "../components/property/https-proxy-port-property";
-import fgpHttpsProxyUsernameProperty from "../components/property/https-proxy-username-property";
-import fgpPublishScriptProperty from "../components/property/publish-script-property";
-import fgpSubSubTitle from "../components/sub-sub-title";
-import fgpSubTitle from "../components/sub-title";
-import fgpVerboseModeEnabledProperty from "../components/property/verbose-mode-enabled-property";
-import fgpYarnEnabledProperty from "../components/property/yarn-enabled-property";
-import fgpYarnDistributionProvidedProperty from "../components/property/yarn-distribution-provided-property";
-import fgpYarnVersionProperty from "../components/property/yarn-version-property";
-import fgpYarnDistributionUrlRootProperty from "../components/property/yarn-distribution-url-root-property";
-import fgpYarnDistributionUrlPathPatternProperty from "../components/property/yarn-distribution-url-path-pattern-property";
-import fgpYarnDistributionServerUsernameProperty from "../components/property/yarn-distribution-server-username-property";
-import fgpYarnDistributionServerPasswordProperty from "../components/property/yarn-distribution-server-password-property";
-import fgpYarnInstallDirectoryProperty from "../components/property/yarn-install-directory-property";
+import Vue from 'vue';
+import fgpAssembleScriptProperty from '@/components/property/assemble-script-property';
+import fgpCacheDirectoryProperty from '@/components/property/cache-directory-property';
+import fgpCheckScriptProperty from '@/components/property/check-script-property';
+import fgpCleanScriptProperty from '@/components/property/clean-script-property';
+import fgpCode from '@/components/code';
+import fgpCodeComment from '@/components/code-comment';
+import fgpGradleScripts from '@/components/gradle-scripts';
+import fgpInstallScriptProperty from '@/components/property/install-script-property';
+import fgpJavaNetworkPropertiesLink from '@/components/link/java-network-properties-link';
+import fgpMainTitle from '@/components/main-title';
+import fgpNodeDistributionProvidedProperty from '@/components/property/node-distribution-provided-property';
+import fgpNodeVersionProperty from '@/components/property/node-version-property';
+import fgpNodeDistributionUrlRootProperty from '@/components/property/node-distribution-url-root-property';
+import fgpNodeDistributionUrlPathPatternProperty from '@/components/property/node-distribution-url-path-pattern-property';
+import fgpNodeDistributionServerUsernameProperty from '@/components/property/node-distribution-server-username-property';
+import fgpNodeDistributionServerPasswordProperty from '@/components/property/node-distribution-server-password-property';
+import fgpNodeInstallDirectoryProperty from '@/components/property/node-install-directory-property';
+import fgpPageMeta from '@/mixin/page-meta';
+import fgpPackageJsonDirectoryProperty from '@/components/property/package-json-directory-property';
+import fgpPropertyLink from '@/components/link/property-link';
+import fgpHttpProxyHostProperty from '@/components/property/http-proxy-host-property';
+import fgpHttpProxyPasswordProperty from '@/components/property/http-proxy-password-property';
+import fgpHttpProxyPortProperty from '@/components/property/http-proxy-port-property';
+import fgpHttpProxyUsernameProperty from '@/components/property/http-proxy-username-property';
+import fgpHttpsProxyHostProperty from '@/components/property/https-proxy-host-property';
+import fgpHttpsProxyPasswordProperty from '@/components/property/https-proxy-password-property';
+import fgpHttpsProxyPortProperty from '@/components/property/https-proxy-port-property';
+import fgpHttpsProxyUsernameProperty from '@/components/property/https-proxy-username-property';
+import fgpPublishScriptProperty from '@/components/property/publish-script-property';
+import fgpSubSubTitle from '@/components/sub-sub-title';
+import fgpSubTitle from '@/components/sub-title';
+import fgpVerboseModeEnabledProperty from '@/components/property/verbose-mode-enabled-property';
+import fgpYarnEnabledProperty from '@/components/property/yarn-enabled-property';
+import fgpYarnDistributionProvidedProperty from '@/components/property/yarn-distribution-provided-property';
+import fgpYarnVersionProperty from '@/components/property/yarn-version-property';
+import fgpYarnDistributionUrlRootProperty from '@/components/property/yarn-distribution-url-root-property';
+import fgpYarnDistributionUrlPathPatternProperty from '@/components/property/yarn-distribution-url-path-pattern-property';
+import fgpYarnDistributionServerUsernameProperty from '@/components/property/yarn-distribution-server-username-property';
+import fgpYarnDistributionServerPasswordProperty from '@/components/property/yarn-distribution-server-password-property';
+import fgpYarnInstallDirectoryProperty from '@/components/property/yarn-install-directory-property';
 
-export default Vue.component("fgp-configuration", {
+export default Vue.component('fgp-configuration', {
     components: {
         fgpAssembleScriptProperty,
         fgpCacheDirectoryProperty,
@@ -347,8 +347,8 @@ export default Vue.component("fgp-configuration", {
     mixins: [fgpPageMeta],
     data() {
         return {
-            htmlTitle: "Configuring Gradle to build a Javascript application with node",
-            metaDescription: "Choose pre-installed packages or request Node.js distributions download, plug scripts from a package.json file to build/test/publish frontend artifacts with Gradle.",
+            htmlTitle: 'Configuring Gradle to build a Javascript application with node',
+            metaDescription: 'Choose pre-installed packages or request Node.js distributions download, plug scripts from a package.json file to build/test/publish frontend artifacts with Gradle.',
             linkCanonicalHref: process.env.FGP_WEBSITE_URL + 'configuration/'
         }
     }

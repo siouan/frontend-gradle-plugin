@@ -18,12 +18,12 @@
 </template>
 
 <script>
-import Vue from "vue";
-import fgpCode from "../code";
-import fgpProperty from "./property";
-import fgpTaskLink from "../link/task-link";
+import Vue from 'vue';
+import fgpCode from '@/components/code';
+import fgpProperty from '@/components/property/property';
+import fgpTaskLink from '@/components/link/task-link';
 
-export default Vue.component("fgp-package-json-directory-property", {
+export default Vue.component('fgp-package-json-directory-property', {
     components: { fgpCode, fgpProperty, fgpTaskLink }
 });
 </script>

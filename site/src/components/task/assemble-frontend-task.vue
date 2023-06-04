@@ -1,7 +1,15 @@
 <template>
-    <fgp-task name="assembleFrontend">
-        <template v-slot:title>Assemble frontend artifacts</template>
-        <template v-slot:description>
+    <fgp-task name="assembleFrontend" :inputs="inputs">
+        <template #title>Assemble frontend artifacts</template>
+        <template #executableType>
+            type of executable derived from the package manager resolved by task
+            <fgp-task-link name="resolvePackageManager" /> in file
+            <fgp-property-link name="cacheDirectory" /><fgp-code>/resolvePackageManager/package-manager-name.txt</fgp-code>.
+        </template>
+        <template #skipConditions>
+            property <fgp-property-link name="assembleScript" /> is not <fgp-code>null</fgp-code>.
+        </template>
+        <template #description>
             This task allows to execute a build script as part of a Gradle build. The build script shall be defined in
             the <fgp-code>package.json</fgp-code> file, and the <fgp-property-link name="assembleScript" /> property
             shall be set with the corresponding
@@ -37,20 +45,30 @@
 </template>
 
 <script>
-import Vue from "vue";
-import fgpCode from "../code";
-import fgpGradleTaskOutcomeLink from "../link/gradle-task-outcome-link";
-import fgpPropertyLink from "../link/property-link";
-import fgpTask from "./task";
-import fgpTaskLink from "../link/task-link";
+import Vue from 'vue';
+import fgpCode from '@/components/code';
+import fgpGradleTaskOutcomeLink from '@/components/link/gradle-task-outcome-link';
+import fgpPropertyLink from '@/components/link/property-link';
+import fgpTask from '@/components/task/task';
+import fgpTaskLink from '@/components/link/task-link';
 
-export default Vue.component("fgp-assemble-frontend-task", {
+export default Vue.component('fgp-assemble-frontend-task', {
     components: {
         fgpCode,
         fgpGradleTaskOutcomeLink,
         fgpPropertyLink,
         fgpTask,
         fgpTaskLink
+    },
+    data() {
+        return {
+            inputs: [
+                { name: 'executableType', type: 'ET', binding: 'C' },
+                { name: 'packageJsonDirectory', type: 'F', binding: 'P', property: 'packageJsonDirectory' },
+                { name: 'nodeInstallDirectory', type: 'F', binding: 'P', property: 'nodeInstallDirectory' },
+                { name: 'script', type: 'S', binding: 'P', property: 'assembleScript' }
+            ]
+        };
     }
 });
 </script>

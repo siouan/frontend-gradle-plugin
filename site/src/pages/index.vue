@@ -88,26 +88,26 @@
 </template>
 
 <script>
-import Vue from "vue";
-import fgpAppConfig from "../mixin/app-config";
-import fgpCode from "../components/code";
-import fgpCorepackLink from "../components/link/corepack-link";
-import fgpFeatureCard from "../components/feature-card";
-import fgpGradleDocsLink from "../components/link/gradle-docs-link";
-import fgpGradleLink from "../components/link/gradle-link";
-import fgpImageLink from "../components/link/image-link";
-import fgpLink from "../components/link/link";
-import fgpMainTitle from "../components/main-title";
-import fgpNodejsLink from "../components/link/nodejs-link";
-import fgpNpmLink from "../components/link/npm-link";
-import fgpPageMeta from "../mixin/page-meta";
-import fgpPnpmLink from "../components/link/pnpm-link";
-import fgpRepoLink from "../components/link/repo-link";
-import fgpSiteLink from "../components/link/site-link";
-import fgpSubTitle from "../components/sub-title";
-import fgpYarnLink from "../components/link/yarn-link";
+import Vue from 'vue';
+import fgpAppConfig from '@/mixin/app-config';
+import fgpCode from '@/components/code';
+import fgpCorepackLink from '@/components/link/corepack-link';
+import fgpFeatureCard from '@/components/feature-card';
+import fgpGradleDocsLink from '@/components/link/gradle-docs-link';
+import fgpGradleLink from '@/components/link/gradle-link';
+import fgpImageLink from '@/components/link/image-link';
+import fgpLink from '@/components/link/link';
+import fgpMainTitle from '@/components/main-title';
+import fgpNodejsLink from '@/components/link/nodejs-link';
+import fgpNpmLink from '@/components/link/npm-link';
+import fgpPageMeta from '@/mixin/page-meta';
+import fgpPnpmLink from '@/components/link/pnpm-link';
+import fgpRepoLink from '@/components/link/repo-link';
+import fgpSiteLink from '@/components/link/site-link';
+import fgpSubTitle from '@/components/sub-title';
+import fgpYarnLink from '@/components/link/yarn-link';
 
-export default Vue.component("fgp-index", {
+export default Vue.component('fgp-index', {
     components: {
         fgpCode,
         fgpCorepackLink,
@@ -128,9 +128,9 @@ export default Vue.component("fgp-index", {
     mixins: [fgpAppConfig, fgpPageMeta],
     data() {
         return {
-            htmlTitle: "Gradle Node/NPM/Yarn plugin to build Javascript applications",
+            htmlTitle: 'Gradle Node/NPM/Yarn plugin to build Javascript applications',
             linkCanonicalHref: process.env.FGP_WEBSITE_URL,
-            metaDescription: "All-in-one Gradle Node plugin, Gradle NPM plugin, Gradle Yarn plugin to build Javascript applications with Gradle: distribution management, built-in tasks, NPX support"
+            metaDescription: 'All-in-one Gradle Node plugin, Gradle NPM plugin, Gradle Yarn plugin to build Javascript applications with Gradle: distribution management, built-in tasks, NPX support'
         }
     }
 });

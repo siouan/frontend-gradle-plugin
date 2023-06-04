@@ -36,13 +36,13 @@
                         </p>
 
                         <fgp-gradle-scripts id="install-gradle-dsl">
-                            <template v-slot:groovy>
+                            <template #groovy>
 <pre><fgp-code>plugins {
     <fgp-code-comment>// For JDK 11+</fgp-code-comment>
     id 'org.siouan.frontend-jdk11' version '7.0.0'
 }</fgp-code></pre>
                             </template>
-                            <template v-slot:kotlin>
+                            <template #kotlin>
 <pre><fgp-code>plugins {
     <fgp-code-comment>// For JDK 11+</fgp-code-comment>
     id("org.siouan.frontend-jdk11") version "7.0.0"
@@ -57,7 +57,7 @@
                         </p>
 
                         <fgp-gradle-scripts id="install-build-script-block">
-                            <template v-slot:groovy>
+                            <template #groovy>
 <pre><fgp-code>buildscript {
     repositories {
         url 'https://plugins.gradle.org/m2/'
@@ -71,7 +71,7 @@
 <fgp-code-comment>// For JDK 11+</fgp-code-comment>
 apply plugin: 'org.siouan.frontend-jdk11'</fgp-code></pre>
                             </template>
-                            <template v-slot:kotlin>
+                            <template #kotlin>
 <pre><fgp-code>buildscript {
     repositories {
         url = uri("https://plugins.gradle.org/m2/")
@@ -110,24 +110,24 @@ apply(plugin = "org.siouan.frontend-jdk11")</fgp-code></pre>
 </template>
 
 <script>
-import Vue from "vue";
-import fgpAppConfig from "../mixin/app-config";
-import fgpCode from "../components/code";
-import fgpCodeComment from "../components/code-comment";
-import fgpGradleDocsLink from "../components/link/gradle-docs-link";
-import fgpGradleLink from "../components/link/gradle-link";
-import fgpGradleScripts from "../components/gradle-scripts";
-import fgpMainTitle from "../components/main-title";
-import fgpNodejsLink from "../components/link/nodejs-link";
-import fgpNpmLink from "../components/link/npm-link";
-import fgpPnpmLink from "../components/link/pnpm-link";
-import fgpPageMeta from "../mixin/page-meta";
-import fgpRepoLink from "../components/link/repo-link";
-import fgpSiteLink from "../components/link/site-link";
-import fgpSubTitle from "../components/sub-title";
-import fgpYarnLink from "../components/link/yarn-link";
+import Vue from 'vue';
+import fgpAppConfig from '@/mixin/app-config';
+import fgpCode from '@/components/code';
+import fgpCodeComment from '@/components/code-comment';
+import fgpGradleDocsLink from '@/components/link/gradle-docs-link';
+import fgpGradleLink from '@/components/link/gradle-link';
+import fgpGradleScripts from '@/components/gradle-scripts';
+import fgpMainTitle from '@/components/main-title';
+import fgpNodejsLink from '@/components/link/nodejs-link';
+import fgpNpmLink from '@/components/link/npm-link';
+import fgpPnpmLink from '@/components/link/pnpm-link';
+import fgpPageMeta from '@/mixin/page-meta';
+import fgpRepoLink from '@/components/link/repo-link';
+import fgpSiteLink from '@/components/link/site-link';
+import fgpSubTitle from '@/components/sub-title';
+import fgpYarnLink from '@/components/link/yarn-link';
 
-export default Vue.component("fgp-getting-started", {
+export default Vue.component('fgp-getting-started', {
     components: {
         fgpCode,
         fgpCodeComment,
@@ -146,9 +146,9 @@ export default Vue.component("fgp-getting-started", {
     mixins: [fgpAppConfig, fgpPageMeta],
     data() {
         return {
-            htmlTitle: "Getting started: building a Javascript application with the Gradle Node plugin",
+            htmlTitle: 'Getting started: building a Javascript application with the Gradle Node plugin',
             linkCanonicalHref: process.env.FGP_WEBSITE_URL + 'getting-started/',
-            metaDescription: "Guide to get started with the plugin: requirements, supported Node.js and Yarn distributions, installation steps."
+            metaDescription: 'Guide to get started with the plugin: requirements, supported Node.js and Yarn distributions, installation steps.'
         }
     }
 });

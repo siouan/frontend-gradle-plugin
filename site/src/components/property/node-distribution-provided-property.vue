@@ -26,13 +26,13 @@
 </template>
 
 <script>
-import Vue from "vue";
-import fgpCode from "../code";
-import fgpNodejsLink from "../link/nodejs-link";
-import fgpProperty from "./property";
-import fgpPropertyLink from "../link/property-link";
+import Vue from 'vue';
+import fgpCode from '@/components/code';
+import fgpNodejsLink from '@/components/link/nodejs-link';
+import fgpProperty from '@/components/property/property';
+import fgpPropertyLink from '@/components/link/property-link';
 
-export default Vue.component("fgp-node-distribution-provided-property", {
+export default Vue.component('fgp-node-distribution-provided-property', {
     components: { fgpCode, fgpNodejsLink, fgpProperty, fgpPropertyLink }
 });
 </script>

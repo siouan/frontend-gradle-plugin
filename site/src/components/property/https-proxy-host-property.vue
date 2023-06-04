@@ -17,12 +17,12 @@
 </template>
 
 <script>
-import Vue from "vue";
-import fgpCode from "../code";
-import fgpProperty from "./property";
-import fgpPropertyLink from "../link/property-link";
+import Vue from 'vue';
+import fgpCode from '@/components/code';
+import fgpProperty from '@/components/property/property';
+import fgpPropertyLink from '@/components/link/property-link';
 
-export default Vue.component("fgp-https-proxy-host-property", {
+export default Vue.component('fgp-https-proxy-host-property', {
     components: { fgpCode, fgpProperty, fgpPropertyLink }
 });
 </script>

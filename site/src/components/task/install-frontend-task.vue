@@ -1,7 +1,16 @@
 <template>
-    <fgp-task name="installFrontend">
-        <template v-slot:title>Install frontend dependencies</template>
-        <template v-slot:description>
+    <fgp-task name="installFrontend" :inputs="inputs">
+        <template #title>Install frontend dependencies</template>
+        <template #executableType>
+            type of executable derived from the package manager resolved by task
+            <fgp-task-link name="resolvePackageManager" /> in file
+            <fgp-property-link name="cacheDirectory" /><fgp-code>/resolvePackageManager/package-manager-name.txt</fgp-code>.
+        </template>
+        <template #skipConditions>
+            file <fgp-property-link name="cacheDirectory" /><fgp-code
+        >/resolvePackageManager/package-manager-name.txt</fgp-code> does not exist.
+        </template>
+        <template #description>
             <p>
                 Depending on the package manager, this task executes either command <fgp-code>npm install</fgp-code>, or
                 command <fgp-code>pnpm install</fgp-code>, or command <fgp-code>yarn install</fgp-code>, by default.
@@ -60,17 +69,17 @@
 </template>
 
 <script>
-import Vue from "vue";
-import fgpCode from "../code";
-import fgpGradleTaskOutcomeLink from "../link/gradle-task-outcome-link";
-import fgpLink from "../link/link";
-import fgpNpmLink from "../link/npm-link";
-import fgpPropertyLink from "../link/property-link";
-import fgpTask from "./task";
-import fgpTaskLink from "../link/task-link";
-import fgpYarnLink from "../link/yarn-link";
+import Vue from 'vue';
+import fgpCode from '@/components/code';
+import fgpGradleTaskOutcomeLink from '@/components/link/gradle-task-outcome-link';
+import fgpLink from '@/components/link/link';
+import fgpNpmLink from '@/components/link/npm-link';
+import fgpPropertyLink from '@/components/link/property-link';
+import fgpTask from '@/components/task/task';
+import fgpTaskLink from '@/components/link/task-link';
+import fgpYarnLink from '@/components/link/yarn-link';
 
-export default Vue.component("fgp-install-frontend-task", {
+export default Vue.component('fgp-install-frontend-task', {
     components: {
         fgpCode,
         fgpGradleTaskOutcomeLink,
@@ -80,6 +89,16 @@ export default Vue.component("fgp-install-frontend-task", {
         fgpTask,
         fgpTaskLink,
         fgpYarnLink
+    },
+    data() {
+        return {
+            inputs: [
+                { name: 'executableType', type: 'ET', binding: 'C' },
+                { name: 'packageJsonDirectory', type: 'F', binding: 'P', property: 'packageJsonDirectory' },
+                { name: 'nodeInstallDirectory', type: 'F', binding: 'P', property: 'nodeInstallDirectory' },
+                { name: 'script', type: 'S', binding: 'P', property: 'installScript' }
+            ]
+        };
     }
 });
 </script>

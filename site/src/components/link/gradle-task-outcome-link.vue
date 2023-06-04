@@ -5,10 +5,10 @@
 </template>
 
 <script>
-import Vue from "vue";
-import fgpGradleDocsLink from "./gradle-docs-link";
+import Vue from 'vue';
+import fgpGradleDocsLink from '@/components/link/gradle-docs-link';
 
-export default Vue.component("fgp-gradle-task-outcome-link", {
+export default Vue.component('fgp-gradle-task-outcome-link', {
     components: { fgpGradleDocsLink },
     props: {
         outcome: {

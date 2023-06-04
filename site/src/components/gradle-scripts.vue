@@ -32,10 +32,10 @@
 </template>
 
 <script>
-import Vue from "vue";
-import { mapGetters, mapMutations } from "vuex";
+import Vue from 'vue';
+import { mapGetters, mapMutations } from 'vuex';
 
-export default Vue.component("fgp-gradle-scripts", {
+export default Vue.component('fgp-gradle-scripts', {
     computed: {
         groovyTabClass() {
             return {
@@ -47,10 +47,10 @@ export default Vue.component("fgp-gradle-scripts", {
                 active: this.kotlinTabVisible,
             };
         },
-        ...mapGetters("gradle-scripts", ["groovyTabVisible", "kotlinTabVisible"]),
+        ...mapGetters('gradle-scripts', ['groovyTabVisible', 'kotlinTabVisible']),
     },
     methods: {
-        ...mapMutations("gradle-scripts", ["setGroovyTabVisible", "setKotlinTabVisible"])
+        ...mapMutations('gradle-scripts', ['setGroovyTabVisible', 'setKotlinTabVisible'])
     }
 });
 </script>

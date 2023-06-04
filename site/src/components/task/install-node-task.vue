@@ -1,7 +1,14 @@
 <template>
-    <fgp-task name="installNode">
-        <template v-slot:title>Install <fgp-nodejs-link /></template>
-        <template v-slot:description>
+    <fgp-task name="installNode" :inputs="inputs" :outputs="outputs">
+        <template #title>Install <fgp-nodejs-link /></template>
+        <template #nodeExecutableFile>
+            <fgp-property-link name="nodeInstallDirectory" /><fgp-code>/node.exe</fgp-code> or
+            <fgp-property-link name="nodeInstallDirectory" /><fgp-code>/bin/node</fgp-code> depending on the O/S.
+        </template>
+        <template #skipConditions>
+            property <fgp-property-link name="nodeDistributionProvided" /> is <fgp-code>true</fgp-code>.
+        </template>
+        <template #description>
             <p>
                 The task downloads a <fgp-nodejs-link /> distribution, verifies its integrity, and installs it in the
                 directory pointed by the <fgp-property-link name="nodeInstallDirectory" /> property. The URL used to
@@ -21,7 +28,7 @@
                 protocol (resp. uses the <fgp-code>http</fgp-code> protocol).
             </p>
             <p>
-                If a <fgp-nodejs-link /> distribution is already installed in the local platform - either as a global
+                If a <fgp-nodejs-link /> distribution is already installed in the system - either as a global
                 installation or as an installation performed by another Gradle (sub-)project - and shall be used instead
                 of a downloaded distribution, take a look at the
                 <fgp-property-link name="nodeDistributionProvided" /> property instead: when <fgp-code>true</fgp-code>,
@@ -44,14 +51,27 @@
 </template>
 
 <script>
-import Vue from "vue";
-import fgpGradleGuidesLink from "../link/gradle-guides-link";
-import fgpGradleTaskOutcomeLink from "../link/gradle-task-outcome-link";
-import fgpInfo from "../info";
-import fgpNodejsLink from "../link/nodejs-link";
-import fgpTask from "./task";
+import Vue from 'vue';
+import fgpGradleGuidesLink from '@/components/link/gradle-guides-link';
+import fgpGradleTaskOutcomeLink from '@/components/link/gradle-task-outcome-link';
+import fgpInfo from '@/components/info';
+import fgpNodejsLink from '@/components/link/nodejs-link';
+import fgpTask from '@/components/task/task';
 
-export default Vue.component("fgp-install-node-task", {
-    components: { fgpGradleGuidesLink, fgpGradleTaskOutcomeLink, fgpInfo, fgpNodejsLink, fgpTask }
+export default Vue.component('fgp-install-node-task', {
+    components: { fgpGradleGuidesLink, fgpGradleTaskOutcomeLink, fgpInfo, fgpNodejsLink, fgpTask },
+    data() {
+        return {
+            inputs: [
+                { name: 'nodeVersion', type: 'S', binding: 'P', property: 'nodeVersion' },
+                { name: 'nodeDistributionUrlRoot', type: 'S', binding: 'P', property: 'nodeDistributionUrlRoot' },
+                { name: 'nodeDistributionUrlPathPattern', type: 'S', binding: 'P', property: 'nodeDistributionUrlPathPattern' },
+                { name: 'nodeInstallDirectory', type: 'S', binding: 'P', property: 'nodeInstallDirectory' }
+            ],
+            outputs: [
+                { name: 'nodeExecutableFile', type: 'RF', binding: 'C' }
+            ]
+        };
+    }
 });
 </script>
