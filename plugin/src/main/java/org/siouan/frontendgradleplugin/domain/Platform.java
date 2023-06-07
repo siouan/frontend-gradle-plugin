@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  * This class represents an execution platform, identified by the architecture of the JVM, and the name of the OS.
@@ -12,6 +13,7 @@ import lombok.EqualsAndHashCode;
  */
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString(onlyExplicitlyIncluded = true)
 public class Platform {
 
     private static final String[] SUPPORTED_JVM_ARM_32_BITS_ARCH_IDS = new String[] {"arm"};
@@ -31,12 +33,14 @@ public class Platform {
      * Architecture on which JVM runs.
      */
     @EqualsAndHashCode.Include
+    @ToString.Include
     private final String jvmArch;
 
     /**
      * Name of the underlying O/S.
      */
     @EqualsAndHashCode.Include
+    @ToString.Include
     private final String osName;
 
     /**
@@ -91,11 +95,6 @@ public class Platform {
      */
     public boolean isWindowsOs() {
         return matchesAnyIdPart(osName, SUPPORTED_WINDOWS_OS_IDS);
-    }
-
-    @Override
-    public String toString() {
-        return Platform.class.getSimpleName() + " {jvmArch=" + jvmArch + ", osName=" + osName + '}';
     }
 
     /**

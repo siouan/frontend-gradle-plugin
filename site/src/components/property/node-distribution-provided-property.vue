@@ -11,7 +11,7 @@
             <li>
                 When <fgp-code>true</fgp-code>, the plugin relies on the following locations in this exact order to find
                 <fgp-code>node</fgp-code>/<fgp-code>npm</fgp-code>/<fgp-code>pnpm</fgp-code>/<fgp-code>yarn</fgp-code> executables:
-                <ol>
+                <ol class="mb-3">
                     <li>
                         The directory pointed by the <fgp-property-link name="nodeInstallDirectory" /> property, if set.
                     </li>
@@ -19,6 +19,10 @@
                         The directory pointed by the <fgp-code>FGP_NODEJS_HOME</fgp-code> environment variable, if set.
                     </li>
                 </ol>
+                <fgp-warning>CAUTION: globally installed distribution is modified when using the plugin and
+                <fgp-corepack-link />. Executables <fgp-code>npm</fgp-code>, <fgp-code>pnpm</fgp-code>,
+                <fgp-code>yarn</fgp-code> that may already exists within <fgp-nodejs-link /> install directory are
+                overwritten when task <fgp-task-link name="installPackageManager" /> is run.</fgp-warning>
                 Other <fgp-code>node*</fgp-code> properties should not be used for clarity.
             </li>
         </ol>

@@ -16,13 +16,15 @@
             <fgp-block-quote>
                 Execution failed for task ':installNode'.
                 > org.siouan.frontendgradleplugin.domain.UnsupportedPlatformException: This platform is not
-                supported yet: Platform {jvmArch=&lt;os.name&gt;, osName=&lt;os.arch&gt;, environment=...}
+                supported yet: Platform(jvmArch=&lt;os.arch&gt;, osName=&lt;os.name&gt;)
             </fgp-block-quote>
 
             In this case, please open an issue in the project's <fgp-repo-link>issue tracker</fgp-repo-link>, and
-            provide the entire error message above. As a workaround, consider using property
-            <fgp-property-link name="nodeDistributionUrlPathPattern" /> and specify a hard-coded path to download the
-            relevant distribution from the <fgp-nodejs-link /> distribution server.
+            provide the entire error message above. If possible, provide also output of command
+            <fgp-code>java -XshowSettings:properties -version</fgp-code> and output of command
+            <fgp-code>uname</fgp-code> for Unix-like O/S (beware of hiding sensitive data in both cases). As a
+            workaround, consider using property <fgp-property-link name="nodeDistributionUrlPathPattern" /> and specify
+            a hard-coded path to download the relevant distribution from the <fgp-nodejs-link /> distribution server.
         </template>
     </fgp-faq>
 </template>

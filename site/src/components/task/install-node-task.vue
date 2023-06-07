@@ -66,7 +66,7 @@ export default Vue.component('fgp-install-node-task', {
                 { name: 'nodeVersion', type: 'S', binding: 'P', property: 'nodeVersion' },
                 { name: 'nodeDistributionUrlRoot', type: 'S', binding: 'P', property: 'nodeDistributionUrlRoot' },
                 { name: 'nodeDistributionUrlPathPattern', type: 'S', binding: 'P', property: 'nodeDistributionUrlPathPattern' },
-                { name: 'nodeInstallDirectory', type: 'S', binding: 'P', property: 'nodeInstallDirectory' }
+                { name: 'nodeInstallDirectory', type: 'F', binding: 'P', property: 'nodeInstallDirectory' }
             ],
             outputs: [
                 { name: 'nodeExecutableFile', type: 'RF', binding: 'C' }

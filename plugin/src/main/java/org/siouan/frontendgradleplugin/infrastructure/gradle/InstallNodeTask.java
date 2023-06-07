@@ -1,8 +1,8 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Paths;
 import javax.inject.Inject;
 
 import org.gradle.api.DefaultTask;
@@ -51,7 +51,7 @@ public class InstallNodeTask extends DefaultTask {
     /**
      * Directory where the Node distribution shall be installed.
      */
-    private final Property<String> nodeInstallDirectory;
+    private final Property<File> nodeInstallDirectory;
 
     /**
      * URL root part to build the exact URL to download the Node.js distribution.
@@ -148,7 +148,7 @@ public class InstallNodeTask extends DefaultTask {
     public InstallNodeTask(final ProjectLayout projectLayout, final ObjectFactory objectFactory) {
         this.beanRegistryId = Beans.getBeanRegistryId(projectLayout.getProjectDirectory().toString());
         this.nodeVersion = objectFactory.property(String.class);
-        this.nodeInstallDirectory = objectFactory.property(String.class);
+        this.nodeInstallDirectory = objectFactory.property(File.class);
         this.nodeDistributionUrlRoot = objectFactory.property(String.class);
         this.nodeDistributionUrlPathPattern = objectFactory.property(String.class);
         this.nodeDistributionServerUsername = objectFactory.property(String.class);
@@ -180,7 +180,7 @@ public class InstallNodeTask extends DefaultTask {
     }
 
     @Input
-    public Property<String> getNodeInstallDirectory() {
+    public Property<File> getNodeInstallDirectory() {
         return nodeInstallDirectory;
     }
 
@@ -293,7 +293,7 @@ public class InstallNodeTask extends DefaultTask {
                 .distributionServerCredentials(distributionServerCredentials)
                 .proxySettings(proxySettings)
                 .temporaryDirectoryPath(getTemporaryDir().toPath())
-                .installDirectoryPath(nodeInstallDirectory.map(Paths::get).get())
+                .installDirectoryPath(nodeInstallDirectory.map(File::toPath).get())
                 .build());
     }
 }
