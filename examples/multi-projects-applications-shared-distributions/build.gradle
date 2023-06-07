@@ -1,3 +1,0 @@
-subprojects {
-    ext.nodeInstallDirectory = file("${rootProject.projectDir}/node")
-}

@@ -1,0 +1,7 @@
+{
+  "name": "npm-9-application-example",
+  "description": "NPM 9 application",
+  "private": true,
+  "version": "0.0.1",
+  "packageManager": "npm@9.6.6"
+}

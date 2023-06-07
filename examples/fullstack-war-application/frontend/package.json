@@ -1,0 +1,17 @@
+{
+  "name": "fullstack-war-application-example",
+  "description": "Fullstack WAR application",
+  "private": true,
+  "version": "1.0.0",
+  "packageManager": "npm@9.6.6",
+  "devDependencies": {
+    "mkdirp": "~3"
+  },
+  "scripts": {
+    "build": "echo Building frontend && mkdirp build/www && node config/config.js",
+    "check": "echo Checking frontend && npm run lint && npm run test",
+    "clean": "echo Cleaning frontend",
+    "lint": "echo Linting frontend",
+    "test": "echo Testing frontend"
+  }
+}

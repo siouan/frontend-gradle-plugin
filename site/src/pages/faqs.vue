@@ -16,17 +16,25 @@
                         What should I do when error <fgp-code>UnsupportedPlatformException</fgp-code> occurs?
                     </fgp-site-link>
                 </li>
+                <li>
+                    <fgp-site-link path="#custom-nodejs-distribution-server">
+                        How to configure plugin so as I can download <fgp-code>Node.js</fgp-code> distribution from a
+                        customserver?
+                    </fgp-site-link>
+                </li>
             </ul>
         </nav>
 
         <fgp-node-corepack-npm-pnpm-yarn-direct-use-faq id="node-corepack-npm-pnpm-yarn-direct-use" />
         <fgp-unsupported-platform-exception-faq id="unsupported-platform-exception" />
+        <fgp-custom-nodejs-distribution-server id="custom-nodejs-distribution-server" />
     </section>
 </template>
 
 <script>
 import Vue from 'vue';
 import fgpCode from '@/components/code';
+import fgpCustomNodejsDistributionServer from '@/components/faq/custom-nodejs-distribution-server';
 import fgpMainTitle from '@/components/main-title';
 import fgpNodeCorepackNpmPnpmYarnDirectUseFaq from '@/components/faq/node-corepack-npm-pnpm-yarn-direct-use-faq';
 import fgpPageMeta from '@/mixin/page-meta';
@@ -36,6 +44,7 @@ import fgpUnsupportedPlatformExceptionFaq from '@/components/faq/unsupported-pla
 export default Vue.component('fgp-faqs', {
     components: {
         fgpCode,
+        fgpCustomNodejsDistributionServer,
         fgpMainTitle,
         fgpNodeCorepackNpmPnpmYarnDirectUseFaq,
         fgpSiteLink,

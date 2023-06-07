@@ -11,6 +11,7 @@ import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
+import org.gradle.api.file.Directory;
 import org.gradle.api.file.RegularFile;
 import org.gradle.api.plugins.BasePlugin;
 import org.gradle.api.provider.Provider;
@@ -314,8 +315,8 @@ public class FrontendGradlePlugin implements Plugin<Project> {
             .getNodeInstallDirectory()
             .set(extension
                 .getNodeInstallDirectory()
-                .map(directory -> directory.getAsFile().getAbsolutePath())
-                .orElse(taskContext.getDefaultNodeInstallDirectoryPath().toString()));
+                .map(Directory::getAsFile)
+                .orElse(taskContext.getDefaultNodeInstallDirectoryPath().toFile()));
         task.getHttpProxyHost().set(extension.getHttpProxyHost());
         task.getHttpProxyPort().set(extension.getHttpProxyPort());
         task.getHttpProxyUsername().set(extension.getHttpProxyUsername());
@@ -358,6 +359,8 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.getNodeInstallDirectory().set(resolveNodeInstallDirectory(beanRegistryId, taskContext));
         task.getPackageManagerNameFile().set(extension.getInternalPackageManagerNameFile());
         task.getPackageManagerExecutablePathFile().set(extension.getInternalPackageManagerExecutablePathFile());
+        // The task is skipped when there's no package.json file. It allows to define a project that installs only a
+        // Node.js distribution.
         task.setOnlyIf(
             t -> extension.getInternalMetadataFile().getAsFile().map(File::toPath).map(Files::exists).getOrElse(false));
         configureDependency(taskContainer, task, INSTALL_NODE_TASK_NAME, InstallNodeTask.class);

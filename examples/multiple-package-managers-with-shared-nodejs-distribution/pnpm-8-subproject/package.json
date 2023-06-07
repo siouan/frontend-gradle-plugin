@@ -1,0 +1,7 @@
+{
+  "name": "pnpm-8-application-example",
+  "description": "PNPM 8 application",
+  "private": true,
+  "version": "0.0.1",
+  "packageManager": "pnpm@8.6.0"
+}
