@@ -20,7 +20,7 @@ tasks.register<RunNode>("nodeVersion") {
     script.set("-v")
 }
 
-tasks.register<RunNpm>("packageManagerVersion") {
+tasks.register<RunNpm>("npmVersion") {
     dependsOn("installPackageManager")
     script.set("-v")
 }

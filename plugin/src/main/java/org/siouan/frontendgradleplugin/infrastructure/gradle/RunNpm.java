@@ -17,9 +17,9 @@ import org.siouan.frontendgradleplugin.domain.ExecutableType;
  * A typical usage of this task in a 'build.gradle' file would be:
  * <pre>
  * import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpm
- * tasks.register('mytask', RunNpm) {
- *     dependsOn tasks.named('installFrontend')
- *     command = 'mycommand'
+ * tasks.register&lt;RunNpm&gt;('mytask') {
+ *     dependsOn(tasks.named('installFrontend'))
+ *     script.set('...')
  * }
  * </pre>
  *

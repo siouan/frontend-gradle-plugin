@@ -18,16 +18,32 @@ public class ResolvePackageManager {
 
     private final GetExecutablePath getExecutablePath;
 
-    private final ParsePackageManagerType parsePackageManagerType;
+    private final ParsePackageManagerFromPackageJsonFile parsePackageManagerFromPackageJsonFile;
 
+    /**
+     * Resolves and saves the package manager applicable to the project (name, version, and path to the executable).
+     *
+     * @param command Command providing parameters.
+     * @throws IOException If an I/O error occurs.
+     * @throws InvalidJsonFileException If the {@code package.json} file does not contain valid JSON.
+     * @throws MalformedPackageManagerSpecification If value of the package manager key cannot be parsed.
+     * @throws UnsupportedPackageManagerException If the package manager is not supported.
+     */
     public void execute(final ResolvePackageManagerCommand command)
-        throws UnsupportedPackageManagerException, IOException {
-        final PackageManagerType packageManagerType = parsePackageManagerType.execute(command.getMetadataFilePath());
-        fileManager.writeString(command.getPackageManagerNameFilePath(), packageManagerType.getPackageManagerName(),
+        throws InvalidJsonFileException, UnsupportedPackageManagerException, IOException,
+        MalformedPackageManagerSpecification {
+        final PackageManager packageManager = parsePackageManagerFromPackageJsonFile.execute(
+            command.getPackageJsonFilePath());
+        fileManager.writeString(command.getPackageManagerSpecificationFilePath(),
+            packageManager.getType().getPackageManagerName() + '@' + packageManager.getVersion(),
             StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
         fileManager.writeString(command.getPackageManagerExecutablePathFilePath(), getExecutablePath
-            .execute(new GetExecutablePathCommand(packageManagerType.getExecutableType(),
-                command.getNodeInstallDirectoryPath(), command.getPlatform()))
+            .execute(GetExecutablePathCommand
+                .builder()
+                .executableType(packageManager.getType().getExecutableType())
+                .nodeInstallDirectoryPath(command.getNodeInstallDirectoryPath())
+                .platform(command.getPlatform())
+                .build())
             .toString(), StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
     }
 }

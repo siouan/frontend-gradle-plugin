@@ -1,6 +1,5 @@
 <template>
-    <fgp-link :href="`https://docs.gradle.org${path}`" :title="title" :hover-style-disabled="hoverStyleDisabled"
-    ><slot /></fgp-link>
+    <fgp-link :href="`https://docs.gradle.org${path}`" :hover-style-disabled="hoverStyleDisabled"><slot /></fgp-link>
 </template>
 
 <script>
@@ -11,10 +10,6 @@ export default Vue.component('fgp-gradle-docs-link', {
     components: { fgpLink },
     props: {
         path: {
-            type: String,
-            default: null
-        },
-        title: {
             type: String,
             default: null
         },

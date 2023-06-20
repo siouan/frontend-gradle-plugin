@@ -17,9 +17,9 @@ import org.siouan.frontendgradleplugin.domain.ExecutableType;
  * A typical usage of this task type in a 'build.gradle' file would be:
  * <pre>
  * import org.siouan.frontendgradleplugin.infrastructure.gradle.RunCorepack
- * tasks.register('mytask', RunCorepack) {
- *     dependsOn tasks.named('installNode')
- *     script = 'myscript'
+ * tasks.register&lt;RunCorepack&gt;('mytask') {
+ *     dependsOn(tasks.named('installNode'))
+ *     script.set('...')
  * }
  * </pre>
  *

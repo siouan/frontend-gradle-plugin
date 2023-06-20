@@ -1,9 +1,6 @@
 {
-  "name": "fullstack-war-application-example",
-  "description": "Fullstack WAR application",
   "private": true,
-  "version": "1.0.0",
-  "packageManager": "npm@9.6.6",
+  "packageManager": "npm@9.6.7",
   "devDependencies": {
     "mkdirp": "~3"
   },

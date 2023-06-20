@@ -1,7 +1,5 @@
 /plugin/out/
-/site/dist/
-/site/node/
-/site/node_modules/
+/site/.frontend-gradle-plugin
 /site/.nuxt/
 /site/.pnp.*
 /site/.yarn/
@@ -10,6 +8,9 @@
 !/site/.yarn/releases
 !/site/.yarn/sdks
 !/site/.yarn/versions
+/site/dist/
+/site/node/
+/site/node_modules/
 .idea/
 .gradle/
 build/

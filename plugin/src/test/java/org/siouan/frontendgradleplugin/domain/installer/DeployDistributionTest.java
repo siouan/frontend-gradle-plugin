@@ -11,7 +11,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.siouan.frontendgradleplugin.test.Resources.getResourcePath;
-import static org.siouan.frontendgradleplugin.test.fixture.PlatformFixture.LOCAL_PLATFORM;
+import static org.siouan.frontendgradleplugin.domain.PlatformFixture.LOCAL_PLATFORM;
 
 import java.io.IOException;
 import java.nio.file.Files;

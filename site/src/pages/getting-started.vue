@@ -94,6 +94,9 @@ apply(plugin = "org.siouan.frontend-jdk11")</fgp-code></pre>
                 property in the <fgp-code>package.json</fgp-code> file.
             </li>
             <li>
+                Add <fgp-code>.frontend-gradle-plugin/</fgp-code> directory to <fgp-code>.gitignore</fgp-code> file(s).
+            </li>
+            <li>
                 <fgp-site-link :path="fgp.paths.configuration">Configure</fgp-site-link> your project, optionally
                 with the help of <fgp-repo-link path="/tree/master/examples">examples</fgp-repo-link> provided for
                 typical use cases.

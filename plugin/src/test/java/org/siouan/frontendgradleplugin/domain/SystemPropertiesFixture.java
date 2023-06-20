@@ -1,10 +1,9 @@
-package org.siouan.frontendgradleplugin.test.fixture;
+package org.siouan.frontendgradleplugin.domain;
 
 import java.util.Objects;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.siouan.frontendgradleplugin.domain.SystemProperties;
 
 /**
  * This class provides utilities to get system information.

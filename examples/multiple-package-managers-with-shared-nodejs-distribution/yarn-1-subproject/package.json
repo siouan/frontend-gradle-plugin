@@ -1,7 +1,4 @@
 {
-  "name": "yarn-1-application-example",
-  "description": "YARN 1 application",
   "private": true,
-  "version": "0.0.1",
   "packageManager": "yarn@1.22.19"
 }

@@ -3,9 +3,9 @@ package org.siouan.frontendgradleplugin.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.siouan.frontendgradleplugin.test.fixture.PathFixture.ANY_PATH;
-import static org.siouan.frontendgradleplugin.test.fixture.PlatformFixture.aPlatform;
-import static org.siouan.frontendgradleplugin.test.fixture.SystemPropertiesFixture.getSystemJvmArch;
+import static org.siouan.frontendgradleplugin.test.PathFixture.ANY_PATH;
+import static org.siouan.frontendgradleplugin.domain.PlatformFixture.aPlatform;
+import static org.siouan.frontendgradleplugin.domain.SystemPropertiesFixture.getSystemJvmArch;
 
 import java.nio.file.Path;
 

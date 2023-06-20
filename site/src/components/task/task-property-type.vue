@@ -1,11 +1,11 @@
 <template>
-    <fgp-gradle-docs-link
-        :path="gradleDocsLinkPath"
-        class="fgp-badge"
-        :class="badgeClass"
-        :title="gradleDocsLinkTitle"
-        hover-style-disabled
-    >{{ type }}</fgp-gradle-docs-link>
+        <fgp-gradle-docs-link
+            :path="gradleDocsLinkPath"
+            :title="gradleDocsLinkTitle"
+            class="badge mr-1"
+            :class="chipClass"
+            hover-style-disabled
+        >{{ type }}</fgp-gradle-docs-link>
 </template>
 
 <script>
@@ -42,26 +42,26 @@ export default Vue.component('fgp-task-property-type', {
         gradleDocsLinkTitle() {
             switch (this.type) {
             case TYPE_EXECUTABLE_TYPE:
-                return 'Provider of org.siouan.frontendgradleplugin.domain.ExecutableType instance';
+                return 'Provider of org.siouan.frontendgradleplugin.domain.ExecutableType instance (task is out-of-date if the value changes)';
             case TYPE_FILE:
-                return 'Provider of java.io.File instance';
+                return 'Provider of java.io.File instance (task is out-of-date if the path changes)';
             case TYPE_REGULAR_FILE:
-                return 'Provider of org.gradle.api.file.RegularFile instance';
+                return 'Provider of org.gradle.api.file.RegularFile instance (task is out-of-date if the content changes)';
             case TYPE_STRING:
-                return 'Provider of java.lang.String instance';
+                return 'Provider of java.lang.String instance (task is out-of-date if the value changes)';
             default:
                 return null;
             }
         },
-        badgeClass() {
+        chipClass() {
             switch (this.type) {
             case TYPE_EXECUTABLE_TYPE:
-                return 'fgp-plugin-type';
+                return 'badge-dark';
             case TYPE_FILE:
             case TYPE_STRING:
-                return 'fgp-java-type';
+                return 'badge-primary';
             case TYPE_REGULAR_FILE:
-                return 'fgp-gradle-type';
+                return 'badge-danger';
             default:
                 return null;
             }
@@ -69,27 +69,3 @@ export default Vue.component('fgp-task-property-type', {
     }
 });
 </script>
-
-<style scoped>
-.fgp-badge {
-    font-size: small;
-    padding: 0 0.3rem;
-    margin-right: 0.2rem;
-    border-radius: 20%;
-}
-
-.fgp-gradle-type {
-    color: white;
-    background-color: red;
-}
-
-.fgp-java-type {
-    color: white;
-    background-color: royalblue;
-}
-
-.fgp-plugin-type {
-    color: white;
-    background-color: black;
-}
-</style>

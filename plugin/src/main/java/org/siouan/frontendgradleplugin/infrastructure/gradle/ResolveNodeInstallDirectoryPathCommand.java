@@ -13,17 +13,17 @@ public class ResolveNodeInstallDirectoryPathCommand {
     /**
      * A user-defined provider of the path to the install directory.
      */
-    private final Provider<Path> userPath;
+    private final Provider<Path> nodeInstallDirectoryFromUser;
 
     /**
      * Whether the Node.js distribution is already installed in the system and shall not be downloaded.
      */
-    private final boolean nodeDistributionProvided;
+    private final Provider<Boolean> nodeDistributionProvided;
 
     /**
-     * A provider of the path to the install directory scanning the environment.
+     * A provider of the path to the install directory given by the environment.
      */
-    private final Provider<Path> environmentPath;
+    private final Provider<Path> nodeInstallDirectoryFromEnvironment;
 
     /**
      * A default path to an install directory.

@@ -1,11 +1,6 @@
 <template>
     <fgp-task name="cleanFrontend" :inputs="inputs">
         <template #title>Clean frontend artifacts</template>
-        <template #executableType>
-            type of executable derived from the package manager resolved by task
-            <fgp-task-link name="resolvePackageManager" /> in file
-            <fgp-property-link name="cacheDirectory" /><fgp-code>/resolvePackageManager/package-manager-name.txt</fgp-code>.
-        </template>
         <template #skipConditions>
             property <fgp-property-link name="cleanScript" /> is not <fgp-code>null</fgp-code>.
         </template>
@@ -44,7 +39,6 @@ export default Vue.component('fgp-clean-frontend-task', {
     data() {
         return {
             inputs: [
-                { name: 'executableType', type: 'ET', binding: 'C' },
                 { name: 'packageJsonDirectory', type: 'F', binding: 'P', property: 'packageJsonDirectory' },
                 { name: 'nodeInstallDirectory', type: 'F', binding: 'P', property: 'nodeInstallDirectory' },
                 { name: 'script', type: 'S', binding: 'P', property: 'cleanScript' }

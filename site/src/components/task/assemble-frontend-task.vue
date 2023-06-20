@@ -1,11 +1,6 @@
 <template>
     <fgp-task name="assembleFrontend" :inputs="inputs">
         <template #title>Assemble frontend artifacts</template>
-        <template #executableType>
-            type of executable derived from the package manager resolved by task
-            <fgp-task-link name="resolvePackageManager" /> in file
-            <fgp-property-link name="cacheDirectory" /><fgp-code>/resolvePackageManager/package-manager-name.txt</fgp-code>.
-        </template>
         <template #skipConditions>
             property <fgp-property-link name="assembleScript" /> is not <fgp-code>null</fgp-code>.
         </template>
@@ -22,7 +17,7 @@
 
             <div class="card my-3">
                 <div class="card-body">
-                    <h5 class="card-title">About task execution</h5>
+                    <h5 class="card-title">About task execution and up-to-date checks</h5>
                     <p class="card-text">
                         If you execute this task several times in a row, you may notice the
                         <fgp-code>npm</fgp-code>/<fgp-code>pnpm</fgp-code>/<fgp-code>yarn</fgp-code> command is always
@@ -63,7 +58,6 @@ export default Vue.component('fgp-assemble-frontend-task', {
     data() {
         return {
             inputs: [
-                { name: 'executableType', type: 'ET', binding: 'C' },
                 { name: 'packageJsonDirectory', type: 'F', binding: 'P', property: 'packageJsonDirectory' },
                 { name: 'nodeInstallDirectory', type: 'F', binding: 'P', property: 'nodeInstallDirectory' },
                 { name: 'script', type: 'S', binding: 'P', property: 'assembleScript' }

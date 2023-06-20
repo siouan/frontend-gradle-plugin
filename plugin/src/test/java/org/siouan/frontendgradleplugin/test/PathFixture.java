@@ -1,4 +1,4 @@
-package org.siouan.frontendgradleplugin.test.fixture;
+package org.siouan.frontendgradleplugin.test;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;

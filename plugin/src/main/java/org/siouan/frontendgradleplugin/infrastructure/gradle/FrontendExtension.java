@@ -156,16 +156,16 @@ public class FrontendExtension {
      *
      * @since 7.0.0
      */
-    private final RegularFileProperty internalMetadataFile;
+    private final RegularFileProperty internalPackageJsonFile;
 
     /**
      * WARNING: THIS IS AN INTERNAL PROPERTY, WHICH MUST NOT BE USED/OVERRIDDEN IN GRADLE BUILD FILES.
-     * <p>File derived from the {@link #cacheDirectory} property where task "resolvePackageManager" stores the name of
-     * the package manager.</p>
+     * <p>File derived from the {@link #cacheDirectory} property where task "resolvePackageManager" stores the name and
+     * the version of the package manager.</p>
      *
      * @since 7.0.0
      */
-    private final RegularFileProperty internalPackageManagerNameFile;
+    private final RegularFileProperty internalPackageManagerSpecificationFile;
 
     /**
      * WARNING: THIS IS AN INTERNAL PROPERTY, WHICH MUST NOT BE USED/OVERRIDDEN IN GRADLE BUILD FILES.
@@ -206,8 +206,8 @@ public class FrontendExtension {
         httpsProxyUsername = objectFactory.property(String.class);
         httpsProxyPassword = objectFactory.property(String.class);
         cacheDirectory = objectFactory.directoryProperty();
-        internalMetadataFile = objectFactory.fileProperty();
-        internalPackageManagerNameFile = objectFactory.fileProperty();
+        internalPackageJsonFile = objectFactory.fileProperty();
+        internalPackageManagerSpecificationFile = objectFactory.fileProperty();
         internalPackageManagerExecutablePathFile = objectFactory.fileProperty();
         verboseModeEnabled = objectFactory.property(Boolean.class);
     }

@@ -1,8 +1,8 @@
 package org.siouan.frontendgradleplugin.domain.installer;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.siouan.frontendgradleplugin.test.fixture.PlatformFixture.ANY_NON_WINDOWS_PLATFORM;
-import static org.siouan.frontendgradleplugin.test.fixture.PlatformFixture.ANY_WINDOWS_PLATFORM;
+import static org.siouan.frontendgradleplugin.domain.PlatformFixture.ANY_NON_WINDOWS_PLATFORM;
+import static org.siouan.frontendgradleplugin.domain.PlatformFixture.ANY_WINDOWS_PLATFORM;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

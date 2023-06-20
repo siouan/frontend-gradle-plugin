@@ -5,7 +5,6 @@ pluginManagement {
         id("com.gradle.enterprise") version "3.13.1"
         id("com.gradle.plugin-publish") version "1.2.0"
         id("org.sonarqube") version "4.0.0.2929"
-        id("com.dorongold.task-tree") version "2.1.1"
    }
 }
 

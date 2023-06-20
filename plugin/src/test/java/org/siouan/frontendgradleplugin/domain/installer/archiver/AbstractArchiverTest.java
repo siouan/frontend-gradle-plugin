@@ -13,9 +13,9 @@ import static org.siouan.frontendgradleplugin.domain.installer.archiver.ArchiveE
 import static org.siouan.frontendgradleplugin.domain.installer.archiver.ArchiveEntryImpl.newFileEntry;
 import static org.siouan.frontendgradleplugin.domain.installer.archiver.ArchiveEntryImpl.newSymbolicLinkEntry;
 import static org.siouan.frontendgradleplugin.domain.installer.archiver.ArchiveEntryImpl.newUnknownEntry;
-import static org.siouan.frontendgradleplugin.test.fixture.PlatformFixture.LOCAL_PLATFORM;
-import static org.siouan.frontendgradleplugin.test.fixture.PlatformFixture.aPlatform;
-import static org.siouan.frontendgradleplugin.test.fixture.SystemPropertiesFixture.getSystemJvmArch;
+import static org.siouan.frontendgradleplugin.domain.PlatformFixture.LOCAL_PLATFORM;
+import static org.siouan.frontendgradleplugin.domain.PlatformFixture.aPlatform;
+import static org.siouan.frontendgradleplugin.domain.SystemPropertiesFixture.getSystemJvmArch;
 
 import java.io.IOException;
 import java.nio.file.Path;

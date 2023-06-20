@@ -2,9 +2,9 @@ package org.siouan.frontendgradleplugin.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.siouan.frontendgradleplugin.test.fixture.PathFixture.ANY_PATH;
-import static org.siouan.frontendgradleplugin.test.fixture.PlatformFixture.ANY_NON_WINDOWS_PLATFORM;
-import static org.siouan.frontendgradleplugin.test.fixture.PlatformFixture.ANY_WINDOWS_PLATFORM;
+import static org.siouan.frontendgradleplugin.test.PathFixture.ANY_PATH;
+import static org.siouan.frontendgradleplugin.domain.PlatformFixture.ANY_NON_WINDOWS_PLATFORM;
+import static org.siouan.frontendgradleplugin.domain.PlatformFixture.ANY_WINDOWS_PLATFORM;
 
 import java.nio.file.Path;
 

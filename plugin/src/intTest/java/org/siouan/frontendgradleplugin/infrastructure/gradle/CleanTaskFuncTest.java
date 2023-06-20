@@ -61,9 +61,9 @@ class CleanTaskFuncTest {
 
         final BuildResult result2 = runGradle(projectDirectoryPath, FrontendGradlePlugin.GRADLE_CLEAN_TASK_NAME);
 
-        assertCleanTaskOutcomes(result2, PluginTaskOutcome.UP_TO_DATE, PluginTaskOutcome.SUCCESS,
+        assertCleanTaskOutcomes(result2, PluginTaskOutcome.UP_TO_DATE, PluginTaskOutcome.UP_TO_DATE,
             PluginTaskOutcome.UP_TO_DATE, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SKIPPED,
-            PluginTaskOutcome.SUCCESS);
+            PluginTaskOutcome.UP_TO_DATE);
     }
 
     @Test
@@ -82,8 +82,8 @@ class CleanTaskFuncTest {
 
         final BuildResult result2 = runGradle(projectDirectoryPath, FrontendGradlePlugin.GRADLE_CLEAN_TASK_NAME);
 
-        assertCleanTaskOutcomes(result2, PluginTaskOutcome.UP_TO_DATE, PluginTaskOutcome.SUCCESS,
+        assertCleanTaskOutcomes(result2, PluginTaskOutcome.UP_TO_DATE, PluginTaskOutcome.UP_TO_DATE,
             PluginTaskOutcome.UP_TO_DATE, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS,
-            PluginTaskOutcome.SUCCESS);
+            PluginTaskOutcome.UP_TO_DATE);
     }
 }

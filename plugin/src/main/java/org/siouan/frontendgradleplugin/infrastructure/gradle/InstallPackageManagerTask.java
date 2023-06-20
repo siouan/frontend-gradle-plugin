@@ -27,9 +27,10 @@ public class InstallPackageManagerTask extends AbstractRunCommandTask {
     private static final String COREPACK_ENABLE_COMMAND = "enable";
 
     /**
-     * Type of package manager.
+     * File specifying the package manager used in the project. The file itself is not read, but using it as an input
+     * allows to re-execute this task when its content changes (i.e. the package manager is upgraded).
      */
-    private final RegularFileProperty packageManagerNameFile;
+    private final RegularFileProperty packageManagerSpecificationFile;
 
     /**
      * File that will contain information about the package manager.
@@ -40,12 +41,13 @@ public class InstallPackageManagerTask extends AbstractRunCommandTask {
     public InstallPackageManagerTask(final ProjectLayout projectLayout, final ObjectFactory objectFactory,
         final ExecOperations execOperations) {
         super(projectLayout, objectFactory, execOperations);
-        this.packageManagerNameFile = objectFactory.fileProperty();
         this.executableType.set(ExecutableType.COREPACK);
-        this.script.set(packageManagerNameFile.getAsFile().map(f -> {
+        this.packageManagerSpecificationFile = objectFactory.fileProperty();
+        this.script.set(packageManagerSpecificationFile.getAsFile().map(f -> {
             try {
                 return String.join(" ", COREPACK_ENABLE_COMMAND,
-                    Beans.getBean(beanRegistryId, FileManager.class).readString(f.toPath(), StandardCharsets.UTF_8));
+                    Beans.getBean(beanRegistryId, FileManager.class).readString(f.toPath(), StandardCharsets.UTF_8)
+                        .split("@")[0]);
             } catch (final BeanRegistryException | IOException e) {
                 throw new GradleException(e.getClass().getName() + ": " + e.getMessage(), e);
             }
@@ -54,8 +56,8 @@ public class InstallPackageManagerTask extends AbstractRunCommandTask {
     }
 
     @InputFile
-    public RegularFileProperty getPackageManagerNameFile() {
-        return packageManagerNameFile;
+    public RegularFileProperty getPackageManagerSpecificationFile() {
+        return packageManagerSpecificationFile;
     }
 
     @OutputFile

@@ -28,10 +28,13 @@
 - [Official documentation][official-documentation]
 - [Release notes][release-notes]
 - [Examples][examples]
-    - [Build a simple JS application][example-simple-js-application]
-    - [Build a simple JS application using a preinstalled Node.js distribution][example-simple-js-application-with-preinstalled-nodejs-distribution]
-    - [Build multiple JS applications using a shared Node.js distribution and different package managers][example-multiple-package-managers-with-shared-nodejs-distribution]
-    - [Build a full-stack Spring Boot WAR application with dedicated frontend and backend sub-projects][example-fullstack-war-application]
+    - [Build a NPM application][example-npm-application]
+    - [Build a PNPM application][example-pnpm-application]
+    - [Build a YARN application (default pnp linker)][example-yarn-application-pnp-linker]
+    - [Build a YARN application (node-modules linker)][example-yarn-application-node-modules-linker]
+    - [Build an application using a preinstalled Node.js distribution][example-application-with-preinstalled-nodejs-distribution]
+    - [Build multiple applications with different package managers and using a shared Node.js distribution][example-multiple-package-managers-with-shared-nodejs-distribution]
+    - [Build a full-stack Spring Boot WAR application with dedicated frontend and backend subprojects][example-fullstack-war-application]
 - [Special thanks](#special-thanks)
 - [Contributing][contributing]
 
@@ -69,10 +72,13 @@ With their feedback, plugin improvement is possible. Special thanks to:
 @[xehonk](https://github.com/xehonk)
 
 [contributing]: <CONTRIBUTING.md> (Contributing to this project)
-[example-fullstack-war-application]: <examples/fullstack-war-application> (Build a full-stack Spring Boot WAR application with dedicated frontend and backend sub-projects)
-[example-multiple-package-managers-with-shared-nodejs-distribution]: <examples/multiple-package-managers-with-shared-nodejs-distribution> (Build multiple frontend applications with dedicated sub-projects using shared distributions)
-[example-simple-js-application]: <examples/simple-js-application> (Build a frontend application in a single project)
-[example-simple-js-application-with-preinstalled-nodejs-distribution]: <examples/simple-js-application-with-preinstalled-nodejs-distribution> (Build a frontend application in a single project using preinstalled distributions)
+[example-fullstack-war-application]: <examples/fullstack-war-application> (Build a full-stack Spring Boot WAR application with dedicated frontend and backend subprojects)
+[example-multiple-package-managers-with-shared-nodejs-distribution]: <examples/multiple-package-managers-with-shared-nodejs-distribution> (Build multiple applications with different package managers and using a shared Node.js distribution)
+[example-npm-application]: <examples/npm-application> (Build a NPM application)
+[example-pnpm-application]: <examples/pnpm-application> (Build a PNPM application)
+[example-yarn-application-pnp-linker]: <examples/yarn-application-with-pnp-linker> (Build a YARN application with default pnp linker)
+[example-yarn-application-node-modules-linker]: <examples/yarn-application-with-node-modules-linker> (Build a YARN application with node-modules linker)
+[example-application-with-preinstalled-nodejs-distribution]: <examples/application-with-preinstalled-nodejs-distribution> (Build an application using a preinstalled Node.js distribution)
 [examples]: <examples> (Examples)
 [official-documentation]: <https://siouan.github.io/frontend-gradle-plugin/> (Official documentation of the Frontend Gradle plugin for node, npm, pnpm, yarn)
 [intellij-idea]: <https://www.jetbrains.com/idea/> (IntelliJ IDEA)

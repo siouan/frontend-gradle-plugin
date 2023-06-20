@@ -7,7 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.siouan.frontendgradleplugin.test.fixture.PlatformFixture.LOCAL_PLATFORM;
+import static org.siouan.frontendgradleplugin.domain.PlatformFixture.LOCAL_PLATFORM;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -25,8 +25,6 @@ import org.siouan.frontendgradleplugin.domain.FrontendException;
 import org.siouan.frontendgradleplugin.domain.Logger;
 import org.siouan.frontendgradleplugin.domain.Platform;
 import org.siouan.frontendgradleplugin.domain.UnsupportedPlatformException;
-import org.siouan.frontendgradleplugin.test.fixture.CredentialsFixture;
-import org.siouan.frontendgradleplugin.test.fixture.ProxySettingsFixture;
 
 @ExtendWith(MockitoExtension.class)
 class GetDistributionTest {

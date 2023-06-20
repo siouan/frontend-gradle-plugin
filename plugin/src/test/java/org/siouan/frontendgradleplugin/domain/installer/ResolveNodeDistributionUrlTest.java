@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.siouan.frontendgradleplugin.test.fixture.PlatformFixture.aPlatform;
+import static org.siouan.frontendgradleplugin.domain.PlatformFixture.aPlatform;
 
 import java.net.MalformedURLException;
 import java.util.Optional;

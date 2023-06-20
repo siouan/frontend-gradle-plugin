@@ -1,7 +1,7 @@
 package org.siouan.frontendgradleplugin.domain.installer;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.siouan.frontendgradleplugin.test.fixture.PlatformFixture.aPlatform;
+import static org.siouan.frontendgradleplugin.domain.PlatformFixture.aPlatform;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -5,7 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.siouan.frontendgradleplugin.test.fixture.PlatformFixture.LOCAL_PLATFORM;
+import static org.siouan.frontendgradleplugin.domain.PlatformFixture.LOCAL_PLATFORM;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -24,7 +24,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class ResolvePackageManagerTest {
 
     @Mock
-    private ParsePackageManagerType parsePackageManagerType;
+    private ParsePackageManagerFromPackageJsonFile parsePackageManagerFromPackageJsonFile;
 
     @Mock
     private GetExecutablePath getExecutablePath;
@@ -37,24 +37,26 @@ class ResolvePackageManagerTest {
 
     @Test
     void should_resolve_package_manager_type_and_store_name_and_executable_file_path_in_cache()
-        throws UnsupportedPackageManagerException, IOException {
-        final Path metadataFilePath = Paths.get("package.json");
+        throws IOException, InvalidJsonFileException, MalformedPackageManagerSpecification,
+        UnsupportedPackageManagerException {
+        final Path packageJsonFilePath = Paths.get("package.json");
         final Path nodeInstallDirectoryPath = Paths.get("node");
         final Platform platform = LOCAL_PLATFORM;
         final Path packageManagerNameFilePath = Paths.get("name.txt");
         final Path packageManagerExecutablePathFilePath = Paths.get("executable-path.txt");
         final PackageManagerType packageManagerType = PackageManagerType.PNPM;
-        when(parsePackageManagerType.execute(metadataFilePath)).thenReturn(packageManagerType);
+        final String packageManagerVersion = "5.9.2";
+        when(parsePackageManagerFromPackageJsonFile.execute(packageJsonFilePath)).thenReturn(
+            PackageManager.builder().type(packageManagerType).version(packageManagerVersion).build());
         final Path executablePath = Paths.get("executable");
-        when(fileManager.writeString(packageManagerNameFilePath, packageManagerType.getPackageManagerName(),
-            StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)).thenReturn(
-            packageManagerNameFilePath);
+        when(fileManager.writeString(packageManagerNameFilePath, "pnpm@5.9.2", StandardCharsets.UTF_8,
+            StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)).thenReturn(packageManagerNameFilePath);
         when(getExecutablePath.execute(any(GetExecutablePathCommand.class))).thenReturn(executablePath);
         when(fileManager.writeString(packageManagerExecutablePathFilePath, executablePath.toString(),
             StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)).thenReturn(
             packageManagerExecutablePathFilePath);
 
-        usecase.execute(new ResolvePackageManagerCommand(metadataFilePath, nodeInstallDirectoryPath, platform,
+        usecase.execute(new ResolvePackageManagerCommand(packageJsonFilePath, nodeInstallDirectoryPath, platform,
             packageManagerNameFilePath, packageManagerExecutablePathFilePath));
 
         final ArgumentCaptor<GetExecutablePathCommand> getExecutablePathQueryArgumentCaptor = ArgumentCaptor.forClass(
@@ -65,6 +67,6 @@ class ResolvePackageManagerTest {
             assertThat(getExecutablePathQuery.getNodeInstallDirectoryPath()).isEqualTo(nodeInstallDirectoryPath);
             assertThat(getExecutablePathQuery.getPlatform()).isEqualTo(platform);
         });
-        verifyNoMoreInteractions(parsePackageManagerType, getExecutablePath, fileManager);
+        verifyNoMoreInteractions(parsePackageManagerFromPackageJsonFile, getExecutablePath, fileManager);
     }
 }

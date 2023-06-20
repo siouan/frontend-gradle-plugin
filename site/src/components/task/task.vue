@@ -8,7 +8,15 @@
                     {{ name }}
                 </fgp-code>
                 -
-                <slot name="title" /> <fgp-site-link path="#app" class="small text-info">&uparrow;</fgp-site-link>
+                <slot name="title" />
+                <fgp-gradle-docs-link
+                    v-if="cacheable"
+                    path="/current/userguide/build_cache.html#sec:task_output_caching_details"
+                    title="Cacheable task"
+                    class="badge badge-dark"
+                    hover-style-disabled
+                >C</fgp-gradle-docs-link>
+                <fgp-site-link path="#app" class="small text-info">&uparrow;</fgp-site-link>
             </h4>
             <ul>
                 <li v-if="inputs.length > 0">
@@ -66,6 +74,10 @@ export default Vue.component('fgp-task', {
         outputs: {
             type: Array,
             default: () => []
+        },
+        cacheable: {
+            type: Boolean,
+            default: false
         }
     },
     computed: {

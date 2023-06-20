@@ -29,16 +29,14 @@ public abstract class AbstractRunCommandTaskType extends AbstractRunCommandTask 
         }
         final FrontendExtension extension = taskContext.getExtension();
         this.packageJsonDirectory.set(extension.getPackageJsonDirectory().getAsFile());
-        this.nodeInstallDirectory.set(extension
-            .getNodeDistributionProvided()
-            .flatMap(nodeDistributionProvided -> resolveNodeInstallDirectoryPath.execute(
-                ResolveNodeInstallDirectoryPathCommand
-                    .builder()
-                    .userPath(extension.getNodeInstallDirectory().getAsFile().map(File::toPath))
-                    .nodeDistributionProvided(nodeDistributionProvided)
-                    .environmentPath(taskContext.getNodeInstallDirectoryFromEnvironment())
-                    .defaultPath(taskContext.getDefaultNodeInstallDirectoryPath())
-                    .build()))
+        this.nodeInstallDirectory.set(resolveNodeInstallDirectoryPath
+            .execute(ResolveNodeInstallDirectoryPathCommand
+                .builder()
+                .nodeInstallDirectoryFromUser(extension.getNodeInstallDirectory().getAsFile().map(File::toPath))
+                .nodeDistributionProvided(extension.getNodeDistributionProvided())
+                .nodeInstallDirectoryFromEnvironment(taskContext.getNodeInstallDirectoryFromEnvironment())
+                .defaultPath(taskContext.getDefaultNodeInstallDirectoryPath())
+                .build())
             .map(Path::toFile));
     }
 }

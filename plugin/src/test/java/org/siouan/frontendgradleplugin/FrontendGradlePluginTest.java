@@ -71,17 +71,17 @@ class FrontendGradlePluginTest {
         assertThat(extension.getHttpsProxyPort().get()).isEqualTo(FrontendGradlePlugin.DEFAULT_HTTPS_PROXY_PORT);
         assertThat(extension.getHttpsProxyUsername().isPresent()).isFalse();
         assertThat(extension.getHttpsProxyPassword().isPresent()).isFalse();
-        assertThat(extension.getInternalMetadataFile().getAsFile().get()).isEqualTo(
-            project.getProjectDir().toPath().resolve(FrontendGradlePlugin.METADATA_FILE_NAME).toFile());
-        assertThat(extension.getInternalPackageManagerNameFile().getAsFile().get()).isEqualTo(project
-            .getBuildDir()
+        assertThat(extension.getInternalPackageJsonFile().getAsFile().get()).isEqualTo(
+            project.getProjectDir().toPath().resolve(FrontendGradlePlugin.PACKAGE_JSON_FILE_NAME).toFile());
+        assertThat(extension.getInternalPackageManagerSpecificationFile().getAsFile().get()).isEqualTo(project
+            .getProjectDir()
             .toPath()
             .resolve(Paths.get(FrontendGradlePlugin.DEFAULT_CACHE_DIRECTORY_NAME,
                 FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME,
-                FrontendGradlePlugin.PACKAGE_MANAGER_NAME_FILE_NAME))
+                FrontendGradlePlugin.PACKAGE_MANAGER_SPECIFICATION_FILE_NAME))
             .toFile());
         assertThat(extension.getInternalPackageManagerExecutablePathFile().getAsFile().get()).isEqualTo(project
-            .getBuildDir()
+            .getProjectDir()
             .toPath()
             .resolve(Paths.get(FrontendGradlePlugin.DEFAULT_CACHE_DIRECTORY_NAME,
                 FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME,
@@ -118,7 +118,7 @@ class FrontendGradlePluginTest {
         extension.getHttpProxyUsername().set("htrshPDA2v6ESar");
         extension.getHttpProxyPassword().set("hts`{(gK65geR5=a");
         extension.getVerboseModeEnabled().set(true);
-        extension.getInternalMetadataFile().set(new File("metadata.json"));
+        extension.getInternalPackageJsonFile().set(new File("metadata.json"));
 
         assertThatTasksAreConfigured(project, extension);
     }
@@ -158,11 +158,11 @@ class FrontendGradlePluginTest {
             .getTasks()
             .named(FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME, ResolvePackageManagerTask.class)
             .get();
-        assertThat(resolvePackageManagerTask.getMetadataFile().getAsFile().get()).isEqualTo(
-            extension.getInternalMetadataFile().getAsFile().get());
+        assertThat(resolvePackageManagerTask.getPackageJsonFile().getAsFile().get()).isEqualTo(
+            extension.getInternalPackageJsonFile().getAsFile().get());
         assertThat(resolvePackageManagerTask.getNodeInstallDirectory().isPresent()).isTrue();
-        assertThat(resolvePackageManagerTask.getPackageManagerNameFile().getAsFile().get()).isEqualTo(
-            extension.getInternalPackageManagerNameFile().getAsFile().get());
+        assertThat(resolvePackageManagerTask.getPackageManagerSpecificationFile().getAsFile().get()).isEqualTo(
+            extension.getInternalPackageManagerSpecificationFile().getAsFile().get());
         assertThat(resolvePackageManagerTask.getPackageManagerExecutablePathFile().getAsFile().get()).isEqualTo(
             extension.getInternalPackageManagerExecutablePathFile().getAsFile().get());
         assertThat(installNodeTask.getDependsOn()).isEmpty();
@@ -176,9 +176,9 @@ class FrontendGradlePluginTest {
         assertThat(installPackageManagerTask.getPackageJsonDirectory().get()).isEqualTo(
             extension.getPackageJsonDirectory().getAsFile().get());
         assertThat(installPackageManagerTask.getNodeInstallDirectory().isPresent()).isTrue();
-        assertThat(installPackageManagerTask.getPackageManagerNameFile().getAsFile().get()).isEqualTo(
-            extension.getInternalPackageManagerNameFile().getAsFile().get());
-        assertThat(installPackageManagerTask.getDependsOn()).containsExactlyInAnyOrder(installNodeTask.getName());
+        assertThat(installPackageManagerTask.getPackageManagerSpecificationFile().getAsFile().get()).isEqualTo(
+            extension.getInternalPackageManagerSpecificationFile().getAsFile().get());
+        assertThat(installPackageManagerTask.getDependsOn()).isEmpty();
 
         final InstallFrontendTask installFrontendTask = project
             .getTasks()
@@ -188,8 +188,7 @@ class FrontendGradlePluginTest {
             extension.getPackageJsonDirectory().getAsFile().get());
         assertThat(installFrontendTask.getNodeInstallDirectory().isPresent()).isTrue();
         assertThat(installFrontendTask.getInstallScript().get()).isEqualTo(extension.getInstallScript().get());
-        assertThat(installFrontendTask.getDependsOn()).containsExactlyInAnyOrder(
-            resolvePackageManagerTask.getName(), installPackageManagerTask.getName());
+        assertThat(installFrontendTask.getDependsOn()).containsExactlyInAnyOrder(installPackageManagerTask.getName());
 
         final CleanTask frontendCleanTask = project
             .getTasks()
@@ -199,8 +198,7 @@ class FrontendGradlePluginTest {
             extension.getPackageJsonDirectory().getAsFile().get());
         assertThat(frontendCleanTask.getNodeInstallDirectory().isPresent()).isTrue();
         assertThat(frontendCleanTask.getCleanScript().getOrNull()).isEqualTo(extension.getCleanScript().getOrNull());
-        assertThat(frontendCleanTask.getDependsOn()).containsExactlyInAnyOrder(resolvePackageManagerTask.getName(),
-            installFrontendTask.getName());
+        assertThat(frontendCleanTask.getDependsOn()).containsExactlyInAnyOrder(installFrontendTask.getName());
         assertThat(project.getTasks().named(BasePlugin.CLEAN_TASK_NAME).get().getDependsOn()).contains(
             frontendCleanTask.getName());
 
@@ -213,8 +211,7 @@ class FrontendGradlePluginTest {
         assertThat(frontendAssembleTask.getNodeInstallDirectory().isPresent()).isTrue();
         assertThat(frontendAssembleTask.getAssembleScript().getOrNull()).isEqualTo(
             extension.getAssembleScript().getOrNull());
-        assertThat(frontendAssembleTask.getDependsOn()).containsExactlyInAnyOrder(resolvePackageManagerTask.getName(),
-            installFrontendTask.getName());
+        assertThat(frontendAssembleTask.getDependsOn()).containsExactlyInAnyOrder(installFrontendTask.getName());
         assertThat(project.getTasks().named(BasePlugin.ASSEMBLE_TASK_NAME).get().getDependsOn()).contains(
             frontendAssembleTask.getName());
 
@@ -226,8 +223,7 @@ class FrontendGradlePluginTest {
             extension.getPackageJsonDirectory().getAsFile().get());
         assertThat(frontendCheckTask.getNodeInstallDirectory().isPresent()).isTrue();
         assertThat(frontendCheckTask.getCheckScript().getOrNull()).isEqualTo(extension.getCheckScript().getOrNull());
-        assertThat(frontendCheckTask.getDependsOn()).containsExactlyInAnyOrder(resolvePackageManagerTask.getName(),
-            installFrontendTask.getName());
+        assertThat(frontendCheckTask.getDependsOn()).containsExactlyInAnyOrder(installFrontendTask.getName());
         assertThat(project.getTasks().named(LifecycleBasePlugin.CHECK_TASK_NAME).get().getDependsOn()).contains(
             frontendCheckTask.getName());
 
@@ -240,8 +236,7 @@ class FrontendGradlePluginTest {
         assertThat(frontendPublishTask.getNodeInstallDirectory().isPresent()).isTrue();
         assertThat(frontendPublishTask.getPublishScript().getOrNull()).isEqualTo(
             extension.getPublishScript().getOrNull());
-        assertThat(frontendPublishTask.getDependsOn()).containsExactlyInAnyOrder(resolvePackageManagerTask.getName(),
-            frontendAssembleTask.getName());
+        assertThat(frontendPublishTask.getDependsOn()).containsExactlyInAnyOrder(frontendAssembleTask.getName());
         assertThat(
             project.getTasks().named(PublishingPlugin.PUBLISH_LIFECYCLE_TASK_NAME).get().getDependsOn()).contains(
             frontendPublishTask.getName());

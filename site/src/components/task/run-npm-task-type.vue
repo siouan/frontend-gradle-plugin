@@ -1,11 +1,6 @@
 <template>
-    <fgp-task name="RunNpm" :type="true" :inputs="inputs">
+    <fgp-task name="RunNpm" type :inputs="inputs">
         <template #title>Run a custom command with <fgp-code>npm</fgp-code></template>
-        <template #executableType>
-            type of executable derived from the package manager resolved by task
-            <fgp-task-link name="resolvePackageManager" /> in file
-            <fgp-property-link name="cacheDirectory" /><fgp-code>/resolvePackageManager/package-manager-name.txt</fgp-code>.
-        </template>
         <template #description>
             <p>
                 The plugin provides task type
@@ -56,7 +51,6 @@ export default Vue.component('fgp-run-npm-task-type', {
     data() {
         return {
             inputs: [
-                { name: 'executableType', type: 'ET', binding: 'C' },
                 { name: 'packageJsonDirectory', type: 'F', binding: 'P', property: 'packageJsonDirectory' },
                 { name: 'nodeInstallDirectory', type: 'F', binding: 'P', property: 'nodeInstallDirectory' },
                 { name: 'script', type: 'S', binding: 'P', property: 'script' }

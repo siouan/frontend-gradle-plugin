@@ -11,21 +11,21 @@ class PackageManagerTypeTest {
 
     @Test
     void should_return_no_package_manager_type() {
-        assertThat(PackageManagerType.fromPackageName("NPM")).isEmpty();
+        assertThat(PackageManagerType.fromPackageManagerName("NPM")).isEmpty();
     }
 
     @Test
     void should_return_npm_package_manager_type() {
-        assertThat(PackageManagerType.fromPackageName("npm")).contains(PackageManagerType.NPM);
+        assertThat(PackageManagerType.fromPackageManagerName("npm")).contains(PackageManagerType.NPM);
     }
 
     @Test
     void should_return_pnpm_package_manager_type() {
-        assertThat(PackageManagerType.fromPackageName("pnpm")).contains(PackageManagerType.PNPM);
+        assertThat(PackageManagerType.fromPackageManagerName("pnpm")).contains(PackageManagerType.PNPM);
     }
 
     @Test
     void should_return_yarn_package_manager_type() {
-        assertThat(PackageManagerType.fromPackageName("yarn")).contains(PackageManagerType.YARN);
+        assertThat(PackageManagerType.fromPackageManagerName("yarn")).contains(PackageManagerType.YARN);
     }
 }
