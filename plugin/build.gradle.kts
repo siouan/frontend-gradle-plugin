@@ -13,10 +13,8 @@ val fgpGradlePluginPortalTags: String by extra
 
 plugins {
     id("idea")
-    id("java-gradle-plugin")
     id("jacoco")
     id("com.gradle.plugin-publish")
-    id("maven-publish")
     id("org.sonarqube")
 }
 
