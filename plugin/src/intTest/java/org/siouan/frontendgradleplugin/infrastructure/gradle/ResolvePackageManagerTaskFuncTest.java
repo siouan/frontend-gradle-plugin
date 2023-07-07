@@ -14,12 +14,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.gradle.api.Project;
 import org.gradle.testkit.runner.BuildResult;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
-import org.siouan.frontendgradleplugin.domain.PackageManagerType;
 import org.siouan.frontendgradleplugin.test.FrontendMapBuilder;
 import org.siouan.frontendgradleplugin.test.PluginTaskOutcome;
 
@@ -41,14 +39,12 @@ class ResolvePackageManagerTaskFuncTest {
             FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME);
 
         assertTaskOutcomes(result, PluginTaskOutcome.SKIPPED, PluginTaskOutcome.SKIPPED);
-        assertThat(projectDirectoryPath.resolve(
-            Paths.get(Project.DEFAULT_BUILD_DIR_NAME, FrontendGradlePlugin.DEFAULT_CACHE_DIRECTORY_NAME,
-                FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME,
-                FrontendGradlePlugin.PACKAGE_MANAGER_NAME_FILE_NAME))).doesNotExist();
-        assertThat(projectDirectoryPath.resolve(
-            Paths.get(Project.DEFAULT_BUILD_DIR_NAME, FrontendGradlePlugin.DEFAULT_CACHE_DIRECTORY_NAME,
-                FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME,
-                FrontendGradlePlugin.PACKAGE_MANAGER_EXECUTABLE_PATH_FILE_NAME))).doesNotExist();
+        assertThat(projectDirectoryPath.resolve(Paths.get(FrontendGradlePlugin.DEFAULT_CACHE_DIRECTORY_NAME,
+            FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME,
+            FrontendGradlePlugin.PACKAGE_MANAGER_SPECIFICATION_FILE_NAME))).doesNotExist();
+        assertThat(projectDirectoryPath.resolve(Paths.get(FrontendGradlePlugin.DEFAULT_CACHE_DIRECTORY_NAME,
+            FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME,
+            FrontendGradlePlugin.PACKAGE_MANAGER_EXECUTABLE_PATH_FILE_NAME))).doesNotExist();
     }
 
     @Test
@@ -60,14 +56,12 @@ class ResolvePackageManagerTaskFuncTest {
             FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME);
 
         assertTaskOutcomes(result, PluginTaskOutcome.SKIPPED, PluginTaskOutcome.FAILED);
-        assertThat(projectDirectoryPath.resolve(
-            Paths.get(Project.DEFAULT_BUILD_DIR_NAME, FrontendGradlePlugin.DEFAULT_CACHE_DIRECTORY_NAME,
-                FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME,
-                FrontendGradlePlugin.PACKAGE_MANAGER_NAME_FILE_NAME))).doesNotExist();
-        assertThat(projectDirectoryPath.resolve(
-            Paths.get(Project.DEFAULT_BUILD_DIR_NAME, FrontendGradlePlugin.DEFAULT_CACHE_DIRECTORY_NAME,
-                FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME,
-                FrontendGradlePlugin.PACKAGE_MANAGER_EXECUTABLE_PATH_FILE_NAME))).doesNotExist();
+        assertThat(projectDirectoryPath.resolve(Paths.get(FrontendGradlePlugin.DEFAULT_CACHE_DIRECTORY_NAME,
+            FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME,
+            FrontendGradlePlugin.PACKAGE_MANAGER_SPECIFICATION_FILE_NAME))).doesNotExist();
+        assertThat(projectDirectoryPath.resolve(Paths.get(FrontendGradlePlugin.DEFAULT_CACHE_DIRECTORY_NAME,
+            FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME,
+            FrontendGradlePlugin.PACKAGE_MANAGER_EXECUTABLE_PATH_FILE_NAME))).doesNotExist();
     }
 
     @Test
@@ -80,14 +74,12 @@ class ResolvePackageManagerTaskFuncTest {
             FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME);
 
         assertTaskOutcomes(result, PluginTaskOutcome.SKIPPED, PluginTaskOutcome.FAILED);
-        assertThat(projectDirectoryPath.resolve(
-            Paths.get(Project.DEFAULT_BUILD_DIR_NAME, FrontendGradlePlugin.DEFAULT_CACHE_DIRECTORY_NAME,
-                FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME,
-                FrontendGradlePlugin.PACKAGE_MANAGER_NAME_FILE_NAME))).doesNotExist();
-        assertThat(projectDirectoryPath.resolve(
-            Paths.get(Project.DEFAULT_BUILD_DIR_NAME, FrontendGradlePlugin.DEFAULT_CACHE_DIRECTORY_NAME,
-                FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME,
-                FrontendGradlePlugin.PACKAGE_MANAGER_EXECUTABLE_PATH_FILE_NAME))).doesNotExist();
+        assertThat(projectDirectoryPath.resolve(Paths.get(FrontendGradlePlugin.DEFAULT_CACHE_DIRECTORY_NAME,
+            FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME,
+            FrontendGradlePlugin.PACKAGE_MANAGER_SPECIFICATION_FILE_NAME))).doesNotExist();
+        assertThat(projectDirectoryPath.resolve(Paths.get(FrontendGradlePlugin.DEFAULT_CACHE_DIRECTORY_NAME,
+            FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME,
+            FrontendGradlePlugin.PACKAGE_MANAGER_EXECUTABLE_PATH_FILE_NAME))).doesNotExist();
     }
 
     @Test
@@ -103,14 +95,12 @@ class ResolvePackageManagerTaskFuncTest {
 
         assertTaskOutcomes(result1, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS);
         final Path packageManagerNameFilePath = projectDirectoryPath.resolve(
-            Paths.get(Project.DEFAULT_BUILD_DIR_NAME, FrontendGradlePlugin.DEFAULT_CACHE_DIRECTORY_NAME,
+            Paths.get(FrontendGradlePlugin.DEFAULT_CACHE_DIRECTORY_NAME,
                 FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME,
-                FrontendGradlePlugin.PACKAGE_MANAGER_NAME_FILE_NAME));
-        assertThat(packageManagerNameFilePath)
-            .content(StandardCharsets.UTF_8)
-            .isEqualTo(PackageManagerType.NPM.getPackageManagerName());
+                FrontendGradlePlugin.PACKAGE_MANAGER_SPECIFICATION_FILE_NAME));
+        assertThat(packageManagerNameFilePath).content(StandardCharsets.UTF_8).isEqualTo("npm@9.6.7");
         final Path packageManagerExecutablePathFilePath = projectDirectoryPath.resolve(
-            Paths.get(Project.DEFAULT_BUILD_DIR_NAME, FrontendGradlePlugin.DEFAULT_CACHE_DIRECTORY_NAME,
+            Paths.get(FrontendGradlePlugin.DEFAULT_CACHE_DIRECTORY_NAME,
                 FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME,
                 FrontendGradlePlugin.PACKAGE_MANAGER_EXECUTABLE_PATH_FILE_NAME));
         assertThat(packageManagerExecutablePathFilePath).exists();
@@ -119,9 +109,7 @@ class ResolvePackageManagerTaskFuncTest {
             FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME);
 
         assertTaskOutcomes(result2, PluginTaskOutcome.UP_TO_DATE, PluginTaskOutcome.UP_TO_DATE);
-        assertThat(packageManagerNameFilePath)
-            .content(StandardCharsets.UTF_8)
-            .isEqualTo(PackageManagerType.NPM.getPackageManagerName());
+        assertThat(packageManagerNameFilePath).content(StandardCharsets.UTF_8).isEqualTo("npm@9.6.7");
         assertThat(packageManagerExecutablePathFilePath).exists();
     }
 }

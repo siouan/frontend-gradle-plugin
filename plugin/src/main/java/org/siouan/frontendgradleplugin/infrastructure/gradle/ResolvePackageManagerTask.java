@@ -9,10 +9,15 @@ import org.gradle.api.file.ProjectLayout;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
+import org.gradle.api.tasks.CacheableTask;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFile;
 import org.gradle.api.tasks.OutputFile;
+import org.gradle.api.tasks.PathSensitive;
+import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.api.tasks.TaskAction;
+import org.siouan.frontendgradleplugin.domain.InvalidJsonFileException;
+import org.siouan.frontendgradleplugin.domain.MalformedPackageManagerSpecification;
 import org.siouan.frontendgradleplugin.domain.Platform;
 import org.siouan.frontendgradleplugin.domain.PlatformProvider;
 import org.siouan.frontendgradleplugin.domain.ResolvePackageManager;
@@ -29,6 +34,7 @@ import org.siouan.frontendgradleplugin.infrastructure.bean.ZeroOrMultiplePublicC
  *
  * @since 7.0.0
  */
+@CacheableTask
 public class ResolvePackageManagerTask extends DefaultTask {
 
     /**
@@ -39,7 +45,7 @@ public class ResolvePackageManagerTask extends DefaultTask {
     /**
      * The 'package.json' file.
      */
-    private final RegularFileProperty metadataFile;
+    private final RegularFileProperty packageJsonFile;
 
     /**
      * Path to the Node.js install directory.
@@ -49,7 +55,7 @@ public class ResolvePackageManagerTask extends DefaultTask {
     /**
      * File that will contain information about the package manager.
      */
-    private final RegularFileProperty packageManagerNameFile;
+    private final RegularFileProperty packageManagerSpecificationFile;
 
     /**
      * File that will contain information about the package manager.
@@ -59,15 +65,16 @@ public class ResolvePackageManagerTask extends DefaultTask {
     @Inject
     public ResolvePackageManagerTask(final ProjectLayout projectLayout, final ObjectFactory objectFactory) {
         this.beanRegistryId = Beans.getBeanRegistryId(projectLayout.getProjectDirectory().toString());
-        this.metadataFile = objectFactory.fileProperty();
+        this.packageJsonFile = objectFactory.fileProperty();
         this.nodeInstallDirectory = objectFactory.property(File.class);
-        this.packageManagerNameFile = objectFactory.fileProperty();
+        this.packageManagerSpecificationFile = objectFactory.fileProperty();
         this.packageManagerExecutablePathFile = objectFactory.fileProperty();
     }
 
     @InputFile
-    public RegularFileProperty getMetadataFile() {
-        return metadataFile;
+    @PathSensitive(PathSensitivity.ABSOLUTE)
+    public RegularFileProperty getPackageJsonFile() {
+        return packageJsonFile;
     }
 
     @Input
@@ -76,8 +83,8 @@ public class ResolvePackageManagerTask extends DefaultTask {
     }
 
     @OutputFile
-    public RegularFileProperty getPackageManagerNameFile() {
-        return packageManagerNameFile;
+    public RegularFileProperty getPackageManagerSpecificationFile() {
+        return packageManagerSpecificationFile;
     }
 
     @OutputFile
@@ -88,19 +95,23 @@ public class ResolvePackageManagerTask extends DefaultTask {
     @TaskAction
     public void execute()
         throws BeanInstanciationException, TooManyCandidateBeansException, ZeroOrMultiplePublicConstructorsException,
-        UnsupportedPackageManagerException, IOException {
+        IOException, InvalidJsonFileException, MalformedPackageManagerSpecification,
+        UnsupportedPackageManagerException {
         Beans.getBean(beanRegistryId, TaskLoggerConfigurer.class).initLoggerAdapter(this);
 
         final Platform platform = Beans.getBean(beanRegistryId, PlatformProvider.class).getPlatform();
         getLogger().debug("Platform: {}", platform);
+        // Though it is not used by the plugin later, the version of the package manager is written in the specification
+        // file so as other tasks using this file as an input are re-executed if the package manager is upgraded (same
+        // package manager, different version).
         Beans
             .getBean(beanRegistryId, ResolvePackageManager.class)
             .execute(ResolvePackageManagerCommand
                 .builder()
-                .metadataFilePath(metadataFile.getAsFile().get().toPath())
+                .packageJsonFilePath(packageJsonFile.getAsFile().get().toPath())
                 .nodeInstallDirectoryPath(nodeInstallDirectory.map(File::toPath).get())
                 .platform(platform)
-                .packageManagerNameFilePath(packageManagerNameFile.getAsFile().get().toPath())
+                .packageManagerSpecificationFilePath(packageManagerSpecificationFile.getAsFile().get().toPath())
                 .packageManagerExecutablePathFilePath(packageManagerExecutablePathFile.getAsFile().get().toPath())
                 .build());
     }

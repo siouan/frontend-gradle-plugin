@@ -2,14 +2,13 @@
     <fgp-property
         name="cacheDirectory"
         type="java.io.File"
-        :required="true"
-        default-value='file("${buildDir}/frontend-gradle-plugin")'
+        required
+        default-value='file("${projectDir}/.frontend-gradle-plugin")'
         :tasks="['resolvePackageManager', 'installPackageManager']"
     >
         <p>
-            Directory where the plugin stores outputs of some of its tasks. Writing outputs in files is the only way to
-            get Gradle skip these tasks when their inputs did not change, and reuse the outputs already computed from
-            previous executions.
+            Directory where the plugin writes some task outputs as files. This is the only way to get Gradle perform
+            up-to-date checks, and reuse outputs without re-executing the related task.
         </p>
     </fgp-property>
 </template>

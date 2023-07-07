@@ -19,12 +19,15 @@ import org.gradle.api.provider.ProviderFactory;
 import org.gradle.api.publish.plugins.PublishingPlugin;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.language.base.plugins.LifecycleBasePlugin;
+import org.siouan.frontendgradleplugin.domain.ExecutableType;
 import org.siouan.frontendgradleplugin.domain.FileManager;
-import org.siouan.frontendgradleplugin.domain.PackageManagerType;
+import org.siouan.frontendgradleplugin.domain.MalformedPackageManagerSpecification;
+import org.siouan.frontendgradleplugin.domain.ParsePackageManagerSpecification;
 import org.siouan.frontendgradleplugin.domain.PlatformProvider;
 import org.siouan.frontendgradleplugin.domain.ResolveGlobalExecutablePathCommand;
 import org.siouan.frontendgradleplugin.domain.ResolveGlobalNodeExecutablePath;
 import org.siouan.frontendgradleplugin.domain.SystemSettingsProvider;
+import org.siouan.frontendgradleplugin.domain.UnsupportedPackageManagerException;
 import org.siouan.frontendgradleplugin.infrastructure.archiver.ArchiverProviderImpl;
 import org.siouan.frontendgradleplugin.infrastructure.bean.BeanInstanciationException;
 import org.siouan.frontendgradleplugin.infrastructure.bean.Beans;
@@ -77,7 +80,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
     /**
      * Name of the default directory used to cache common files for multiple tasks.
      */
-    public static final String DEFAULT_CACHE_DIRECTORY_NAME = "frontend-gradle-plugin";
+    public static final String DEFAULT_CACHE_DIRECTORY_NAME = ".frontend-gradle-plugin";
 
     /**
      * Default port for the proxy server handling HTTP requests.
@@ -130,7 +133,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
     /**
      * Name of the file containing Javascript project metadata.
      */
-    public static final String METADATA_FILE_NAME = "package.json";
+    public static final String PACKAGE_JSON_FILE_NAME = "package.json";
 
     /**
      * Name of the task that installs a Node distribution.
@@ -143,9 +146,9 @@ public class FrontendGradlePlugin implements Plugin<Project> {
     public static final String NODEJS_HOME_ENV_VAR = "FGP_NODEJS_HOME";
 
     /**
-     * Name of the file containing the name of the package manager resolved.
+     * Name of the file containing the name and version of the package manager resolved.
      */
-    public static final String PACKAGE_MANAGER_NAME_FILE_NAME = "package-manager-name.txt";
+    public static final String PACKAGE_MANAGER_SPECIFICATION_FILE_NAME = "package-manager-specification.txt";
 
     /**
      * Name of the file containing the path to the package manager executable resolved.
@@ -187,17 +190,17 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         frontendExtension.getHttpsProxyPort().convention(DEFAULT_HTTPS_PROXY_PORT);
         frontendExtension
             .getCacheDirectory()
-            .convention(project.getLayout().getBuildDirectory().dir(DEFAULT_CACHE_DIRECTORY_NAME));
+            .convention(project.getLayout().getProjectDirectory().dir(DEFAULT_CACHE_DIRECTORY_NAME));
         frontendExtension
-            .getInternalMetadataFile()
+            .getInternalPackageJsonFile()
             .fileProvider(
-                frontendExtension.getPackageJsonDirectory().file(METADATA_FILE_NAME).map(RegularFile::getAsFile));
+                frontendExtension.getPackageJsonDirectory().file(PACKAGE_JSON_FILE_NAME).map(RegularFile::getAsFile));
         frontendExtension
-            .getInternalPackageManagerNameFile()
+            .getInternalPackageManagerSpecificationFile()
             .convention(frontendExtension
                 .getCacheDirectory()
                 .dir(RESOLVE_PACKAGE_MANAGER_TASK_NAME)
-                .map(directory -> directory.file(PACKAGE_MANAGER_NAME_FILE_NAME)));
+                .map(directory -> directory.file(PACKAGE_MANAGER_SPECIFICATION_FILE_NAME)));
         frontendExtension
             .getInternalPackageManagerExecutablePathFile()
             .convention(frontendExtension
@@ -355,14 +358,18 @@ public class FrontendGradlePlugin implements Plugin<Project> {
 
         task.setGroup(TASK_GROUP);
         task.setDescription("Resolves the package manager.");
-        task.getMetadataFile().set(extension.getInternalMetadataFile());
+        task.getPackageJsonFile().set(extension.getInternalPackageJsonFile());
         task.getNodeInstallDirectory().set(resolveNodeInstallDirectory(beanRegistryId, taskContext));
-        task.getPackageManagerNameFile().set(extension.getInternalPackageManagerNameFile());
+        task.getPackageManagerSpecificationFile().set(extension.getInternalPackageManagerSpecificationFile());
         task.getPackageManagerExecutablePathFile().set(extension.getInternalPackageManagerExecutablePathFile());
         // The task is skipped when there's no package.json file. It allows to define a project that installs only a
         // Node.js distribution.
-        task.setOnlyIf(
-            t -> extension.getInternalMetadataFile().getAsFile().map(File::toPath).map(Files::exists).getOrElse(false));
+        task.setOnlyIf(t -> extension
+            .getInternalPackageJsonFile()
+            .getAsFile()
+            .map(File::toPath)
+            .map(Files::exists)
+            .getOrElse(false));
         configureDependency(taskContainer, task, INSTALL_NODE_TASK_NAME, InstallNodeTask.class);
     }
 
@@ -385,8 +392,9 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         final Provider<ResolvePackageManagerTask> resolvePackageManagerTaskProvider = taskContainer.named(
             RESOLVE_PACKAGE_MANAGER_TASK_NAME, ResolvePackageManagerTask.class);
         task
-            .getPackageManagerNameFile()
-            .set(resolvePackageManagerTaskProvider.flatMap(ResolvePackageManagerTask::getPackageManagerNameFile));
+            .getPackageManagerSpecificationFile()
+            .set(resolvePackageManagerTaskProvider.flatMap(
+                ResolvePackageManagerTask::getPackageManagerSpecificationFile));
         task
             .getPackageManagerExecutableFile()
             .set(resolvePackageManagerTaskProvider
@@ -411,7 +419,6 @@ public class FrontendGradlePlugin implements Plugin<Project> {
             .map(File::toPath)
             .map(Files::exists)
             .getOrElse(false));
-        configureDependency(taskContainer, task, INSTALL_NODE_TASK_NAME, InstallNodeTask.class);
     }
 
     /**
@@ -430,31 +437,14 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.setDescription("Installs frontend dependencies.");
         task.getPackageJsonDirectory().set(extension.getPackageJsonDirectory().getAsFile());
         task.getNodeInstallDirectory().set(resolveNodeInstallDirectory(beanRegistryId, taskContext));
-        task
-            .getExecutableType()
-            .set(taskContainer
-                .named(RESOLVE_PACKAGE_MANAGER_TASK_NAME, ResolvePackageManagerTask.class)
-                .flatMap(ResolvePackageManagerTask::getPackageManagerNameFile)
-                .map(RegularFile::getAsFile)
-                .map(f -> {
-                    try {
-                        return PackageManagerType
-                            .fromPackageName(getBeanOrFail(beanRegistryId, FileManager.class).readString(f.toPath(),
-                                StandardCharsets.UTF_8))
-                            .map(PackageManagerType::getExecutableType)
-                            .orElseThrow();
-                    } catch (final IOException e) {
-                        throw new GradleException(e.getClass().getName() + ": " + e.getMessage(), e);
-                    }
-                }));
+        task.getExecutableType().set(getExecutableType(taskContainer, beanRegistryId));
         task.getInstallScript().set(extension.getInstallScript());
         task.setOnlyIf(t -> extension
-            .getInternalPackageManagerNameFile()
+            .getInternalPackageManagerSpecificationFile()
             .getAsFile()
             .map(File::toPath)
             .map(Files::exists)
             .getOrElse(false));
-        configureDependency(taskContainer, task, RESOLVE_PACKAGE_MANAGER_TASK_NAME, ResolvePackageManagerTask.class);
         configureDependency(taskContainer, task, INSTALL_PACKAGE_MANAGER_TASK_NAME, InstallPackageManagerTask.class);
     }
 
@@ -474,26 +464,9 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.setDescription("Cleans frontend resources outside the build directory by running a specific script.");
         task.getPackageJsonDirectory().set(extension.getPackageJsonDirectory().getAsFile());
         task.getNodeInstallDirectory().set(resolveNodeInstallDirectory(beanRegistryId, taskContext));
-        task
-            .getExecutableType()
-            .set(taskContainer
-                .named(RESOLVE_PACKAGE_MANAGER_TASK_NAME, ResolvePackageManagerTask.class)
-                .flatMap(ResolvePackageManagerTask::getPackageManagerNameFile)
-                .map(RegularFile::getAsFile)
-                .map(f -> {
-                    try {
-                        return PackageManagerType
-                            .fromPackageName(getBeanOrFail(beanRegistryId, FileManager.class).readString(f.toPath(),
-                                StandardCharsets.UTF_8))
-                            .map(PackageManagerType::getExecutableType)
-                            .orElseThrow();
-                    } catch (final IOException e) {
-                        throw new GradleException(e.getClass().getName() + ": " + e.getMessage(), e);
-                    }
-                }));
+        task.getExecutableType().set(getExecutableType(taskContainer, beanRegistryId));
         task.getCleanScript().set(extension.getCleanScript());
         task.setOnlyIf(t -> extension.getCleanScript().isPresent());
-        configureDependency(taskContainer, task, RESOLVE_PACKAGE_MANAGER_TASK_NAME, ResolvePackageManagerTask.class);
         configureDependency(taskContainer, task, INSTALL_FRONTEND_TASK_NAME, InstallFrontendTask.class);
     }
 
@@ -513,26 +486,9 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.setDescription("Checks frontend by running a specific script.");
         task.getPackageJsonDirectory().set(extension.getPackageJsonDirectory().getAsFile());
         task.getNodeInstallDirectory().set(resolveNodeInstallDirectory(beanRegistryId, taskContext));
-        task
-            .getExecutableType()
-            .set(taskContainer
-                .named(RESOLVE_PACKAGE_MANAGER_TASK_NAME, ResolvePackageManagerTask.class)
-                .flatMap(ResolvePackageManagerTask::getPackageManagerNameFile)
-                .map(RegularFile::getAsFile)
-                .map(f -> {
-                    try {
-                        return PackageManagerType
-                            .fromPackageName(getBeanOrFail(beanRegistryId, FileManager.class).readString(f.toPath(),
-                                StandardCharsets.UTF_8))
-                            .map(PackageManagerType::getExecutableType)
-                            .orElseThrow();
-                    } catch (final IOException e) {
-                        throw new GradleException(e.getClass().getName() + ": " + e.getMessage(), e);
-                    }
-                }));
+        task.getExecutableType().set(getExecutableType(taskContainer, beanRegistryId));
         task.getCheckScript().set(extension.getCheckScript());
         task.setOnlyIf(t -> extension.getCheckScript().isPresent());
-        configureDependency(taskContainer, task, RESOLVE_PACKAGE_MANAGER_TASK_NAME, ResolvePackageManagerTask.class);
         configureDependency(taskContainer, task, INSTALL_FRONTEND_TASK_NAME, InstallFrontendTask.class);
     }
 
@@ -552,26 +508,9 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.setDescription("Assembles frontend artifacts by running a specific script.");
         task.getPackageJsonDirectory().set(extension.getPackageJsonDirectory().getAsFile());
         task.getNodeInstallDirectory().set(resolveNodeInstallDirectory(beanRegistryId, taskContext));
-        task
-            .getExecutableType()
-            .set(taskContainer
-                .named(RESOLVE_PACKAGE_MANAGER_TASK_NAME, ResolvePackageManagerTask.class)
-                .flatMap(ResolvePackageManagerTask::getPackageManagerNameFile)
-                .map(RegularFile::getAsFile)
-                .map(f -> {
-                    try {
-                        return PackageManagerType
-                            .fromPackageName(getBeanOrFail(beanRegistryId, FileManager.class).readString(f.toPath(),
-                                StandardCharsets.UTF_8))
-                            .map(PackageManagerType::getExecutableType)
-                            .orElseThrow();
-                    } catch (final IOException e) {
-                        throw new GradleException(e.getClass().getName() + ": " + e.getMessage(), e);
-                    }
-                }));
+        task.getExecutableType().set(getExecutableType(taskContainer, beanRegistryId));
         task.getAssembleScript().set(extension.getAssembleScript());
         task.setOnlyIf(t -> extension.getAssembleScript().isPresent());
-        configureDependency(taskContainer, task, RESOLVE_PACKAGE_MANAGER_TASK_NAME, ResolvePackageManagerTask.class);
         configureDependency(taskContainer, task, INSTALL_FRONTEND_TASK_NAME, InstallFrontendTask.class);
     }
 
@@ -591,27 +530,29 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.setDescription("Publishes frontend artifacts by running a specific script.");
         task.getPackageJsonDirectory().set(extension.getPackageJsonDirectory().getAsFile());
         task.getNodeInstallDirectory().set(resolveNodeInstallDirectory(beanRegistryId, taskContext));
-        task
-            .getExecutableType()
-            .set(taskContainer
-                .named(RESOLVE_PACKAGE_MANAGER_TASK_NAME, ResolvePackageManagerTask.class)
-                .flatMap(ResolvePackageManagerTask::getPackageManagerNameFile)
-                .map(RegularFile::getAsFile)
-                .map(f -> {
-                    try {
-                        return PackageManagerType
-                            .fromPackageName(getBeanOrFail(beanRegistryId, FileManager.class).readString(f.toPath(),
-                                StandardCharsets.UTF_8))
-                            .map(PackageManagerType::getExecutableType)
-                            .orElseThrow();
-                    } catch (final IOException e) {
-                        throw new GradleException(e.getClass().getName() + ": " + e.getMessage(), e);
-                    }
-                }));
+        task.getExecutableType().set(getExecutableType(taskContainer, beanRegistryId));
         task.getPublishScript().set(extension.getPublishScript());
         task.setOnlyIf(t -> extension.getAssembleScript().isPresent() && extension.getPublishScript().isPresent());
-        configureDependency(taskContainer, task, RESOLVE_PACKAGE_MANAGER_TASK_NAME, ResolvePackageManagerTask.class);
         configureDependency(taskContainer, task, ASSEMBLE_TASK_NAME, AssembleTask.class);
+    }
+
+    private Provider<ExecutableType> getExecutableType(final TaskContainer taskContainer, final String beanRegistryId) {
+        return taskContainer
+            .named(RESOLVE_PACKAGE_MANAGER_TASK_NAME, ResolvePackageManagerTask.class)
+            .flatMap(ResolvePackageManagerTask::getPackageManagerSpecificationFile)
+            .map(RegularFile::getAsFile)
+            .map(f -> {
+                try {
+                    return getBeanOrFail(beanRegistryId, ParsePackageManagerSpecification.class)
+                        .execute(getBeanOrFail(beanRegistryId, FileManager.class).readString(f.toPath(),
+                            StandardCharsets.UTF_8))
+                        .getType()
+                        .getExecutableType();
+                } catch (final IOException | MalformedPackageManagerSpecification |
+                    UnsupportedPackageManagerException e) {
+                    throw new GradleException(e.getClass().getName() + ": " + e.getMessage(), e);
+                }
+            });
     }
 
     /**
@@ -654,16 +595,14 @@ public class FrontendGradlePlugin implements Plugin<Project> {
             throw new GradleException(e.getClass().getName() + ": " + e.getMessage(), e);
         }
 
-        return extension
-            .getNodeDistributionProvided()
-            .flatMap(nodeDistributionProvided -> resolveNodeInstallDirectoryPath.execute(
-                ResolveNodeInstallDirectoryPathCommand
-                    .builder()
-                    .userPath(extension.getNodeInstallDirectory().getAsFile().map(File::toPath))
-                    .nodeDistributionProvided(nodeDistributionProvided)
-                    .environmentPath(taskContext.getNodeInstallDirectoryFromEnvironment())
-                    .defaultPath(taskContext.getDefaultNodeInstallDirectoryPath())
-                    .build()))
+        return resolveNodeInstallDirectoryPath
+            .execute(ResolveNodeInstallDirectoryPathCommand
+                .builder()
+                .nodeInstallDirectoryFromUser(extension.getNodeInstallDirectory().getAsFile().map(File::toPath))
+                .nodeDistributionProvided(extension.getNodeDistributionProvided())
+                .nodeInstallDirectoryFromEnvironment(taskContext.getNodeInstallDirectoryFromEnvironment())
+                .defaultPath(taskContext.getDefaultNodeInstallDirectoryPath())
+                .build())
             .map(Path::toFile);
     }
 

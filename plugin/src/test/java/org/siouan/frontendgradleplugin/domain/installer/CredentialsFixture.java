@@ -1,8 +1,7 @@
-package org.siouan.frontendgradleplugin.test.fixture;
+package org.siouan.frontendgradleplugin.domain.installer;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.siouan.frontendgradleplugin.domain.installer.Credentials;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class CredentialsFixture {

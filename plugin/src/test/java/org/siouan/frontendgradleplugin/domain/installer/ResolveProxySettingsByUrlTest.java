@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.siouan.frontendgradleplugin.test.fixture.ProxySettingsFixture.someProxySettings;
+import static org.siouan.frontendgradleplugin.domain.installer.ProxySettingsFixture.someProxySettings;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -16,7 +16,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.siouan.frontendgradleplugin.domain.SystemSettingsProvider;
-import org.siouan.frontendgradleplugin.test.fixture.CredentialsFixture;
 
 @ExtendWith(MockitoExtension.class)
 class ResolveProxySettingsByUrlTest {

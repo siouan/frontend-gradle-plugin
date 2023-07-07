@@ -13,10 +13,10 @@ This example demonstrates how to configure a Gradle project to build a Javascrip
 ### Description
 
 - [`settings.gradle.kts`](settings.gradle.kts): defines version of used plugins.
-- [`build.gradle.kts`](build.gradle.kts): applies and configure this plugin.
+- [`build.gradle.kts`](build.gradle.kts): applies and configures the plugin.
 - [`package.json`](package.json): scripts connected to Gradle lifecycle tasks `clean`, `assemble`, `check`.
 
-Enter `gradlew build` on a command line and verify outputs of each task.
+Enter `gradlew nodeVersion npmVersion build` on a command line and verify outputs of each task.
 
 [dsl-reference]: <https://siouan.github.io/frontend-gradle-plugin/configuration> (DSL reference)
 [gradle-wrapper]: <https://docs.gradle.org/current/userguide/gradle_wrapper.html> (Gradle Wrapper)

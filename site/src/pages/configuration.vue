@@ -48,7 +48,7 @@
     <fgp-property-link name="httpProxyUsername" /> = 'username'
     <fgp-property-link name="httpProxyPassword" /> = 'password'
     <fgp-property-link name="verboseModeEnabled" /> = false
-    <fgp-property-link name="cacheDirectory" /> = file("${buildDir}/frontend-gradle-plugin")
+    <fgp-property-link name="cacheDirectory" /> = file("${projectDir}/.frontend-gradle-plugin")
 }</fgp-code></pre>
             </template>
             <template #kotlin>
@@ -90,7 +90,7 @@
     <fgp-property-link name="httpProxyUsername" />.set("username")
     <fgp-property-link name="httpProxyPassword" />.set("password")
     <fgp-property-link name="verboseModeEnabled" />.set(false)
-    <fgp-property-link name="cacheDirectory" />.set(project.layout.buildDirectory.dir("frontend-gradle-plugin"))
+    <fgp-property-link name="cacheDirectory" />.set(project.layout.projectDirectory.dir(".frontend-gradle-plugin"))
 }</fgp-code></pre>
             </template>
         </fgp-gradle-scripts>

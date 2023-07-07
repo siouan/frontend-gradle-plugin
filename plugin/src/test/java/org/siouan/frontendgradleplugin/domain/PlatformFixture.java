@@ -1,11 +1,10 @@
-package org.siouan.frontendgradleplugin.test.fixture;
+package org.siouan.frontendgradleplugin.domain;
 
-import static org.siouan.frontendgradleplugin.test.fixture.SystemPropertiesFixture.getSystemJvmArch;
-import static org.siouan.frontendgradleplugin.test.fixture.SystemPropertiesFixture.getSystemOsName;
+import static org.siouan.frontendgradleplugin.domain.SystemPropertiesFixture.getSystemJvmArch;
+import static org.siouan.frontendgradleplugin.domain.SystemPropertiesFixture.getSystemOsName;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.siouan.frontendgradleplugin.domain.Platform;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class PlatformFixture {

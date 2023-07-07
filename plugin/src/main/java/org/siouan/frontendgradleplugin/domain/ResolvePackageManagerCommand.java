@@ -17,7 +17,7 @@ public class ResolvePackageManagerCommand {
     /**
      * Path to the metadata file (i.e. {@code package.json} file).
      */
-    private final Path metadataFilePath;
+    private final Path packageJsonFilePath;
 
     /**
      * Path to a Node.js install directory.
@@ -32,7 +32,7 @@ public class ResolvePackageManagerCommand {
     /**
      * Path to the file providing the name of the package manager.
      */
-    private final Path packageManagerNameFilePath;
+    private final Path packageManagerSpecificationFilePath;
 
     /**
      * Path to the file providing the path to the package manager executable.

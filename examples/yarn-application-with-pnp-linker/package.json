@@ -1,0 +1,14 @@
+{
+  "private": true,
+  "packageManager": "yarn@3.6.1",
+  "scripts": {
+    "build": "echo Building frontend",
+    "check": "echo Checking frontend && yarn run lint && yarn run test",
+    "clean": "echo Cleaning frontend",
+    "lint": "echo Linting frontend",
+    "test": "echo Testing frontend"
+  },
+  "optionalDependencies": {
+    "corepack": "0.19.0"
+  }
+}

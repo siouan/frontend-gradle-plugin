@@ -24,10 +24,10 @@ public enum PackageManagerType {
 
     private final ExecutableType executableType;
 
-    public static Optional<PackageManagerType> fromPackageName(final String packageName) {
+    public static Optional<PackageManagerType> fromPackageManagerName(final String packageManagerName) {
         return Arrays
             .stream(values())
-            .filter(packageManagerType -> packageManagerType.packageManagerName.equals(packageName))
+            .filter(packageManagerType -> packageManagerType.packageManagerName.equals(packageManagerName))
             .findAny();
     }
 }

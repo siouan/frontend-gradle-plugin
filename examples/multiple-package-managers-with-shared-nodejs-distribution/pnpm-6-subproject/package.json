@@ -1,7 +1,4 @@
 {
-  "name": "pnpm-6-application-example",
-  "description": "PNPM 6 application",
   "private": true,
-  "version": "0.0.1",
   "packageManager": "pnpm@6.35.1"
 }

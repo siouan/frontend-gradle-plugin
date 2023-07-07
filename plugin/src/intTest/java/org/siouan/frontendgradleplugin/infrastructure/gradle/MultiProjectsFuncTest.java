@@ -109,12 +109,12 @@ class MultiProjectsFuncTest {
 
         assertTaskOutcomes(result1, NPM_SUB_PROJECT_NAME, PluginTaskOutcome.SKIPPED, PluginTaskOutcome.SUCCESS,
             PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS,
-            PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS,
+            PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.UP_TO_DATE, PluginTaskOutcome.SUCCESS,
             PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS);
 
         assertTaskOutcomes(result1, PNPM_SUB_PROJECT_NAME, PluginTaskOutcome.SKIPPED, PluginTaskOutcome.SUCCESS,
             PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS,
-            PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS,
+            PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.UP_TO_DATE, PluginTaskOutcome.SUCCESS,
             PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS);
 
         assertTaskOutcomes(result1, PluginTaskOutcome.IGNORED, PluginTaskOutcome.IGNORED, PluginTaskOutcome.IGNORED,
@@ -125,17 +125,17 @@ class MultiProjectsFuncTest {
         final BuildResult result2 = runGradle(projectDirectoryPath, LifecycleBasePlugin.BUILD_TASK_NAME,
             FrontendGradlePlugin.GRADLE_PUBLISH_TASK_NAME);
 
-        assertTaskOutcomes(result2, YARN_SUB_PROJECT_NAME, PluginTaskOutcome.UP_TO_DATE, PluginTaskOutcome.SUCCESS,
+        assertTaskOutcomes(result2, YARN_SUB_PROJECT_NAME, PluginTaskOutcome.UP_TO_DATE, PluginTaskOutcome.UP_TO_DATE,
             PluginTaskOutcome.UP_TO_DATE, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.IGNORED,
             PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.IGNORED,
             PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS);
 
-        assertTaskOutcomes(result2, NPM_SUB_PROJECT_NAME, PluginTaskOutcome.SKIPPED, PluginTaskOutcome.SUCCESS,
+        assertTaskOutcomes(result2, NPM_SUB_PROJECT_NAME, PluginTaskOutcome.SKIPPED, PluginTaskOutcome.UP_TO_DATE,
             PluginTaskOutcome.UP_TO_DATE, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.IGNORED,
             PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.IGNORED,
             PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS);
 
-        assertTaskOutcomes(result2, PNPM_SUB_PROJECT_NAME, PluginTaskOutcome.SKIPPED, PluginTaskOutcome.SUCCESS,
+        assertTaskOutcomes(result2, PNPM_SUB_PROJECT_NAME, PluginTaskOutcome.SKIPPED, PluginTaskOutcome.UP_TO_DATE,
             PluginTaskOutcome.UP_TO_DATE, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.IGNORED,
             PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.IGNORED,
             PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS);

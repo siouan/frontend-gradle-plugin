@@ -1,5 +1,5 @@
 <template>
-    <a :href="href" :title="title" :class="hoverClass"><slot /></a>
+    <a :href="href" :class="hoverClass"><slot /></a>
 </template>
 
 <script>
@@ -10,10 +10,6 @@ export default Vue.component('fgp-link', {
         href: {
             type: String,
             required: true
-        },
-        title: {
-            type: String,
-            default: null
         },
         hoverStyleDisabled: {
             type: Boolean,

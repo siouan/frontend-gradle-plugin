@@ -1,9 +1,9 @@
 package org.siouan.frontendgradleplugin.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.siouan.frontendgradleplugin.test.fixture.PlatformFixture.aPlatform;
-import static org.siouan.frontendgradleplugin.test.fixture.SystemPropertiesFixture.getSystemJvmArch;
-import static org.siouan.frontendgradleplugin.test.fixture.SystemPropertiesFixture.getSystemOsName;
+import static org.siouan.frontendgradleplugin.domain.PlatformFixture.aPlatform;
+import static org.siouan.frontendgradleplugin.domain.SystemPropertiesFixture.getSystemJvmArch;
+import static org.siouan.frontendgradleplugin.domain.SystemPropertiesFixture.getSystemOsName;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -22,19 +22,27 @@
                         customserver?
                     </fgp-site-link>
                 </li>
+                <li>
+                    <fgp-site-link path="#cache-directory">
+                        What's the purpose of the <fgp-code>.frontend-gradle-plugin</fgp-code> directory generated in
+                        each project?
+                    </fgp-site-link>
+                </li>
             </ul>
         </nav>
 
         <fgp-node-corepack-npm-pnpm-yarn-direct-use-faq id="node-corepack-npm-pnpm-yarn-direct-use" />
         <fgp-unsupported-platform-exception-faq id="unsupported-platform-exception" />
-        <fgp-custom-nodejs-distribution-server id="custom-nodejs-distribution-server" />
+        <fgp-custom-nodejs-distribution-server-faq id="custom-nodejs-distribution-server" />
+        <fgp-cache-directory-faq id="cache-directory" />
     </section>
 </template>
 
 <script>
 import Vue from 'vue';
+import fgpCacheDirectoryFaq from '@/components/faq/cache-directory-faq';
 import fgpCode from '@/components/code';
-import fgpCustomNodejsDistributionServer from '@/components/faq/custom-nodejs-distribution-server';
+import fgpCustomNodejsDistributionServerFaq from '@/components/faq/custom-nodejs-distribution-server-faq';
 import fgpMainTitle from '@/components/main-title';
 import fgpNodeCorepackNpmPnpmYarnDirectUseFaq from '@/components/faq/node-corepack-npm-pnpm-yarn-direct-use-faq';
 import fgpPageMeta from '@/mixin/page-meta';
@@ -43,8 +51,9 @@ import fgpUnsupportedPlatformExceptionFaq from '@/components/faq/unsupported-pla
 
 export default Vue.component('fgp-faqs', {
     components: {
+        fgpCacheDirectoryFaq,
         fgpCode,
-        fgpCustomNodejsDistributionServer,
+        fgpCustomNodejsDistributionServerFaq,
         fgpMainTitle,
         fgpNodeCorepackNpmPnpmYarnDirectUseFaq,
         fgpSiteLink,

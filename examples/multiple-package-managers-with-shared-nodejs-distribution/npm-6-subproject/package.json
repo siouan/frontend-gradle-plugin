@@ -1,7 +1,4 @@
 {
-  "name": "npm-6-application-example",
-  "description": "NPM 6 application",
   "private": true,
-  "version": "0.0.1",
   "packageManager": "npm@6.14.18"
 }

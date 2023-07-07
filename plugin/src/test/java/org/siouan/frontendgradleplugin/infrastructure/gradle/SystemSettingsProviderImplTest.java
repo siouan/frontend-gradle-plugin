@@ -3,8 +3,8 @@ package org.siouan.frontendgradleplugin.infrastructure.gradle;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.siouan.frontendgradleplugin.test.fixture.SystemPropertiesFixture.getSystemJvmArch;
-import static org.siouan.frontendgradleplugin.test.fixture.SystemPropertiesFixture.getSystemOsName;
+import static org.siouan.frontendgradleplugin.domain.SystemPropertiesFixture.getSystemJvmArch;
+import static org.siouan.frontendgradleplugin.domain.SystemPropertiesFixture.getSystemOsName;
 
 import org.gradle.api.provider.Provider;
 import org.junit.jupiter.api.BeforeEach;

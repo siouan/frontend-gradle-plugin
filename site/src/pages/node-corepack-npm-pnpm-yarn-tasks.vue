@@ -183,8 +183,8 @@ export default Vue.component('fgp-node-corepack-npm-pnpm-yarn-tasks', {
     mixins: [fgpPageMeta],
     data() {
         return {
-            htmlTitle: 'Gradle tasks to run node, npm, npx, yarn commands',
-            metaDescription: 'Gradle tasks and types provided by the plugin to run node/npm/npx/yarn: integration, dependencies, customization, recommendations',
+            htmlTitle: 'Gradle tasks to run node, corepack, npm, pnpm, yarn commands',
+            metaDescription: 'Gradle tasks and types provided by the plugin to run node/corepack/npm/pnpm/yarn: integration, dependencies, customization, recommendations',
             linkCanonicalHref: process.env.FGP_WEBSITE_URL + 'node-corepack-npm-pnpm-yarn-tasks/'
         }
     }

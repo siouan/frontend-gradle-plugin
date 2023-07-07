@@ -1,7 +1,7 @@
 ## Example: build multiple frontend applications with dedicated sub-projects using shared distributions
 
 This example demonstrates how a single [Node.js][nodejs] distribution may be installed and shared among multiple
-subprojects, each one using a different package manager.
+subprojects, and how different package managers may be used in these subprojects.
 
 ### Requirements
 
@@ -15,9 +15,11 @@ subprojects simply reuse this property and the `nodeDistributionProvided` plugin
 distribution. All package managers used in `package.json` files are different. Thanks to [Corepack][corepack], the
 [Node.js][nodejs] distribution deals with the download of each package manager and its activation in each subproject.
 
-Each subproject defines a custom task to show the version of the package manager it relies on. Finally,
-run `gradlew build` on a command line, and check the output of these tasks.
+Each subproject defines a custom task `<packageManager>Version` that prints the version of the package manager enabled
+in the subproject. Finally, run `gradlew build` on a command line, and verify these tasks prints the expected version
+based on the [`packageManager`][package-manager-field] field located in the `package.json` file.
 
 [corepack]: <https://nodejs.org/api/corepack.html> (Corepack)
 [gradle-wrapper]: <https://docs.gradle.org/current/userguide/gradle_wrapper.html> (Gradle Wrapper)
 [nodejs]: <https://nodejs.org/> (Node.js)
+[package-manager-field]: <https://nodejs.org/api/packages.html#packagemanager> (packageManager field)

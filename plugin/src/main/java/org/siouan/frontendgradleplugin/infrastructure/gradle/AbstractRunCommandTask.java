@@ -7,6 +7,7 @@ import org.gradle.api.file.ProjectLayout;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.process.ExecOperations;
 import org.siouan.frontendgradleplugin.domain.ExecutableType;
@@ -21,34 +22,34 @@ import org.siouan.frontendgradleplugin.infrastructure.bean.Beans;
  */
 public abstract class AbstractRunCommandTask extends DefaultTask {
 
-    final ExecOperations execOperations;
+    protected final ExecOperations execOperations;
 
     /**
      * Bean registry ID.
      *
      * @since 5.2.0
      */
-    final String beanRegistryId;
+    protected final String beanRegistryId;
 
     /**
      * Directory where the 'package.json' file is located.
      */
-    final Property<File> packageJsonDirectory;
+    protected final Property<File> packageJsonDirectory;
 
     /**
-     * Directory where the Node distribution is installed.
+     * Directory where the Node.js distribution is installed.
      */
-    final Property<File> nodeInstallDirectory;
+    protected final Property<File> nodeInstallDirectory;
 
     /**
      * Type of executable to run.
      */
-    final Property<ExecutableType> executableType;
+    protected final Property<ExecutableType> executableType;
 
     /**
      * The command to execute.
      */
-    final Property<String> script;
+    protected final Property<String> script;
 
     AbstractRunCommandTask(final ProjectLayout projectLayout, final ObjectFactory objectFactory,
         final ExecOperations execOperations) {
@@ -60,7 +61,7 @@ public abstract class AbstractRunCommandTask extends DefaultTask {
         this.script = objectFactory.property(String.class);
     }
 
-    @Input
+    @Internal
     public Property<ExecutableType> getExecutableType() {
         return executableType;
     }

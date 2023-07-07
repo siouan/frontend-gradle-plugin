@@ -1,7 +1,7 @@
 package org.siouan.frontendgradleplugin.domain.installer;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.siouan.frontendgradleplugin.test.fixture.CredentialsFixture.someCredentials;
+import static org.siouan.frontendgradleplugin.domain.installer.CredentialsFixture.someCredentials;
 
 import java.net.Proxy;
 

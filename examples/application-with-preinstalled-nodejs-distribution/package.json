@@ -1,9 +1,6 @@
 {
-  "name": "simple-js-application-with-preinstalled-nodejs-distribution-example",
-  "description": "Simple JS application",
   "private": true,
-  "version": "1.0.0",
-  "packageManager": "npm@9.6.6",
+  "packageManager": "npm@9.6.7",
   "scripts": {
     "build": "echo Building frontend",
     "check": "echo Checking frontend && npm run lint && npm run test",

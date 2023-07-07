@@ -18,7 +18,6 @@ plugins {
     id("com.gradle.plugin-publish")
     id("maven-publish")
     id("org.sonarqube")
-    id("com.dorongold.task-tree")
 }
 
 repositories {
