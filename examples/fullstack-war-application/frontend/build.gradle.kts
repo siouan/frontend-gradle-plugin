@@ -1,5 +1,5 @@
 plugins {
-    id("org.siouan.frontend-jdk11")
+    id("org.siouan.frontend-jdk17")
 }
 
 frontend {

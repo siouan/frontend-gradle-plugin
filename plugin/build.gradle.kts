@@ -27,8 +27,8 @@ version = fgpVersion
 description = fgpDescription
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
     withJavadocJar()
     withSourcesJar()
 }
@@ -77,6 +77,13 @@ tasks.named<Wrapper>("wrapper") {
 tasks.withType<Test> {
     useJUnitPlatform()
     outputs.upToDateWhen { false }
+    jvmArgs(
+        "--add-opens", "java.base/java.lang=ALL-UNNAMED",
+        "--add-opens", "java.base/java.util=ALL-UNNAMED"
+    )
+    distribution {
+        enabled.set(true)
+    }
 }
 
 tasks.register<Test>("integrationTest") {
@@ -140,7 +147,7 @@ sonarqube {
         property("sonar.organization", "siouan")
         property("sonar.projectKey", "siouan_frontend-gradle-plugin")
         property("sonar.projectName", "frontend-gradle-plugin")
-        property("sonar.projectVersion", "${fgpVersion}-jdk11")
+        property("sonar.projectVersion", "${fgpVersion}-jdk17")
 
         property("sonar.links.homepage", "https://github.com/siouan/frontend-gradle-plugin")
         property("sonar.links.ci", "https://travis-ci.com/siouan/frontend-gradle-plugin")
