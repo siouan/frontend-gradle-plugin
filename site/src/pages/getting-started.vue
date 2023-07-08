@@ -12,7 +12,7 @@
         </ul>
         <p>
             The plugin is built and tested on Linux, Mac OS, Windows (see the list of build environments used in
-            the <fgp-repo-link path="/blob/master/CONTRIBUTING.md">contributing notes</fgp-repo-link>).
+            the <fgp-repo-link path="/blob/main/CONTRIBUTING.md">contributing notes</fgp-repo-link>).
         </p>
 
         <fgp-sub-title>Supported distributions</fgp-sub-title>
@@ -110,7 +110,7 @@ apply(plugin = "org.siouan.frontend-jdk11")</fgp-code></pre>
             </li>
             <li>
                 <fgp-site-link :path="fgp.paths.configuration">Configure</fgp-site-link> your project, optionally
-                with the help of <fgp-repo-link path="/tree/master/examples">examples</fgp-repo-link> provided for
+                with the help of <fgp-repo-link path="/tree/main/examples">examples</fgp-repo-link> provided for
                 typical use cases.
             </li>
             <li>Run <fgp-code>gradlew build</fgp-code>.</li>

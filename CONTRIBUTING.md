@@ -10,7 +10,7 @@ After ensuring the problem was not reported already, any issue may be created us
 
 #### Long-term branches
 
-- Production branch: the `master` branch contains stable releases compiled with the most recent LTS JDK. The `HEAD`
+- Production branch: the `main` branch contains stable releases compiled with the most recent LTS JDK. The `HEAD`
 revision matches generally the latest stable release, though it may sometimes contain above the latest release some
 fixes unrelated to the packaged software (online documentation, CI workflows, etc.) It MUST receive commits only with
 pull requests merged from version branches.

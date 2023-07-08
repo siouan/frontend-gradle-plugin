@@ -33,7 +33,7 @@
                         since it depends on the package manager used, the value of the
                         <fgp-property-link name="installScript" /> property, and the files present in the project.
                         That's why incremental build for this task is not available out-of-the-box by now. However,
-                        some <fgp-repo-link path="/tree/master/examples">examples</fgp-repo-link> provide guidelines
+                        some <fgp-repo-link path="/tree/main/examples">examples</fgp-repo-link> provide guidelines
                         to customize this task and limit executions under certain circumstances. Notes hereafter provide
                         also some unofficial ideas:
                         </p>
