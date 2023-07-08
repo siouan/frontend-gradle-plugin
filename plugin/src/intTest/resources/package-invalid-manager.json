@@ -1,0 +1,8 @@
+{
+  "name": "frontend-gradle-plugin-package-manager-resolution-tests",
+  "version": "1.0.0",
+  "description": "Empty project to test package manager resolution",
+  "private": true,
+  "license": "UNLICENSED",
+  "packageManager": "invalid-manager"
+}

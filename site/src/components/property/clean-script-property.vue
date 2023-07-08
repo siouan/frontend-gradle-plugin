@@ -17,12 +17,12 @@
 </template>
 
 <script>
-import Vue from "vue";
-import fgpCode from "../code";
-import fgpInfo from "../info";
-import fgpProperty from "./property";
+import Vue from 'vue';
+import fgpCode from '@/components/code';
+import fgpInfo from '@/components/info';
+import fgpProperty from '@/components/property/property';
 
-export default Vue.component("fgp-clean-script-property", {
+export default Vue.component('fgp-clean-script-property', {
     components: { fgpCode, fgpInfo, fgpProperty }
 });
 </script>

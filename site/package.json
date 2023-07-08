@@ -2,7 +2,8 @@
   "name": "frontend-gradle-plugin-site",
   "description": "Frontend Gradle plugin's official site",
   "license": "Apache-2.0",
-  "version": "6.0.0",
+  "version": "7.0.0",
+  "packageManager": "yarn@3.6.0",
   "scripts": {
     "dev": "nuxt",
     "build": "nuxt build",
@@ -14,23 +15,26 @@
     "lint": "yarn lint:js"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^5.15.4",
-    "bootstrap": "^4.6.0",
-    "nuxt": "^2.15.8",
-    "vue-i18n": "^8.16.5"
+    "@fortawesome/fontawesome-free": "~5",
+    "bootstrap": "~4",
+    "nuxt": "~2",
+    "vue-i18n": "~8"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "^7.16.0",
-    "@nuxtjs/eslint-config": "^7.0.0",
-    "@nuxtjs/eslint-module": "^3.0.2",
-    "eslint": "^7.32.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-nuxt": "^3.0.0",
-    "eslint-plugin-prettier": "^4.0.0",
-    "fibers": "^5.0.0",
-    "ncp": "^2.0.0",
-    "prettier": "^2.4.1",
-    "sass": "^1.43.4",
-    "sass-loader": "^10.2.0"
+    "@babel/eslint-parser": "~7",
+    "@nuxtjs/eslint-config": "~7",
+    "@nuxtjs/eslint-module": "~3",
+    "babel-eslint": "~10",
+    "eslint": "~7",
+    "eslint-config-prettier": "~8",
+    "eslint-plugin-nuxt": "~3",
+    "eslint-plugin-prettier": "~4",
+    "fibers": "~5",
+    "ncp": "~2",
+    "node-gyp": "~9",
+    "prettier": "~2",
+    "rimraf": "~5",
+    "sass": "~1",
+    "sass-loader": "~10"
   }
 }

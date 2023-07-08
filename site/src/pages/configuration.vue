@@ -9,18 +9,20 @@
         </p>
 
         <fgp-gradle-scripts id="plugin-dsl">
-            <template v-slot:groovy>
+            <template #groovy>
                 <pre><fgp-code>frontend {
     <fgp-property-link name="nodeDistributionProvided" /> = false
-    <fgp-property-link name="nodeVersion" /> = '14.17.3'
+    <fgp-property-link name="nodeVersion" /> = '18.16.0'
     <fgp-property-link name="nodeDistributionUrlRoot" /> = 'https://nodejs.org/dist/'
     <fgp-property-link name="nodeDistributionUrlPathPattern" /> = 'vVERSION/node-vVERSION-ARCH.TYPE'
     <fgp-property-link name="nodeDistributionServerUsername" /> = 'username'
     <fgp-property-link name="nodeDistributionServerPassword" /> = 'password'
     <fgp-property-link name="nodeInstallDirectory" /> = file("${projectDir}/node")
 
+    <fgp-code-comment>// REMOVED PROPERTIES - PRIOR TO RELEASE 7.0.0</fgp-code-comment>
     <fgp-property-link name="yarnEnabled" /> = false
-    <fgp-property-link name="yarnVersion" /> = '3.0.0'
+    <fgp-property-link name="yarnVersion" /> = '3.5.1'
+    <fgp-code-comment>// END OF REMOVED PROPERTIES</fgp-code-comment>
     <fgp-code-comment>// REMOVED PROPERTIES - PRIOR TO RELEASE 6.0.0</fgp-code-comment>
     <fgp-property-link name="yarnDistributionProvided" /> = false
     <fgp-property-link name="yarnDistributionUrlRoot" /> = 'https://github.com/yarnpkg/yarn/releases/download/'
@@ -46,20 +48,23 @@
     <fgp-property-link name="httpProxyUsername" /> = 'username'
     <fgp-property-link name="httpProxyPassword" /> = 'password'
     <fgp-property-link name="verboseModeEnabled" /> = false
+    <fgp-property-link name="cacheDirectory" /> = file("${projectDir}/.frontend-gradle-plugin")
 }</fgp-code></pre>
             </template>
-            <template v-slot:kotlin>
+            <template #kotlin>
                 <pre><fgp-code>frontend {
     <fgp-property-link name="nodeDistributionProvided" />.set(false)
-    <fgp-property-link name="nodeVersion" />.set("14.17.3")
+    <fgp-property-link name="nodeVersion" />.set("18.16.0")
     <fgp-property-link name="nodeDistributionUrlRoot" />.set("https://nodejs.org/dist/")
     <fgp-property-link name="nodeDistributionUrlPathPattern" />.set("vVERSION/node-vVERSION-ARCH.TYPE")
     <fgp-property-link name="nodeDistributionServerUsername" />.set("username")
     <fgp-property-link name="nodeDistributionServerPassword" />.set("password")
     <fgp-property-link name="nodeInstallDirectory" />.set(project.layout.projectDirectory.dir("node"))
 
+    <fgp-code-comment>// REMOVED PROPERTIES - PRIOR TO RELEASE 7.0.0</fgp-code-comment>
     <fgp-property-link name="yarnEnabled" />.set(false)
-    <fgp-property-link name="yarnVersion" />.set("3.0.0")
+    <fgp-property-link name="yarnVersion" />.set("3.5.1")
+    <fgp-code-comment>// END OF REMOVED PROPERTIES</fgp-code-comment>
     <fgp-code-comment>// REMOVED PROPERTIES - PRIOR TO RELEASE 6.0.0</fgp-code-comment>
     <fgp-property-link name="yarnDistributionProvided" />.set(false)
     <fgp-property-link name="yarnDistributionUrlRoot" />.set("https://github.com/yarnpkg/yarn/releases/download/")
@@ -85,6 +90,7 @@
     <fgp-property-link name="httpProxyUsername" />.set("username")
     <fgp-property-link name="httpProxyPassword" />.set("password")
     <fgp-property-link name="verboseModeEnabled" />.set(false)
+    <fgp-property-link name="cacheDirectory" />.set(project.layout.projectDirectory.dir(".frontend-gradle-plugin"))
 }</fgp-code></pre>
             </template>
         </fgp-gradle-scripts>
@@ -119,18 +125,26 @@
         <section>
             <fgp-sub-sub-title id="script-settings">Script settings</fgp-sub-sub-title>
             <p>
-                Depending on the value of the <fgp-property-link name="yarnEnabled" /> property, the value for each
-                property hereafter is provided as argument either of the <fgp-code>npm</fgp-code> executable or the
-                <fgp-code>yarn</fgp-code> executable. Under Unix-like O/S, white space characters
-                <fgp-code>' '</fgp-code> in an argument value must be escaped with a backslash character
-                <fgp-code>'\'</fgp-code>. Under Windows O/S, the whole argument must be enclosed between double-quotes.
+                Starting from release 7.0.0, the value for each property hereafter is provided as arguments of the
+                package manager executable.
+            </p>
+            <p>
+                Before release 7.0.0, Depending on the value of the <fgp-property-link name="yarnEnabled" /> property,
+                the value for each property hereafter is provided as argument either of the <fgp-code>npm</fgp-code>
+                executable or the <fgp-code>yarn</fgp-code> executable.
+            </p>
+            <p>
+                Under Unix-like O/S, white space characters <fgp-code>' '</fgp-code> in an argument value must be
+                escaped with a backslash character <fgp-code>'\'</fgp-code>. Under Windows O/S, the whole argument must
+                be enclosed between double-quotes.
             </p>
             <ul>
                 <li>Example on Unix-like O/S: <fgp-code>assembleScript = 'run assemble single\ argument'</fgp-code></li>
                 <li>Example on Windows O/S: <fgp-code>assembleScript = 'run assemble "single argument"'</fgp-code></li>
             </ul>
             <p>
-                Design of the plugin's tasks running a <fgp-code>npm</fgp-code>/<fgp-code>yarn</fgp-code> executable
+                Design of the plugin's tasks running a
+                <fgp-code>npm</fgp-code>/<fgp-code>pnpm</fgp-code>/<fgp-code>yarn</fgp-code> executable
                 (e.g. <fgp-task-link name="assembleFrontend" /> task) rely on the assumption the
                 <fgp-code>package.json</fgp-code> file contains all script definitions, and is the single resource
                 defining how to build the frontend application, execute unit tests, lint source code, run a development
@@ -141,7 +155,7 @@
                 <fgp-code>run &lt;script-name&gt;</fgp-code>, and nothing more. Example:
             </p>
             <fgp-gradle-scripts id="script-property-example" class="mt-3">
-                <template v-slot:groovy>
+                <template #groovy>
                     <pre><fgp-code><fgp-code-comment>// Instead of:</fgp-code-comment>
 assembleScript = 'run webpack &#45;&#45; &#45;&#45;config webpack.config.js &#45;&#45;profile'
 
@@ -152,7 +166,7 @@ assembleScript = 'run build'
 //   "build": "webpack &#45;&#45;config webpack/webpack.prod.js &#45;&#45;profile"
 // }</fgp-code-comment></fgp-code></pre>
                 </template>
-                <template v-slot:kotlin>
+                <template #kotlin>
                     <pre><fgp-code><fgp-code-comment>// Instead of:</fgp-code-comment>
 assembleScript.set("run webpack &#45;&#45; &#45;&#45;config webpack.config.js &#45;&#45;profile")
 
@@ -185,6 +199,7 @@ assembleScript.set("run build")
             <fgp-http-proxy-username-property />
             <fgp-http-proxy-password-property />
             <fgp-verbose-mode-enabled-property />
+            <fgp-cache-directory-property />
         </section>
 
         <section>
@@ -245,50 +260,52 @@ assembleScript.set("run build")
 </template>
 
 <script>
-import Vue from "vue";
-import fgpAssembleScriptProperty from "../components/property/assemble-script-property";
-import fgpCheckScriptProperty from "../components/property/check-script-property";
-import fgpCleanScriptProperty from "../components/property/clean-script-property";
-import fgpCode from "../components/code";
-import fgpCodeComment from "../components/code-comment";
-import fgpGradleScripts from "../components/gradle-scripts";
-import fgpInstallScriptProperty from "../components/property/install-script-property";
-import fgpJavaNetworkPropertiesLink from "../components/link/java-network-properties-link";
-import fgpMainTitle from "../components/main-title";
-import fgpNodeDistributionProvidedProperty from "../components/property/node-distribution-provided-property";
-import fgpNodeVersionProperty from "../components/property/node-version-property";
-import fgpNodeDistributionUrlRootProperty from "../components/property/node-distribution-url-root-property";
-import fgpNodeDistributionUrlPathPatternProperty from "../components/property/node-distribution-url-path-pattern-property";
-import fgpNodeDistributionServerUsernameProperty from "../components/property/node-distribution-server-username-property";
-import fgpNodeDistributionServerPasswordProperty from "../components/property/node-distribution-server-password-property";
-import fgpNodeInstallDirectoryProperty from "../components/property/node-install-directory-property";
-import fgpPageMeta from "../mixin/page-meta";
-import fgpPackageJsonDirectoryProperty from "../components/property/package-json-directory-property";
-import fgpPropertyLink from "../components/link/property-link";
-import fgpHttpProxyHostProperty from "../components/property/http-proxy-host-property";
-import fgpHttpProxyPasswordProperty from "../components/property/http-proxy-password-property";
-import fgpHttpProxyPortProperty from "../components/property/http-proxy-port-property";
-import fgpHttpProxyUsernameProperty from "../components/property/http-proxy-username-property";
-import fgpHttpsProxyHostProperty from "../components/property/https-proxy-host-property";
-import fgpHttpsProxyPasswordProperty from "../components/property/https-proxy-password-property";
-import fgpHttpsProxyPortProperty from "../components/property/https-proxy-port-property";
-import fgpHttpsProxyUsernameProperty from "../components/property/https-proxy-username-property";
-import fgpPublishScriptProperty from "../components/property/publish-script-property";
-import fgpSubSubTitle from "../components/sub-sub-title";
-import fgpSubTitle from "../components/sub-title";
-import fgpVerboseModeEnabledProperty from "../components/property/verbose-mode-enabled-property";
-import fgpYarnEnabledProperty from "../components/property/yarn-enabled-property";
-import fgpYarnDistributionProvidedProperty from "../components/property/yarn-distribution-provided-property";
-import fgpYarnVersionProperty from "../components/property/yarn-version-property";
-import fgpYarnDistributionUrlRootProperty from "../components/property/yarn-distribution-url-root-property";
-import fgpYarnDistributionUrlPathPatternProperty from "../components/property/yarn-distribution-url-path-pattern-property";
-import fgpYarnDistributionServerUsernameProperty from "../components/property/yarn-distribution-server-username-property";
-import fgpYarnDistributionServerPasswordProperty from "../components/property/yarn-distribution-server-password-property";
-import fgpYarnInstallDirectoryProperty from "../components/property/yarn-install-directory-property";
+import Vue from 'vue';
+import fgpAssembleScriptProperty from '@/components/property/assemble-script-property';
+import fgpCacheDirectoryProperty from '@/components/property/cache-directory-property';
+import fgpCheckScriptProperty from '@/components/property/check-script-property';
+import fgpCleanScriptProperty from '@/components/property/clean-script-property';
+import fgpCode from '@/components/code';
+import fgpCodeComment from '@/components/code-comment';
+import fgpGradleScripts from '@/components/gradle-scripts';
+import fgpInstallScriptProperty from '@/components/property/install-script-property';
+import fgpJavaNetworkPropertiesLink from '@/components/link/java-network-properties-link';
+import fgpMainTitle from '@/components/main-title';
+import fgpNodeDistributionProvidedProperty from '@/components/property/node-distribution-provided-property';
+import fgpNodeVersionProperty from '@/components/property/node-version-property';
+import fgpNodeDistributionUrlRootProperty from '@/components/property/node-distribution-url-root-property';
+import fgpNodeDistributionUrlPathPatternProperty from '@/components/property/node-distribution-url-path-pattern-property';
+import fgpNodeDistributionServerUsernameProperty from '@/components/property/node-distribution-server-username-property';
+import fgpNodeDistributionServerPasswordProperty from '@/components/property/node-distribution-server-password-property';
+import fgpNodeInstallDirectoryProperty from '@/components/property/node-install-directory-property';
+import fgpPageMeta from '@/mixin/page-meta';
+import fgpPackageJsonDirectoryProperty from '@/components/property/package-json-directory-property';
+import fgpPropertyLink from '@/components/link/property-link';
+import fgpHttpProxyHostProperty from '@/components/property/http-proxy-host-property';
+import fgpHttpProxyPasswordProperty from '@/components/property/http-proxy-password-property';
+import fgpHttpProxyPortProperty from '@/components/property/http-proxy-port-property';
+import fgpHttpProxyUsernameProperty from '@/components/property/http-proxy-username-property';
+import fgpHttpsProxyHostProperty from '@/components/property/https-proxy-host-property';
+import fgpHttpsProxyPasswordProperty from '@/components/property/https-proxy-password-property';
+import fgpHttpsProxyPortProperty from '@/components/property/https-proxy-port-property';
+import fgpHttpsProxyUsernameProperty from '@/components/property/https-proxy-username-property';
+import fgpPublishScriptProperty from '@/components/property/publish-script-property';
+import fgpSubSubTitle from '@/components/sub-sub-title';
+import fgpSubTitle from '@/components/sub-title';
+import fgpVerboseModeEnabledProperty from '@/components/property/verbose-mode-enabled-property';
+import fgpYarnEnabledProperty from '@/components/property/yarn-enabled-property';
+import fgpYarnDistributionProvidedProperty from '@/components/property/yarn-distribution-provided-property';
+import fgpYarnVersionProperty from '@/components/property/yarn-version-property';
+import fgpYarnDistributionUrlRootProperty from '@/components/property/yarn-distribution-url-root-property';
+import fgpYarnDistributionUrlPathPatternProperty from '@/components/property/yarn-distribution-url-path-pattern-property';
+import fgpYarnDistributionServerUsernameProperty from '@/components/property/yarn-distribution-server-username-property';
+import fgpYarnDistributionServerPasswordProperty from '@/components/property/yarn-distribution-server-password-property';
+import fgpYarnInstallDirectoryProperty from '@/components/property/yarn-install-directory-property';
 
-export default Vue.component("fgp-configuration", {
+export default Vue.component('fgp-configuration', {
     components: {
         fgpAssembleScriptProperty,
+        fgpCacheDirectoryProperty,
         fgpCheckScriptProperty,
         fgpCleanScriptProperty,
         fgpCode,
@@ -330,8 +347,8 @@ export default Vue.component("fgp-configuration", {
     mixins: [fgpPageMeta],
     data() {
         return {
-            htmlTitle: "Configuring Gradle to build a Javascript application with node",
-            metaDescription: "Choose pre-installed packages or request Node.js distributions download, plug scripts from a package.json file to build/test/publish frontend artifacts with Gradle.",
+            htmlTitle: 'Configuring Gradle to build a Javascript application with node',
+            metaDescription: 'Choose pre-installed packages or request Node.js distributions download, plug scripts from a package.json file to build/test/publish frontend artifacts with Gradle.',
             linkCanonicalHref: process.env.FGP_WEBSITE_URL + 'configuration/'
         }
     }

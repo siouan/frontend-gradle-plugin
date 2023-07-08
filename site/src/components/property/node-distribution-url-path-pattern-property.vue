@@ -8,7 +8,7 @@
         <p>
             This property is used to build the exact URL to download the distribution, by appending its value to the
             value of the <fgp-property-link name="nodeDistributionUrlRoot" /> property. This property may be set with a
-            fixed trailing path part (e.g. <fgp-code>dist/node-v14.17.3-win-x64.zip</fgp-code>), or take advantage of
+            fixed trailing path part (e.g. <fgp-code>dist/node-v18.16.0-win-x64.zip</fgp-code>), or take advantage of
             the automatic distribution resolution in the plugin, using specific tokens in the pattern such as
             <fgp-code>VERSION</fgp-code>, <fgp-code>ARCH</fgp-code>, <fgp-code>TYPE</fgp-code>. Then, the exact URL used
             by default to download the distribution is
@@ -46,12 +46,12 @@
 </template>
 
 <script>
-import Vue from "vue";
-import fgpCode from "../code";
-import fgpProperty from "./property";
-import fgpPropertyLink from "../link/property-link";
+import Vue from 'vue';
+import fgpCode from '@/components/code';
+import fgpProperty from '@/components/property/property';
+import fgpPropertyLink from '@/components/link/property-link';
 
-export default Vue.component("fgp-node-distribution-url-path-pattern-property", {
+export default Vue.component('fgp-node-distribution-url-path-pattern-property', {
     components: { fgpCode, fgpProperty, fgpPropertyLink }
 });
 </script>

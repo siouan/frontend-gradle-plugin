@@ -19,12 +19,12 @@
 </template>
 
 <script>
-import Vue from "vue";
-import fgpProperty from "./property";
-import fgpPropertyLink from "../link/property-link";
-import fgpWarning from "../warning";
+import Vue from 'vue';
+import fgpProperty from '@/components/property/property';
+import fgpPropertyLink from '@/components/link/property-link';
+import fgpWarning from '@/components/warning';
 
-export default Vue.component("fgp-https-proxy-username-property", {
+export default Vue.component('fgp-https-proxy-username-property', {
     components: { fgpProperty, fgpPropertyLink, fgpWarning }
 });
 </script>

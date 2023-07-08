@@ -3,7 +3,7 @@
         name="packageJsonDirectory"
         type="java.lang.String"
         default-value="$projectDir"
-        :tasks="['installFrontend', 'cleanFrontend', 'assembleFrontend', 'checkFrontend', 'publishFrontend']"
+        :tasks="['resolvePackageManager', 'installPackageManager', 'installFrontend', 'cleanFrontend', 'assembleFrontend', 'checkFrontend', 'publishFrontend']"
     >
         <p>
             Location of the directory containing the <fgp-code>package.json</fgp-code> file. By default, this file is
@@ -18,12 +18,12 @@
 </template>
 
 <script>
-import Vue from "vue";
-import fgpCode from "../code";
-import fgpProperty from "./property";
-import fgpTaskLink from "../link/task-link";
+import Vue from 'vue';
+import fgpCode from '@/components/code';
+import fgpProperty from '@/components/property/property';
+import fgpTaskLink from '@/components/link/task-link';
 
-export default Vue.component("fgp-package-json-directory-property", {
+export default Vue.component('fgp-package-json-directory-property', {
     components: { fgpCode, fgpProperty, fgpTaskLink }
 });
 </script>

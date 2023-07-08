@@ -1,12 +1,21 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath("org.siouan", "frontend-jdk17", "7.0.0")
+    }
+}
+
 plugins {
-    id("org.siouan.frontend-jdk11") version "5.3.0"
+    id("org.siouan.frontend-jdk17")
 }
 
 frontend {
-    nodeVersion.set("14.18.1")
-    yarnEnabled.set(true)
-    yarnVersion.set("1.22.17")
+    nodeVersion.set("18.16.0")
     assembleScript.set("run generate")
     cleanScript.set("run clean")
     publishScript.set("run deploy")
+    verboseModeEnabled.set(true)
 }

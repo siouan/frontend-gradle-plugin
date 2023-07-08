@@ -13,8 +13,7 @@
                 <li v-if="tasks.length > 0">
                     Related tasks:
                     <span v-for="(taskName, index) in tasks" :key="taskName">
-                        <fgp-task-link :name="taskName" />
-                        <template v-if="index < tasks.length - 1">, </template>
+                        <fgp-task-link :name="taskName" /><template v-if="index < tasks.length - 1">, </template>
                     </span>
                 </li>
                 <li>
@@ -46,17 +45,17 @@
 </template>
 
 <script>
-import Vue from "vue";
-import fgpCode from "../code";
-import fgpLink from "../link/link";
-import fgpPropertyLinkAnchor from "../link/property-link-anchor";
-import fgpSiteLink from "../link/site-link";
-import fgpTaskLink from "../link/task-link";
+import Vue from 'vue';
+import fgpCode from '@/components/code';
+import fgpLink from '@/components/link/link';
+import fgpPropertyLinkAnchor from '@/components/link/property-link-anchor';
+import fgpSiteLink from '@/components/link/site-link';
+import fgpTaskLink from '@/components/link/task-link';
 
 const QUALIFIED_JDK_CLASS_NAME_REGEXP = /^javax?\.([a-z]\w+\.)+[A-Z]\w+$/;
-const JDK_STRING_CLASS_NAME = "java.lang.String";
+const JDK_STRING_CLASS_NAME = 'java.lang.String';
 
-export default Vue.component("fgp-property", {
+export default Vue.component('fgp-property', {
     components: { fgpCode, fgpLink, fgpPropertyLinkAnchor, fgpSiteLink, fgpTaskLink },
     props: {
         name: {
@@ -87,13 +86,13 @@ export default Vue.component("fgp-property", {
     computed: {
         defaultScriptValue() {
             if (this.defaultValue === null) {
-                return "null";
+                return 'null';
             }
             return this.type === JDK_STRING_CLASS_NAME ? `"${this.defaultValue}"` : this.defaultValue;
         },
         jdkHref() {
             if (this.type && QUALIFIED_JDK_CLASS_NAME_REGEXP.test(this.type)) {
-                return `https://docs.oracle.com/javase/8/docs/api/index.html?${this.type.replace(/\./, "/")}.html`;
+                return `https://docs.oracle.com/javase/8/docs/api/index.html?${this.type.replace(/\./, '/')}.html`;
             }
             return null;
         },

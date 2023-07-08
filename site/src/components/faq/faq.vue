@@ -12,10 +12,10 @@
 </template>
 
 <script>
-import Vue from "vue";
-import fgpSiteLink from "../link/site-link";
+import Vue from 'vue';
+import fgpSiteLink from '@/components/link/site-link';
 
-export default Vue.component("fgp-faq", {
+export default Vue.component('fgp-faq', {
     components: { fgpSiteLink }
 });
 </script>

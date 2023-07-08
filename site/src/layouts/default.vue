@@ -10,14 +10,14 @@
 </template>
 
 <script>
-import Vue from "vue";
-import fgpFooter from "../components/footer";
-import fgpHeader from "../components/header";
+import Vue from 'vue';
+import fgpFooter from '@/components/footer';
+import fgpHeader from '@/components/header';
 
-export default Vue.component("fgp-app", {
+export default Vue.component('fgp-app', {
     components: { fgpFooter, fgpHeader },
     methods: {
-        changeLang: function(lang) {
+        changeLang: lang => {
             this.$i18n.locale = lang;
         }
     }

@@ -15,9 +15,9 @@
 </template>
 
 <script>
-import Vue from "vue";
+import Vue from 'vue';
 
-export default Vue.component("fgp-feature-card", {
+export default Vue.component('fgp-feature-card', {
     props: {
         title: {
             type: String,

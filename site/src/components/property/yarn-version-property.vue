@@ -3,7 +3,7 @@
         name="yarnVersion"
         type="java.lang.String"
         :required="false"
-        example="3.0.0"
+        example="3.5.1"
         :tasks="['installYarn']"
     >
         <p>
@@ -17,12 +17,12 @@
 </template>
 
 <script>
-import Vue from "vue";
-import fgpCode from "../code";
-import fgpProperty from "./property";
-import fgpPropertyLink from "../link/property-link";
+import Vue from 'vue';
+import fgpCode from '@/components/code';
+import fgpProperty from '@/components/property/property';
+import fgpPropertyLink from '@/components/link/property-link';
 
-export default Vue.component("fgp-yarn-version-property", {
+export default Vue.component('fgp-yarn-version-property', {
     components: { fgpCode, fgpProperty, fgpPropertyLink }
 });
 </script>

@@ -1,5 +1,5 @@
-const GROOVY_TAB_KEY = "groovy";
-const KOTLIN_TAB_KEY = "kotlin";
+const GROOVY_TAB_KEY = 'groovy';
+const KOTLIN_TAB_KEY = 'kotlin';
 
 function setGradleScriptTabVisible(state, tabKey) {
     state.tabKey = tabKey;

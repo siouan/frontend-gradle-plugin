@@ -83,11 +83,11 @@
 </template>
 
 <script>
-import Vue from "vue";
-import fgpAppConfig from "../mixin/app-config";
-import fgpSiteLink from "../components/link/site-link";
+import Vue from 'vue';
+import fgpAppConfig from '@/mixin/app-config';
+import fgpSiteLink from '@/components/link/site-link';
 
-export default Vue.component("fgp-header", {
+export default Vue.component('fgp-header', {
     components: { fgpSiteLink },
     mixins: [fgpAppConfig],
     data: () => ({
@@ -98,7 +98,7 @@ export default Vue.component("fgp-header", {
             this.toggleMenuVisible(false);
         },
         selectLang(lang) {
-            this.$emit("lang-change", lang);
+            this.$emit('lang-change', lang);
         },
         toggleMenuVisible() {
             this.menuVisible = !this.menuVisible;

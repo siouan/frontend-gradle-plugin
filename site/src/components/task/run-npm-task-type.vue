@@ -1,33 +1,32 @@
 <template>
-    <fgp-task name="RunNpm" :type="true">
-        <template v-slot:title
-            >Run a custom command with <fgp-code>npm</fgp-code></template
-        >
-        <template v-slot:description>
+    <fgp-task name="RunNpm" type :inputs="inputs">
+        <template #title>Run a custom command with <fgp-code>npm</fgp-code></template>
+        <template #description>
             <p>
-                The plugin provides the task type
-                <fgp-code>org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpm</fgp-code> that allows
-                creating a custom task to run a frontend script. The <fgp-code>script</fgp-code> property must be set
-                with the corresponding command. Then, choose the appropriate task dependency: make the task either
-                depends on <fgp-task-link name="installNode" /> task or on <fgp-task-link name="installFrontend" />
-                task. The code hereafter shows the configuration required to run a linter:
+                The plugin provides task type
+                <fgp-code>org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpm</fgp-code> that allows creating
+                a custom task to run a <fgp-code>npm</fgp-code> command. The <fgp-code>script</fgp-code> property must
+                be set with the corresponding command. Then, choose whether additional dependencies located in the
+                <fgp-code>package.json</fgp-code> file should be installed: make the task either depends on
+                <fgp-task-link name="installPackageManager" /> task or on <fgp-task-link name="installFrontend" /> task.
+                The code hereafter shows the configuration required to output the version of <fgp-code>npm</fgp-code>:
             </p>
 
             <fgp-gradle-scripts id="run-npm-example" class="my-3">
-                <template v-slot:groovy>
+                <template #groovy>
                     <pre><fgp-code>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpm
-tasks.register('e2e', RunNpm) {
-    <fgp-code-comment>// dependsOn tasks.named('installNode')
+tasks.register('npmVersion', RunNpm) {
+    <fgp-code-comment>// dependsOn tasks.named('installPackageManager')
     // dependsOn tasks.named('installFrontend')</fgp-code-comment>
-    script = 'run lint'
+    script = '--version'
 }</fgp-code></pre>
                 </template>
-                <template v-slot:kotlin>
+                <template #kotlin>
                     <pre><fgp-code>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpm
-tasks.register&lt;RunNpm&gt;("e2e") {
-    <fgp-code-comment>// dependsOn(tasks.named("installNode"))
+tasks.register&lt;RunNpm&gt;("npmVersion") {
+    <fgp-code-comment>// dependsOn(tasks.named("installPackageManager"))
     // dependsOn(tasks.named("installFrontend"))</fgp-code-comment>
-    script.set("run lint")
+    script.set("--version")
 }</fgp-code></pre>
                 </template>
             </fgp-gradle-scripts>
@@ -36,18 +35,27 @@ tasks.register&lt;RunNpm&gt;("e2e") {
 </template>
 
 <script>
-import Vue from "vue";
-import fgpCode from "../code";
-import fgpGradleScripts from "../gradle-scripts";
-import fgpTask from "./task";
-import fgpTaskLink from "../link/task-link";
+import Vue from 'vue';
+import fgpCode from '@/components/code';
+import fgpGradleScripts from '@/components/gradle-scripts';
+import fgpTask from '@/components/task/task';
+import fgpTaskLink from '@/components/link/task-link';
 
-export default Vue.component("fgp-run-npm-task-type", {
+export default Vue.component('fgp-run-npm-task-type', {
     components: {
         fgpCode,
         fgpGradleScripts,
         fgpTask,
         fgpTaskLink
+    },
+    data() {
+        return {
+            inputs: [
+                { name: 'packageJsonDirectory', type: 'F', binding: 'P', property: 'packageJsonDirectory' },
+                { name: 'nodeInstallDirectory', type: 'F', binding: 'P', property: 'nodeInstallDirectory' },
+                { name: 'script', type: 'S', binding: 'P', property: 'script' }
+            ]
+        };
     }
 });
 </script>

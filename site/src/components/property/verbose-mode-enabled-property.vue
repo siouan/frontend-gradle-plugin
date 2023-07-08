@@ -10,11 +10,11 @@
 </template>
 
 <script>
-import Vue from "vue";
-import fgpCode from "../code";
-import fgpProperty from "./property";
+import Vue from 'vue';
+import fgpCode from '@/components/code';
+import fgpProperty from '@/components/property/property';
 
-export default Vue.component("fgp-verbose-mode-enabled-property", {
+export default Vue.component('fgp-verbose-mode-enabled-property', {
     components: { fgpCode, fgpProperty }
 });
 </script>

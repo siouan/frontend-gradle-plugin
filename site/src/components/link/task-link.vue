@@ -5,12 +5,12 @@
 </template>
 
 <script>
-import Vue from "vue";
-import fgpCode from "../code";
-import fgpSiteLink from "./site-link";
-import fgpAppConfig from "../../mixin/app-config";
+import Vue from 'vue';
+import fgpCode from '@/components/code';
+import fgpSiteLink from '@/components/link/site-link';
+import fgpAppConfig from '@/mixin/app-config';
 
-export default Vue.component("fgp-task-link", {
+export default Vue.component('fgp-task-link', {
     components: { fgpCode, fgpSiteLink },
     mixins: [fgpAppConfig],
     props: {

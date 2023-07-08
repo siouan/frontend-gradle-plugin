@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import Vue from "vue";
+import Vue from 'vue';
 
-export default Vue.component("fgp-sub-sub-title", {});
+export default Vue.component('fgp-sub-sub-title', {});
 </script>

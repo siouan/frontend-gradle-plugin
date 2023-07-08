@@ -5,10 +5,10 @@
 </template>
 
 <script>
-import Vue from "vue";
-import fgpLink from "./link";
+import Vue from 'vue';
+import fgpLink from '@/components/link/link';
 
-export default Vue.component("fgp-java-system-properties-link", {
+export default Vue.component('fgp-java-system-properties-link', {
     components: { fgpLink }
 });
 </script>
