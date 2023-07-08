@@ -32,8 +32,10 @@
                         <fgp-task-link name="installNode" /> task). Resolving these inputs/outputs is a bit complex,
                         since it depends on the package manager used, the value of the
                         <fgp-property-link name="installScript" /> property, and the files present in the project.
-                        That's why incremental build for this task is not supported by now. Hereafter are some
-                        guidelines to help adding custom inputs and outputs under certain circumstances:
+                        That's why incremental build for this task is not available out-of-the-box by now. However,
+                        some <fgp-repo-link path="/tree/master/examples">examples</fgp-repo-link> provide guidelines
+                        to customize this task and limit executions under certain circumstances. Notes hereafter provide
+                        also some unofficial ideas:
                         </p>
                         <ul>
                             <li><fgp-npm-link />: inputs may be one or
@@ -43,9 +45,8 @@
                                 <fgp-code>node_modules</fgp-code> directory and the
                                 <fgp-code>package-lock.json</fgp-code> file (see
                                 <fgp-npm-docs-link path="/cli/v9/commands/npm-install">npm install</fgp-npm-docs-link>).
-                                The set of input files also depends on the command run. For example, if the
-                                <fgp-property-link name="installScript" /> property is set with
-                                <fgp-code>run ci</fgp-code>, files <fgp-code>npm-shrinkwrap.json</fgp-code> and
+                                If the <fgp-property-link name="installScript" /> property is set with
+                                <fgp-code>ci</fgp-code>, files <fgp-code>npm-shrinkwrap.json</fgp-code> and
                                 <fgp-code>package-lock.json</fgp-code> may be the only possible input file, if one or
                                 the other exists, and the <fgp-code>node_modules</fgp-code> directory the only output.
                             </li>
@@ -57,8 +58,9 @@
                             <li><fgp-yarn-link />: inputs may be one or
                                 more of files <fgp-code>package.json</fgp-code>, <fgp-code>yarn.lock</fgp-code>,
                                 while outputs may be the
-                                <fgp-code>node_modules</fgp-code> directory or the <fgp-code>.pnp.cjs</fgp-code> file
-                                (<fgp-yarn-link label="Zero-installs" title="Zero-Install feature" />) and the
+                                <fgp-code>node_modules</fgp-code> directory, or the <fgp-code>.pnp.cjs</fgp-code> file
+                                and the <fgp-code>.yarn/cache</fgp-code> directory
+                                (<fgp-yarn-link label="Zero-installs" title="Zero-Install feature" />), and the
                                 <fgp-code>yarn.lock</fgp-code> file.
                             </li>
                         </ul>

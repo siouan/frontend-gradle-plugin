@@ -1,3 +1,4 @@
+/plugin/buildSrc/out/
 /plugin/out/
 /site/.frontend-gradle-plugin
 /site/.nuxt/
