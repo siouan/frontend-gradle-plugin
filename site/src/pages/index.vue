@@ -128,9 +128,9 @@ export default Vue.component('fgp-index', {
     mixins: [fgpAppConfig, fgpPageMeta],
     data() {
         return {
-            htmlTitle: 'Gradle Node/NPM/Yarn plugin to build Javascript applications',
+            htmlTitle: 'Gradle Node/NPM/PNPM/Yarn plugin to build Javascript applications',
             linkCanonicalHref: process.env.FGP_WEBSITE_URL,
-            metaDescription: 'All-in-one Gradle Node plugin, Gradle NPM plugin, Gradle Yarn plugin to build Javascript applications with Gradle: distribution management, built-in tasks, NPX support'
+            metaDescription: 'All-in-one Gradle Node plugin, Gradle NPM plugin, Gradle PNPM plugin, Gradle Yarn plugin to build Javascript applications with Gradle: distribution management, built-in tasks'
         }
     }
 });

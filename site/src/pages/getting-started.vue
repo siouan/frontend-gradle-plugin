@@ -163,7 +163,7 @@ export default Vue.component('fgp-getting-started', {
         return {
             htmlTitle: 'Getting started: building a Javascript application with the Gradle Node plugin',
             linkCanonicalHref: process.env.FGP_WEBSITE_URL + 'getting-started/',
-            metaDescription: 'Guide to get started with the plugin: requirements, supported Node.js and Yarn distributions, installation steps.'
+            metaDescription: 'Guide to get started with the plugin: requirements, supported Node.js, NPM, PNPM, Yarn distributions, installation steps.'
         }
     }
 });
