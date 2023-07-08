@@ -7,8 +7,8 @@
             The following tools must be installed to use the plugin:
         </p>
         <ul>
-            <li><fgp-gradle-link /> 7.3+ and JDK 17 build</li>
-            <li><fgp-gradle-link /> 6.1+ and JDK 11 build</li>
+            <li>JDK 17 build: <fgp-gradle-link /> 7.3+</li>
+            <li>JDK 11 build: <fgp-gradle-link /> 6.1+</li>
         </ul>
         <p>
             The plugin is built and tested on Linux, Mac OS, Windows (see the list of build environments used in

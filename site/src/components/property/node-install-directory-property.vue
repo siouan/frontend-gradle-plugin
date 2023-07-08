@@ -12,7 +12,7 @@
             <fgp-code>file("${projectDir}/node")</fgp-code>). When property
             <fgp-property-link name="nodeDistributionProvided" /> is <fgp-code>true</fgp-code>, this property may be
             used to point the directory where the distribution is already installed. If <fgp-code>null</fgp-code>, the
-            plugin will try to find the installation directory with the <fgp-code>FGP_NODEJS_HOME</fgp-code> environment
+            plugin tries to find the installation directory with the <fgp-code>FGP_NODEJS_HOME</fgp-code> environment
             variable.
         </p>
     </fgp-property>
