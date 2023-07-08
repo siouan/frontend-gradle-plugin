@@ -46,8 +46,7 @@ public class ParsePackageManagerFromPackageJsonFile {
             throw new InvalidJsonFileException(packageJsonFilePath);
         }
         final PackageManager packageManager = parsePackageManagerSpecification.execute(packageManagerSpecification);
-        logger.info("Package manager: {} v{}", packageManager.getType().getPackageManagerName(),
-            packageManager.getVersion());
+        logger.info("Package manager: {} v{}", packageManager.type().getPackageManagerName(), packageManager.version());
         return packageManager;
     }
 }

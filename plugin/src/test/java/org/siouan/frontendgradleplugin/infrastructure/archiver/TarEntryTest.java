@@ -39,7 +39,7 @@ class TarEntryTest {
 
         final TarEntry entry = new TarEntry(lowLevelEntry);
 
-        assertThat(entry.getLowLevelEntry()).isEqualTo(lowLevelEntry);
+        assertThat(entry.lowLevelEntry()).isEqualTo(lowLevelEntry);
         assertThat(entry.getName()).isEqualTo(name);
         assertThat(entry.isDirectory()).isEqualTo(isDirectory);
         assertThat(entry.isSymbolicLink()).isEqualTo(isSymbolicLink);
@@ -62,7 +62,7 @@ class TarEntryTest {
 
         final TarEntry entry = new TarEntry(lowLevelEntry);
 
-        assertThat(entry.getLowLevelEntry()).isEqualTo(lowLevelEntry);
+        assertThat(entry.lowLevelEntry()).isEqualTo(lowLevelEntry);
         assertThat(entry.getName()).isEqualTo(name);
         assertThat(entry.isDirectory()).isEqualTo(isDirectory);
         assertThat(entry.isSymbolicLink()).isEqualTo(isSymbolicLink);
@@ -85,7 +85,7 @@ class TarEntryTest {
 
         final TarEntry entry = new TarEntry(lowLevelEntry);
 
-        assertThat(entry.getLowLevelEntry()).isEqualTo(lowLevelEntry);
+        assertThat(entry.lowLevelEntry()).isEqualTo(lowLevelEntry);
         assertThat(entry.getName()).isEqualTo(name);
         assertThat(entry.isDirectory()).isEqualTo(isDirectory);
         assertThat(entry.isSymbolicLink()).isEqualTo(isSymbolicLink);

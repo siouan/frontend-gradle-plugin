@@ -3,8 +3,8 @@ package org.siouan.frontendgradleplugin.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.siouan.frontendgradleplugin.test.PathFixture.ANY_PATH;
 import static org.siouan.frontendgradleplugin.domain.PlatformFixture.aPlatform;
+import static org.siouan.frontendgradleplugin.test.PathFixture.ANY_PATH;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -48,9 +48,12 @@ class GetExecutablePathTest {
             .platform(platform)
             .build())).thenReturn(executablePath);
 
-        assertThat(usecase.execute(
-            new GetExecutablePathCommand(ExecutableType.NODE, NODE_INSTALL_DIRECTORY_PATH, platform))).isEqualTo(
-            executablePath);
+        assertThat(usecase.execute(GetExecutablePathCommand
+            .builder()
+            .executableType(ExecutableType.NODE)
+            .nodeInstallDirectoryPath(NODE_INSTALL_DIRECTORY_PATH)
+            .platform(platform)
+            .build())).isEqualTo(executablePath);
 
         verifyNoMoreInteractions(getCorepackExecutablePath, getNodeExecutablePath, getNpmExecutablePath,
             getPnpmExecutablePath, getYarnExecutablePath);
@@ -66,9 +69,12 @@ class GetExecutablePathTest {
             .platform(platform)
             .build())).thenReturn(executablePath);
 
-        assertThat(usecase.execute(
-            new GetExecutablePathCommand(ExecutableType.COREPACK, NODE_INSTALL_DIRECTORY_PATH, platform))).isEqualTo(
-            executablePath);
+        assertThat(usecase.execute(GetExecutablePathCommand
+            .builder()
+            .executableType(ExecutableType.COREPACK)
+            .nodeInstallDirectoryPath(NODE_INSTALL_DIRECTORY_PATH)
+            .platform(platform)
+            .build())).isEqualTo(executablePath);
 
         verifyNoMoreInteractions(getCorepackExecutablePath, getNodeExecutablePath, getNpmExecutablePath,
             getPnpmExecutablePath, getYarnExecutablePath);
@@ -84,9 +90,12 @@ class GetExecutablePathTest {
             .platform(platform)
             .build())).thenReturn(executablePath);
 
-        assertThat(usecase.execute(
-            new GetExecutablePathCommand(ExecutableType.NPM, NODE_INSTALL_DIRECTORY_PATH, platform))).isEqualTo(
-            executablePath);
+        assertThat(usecase.execute(GetExecutablePathCommand
+            .builder()
+            .executableType(ExecutableType.NPM)
+            .nodeInstallDirectoryPath(NODE_INSTALL_DIRECTORY_PATH)
+            .platform(platform)
+            .build())).isEqualTo(executablePath);
 
         verifyNoMoreInteractions(getCorepackExecutablePath, getNodeExecutablePath, getNpmExecutablePath,
             getPnpmExecutablePath, getYarnExecutablePath);
@@ -102,9 +111,12 @@ class GetExecutablePathTest {
             .platform(platform)
             .build())).thenReturn(executablePath);
 
-        assertThat(usecase.execute(
-            new GetExecutablePathCommand(ExecutableType.PNPM, NODE_INSTALL_DIRECTORY_PATH, platform))).isEqualTo(
-            executablePath);
+        assertThat(usecase.execute(GetExecutablePathCommand
+            .builder()
+            .executableType(ExecutableType.PNPM)
+            .nodeInstallDirectoryPath(NODE_INSTALL_DIRECTORY_PATH)
+            .platform(platform)
+            .build())).isEqualTo(executablePath);
 
         verifyNoMoreInteractions(getCorepackExecutablePath, getNodeExecutablePath, getNpmExecutablePath,
             getPnpmExecutablePath, getYarnExecutablePath);
@@ -120,9 +132,12 @@ class GetExecutablePathTest {
             .platform(platform)
             .build())).thenReturn(executablePath);
 
-        assertThat(usecase.execute(
-            new GetExecutablePathCommand(ExecutableType.YARN, NODE_INSTALL_DIRECTORY_PATH, platform))).isEqualTo(
-            executablePath);
+        assertThat(usecase.execute(GetExecutablePathCommand
+            .builder()
+            .executableType(ExecutableType.YARN)
+            .nodeInstallDirectoryPath(NODE_INSTALL_DIRECTORY_PATH)
+            .platform(platform)
+            .build())).isEqualTo(executablePath);
 
         verifyNoMoreInteractions(getCorepackExecutablePath, getNodeExecutablePath, getNpmExecutablePath,
             getPnpmExecutablePath, getYarnExecutablePath);

@@ -50,23 +50,22 @@ public class InstallNodeDistribution {
         throws IOException, InvalidNodeDistributionException, NodeDistributionShasumNotFoundException,
         UnsupportedPlatformException, InvalidDistributionUrlException, ResourceDownloadException, ArchiverException,
         UnsupportedDistributionArchiveException {
-        logger.info("Removing install directory '{}'", command.getInstallDirectoryPath());
-        fileManager.deleteFileTree(command.getInstallDirectoryPath(), true);
+        logger.info("Removing install directory '{}'", command.installDirectoryPath());
+        fileManager.deleteFileTree(command.installDirectoryPath(), true);
 
-        final GetDistributionCommand getDistributionCommand = new GetDistributionCommand(command.getPlatform(),
-            command.getVersion(), command.getDistributionUrlRoot(), command.getDistributionUrlPathPattern(),
-            command.getDistributionServerCredentials(), command.getProxySettings(),
-            command.getTemporaryDirectoryPath());
+        final GetDistributionCommand getDistributionCommand = new GetDistributionCommand(command.platform(),
+            command.version(), command.distributionUrlRoot(), command.distributionUrlPathPattern(),
+            command.distributionServerCredentials(), command.proxySettings(), command.temporaryDirectoryPath());
         final Path distributionFilePath = getDistribution.execute(getDistributionCommand);
 
         // Deploys the distribution
-        deployDistribution.execute(new DeployDistributionCommand(command.getPlatform(),
-            command.getTemporaryDirectoryPath().resolve(EXTRACT_DIRECTORY_NAME), command.getInstallDirectoryPath(),
+        deployDistribution.execute(new DeployDistributionCommand(command.platform(),
+            command.temporaryDirectoryPath().resolve(EXTRACT_DIRECTORY_NAME), command.installDirectoryPath(),
             distributionFilePath));
 
         logger.info("Removing distribution file '{}'", distributionFilePath);
         fileManager.delete(distributionFilePath);
 
-        logger.info("Distribution installed in '{}'", command.getInstallDirectoryPath());
+        logger.info("Distribution installed in '{}'", command.installDirectoryPath());
     }
 }

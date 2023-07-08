@@ -64,9 +64,12 @@ public class ResolveExecutionSettings {
             .nodeInstallDirectoryPath(command.getNodeInstallDirectoryPath())
             .platform(command.getPlatform())
             .build());
-        final Path executablePath = getExecutablePath.execute(
-            new GetExecutablePathCommand(command.getExecutableType(), command.getNodeInstallDirectoryPath(),
-                command.getPlatform()));
+        final Path executablePath = getExecutablePath.execute(GetExecutablePathCommand
+            .builder()
+            .executableType(command.getExecutableType())
+            .nodeInstallDirectoryPath(command.getNodeInstallDirectoryPath())
+            .platform(command.getPlatform())
+            .build());
 
         final Path executable;
         final List<String> args = new ArrayList<>();

@@ -3,39 +3,17 @@ package org.siouan.frontendgradleplugin.domain;
 import java.nio.file.Path;
 
 import lombok.Builder;
-import lombok.Getter;
 
 /**
  * Parameters to resolve the package manager in a project.
  *
+ * @param packageJsonFilePath Path to the metadata file (i.e. {@code package.json} file).
+ * @param nodeInstallDirectoryPath Path to a Node.js install directory.
+ * @param platform Underlying platform.
+ * @param packageManagerSpecificationFilePath Path to the file providing the name of the package manager.
+ * @param packageManagerExecutablePathFilePath Path to the file providing the path to the package manager executable.
  * @since 7.0.0
  */
 @Builder
-@Getter
-public class ResolvePackageManagerCommand {
-
-    /**
-     * Path to the metadata file (i.e. {@code package.json} file).
-     */
-    private final Path packageJsonFilePath;
-
-    /**
-     * Path to a Node.js install directory.
-     */
-    private final Path nodeInstallDirectoryPath;
-
-    /**
-     * Underlying platform.
-     */
-    private final Platform platform;
-
-    /**
-     * Path to the file providing the name of the package manager.
-     */
-    private final Path packageManagerSpecificationFilePath;
-
-    /**
-     * Path to the file providing the path to the package manager executable.
-     */
-    private final Path packageManagerExecutablePathFilePath;
-}
+public record ResolvePackageManagerCommand(Path packageJsonFilePath, Path nodeInstallDirectoryPath, Platform platform,
+    Path packageManagerSpecificationFilePath, Path packageManagerExecutablePathFilePath) {}
