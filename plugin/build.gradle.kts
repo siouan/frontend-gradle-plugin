@@ -81,9 +81,6 @@ tasks.withType<Test> {
         "--add-opens", "java.base/java.lang=ALL-UNNAMED",
         "--add-opens", "java.base/java.util=ALL-UNNAMED"
     )
-    distribution {
-        enabled.set(true)
-    }
 }
 
 tasks.register<Test>("integrationTest") {
