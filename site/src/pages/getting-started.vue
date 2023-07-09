@@ -7,8 +7,8 @@
             The following tools must be installed to use the plugin:
         </p>
         <ul>
-            <li>JDK 17 build: <fgp-gradle-link /> 7.3+</li>
-            <li>JDK 11 build: <fgp-gradle-link /> 6.1+</li>
+            <li><fgp-gradle-plugins-link path="/plugin/org.siouan.frontend-jdk17">JDK 17 build</fgp-gradle-plugins-link>: <fgp-gradle-link /> 7.3+</li>
+            <li><fgp-gradle-plugins-link path="/plugin/org.siouan.frontend-jdk11">JDK 11 build</fgp-gradle-plugins-link>: <fgp-gradle-link /> 6.1+</li>
         </ul>
         <p>
             The plugin is built and tested on Linux, Mac OS, Windows (see the list of build environments used in
@@ -131,6 +131,7 @@ import fgpCode from '@/components/code';
 import fgpCodeComment from '@/components/code-comment';
 import fgpGradleDocsLink from '@/components/link/gradle-docs-link';
 import fgpGradleLink from '@/components/link/gradle-link';
+import fgpGradlePluginsLink from '@/components/link/gradle-plugins-link';
 import fgpGradleScripts from '@/components/gradle-scripts';
 import fgpMainTitle from '@/components/main-title';
 import fgpNodejsLink from '@/components/link/nodejs-link';
@@ -148,6 +149,7 @@ export default Vue.component('fgp-getting-started', {
         fgpCodeComment,
         fgpGradleDocsLink,
         fgpGradleLink,
+        fgpGradlePluginsLink,
         fgpGradleScripts,
         fgpMainTitle,
         fgpNodejsLink,
