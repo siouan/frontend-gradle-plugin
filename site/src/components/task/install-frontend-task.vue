@@ -81,6 +81,7 @@
 import Vue from 'vue';
 import fgpCode from '@/components/code';
 import fgpGradleTaskOutcomeLink from '@/components/link/gradle-task-outcome-link';
+import fgpNpmDocsLink from '@/components/link/npm-docs-link';
 import fgpNpmLink from '@/components/link/npm-link';
 import fgpPropertyLink from '@/components/link/property-link';
 import fgpTask from '@/components/task/task';
@@ -91,6 +92,7 @@ export default Vue.component('fgp-install-frontend-task', {
     components: {
         fgpCode,
         fgpGradleTaskOutcomeLink,
+        fgpNpmDocsLink,
         fgpNpmLink,
         fgpPropertyLink,
         fgpTask,
