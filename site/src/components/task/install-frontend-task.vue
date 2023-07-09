@@ -19,7 +19,9 @@
 
             <div class="card my-3">
                 <div class="card-body">
-                    <h5 class="card-title">About incremental build and up-to-date checks</h5>
+                    <h5 class="card-title">About
+                        <fgp-gradle-docs-link path="/current/userguide/incremental_build.html">incremental build</fgp-gradle-docs-link>
+                        and up-to-date checks</h5>
                     <div class="card-text">
                         <p>
                         If you execute this task several times in a row, you may notice the
@@ -30,7 +32,7 @@
                         input(s) and output(s) Gradle could track to know the task is already
                         <fgp-gradle-task-outcome-link outcome="UP-TO-DATE" /> (e.g. unlike the
                         <fgp-task-link name="installNode" /> task). Resolving these inputs/outputs is a bit complex,
-                        since it depends on the package manager used, the value of the
+                        since it depends on the package manager, the value of the
                         <fgp-property-link name="installScript" /> property, and the files present in the project.
                         That's why incremental build for this task is not available out-of-the-box by now. However,
                         some <fgp-repo-link path="/tree/main/examples">examples</fgp-repo-link> provide guidelines
@@ -79,6 +81,7 @@
 import Vue from 'vue';
 import fgpCode from '@/components/code';
 import fgpGradleTaskOutcomeLink from '@/components/link/gradle-task-outcome-link';
+import fgpNpmDocsLink from '@/components/link/npm-docs-link';
 import fgpNpmLink from '@/components/link/npm-link';
 import fgpPropertyLink from '@/components/link/property-link';
 import fgpTask from '@/components/task/task';
@@ -89,6 +92,7 @@ export default Vue.component('fgp-install-frontend-task', {
     components: {
         fgpCode,
         fgpGradleTaskOutcomeLink,
+        fgpNpmDocsLink,
         fgpNpmLink,
         fgpPropertyLink,
         fgpTask,

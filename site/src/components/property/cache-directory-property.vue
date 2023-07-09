@@ -8,7 +8,8 @@
     >
         <p>
             Directory where the plugin writes some task outputs as files. This is the only way to get Gradle perform
-            up-to-date checks, and reuse outputs without re-executing the related task.
+            up-to-date checks, and reuse outputs without re-executing the related task (see also
+            <fgp-site-link path="/faqs#cache-directory">this FAQ</fgp-site-link>).
         </p>
     </fgp-property>
 </template>

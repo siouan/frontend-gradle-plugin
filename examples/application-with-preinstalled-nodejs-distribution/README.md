@@ -1,4 +1,4 @@
-## Example: build a simple JS application using a preinstalled [Node.js][nodejs] distribution.
+## Example: build a Javascript application using a preinstalled [Node.js][nodejs] distribution.
 
 This example demonstrates how to configure a Gradle project to build a Javascript application.
 
