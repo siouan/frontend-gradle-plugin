@@ -1,1 +1,0 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[64],{398:function(t,n,e){"use strict";e.r(n);var l=e(0).a.component("fgp-section-title",{}),o=e(13),component=Object(o.a)(l,(function(){var t=this,n=t._self._c;t._self._setupProxy;return n("h4",{staticClass:"mt-3"},[n("u",[t._t("default")],2)])}),[],!1,null,null,null);n.default=component.exports}}]);
