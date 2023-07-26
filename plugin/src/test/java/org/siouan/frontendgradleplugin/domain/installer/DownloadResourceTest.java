@@ -48,6 +48,8 @@ class DownloadResourceTest {
 
     @Mock
     private HttpResponse httpResponse;
+    @Mock
+    private HttpResponse httpResponse2;
 
     @Mock
     private FileManager fileManager;
@@ -63,6 +65,8 @@ class DownloadResourceTest {
 
     @Mock
     private InputStream inputStream;
+    @Mock
+    private InputStream inputStream2;
 
     @InjectMocks
     private DownloadResource usecase;
@@ -147,6 +151,36 @@ class DownloadResourceTest {
         verify(resourceInputChannel).close();
         verify(httpResponse).close();
         verify(fileManager).deleteIfExists(downloadResourceCommand.getTemporaryFilePath());
+        verifyNoMoreInteractions(fileManager, channelProvider, httpClientProvider, httpClient);
+    }
+
+    @Test
+    void should_retry_when_http_response_is_not_ok() throws IOException, ResourceDownloadException {
+        final DownloadResourceCommand downloadResourceCommand = buildDownloadParameters(Paths.get("/htrsgvrqehjynjt"));
+        when(httpClient.sendGetRequest(downloadResourceCommand.getResourceUrl(),
+            downloadResourceCommand.getServerCredentials(), downloadResourceCommand.getProxySettings()))
+                .thenReturn(httpResponse, httpResponse2);
+        when(httpResponse.getInputStream()).thenReturn(inputStream);
+        when(httpResponse2.getInputStream()).thenReturn(inputStream2);
+        final ReadableByteChannel resourceInputChannel = mock(ReadableByteChannel.class);
+        when(channelProvider.getReadableByteChannel(inputStream)).thenReturn(resourceInputChannel);
+        final FileChannel resourceOutputChannel = spy(FileChannel.class);
+        final ReadableByteChannel resourceInputChannel2 = mock(ReadableByteChannel.class);
+        when(channelProvider.getReadableByteChannel(inputStream2)).thenReturn(resourceInputChannel2);
+        when(channelProvider.getWritableFileChannelForNewFile(downloadResourceCommand.getTemporaryFilePath(),
+            StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)).thenReturn(
+            resourceOutputChannel);
+        when(httpResponse.getStatusCode()).thenReturn(404);
+        when(httpResponse2.getStatusCode()).thenReturn(200);
+
+        usecase.execute(downloadResourceCommand);
+
+        verify(resourceOutputChannel).transferFrom(resourceInputChannel2, 0, Long.MAX_VALUE);
+        verify(resourceInputChannel2).close();
+        verify(httpResponse).close();
+        verify(httpResponse2).close();
+        verify(fileManager).move(downloadResourceCommand.getTemporaryFilePath(),
+                downloadResourceCommand.getDestinationFilePath(), StandardCopyOption.REPLACE_EXISTING);
         verifyNoMoreInteractions(fileManager, channelProvider, httpClientProvider, httpClient);
     }
 

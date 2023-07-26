@@ -19,6 +19,7 @@ import org.siouan.frontendgradleplugin.domain.Logger;
 @RequiredArgsConstructor
 public class DownloadResource {
 
+    public static final int MAX_TRIES = 3;
     private final FileManager fileManager;
 
     private final ChannelProvider channelProvider;
@@ -49,28 +50,37 @@ public class DownloadResource {
                 proxySettings.getProxyType(), proxySettings.getProxyHost(), proxySettings.getProxyPort());
         }
 
-        try (final HttpResponse response = httpClientProvider
-            .getInstance()
-            .sendGetRequest(resourceUrl, downloadResourceCommand.getServerCredentials(), proxySettings);
-             final ReadableByteChannel resourceInputChannel = channelProvider.getReadableByteChannel(
-                 response.getInputStream());
-             final FileChannel resourceOutputChannel = channelProvider.getWritableFileChannelForNewFile(
-                 downloadResourceCommand.getTemporaryFilePath(), StandardOpenOption.WRITE, StandardOpenOption.CREATE,
-                 StandardOpenOption.TRUNCATE_EXISTING)) {
-            logger.debug("---> {}/{} {} {}", response.getProtocol(), response.getVersion(), response.getStatusCode(),
-                response.getReasonPhrase());
-            if (response.getStatusCode() != 200) {
-                throw new ResourceDownloadException(
-                    "Unexpected HTTP response: " + response.getProtocol() + '/' + response.getVersion() + ' '
-                        + response.getStatusCode() + ' ' + response.getReasonPhrase());
+        int trie = 0;
+        while (trie < MAX_TRIES) {
+            try (final HttpResponse response = httpClientProvider
+                    .getInstance()
+                    .sendGetRequest(resourceUrl, downloadResourceCommand.getServerCredentials(), proxySettings);
+                 final ReadableByteChannel resourceInputChannel = channelProvider.getReadableByteChannel(
+                         response.getInputStream());
+                 final FileChannel resourceOutputChannel = channelProvider.getWritableFileChannelForNewFile(
+                         downloadResourceCommand.getTemporaryFilePath(), StandardOpenOption.WRITE, StandardOpenOption.CREATE,
+                         StandardOpenOption.TRUNCATE_EXISTING)) {
+                logger.debug("---> {}/{} {} {}", response.getProtocol(), response.getVersion(), response.getStatusCode(),
+                        response.getReasonPhrase());
+                trie++;
+                if (response.getStatusCode() != 200) {
+                    if (trie == MAX_TRIES) {
+                        throw new ResourceDownloadException(
+                                "Unexpected HTTP response: " + response.getProtocol() + '/' + response.getVersion() + ' '
+                                        + response.getStatusCode() + ' ' + response.getReasonPhrase());
+                    }
+                    logger.debug("---> Got status {}, retry {}/{}", response.getStatusCode(), trie, MAX_TRIES);
+                    continue;
+                }
+                resourceOutputChannel.transferFrom(resourceInputChannel, 0, Long.MAX_VALUE);
+                break;
+            } catch (final IOException | ResourceDownloadException e) {
+                fileManager.deleteIfExists(downloadResourceCommand.getTemporaryFilePath());
+                throw e;
             }
-            resourceOutputChannel.transferFrom(resourceInputChannel, 0, Long.MAX_VALUE);
-        } catch (final IOException | ResourceDownloadException e) {
-            fileManager.deleteIfExists(downloadResourceCommand.getTemporaryFilePath());
-            throw e;
         }
 
         fileManager.move(downloadResourceCommand.getTemporaryFilePath(),
-            downloadResourceCommand.getDestinationFilePath(), StandardCopyOption.REPLACE_EXISTING);
+                downloadResourceCommand.getDestinationFilePath(), StandardCopyOption.REPLACE_EXISTING);
     }
 }
