@@ -1,0 +1,1 @@
+__NUXT_JSONP__("/node-corepack-npm-pnpm-yarn-tasks", {data:[{}],fetch:{},mutations:[]});
