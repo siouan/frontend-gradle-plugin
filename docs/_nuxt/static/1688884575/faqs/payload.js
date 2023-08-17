@@ -1,1 +1,0 @@
-__NUXT_JSONP__("/faqs", {data:[{}],fetch:{},mutations:[]});

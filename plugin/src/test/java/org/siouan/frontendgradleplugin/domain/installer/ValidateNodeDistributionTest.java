@@ -82,6 +82,7 @@ class ValidateNodeDistributionTest {
         when(buildTemporaryFileName.execute(SHASUMS_FILE_NAME)).thenReturn(TMP_SHASUMS_FILE_NAME);
         final Credentials distributionServerCredentials = CredentialsFixture.someCredentials();
         final ProxySettings proxySettings = ProxySettingsFixture.someProxySettings();
+        final RetrySettings retrySettings = RetrySettingsFixture.someRetrySettings();
         final Exception expectedException = new IOException();
         doThrow(expectedException)
             .when(downloadResource)
@@ -92,9 +93,10 @@ class ValidateNodeDistributionTest {
                 .destinationFilePath(downloadedShasumFilepath)
                 .serverCredentials(distributionServerCredentials)
                 .proxySettings(proxySettings)
+                .retrySettings(retrySettings)
                 .build());
         final ValidateNodeDistributionCommand validateNodeDistributionCommand = new ValidateNodeDistributionCommand(
-            temporaryDirectoryPath, DISTRIBUTION_URL, distributionServerCredentials, proxySettings,
+            temporaryDirectoryPath, DISTRIBUTION_URL, distributionServerCredentials, proxySettings, retrySettings,
             DISTRIBUTION_FILE_PATH);
 
         assertThatThrownBy(() -> usecase.execute(validateNodeDistributionCommand)).isEqualTo(expectedException);
@@ -115,8 +117,9 @@ class ValidateNodeDistributionTest {
             .build())).thenThrow(expectedException);
         final Credentials distributionServerCredentials = CredentialsFixture.someCredentials();
         final ProxySettings proxySettings = ProxySettingsFixture.someProxySettings();
+        final RetrySettings retrySettings = RetrySettingsFixture.someRetrySettings();
         final ValidateNodeDistributionCommand validateNodeDistributionCommand = new ValidateNodeDistributionCommand(
-            temporaryDirectoryPath, DISTRIBUTION_URL, distributionServerCredentials, proxySettings,
+            temporaryDirectoryPath, DISTRIBUTION_URL, distributionServerCredentials, proxySettings, retrySettings,
             DISTRIBUTION_FILE_PATH);
 
         assertThatThrownBy(() -> usecase.execute(validateNodeDistributionCommand)).isEqualTo(expectedException);
@@ -128,6 +131,7 @@ class ValidateNodeDistributionTest {
             .destinationFilePath(downloadedShasumFilepath)
             .serverCredentials(distributionServerCredentials)
             .proxySettings(proxySettings)
+            .retrySettings(retrySettings)
             .build());
         verify(fileManager).deleteIfExists(downloadedShasumFilepath);
         verifyNoMoreInteractions(fileManager, downloadResource, readNodeDistributionShasum, hashFile);
@@ -144,8 +148,9 @@ class ValidateNodeDistributionTest {
             .build())).thenReturn(Optional.empty());
         final Credentials distributionServerCredentials = CredentialsFixture.someCredentials();
         final ProxySettings proxySettings = ProxySettingsFixture.someProxySettings();
+        final RetrySettings retrySettings = RetrySettingsFixture.someRetrySettings();
         final ValidateNodeDistributionCommand validateNodeDistributionCommand = new ValidateNodeDistributionCommand(
-            temporaryDirectoryPath, DISTRIBUTION_URL, distributionServerCredentials, proxySettings,
+            temporaryDirectoryPath, DISTRIBUTION_URL, distributionServerCredentials, proxySettings, retrySettings,
             DISTRIBUTION_FILE_PATH);
 
         assertThatThrownBy(() -> usecase.execute(validateNodeDistributionCommand)).isInstanceOf(
@@ -158,6 +163,7 @@ class ValidateNodeDistributionTest {
             .destinationFilePath(downloadedShasumFilepath)
             .serverCredentials(distributionServerCredentials)
             .proxySettings(proxySettings)
+            .retrySettings(retrySettings)
             .build());
         verify(fileManager).deleteIfExists(downloadedShasumFilepath);
         verifyNoMoreInteractions(fileManager, downloadResource, readNodeDistributionShasum, hashFile);
@@ -176,8 +182,9 @@ class ValidateNodeDistributionTest {
         when(hashFile.execute(DISTRIBUTION_FILE_PATH)).thenThrow(expectedException);
         final Credentials distributionServerCredentials = CredentialsFixture.someCredentials();
         final ProxySettings proxySettings = ProxySettingsFixture.someProxySettings();
+        final RetrySettings retrySettings = RetrySettingsFixture.someRetrySettings();
         final ValidateNodeDistributionCommand validateNodeDistributionCommand = new ValidateNodeDistributionCommand(
-            temporaryDirectoryPath, DISTRIBUTION_URL, distributionServerCredentials, proxySettings,
+            temporaryDirectoryPath, DISTRIBUTION_URL, distributionServerCredentials, proxySettings, retrySettings,
             DISTRIBUTION_FILE_PATH);
 
         assertThatThrownBy(() -> usecase.execute(validateNodeDistributionCommand)).isEqualTo(expectedException);
@@ -189,6 +196,7 @@ class ValidateNodeDistributionTest {
             .destinationFilePath(downloadedShasumFilepath)
             .serverCredentials(distributionServerCredentials)
             .proxySettings(proxySettings)
+            .retrySettings(retrySettings)
             .build());
         verify(fileManager).deleteIfExists(downloadedShasumFilepath);
         verifyNoMoreInteractions(fileManager, downloadResource, readNodeDistributionShasum, hashFile);
@@ -207,8 +215,9 @@ class ValidateNodeDistributionTest {
         when(hashFile.execute(DISTRIBUTION_FILE_PATH)).thenReturn("fedcba98765543210");
         final Credentials distributionServerCredentials = CredentialsFixture.someCredentials();
         final ProxySettings proxySettings = ProxySettingsFixture.someProxySettings();
+        final RetrySettings retrySettings = RetrySettingsFixture.someRetrySettings();
         final ValidateNodeDistributionCommand validateNodeDistributionCommand = new ValidateNodeDistributionCommand(
-            temporaryDirectoryPath, DISTRIBUTION_URL, distributionServerCredentials, proxySettings,
+            temporaryDirectoryPath, DISTRIBUTION_URL, distributionServerCredentials, proxySettings, retrySettings,
             DISTRIBUTION_FILE_PATH);
 
         assertThatThrownBy(() -> usecase.execute(validateNodeDistributionCommand)).isInstanceOf(
@@ -221,6 +230,7 @@ class ValidateNodeDistributionTest {
             .destinationFilePath(downloadedShasumFilepath)
             .serverCredentials(distributionServerCredentials)
             .proxySettings(proxySettings)
+            .retrySettings(retrySettings)
             .build());
         verify(fileManager).deleteIfExists(downloadedShasumFilepath);
         verifyNoMoreInteractions(fileManager, downloadResource, readNodeDistributionShasum, hashFile);
@@ -241,8 +251,9 @@ class ValidateNodeDistributionTest {
         when(hashFile.execute(DISTRIBUTION_FILE_PATH)).thenReturn(expectedHash);
         final Credentials distributionServerCredentials = CredentialsFixture.someCredentials();
         final ProxySettings proxySettings = ProxySettingsFixture.someProxySettings();
+        final RetrySettings retrySettings = RetrySettingsFixture.someRetrySettings();
         final ValidateNodeDistributionCommand validateNodeDistributionCommand = new ValidateNodeDistributionCommand(
-            temporaryDirectoryPath, DISTRIBUTION_URL, distributionServerCredentials, proxySettings,
+            temporaryDirectoryPath, DISTRIBUTION_URL, distributionServerCredentials, proxySettings, retrySettings,
             DISTRIBUTION_FILE_PATH);
 
         usecase.execute(validateNodeDistributionCommand);
@@ -254,6 +265,7 @@ class ValidateNodeDistributionTest {
             .destinationFilePath(downloadedShasumFilepath)
             .serverCredentials(distributionServerCredentials)
             .proxySettings(proxySettings)
+            .retrySettings(retrySettings)
             .build());
         verify(fileManager).deleteIfExists(downloadedShasumFilepath);
         verifyNoMoreInteractions(fileManager, downloadResource, readNodeDistributionShasum, hashFile);

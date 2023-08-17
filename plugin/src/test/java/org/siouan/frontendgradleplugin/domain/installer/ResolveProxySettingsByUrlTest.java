@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import static org.siouan.frontendgradleplugin.domain.installer.ProxySettingsFixture.someProxySettings;
 
 import java.net.MalformedURLException;
+import java.net.Proxy;
 import java.net.URL;
 import java.util.Set;
 
@@ -67,19 +68,21 @@ class ResolveProxySettingsByUrlTest {
     }
 
     @Test
-    void should_return_null_when_url_uses_file_protocol() throws MalformedURLException {
-        assertThat(usecase.execute(ResolveProxySettingsByUrlCommand
-            .builder()
-            .httpProxyPort(80)
-            .httpsProxyPort(443)
-            .resourceUrl(new URL(FILE_RESOURCE_URL))
-            .build())).isNull();
+    void should_return_direct_connection_when_url_uses_file_protocol() throws MalformedURLException {
+        assertThat(usecase
+            .execute(ResolveProxySettingsByUrlCommand
+                .builder()
+                .httpProxyPort(80)
+                .httpsProxyPort(443)
+                .resourceUrl(new URL(FILE_RESOURCE_URL))
+                .build())
+            .getProxyType()).isEqualTo(Proxy.Type.DIRECT);
 
         verifyNoMoreInteractions(systemSettingsProvider, isNonProxyHost, selectProxySettings);
     }
 
     @Test
-    void should_return_null_when_url_uses_non_proxy_host() throws MalformedURLException {
+    void should_return_direct_connection_when_url_uses_non_proxy_host() throws MalformedURLException {
         final Set<String> nonProxyHosts = Set.of(PLUGIN_PROXY_HOST);
         when(systemSettingsProvider.getNonProxyHosts()).thenReturn(nonProxyHosts);
         final URL resourceUrl = new URL(HTTP_RESOURCE_URL);
@@ -89,12 +92,14 @@ class ResolveProxySettingsByUrlTest {
             .hostNameOrIpAddress(resourceUrl.getHost())
             .build())).thenReturn(true);
 
-        assertThat(usecase.execute(ResolveProxySettingsByUrlCommand
-            .builder()
-            .httpProxyPort(80)
-            .httpsProxyPort(443)
-            .resourceUrl(resourceUrl)
-            .build())).isNull();
+        assertThat(usecase
+            .execute(ResolveProxySettingsByUrlCommand
+                .builder()
+                .httpProxyPort(80)
+                .httpsProxyPort(443)
+                .resourceUrl(resourceUrl)
+                .build())
+            .getProxyType()).isEqualTo(Proxy.Type.DIRECT);
 
         verifyNoMoreInteractions(systemSettingsProvider, isNonProxyHost, selectProxySettings);
     }

@@ -33,43 +33,39 @@ public class ValidateNodeDistribution {
      * each supported platform, resolves the expected shasum matching the distribution file name, and verifies the
      * actual shasum of the distribution file matches this expected shasum.
      *
-     * @param validateNodeDistributionCommand Command providing parameters to validate the distribution.
+     * @param command Command providing parameters to validate the distribution.
      * @throws ResourceDownloadException If downloading the file providing shasums fails.
      * @throws InvalidNodeDistributionException If the distribution is invalid.
      * @throws NodeDistributionShasumNotFoundException If validation cannot be done for other reason.
      * @throws IOException If an I/O error occurs.
      */
-    public void execute(final ValidateNodeDistributionCommand validateNodeDistributionCommand)
+    public void execute(final ValidateNodeDistributionCommand command)
         throws InvalidNodeDistributionException, IOException, NodeDistributionShasumNotFoundException,
         ResourceDownloadException {
-        final Path shasumsFilePath = validateNodeDistributionCommand
-            .getTemporaryDirectoryPath()
-            .resolve(SHASUMS_FILE_NAME);
+        final Path shasumsFilePath = command.getTemporaryDirectoryPath().resolve(SHASUMS_FILE_NAME);
         // Resolve the URL to download the shasum file
         final String expectedShasum;
         try {
-            final URL shasumsFileUrl = new URL(validateNodeDistributionCommand.getDistributionUrl(), SHASUMS_FILE_NAME);
+            final URL shasumsFileUrl = new URL(command.getDistributionUrl(), SHASUMS_FILE_NAME);
 
             // Download the shasum file
             logger.debug("Downloading shasums at '{}'", shasumsFileUrl);
-            final Path temporaryFilePath = validateNodeDistributionCommand
+            final Path temporaryFilePath = command
                 .getTemporaryDirectoryPath()
                 .resolve(buildTemporaryFileName.execute(shasumsFilePath.getFileName().toString()));
             downloadResource.execute(DownloadResourceCommand
                 .builder()
                 .resourceUrl(shasumsFileUrl)
-                .serverCredentials(validateNodeDistributionCommand.getDistributionServerCredentials())
-                .proxySettings(validateNodeDistributionCommand.getProxySettings())
+                .serverCredentials(command.getDistributionServerCredentials())
+                .proxySettings(command.getProxySettings())
+                .retrySettings(command.getRetrySettings())
                 .temporaryFilePath(temporaryFilePath)
                 .destinationFilePath(shasumsFilePath)
                 .build());
 
             // Verify the distribution integrity
             logger.info("Verifying distribution integrity");
-            final String distributionFileName = validateNodeDistributionCommand
-                .getDistributionFilePath()
-                .getFileName()
-                .toString();
+            final String distributionFileName = command.getDistributionFilePath().getFileName().toString();
             expectedShasum = readNodeDistributionShasum
                 .execute(ReadNodeDistributionShasumCommand
                     .builder()
@@ -81,7 +77,7 @@ public class ValidateNodeDistribution {
             fileManager.deleteIfExists(shasumsFilePath);
         }
 
-        if (!hashFile.execute(validateNodeDistributionCommand.getDistributionFilePath()).equals(expectedShasum)) {
+        if (!hashFile.execute(command.getDistributionFilePath()).equals(expectedShasum)) {
             throw new InvalidNodeDistributionException();
         }
     }
