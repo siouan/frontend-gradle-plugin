@@ -8,4 +8,8 @@ public abstract class FrontendException extends Exception {
     protected FrontendException(final String message) {
         super(message);
     }
+
+    protected FrontendException(final Throwable throwable) {
+        super(throwable);
+    }
 }

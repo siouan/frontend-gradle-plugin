@@ -25,8 +25,9 @@ class SelectProxySettingsTest {
     private SelectProxySettings usecase;
 
     @Test
-    void should_return_null_if_system_proxy_host_and_plugin_proxy_host_are_null() {
-        assertThat(usecase.execute(SelectProxySettingsCommand.builder().build())).isNull();
+    void should_return_direct_connection_if_system_proxy_host_and_plugin_proxy_host_are_null() {
+        assertThat(usecase.execute(SelectProxySettingsCommand.builder().build()).getProxyType()).isEqualTo(
+            Proxy.Type.DIRECT);
     }
 
     @Test

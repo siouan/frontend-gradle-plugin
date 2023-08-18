@@ -42,6 +42,14 @@ public class ValidateNodeDistributionCommand {
     private final ProxySettings proxySettings;
 
     /**
+     * Settings to retry a file download.
+     *
+     * @since 7.1.0
+     */
+    @EqualsAndHashCode.Include
+    private final RetrySettings retrySettings;
+
+    /**
      * Path to the distribution archive.
      */
     @EqualsAndHashCode.Include

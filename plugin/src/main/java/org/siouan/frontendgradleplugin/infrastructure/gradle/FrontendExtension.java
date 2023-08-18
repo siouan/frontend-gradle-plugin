@@ -5,6 +5,7 @@ import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
+import org.gradle.api.provider.SetProperty;
 
 /**
  * Extension providing configuration properties for frontend tasks.
@@ -144,6 +145,41 @@ public class FrontendExtension {
     private final Property<String> httpsProxyPassword;
 
     /**
+     * Maximum number of attempts to download a file.
+     *
+     * @since 7.1.0
+     */
+    private final Property<Integer> maxDownloadAttempts;
+
+    /**
+     * HTTP statuses that should trigger another download attempt.
+     *
+     * @since 7.1.0
+     */
+    private final SetProperty<Integer> retryHttpStatuses;
+
+    /**
+     * Interval between the first download attempt and an eventual retry.
+     *
+     * @since 7.1.0
+     */
+    private final Property<Integer> retryInitialIntervalMs;
+
+    /**
+     * Multiplier used to compute the intervals between retry attempts.
+     *
+     * @since 7.1.0
+     */
+    private final Property<Double> retryIntervalMultiplier;
+
+    /**
+     * Maximum interval between retry attempts.
+     *
+     * @since 7.1.0
+     */
+    private final Property<Integer> retryMaxIntervalMs;
+
+    /**
      * Directory where the plugin caches some common files for multiple tasks.
      *
      * @since 7.0.0
@@ -205,6 +241,11 @@ public class FrontendExtension {
         httpsProxyPort = objectFactory.property(Integer.class);
         httpsProxyUsername = objectFactory.property(String.class);
         httpsProxyPassword = objectFactory.property(String.class);
+        maxDownloadAttempts = objectFactory.property(Integer.class);
+        retryHttpStatuses = objectFactory.setProperty(Integer.class);
+        retryInitialIntervalMs = objectFactory.property(Integer.class);
+        retryIntervalMultiplier = objectFactory.property(Double.class);
+        retryMaxIntervalMs = objectFactory.property(Integer.class);
         cacheDirectory = objectFactory.directoryProperty();
         internalPackageJsonFile = objectFactory.fileProperty();
         internalPackageManagerSpecificationFile = objectFactory.fileProperty();

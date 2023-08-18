@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Set;
 
 import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
@@ -98,6 +99,11 @@ public class FrontendGradlePlugin implements Plugin<Project> {
     public static final String DEFAULT_INSTALL_SCRIPT = "install";
 
     /**
+     * Maximum number of attempts to download a file.
+     */
+    public static final int DEFAULT_MAX_DOWNLOAD_ATTEMPTS = 1;
+
+    /**
      * Name of the task that installs a Node.js distribution.
      */
     public static final String DEFAULT_NODE_INSTALL_DIRECTORY_NAME = "node";
@@ -111,6 +117,17 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      * URL pattern used to download the Node.js distribution.
      */
     public static final String DEFAULT_NODE_DISTRIBUTION_URL_ROOT = "https://nodejs.org/dist/";
+
+    /**
+     * HTTP statuses that should trigger another download attempt.
+     */
+    public static final Set<Integer> DEFAULT_RETRY_HTTP_STATUSES = Set.of(408, 429, 500, 502, 503, 504);
+
+    public static final int DEFAULT_RETRY_INITIAL_INTERVAL_MS = 1000;
+
+    public static final double DEFAULT_RETRY_INTERVAL_MULTIPLIER = 2;
+
+    public static final int DEFAULT_RETRY_MAX_INTERVAL_MS = 30000;
 
     public static final String GRADLE_ASSEMBLE_TASK_NAME = LifecycleBasePlugin.ASSEMBLE_TASK_NAME;
 
@@ -188,6 +205,11 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         frontendExtension.getPackageJsonDirectory().convention(project.getLayout().getProjectDirectory());
         frontendExtension.getHttpProxyPort().convention(DEFAULT_HTTP_PROXY_PORT);
         frontendExtension.getHttpsProxyPort().convention(DEFAULT_HTTPS_PROXY_PORT);
+        frontendExtension.getMaxDownloadAttempts().convention(DEFAULT_MAX_DOWNLOAD_ATTEMPTS);
+        frontendExtension.getRetryHttpStatuses().convention(DEFAULT_RETRY_HTTP_STATUSES);
+        frontendExtension.getRetryInitialIntervalMs().convention(DEFAULT_RETRY_INITIAL_INTERVAL_MS);
+        frontendExtension.getRetryIntervalMultiplier().convention(DEFAULT_RETRY_INTERVAL_MULTIPLIER);
+        frontendExtension.getRetryMaxIntervalMs().convention(DEFAULT_RETRY_MAX_INTERVAL_MS);
         frontendExtension
             .getCacheDirectory()
             .convention(project.getLayout().getProjectDirectory().dir(DEFAULT_CACHE_DIRECTORY_NAME));
@@ -341,6 +363,11 @@ public class FrontendGradlePlugin implements Plugin<Project> {
                         .platform(getBeanOrFail(beanRegistryId, PlatformProvider.class).getPlatform())
                         .build())
                     .toFile()));
+        task.getMaxDownloadAttempts().set(extension.getMaxDownloadAttempts());
+        task.getRetryHttpStatuses().set(extension.getRetryHttpStatuses());
+        task.getRetryInitialIntervalMs().set(extension.getRetryInitialIntervalMs());
+        task.getRetryIntervalMultiplier().set(extension.getRetryIntervalMultiplier());
+        task.getRetryMaxIntervalMs().set(extension.getRetryMaxIntervalMs());
         task.setOnlyIf(t -> !extension.getNodeDistributionProvided().get());
     }
 

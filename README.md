@@ -67,6 +67,7 @@ With their feedback, plugin improvement is possible. Special thanks to:
 @[rolaca11](https://github.com/rolaca11),
 @[stephanebastian](https://github.com/stephanebastian),
 @[TapaiBalazs](https://github.com/TapaiBalazs),
+@[thebignet](https://github.com/thebignet)
 @[tngwoerleij](https://github.com/tngwoerleij),
 @[trohr](https://github.com/trohr),
 @[xehonk](https://github.com/xehonk)

@@ -10,6 +10,7 @@ import org.gradle.api.file.ProjectLayout;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
+import org.gradle.api.provider.SetProperty;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.OutputFile;
@@ -26,6 +27,7 @@ import org.siouan.frontendgradleplugin.domain.installer.ProxySettings;
 import org.siouan.frontendgradleplugin.domain.installer.ResolveProxySettingsByUrl;
 import org.siouan.frontendgradleplugin.domain.installer.ResolveProxySettingsByUrlCommand;
 import org.siouan.frontendgradleplugin.domain.installer.ResourceDownloadException;
+import org.siouan.frontendgradleplugin.domain.installer.RetrySettings;
 import org.siouan.frontendgradleplugin.domain.installer.UnsupportedDistributionArchiveException;
 import org.siouan.frontendgradleplugin.domain.installer.archiver.ArchiverException;
 import org.siouan.frontendgradleplugin.infrastructure.bean.BeanRegistryException;
@@ -93,56 +95,91 @@ public class InstallNodeTask extends DefaultTask {
      *
      * @since 5.0.0
      */
-    protected final Property<String> httpProxyHost;
+    private final Property<String> httpProxyHost;
 
     /**
      * Proxy port used to download resources with HTTP protocol.
      *
      * @since 5.0.0
      */
-    protected final Property<Integer> httpProxyPort;
+    private final Property<Integer> httpProxyPort;
 
     /**
      * Username to authenticate on the proxy server for HTTP requests.
      *
      * @since 5.0.0
      */
-    protected final Property<String> httpProxyUsername;
+    private final Property<String> httpProxyUsername;
 
     /**
      * Password to authenticate on the proxy server for HTTP requests.
      *
      * @since 5.0.0
      */
-    protected final Property<String> httpProxyPassword;
+    private final Property<String> httpProxyPassword;
 
     /**
      * Proxy host used to download resources with HTTPS protocol.
      *
      * @since 2.1.0
      */
-    protected final Property<String> httpsProxyHost;
+    private final Property<String> httpsProxyHost;
 
     /**
      * Proxy port used to download resources with HTTPS protocol.
      *
      * @since 2.1.0
      */
-    protected final Property<Integer> httpsProxyPort;
+    private final Property<Integer> httpsProxyPort;
 
     /**
      * Username to authenticate on the proxy server for HTTPS requests.
      *
      * @since 3.0.0
      */
-    protected final Property<String> httpsProxyUsername;
+    private final Property<String> httpsProxyUsername;
 
     /**
      * Password to authenticate on the proxy server for HTTPS requests.
      *
      * @since 3.0.0
      */
-    protected final Property<String> httpsProxyPassword;
+    private final Property<String> httpsProxyPassword;
+
+    /**
+     * Maximum number of attempts to download a file.
+     *
+     * @since 7.1.0
+     */
+    private final Property<Integer> maxDownloadAttempts;
+
+    /**
+     * HTTP statuses that should trigger another download attempt.
+     *
+     * @since 7.1.0
+     */
+    private final SetProperty<Integer> retryHttpStatuses;
+
+    /**
+     * Interval between the first download attempt and an eventual retry.
+     *
+     * @since 7.1.0
+     */
+    private final Property<Integer> retryInitialIntervalMs;
+
+    /**
+     * Multiplier used to compute the intervals between retry attempts.
+     *
+     * @since 7.1.0
+     */
+    private final Property<Double> retryIntervalMultiplier;
+
+    /**
+     * Maximum interval between retry attempts.
+     *
+     * @since 7.1.0
+     */
+    private final Property<Integer> retryMaxIntervalMs;
 
     @Inject
     public InstallNodeTask(final ProjectLayout projectLayout, final ObjectFactory objectFactory) {
@@ -162,6 +199,11 @@ public class InstallNodeTask extends DefaultTask {
         this.httpsProxyPort = objectFactory.property(Integer.class);
         this.httpsProxyUsername = objectFactory.property(String.class);
         this.httpsProxyPassword = objectFactory.property(String.class);
+        this.maxDownloadAttempts = objectFactory.property(Integer.class);
+        this.retryHttpStatuses = objectFactory.setProperty(Integer.class);
+        this.retryInitialIntervalMs = objectFactory.property(Integer.class);
+        this.retryIntervalMultiplier = objectFactory.property(Double.class);
+        this.retryMaxIntervalMs = objectFactory.property(Integer.class);
     }
 
     @Input
@@ -234,6 +276,31 @@ public class InstallNodeTask extends DefaultTask {
         return httpsProxyPassword;
     }
 
+    @Internal
+    public Property<Integer> getMaxDownloadAttempts() {
+        return maxDownloadAttempts;
+    }
+
+    @Internal
+    public SetProperty<Integer> getRetryHttpStatuses() {
+        return retryHttpStatuses;
+    }
+
+    @Internal
+    public Property<Integer> getRetryInitialIntervalMs() {
+        return retryInitialIntervalMs;
+    }
+
+    @Internal
+    public Property<Double> getRetryIntervalMultiplier() {
+        return retryIntervalMultiplier;
+    }
+
+    @Internal
+    public Property<Integer> getRetryMaxIntervalMs() {
+        return retryMaxIntervalMs;
+    }
+
     @OutputFile
     public RegularFileProperty getNodeExecutableFile() {
         return nodeExecutableFile;
@@ -292,6 +359,14 @@ public class InstallNodeTask extends DefaultTask {
                 .distributionUrlPathPattern(nodeDistributionUrlPathPattern.get())
                 .distributionServerCredentials(distributionServerCredentials)
                 .proxySettings(proxySettings)
+                .retrySettings(RetrySettings
+                    .builder()
+                    .maxDownloadAttempts(maxDownloadAttempts.get())
+                    .retryHttpStatuses(retryHttpStatuses.get())
+                    .retryInitialIntervalMs(retryInitialIntervalMs.get())
+                    .retryIntervalMultiplier(retryIntervalMultiplier.get())
+                    .retryMaxIntervalMs(retryMaxIntervalMs.get())
+                    .build())
                 .temporaryDirectoryPath(getTemporaryDir().toPath())
                 .installDirectoryPath(nodeInstallDirectory.map(File::toPath).get())
                 .build());

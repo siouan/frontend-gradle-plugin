@@ -51,6 +51,7 @@ configurations["intTestRuntimeOnly"]
 
 dependencies {
     implementation(gradleApi())
+    implementation("io.github.resilience4j:resilience4j-retry:2.1.0")
     implementation("org.apache.httpcomponents.client5:httpclient5:5.2.1")
     implementation("org.apache.commons:commons-compress:1.23.0")
     implementation("org.json:json:20230227")
