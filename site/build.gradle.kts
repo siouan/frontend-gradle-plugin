@@ -4,12 +4,12 @@ buildscript {
     }
 
     dependencies {
-        classpath("org.siouan", "frontend-jdk17", "7.1.0")
+        classpath("org.siouan", "frontend-jdk11", "7.1.0")
     }
 }
 
 plugins {
-    id("org.siouan.frontend-jdk17")
+    id("org.siouan.frontend-jdk11")
 }
 
 frontend {

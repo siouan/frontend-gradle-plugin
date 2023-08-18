@@ -1,6 +1,7 @@
 package org.siouan.frontendgradleplugin.infrastructure.archiver;
 
 import lombok.Builder;
+import lombok.Getter;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.siouan.frontendgradleplugin.domain.installer.archiver.ArchiveEntry;
 
@@ -9,18 +10,23 @@ import org.siouan.frontendgradleplugin.domain.installer.archiver.ArchiveEntry;
  * implementation of ZIP entries. It allows to hide implementation details, and conforms to a uniform interface for this
  * plugin's archivers.
  *
- * @param lowLevelEntry Low-level entry.
  * @since 1.1.3
  */
 @Builder
-public record ZipEntry(ZipArchiveEntry lowLevelEntry) implements ArchiveEntry {
+@Getter
+public class ZipEntry implements ArchiveEntry {
+
+    /**
+     * Low-level entry.
+     */
+    private final ZipArchiveEntry lowLevelEntry;
 
     /**
      * Gets the low-level entry this entry is mapped to.
      *
      * @return Entry.
      */
-    public ZipArchiveEntry getLowLevelEntry() {
+    ZipArchiveEntry getLowLevelEntry() {
         return lowLevelEntry;
     }
 

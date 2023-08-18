@@ -3,15 +3,30 @@ package org.siouan.frontendgradleplugin.infrastructure.gradle;
 import java.nio.file.Path;
 
 import lombok.Builder;
+import lombok.Getter;
 import org.gradle.api.provider.Provider;
 
-/**
- * @param nodeInstallDirectoryFromUser A user-defined provider of the path to the install directory
- * @param nodeDistributionProvided Whether the Node.js distribution is already installed in the system and shall not be
- * downloaded.
- * @param nodeInstallDirectoryFromEnvironment A provider of the path to the install directory given by the environment.
- * @param defaultPath A default path to an install directory.
- */
+@Getter
 @Builder
-public record ResolveNodeInstallDirectoryPathCommand(Provider<Path> nodeInstallDirectoryFromUser,
-    Provider<Boolean> nodeDistributionProvided, Provider<Path> nodeInstallDirectoryFromEnvironment, Path defaultPath) {}
+public class ResolveNodeInstallDirectoryPathCommand {
+
+    /**
+     * A user-defined provider of the path to the install directory.
+     */
+    private final Provider<Path> nodeInstallDirectoryFromUser;
+
+    /**
+     * Whether the Node.js distribution is already installed in the system and shall not be downloaded.
+     */
+    private final Provider<Boolean> nodeDistributionProvided;
+
+    /**
+     * A provider of the path to the install directory given by the environment.
+     */
+    private final Provider<Path> nodeInstallDirectoryFromEnvironment;
+
+    /**
+     * A default path to an install directory.
+     */
+    private final Path defaultPath;
+}

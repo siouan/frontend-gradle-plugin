@@ -1,6 +1,7 @@
 package org.siouan.frontendgradleplugin.domain;
 
 import lombok.Builder;
+import lombok.Getter;
 
 /**
  * Model class providing the content of the
@@ -10,4 +11,10 @@ import lombok.Builder;
  * @since 7.0.0
  */
 @Builder
-public record PackageManager(PackageManagerType type, String version) {}
+@Getter
+public class PackageManager {
+
+    private final PackageManagerType type;
+
+    private final String version;
+}

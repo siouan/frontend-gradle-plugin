@@ -63,11 +63,11 @@ class GradleScriptRunnerAdapterTest {
             .build();
         when(resolveExecutionSettings.execute(ResolveExecutionSettingsCommand
             .builder()
-            .packageJsonDirectoryPath(scriptProperties.packageJsonDirectoryPath())
-            .executableType(scriptProperties.executableType())
-            .nodeInstallDirectoryPath(scriptProperties.nodeInstallDirectoryPath())
-            .platform(scriptProperties.platform())
-            .script(scriptProperties.script())
+            .packageJsonDirectoryPath(scriptProperties.getPackageJsonDirectoryPath())
+            .executableType(scriptProperties.getExecutableType())
+            .nodeInstallDirectoryPath(scriptProperties.getNodeInstallDirectoryPath())
+            .platform(scriptProperties.getPlatform())
+            .script(scriptProperties.getScript())
             .build())).thenReturn(executionSettings);
         final ExecResult execResult = mock(ExecResult.class);
         when(execOperations.exec(any(ExecSpecAction.class))).thenReturn(execResult);

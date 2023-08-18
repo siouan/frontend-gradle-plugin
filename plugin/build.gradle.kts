@@ -27,8 +27,8 @@ version = fgpVersion
 description = fgpDescription
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
     withJavadocJar()
     withSourcesJar()
 }
@@ -51,7 +51,7 @@ configurations["intTestRuntimeOnly"]
 
 dependencies {
     implementation(gradleApi())
-    implementation("io.github.resilience4j:resilience4j-retry:2.1.0")
+    implementation("io.github.resilience4j:resilience4j-retry:1.7.1")
     implementation("org.apache.httpcomponents.client5:httpclient5:5.2.1")
     implementation("org.apache.commons:commons-compress:1.23.0")
     implementation("org.json:json:20230618")
@@ -145,7 +145,7 @@ sonarqube {
         property("sonar.organization", "siouan")
         property("sonar.projectKey", "siouan_frontend-gradle-plugin")
         property("sonar.projectName", "frontend-gradle-plugin")
-        property("sonar.projectVersion", "${fgpVersion}-jdk17")
+        property("sonar.projectVersion", "${fgpVersion}-jdk11")
 
         property("sonar.links.homepage", "https://github.com/siouan/frontend-gradle-plugin")
         property("sonar.links.ci", "https://travis-ci.com/siouan/frontend-gradle-plugin")

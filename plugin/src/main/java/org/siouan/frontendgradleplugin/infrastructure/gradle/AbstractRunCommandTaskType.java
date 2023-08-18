@@ -27,15 +27,15 @@ public abstract class AbstractRunCommandTaskType extends AbstractRunCommandTask 
         } catch (final BeanRegistryException e) {
             throw new GradleException(e.getClass().getName() + ": " + e.getMessage(), e);
         }
-        final FrontendExtension extension = taskContext.extension();
+        final FrontendExtension extension = taskContext.getExtension();
         this.packageJsonDirectory.set(extension.getPackageJsonDirectory().getAsFile());
         this.nodeInstallDirectory.set(resolveNodeInstallDirectoryPath
             .execute(ResolveNodeInstallDirectoryPathCommand
                 .builder()
                 .nodeInstallDirectoryFromUser(extension.getNodeInstallDirectory().getAsFile().map(File::toPath))
                 .nodeDistributionProvided(extension.getNodeDistributionProvided())
-                .nodeInstallDirectoryFromEnvironment(taskContext.nodeInstallDirectoryFromEnvironment())
-                .defaultPath(taskContext.defaultNodeInstallDirectoryPath())
+                .nodeInstallDirectoryFromEnvironment(taskContext.getNodeInstallDirectoryFromEnvironment())
+                .defaultPath(taskContext.getDefaultNodeInstallDirectoryPath())
                 .build())
             .map(Path::toFile));
     }

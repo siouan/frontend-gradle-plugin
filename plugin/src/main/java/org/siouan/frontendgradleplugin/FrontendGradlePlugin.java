@@ -327,7 +327,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      */
     protected void configureInstallNodeTask(final InstallNodeTask task, final String beanRegistryId,
         final TaskContext taskContext) {
-        final FrontendExtension extension = taskContext.extension();
+        final FrontendExtension extension = taskContext.getExtension();
 
         task.setGroup(TASK_GROUP);
         task.setDescription("Downloads and installs a Node.js distribution.");
@@ -341,7 +341,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
             .set(extension
                 .getNodeInstallDirectory()
                 .map(Directory::getAsFile)
-                .orElse(taskContext.defaultNodeInstallDirectoryPath().toFile()));
+                .orElse(taskContext.getDefaultNodeInstallDirectoryPath().toFile()));
         task.getHttpProxyHost().set(extension.getHttpProxyHost());
         task.getHttpProxyPort().set(extension.getHttpProxyPort());
         task.getHttpProxyUsername().set(extension.getHttpProxyUsername());
@@ -355,7 +355,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
             .fileProvider(extension
                 .getNodeInstallDirectory()
                 .map(directory -> directory.getAsFile().toPath())
-                .orElse(taskContext.defaultNodeInstallDirectoryPath())
+                .orElse(taskContext.getDefaultNodeInstallDirectoryPath())
                 .map(nodeInstallDirectoryPath -> getBeanOrFail(beanRegistryId, ResolveGlobalNodeExecutablePath.class)
                     .execute(ResolveGlobalExecutablePathCommand
                         .builder()
@@ -381,7 +381,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      */
     protected void configureResolvePackageManagerTask(final ResolvePackageManagerTask task, final String beanRegistryId,
         final TaskContainer taskContainer, final TaskContext taskContext) {
-        final FrontendExtension extension = taskContext.extension();
+        final FrontendExtension extension = taskContext.getExtension();
 
         task.setGroup(TASK_GROUP);
         task.setDescription("Resolves the package manager.");
@@ -410,7 +410,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      */
     protected void configureInstallPackageManagerTask(final InstallPackageManagerTask task, final String beanRegistryId,
         final TaskContainer taskContainer, final TaskContext taskContext) {
-        final FrontendExtension extension = taskContext.extension();
+        final FrontendExtension extension = taskContext.getExtension();
 
         task.setGroup(TASK_GROUP);
         task.setDescription("Installs the package manager.");
@@ -458,7 +458,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      */
     protected void configureInstallFrontendTask(final InstallFrontendTask task, final String beanRegistryId,
         final TaskContainer taskContainer, final TaskContext taskContext) {
-        final FrontendExtension extension = taskContext.extension();
+        final FrontendExtension extension = taskContext.getExtension();
 
         task.setGroup(TASK_GROUP);
         task.setDescription("Installs frontend dependencies.");
@@ -485,7 +485,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      */
     protected void configureCleanTask(final CleanTask task, final String beanRegistryId,
         final TaskContainer taskContainer, final TaskContext taskContext) {
-        final FrontendExtension extension = taskContext.extension();
+        final FrontendExtension extension = taskContext.getExtension();
 
         task.setGroup(TASK_GROUP);
         task.setDescription("Cleans frontend resources outside the build directory by running a specific script.");
@@ -507,7 +507,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      */
     protected void configureCheckTask(final CheckTask task, final String beanRegistryId,
         final TaskContainer taskContainer, final TaskContext taskContext) {
-        final FrontendExtension extension = taskContext.extension();
+        final FrontendExtension extension = taskContext.getExtension();
 
         task.setGroup(TASK_GROUP);
         task.setDescription("Checks frontend by running a specific script.");
@@ -529,7 +529,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      */
     protected void configureAssembleTask(final AssembleTask task, final String beanRegistryId,
         final TaskContainer taskContainer, final TaskContext taskContext) {
-        final FrontendExtension extension = taskContext.extension();
+        final FrontendExtension extension = taskContext.getExtension();
 
         task.setGroup(TASK_GROUP);
         task.setDescription("Assembles frontend artifacts by running a specific script.");
@@ -551,7 +551,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      */
     protected void configurePublishTask(final PublishTask task, final String beanRegistryId,
         final TaskContainer taskContainer, final TaskContext taskContext) {
-        final FrontendExtension extension = taskContext.extension();
+        final FrontendExtension extension = taskContext.getExtension();
 
         task.setGroup(TASK_GROUP);
         task.setDescription("Publishes frontend artifacts by running a specific script.");
@@ -573,7 +573,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
                     return getBeanOrFail(beanRegistryId, ParsePackageManagerSpecification.class)
                         .execute(getBeanOrFail(beanRegistryId, FileManager.class).readString(f.toPath(),
                             StandardCharsets.UTF_8))
-                        .type()
+                        .getType()
                         .getExecutableType();
                 } catch (final IOException | MalformedPackageManagerSpecification |
                     UnsupportedPackageManagerException e) {
@@ -613,7 +613,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
     }
 
     private Provider<File> resolveNodeInstallDirectory(final String beanRegistryId, final TaskContext taskContext) {
-        final FrontendExtension extension = taskContext.extension();
+        final FrontendExtension extension = taskContext.getExtension();
         final ResolveNodeInstallDirectoryPath resolveNodeInstallDirectoryPath;
         try {
             resolveNodeInstallDirectoryPath = Beans.getBean(beanRegistryId, ResolveNodeInstallDirectoryPath.class);
@@ -627,8 +627,8 @@ public class FrontendGradlePlugin implements Plugin<Project> {
                 .builder()
                 .nodeInstallDirectoryFromUser(extension.getNodeInstallDirectory().getAsFile().map(File::toPath))
                 .nodeDistributionProvided(extension.getNodeDistributionProvided())
-                .nodeInstallDirectoryFromEnvironment(taskContext.nodeInstallDirectoryFromEnvironment())
-                .defaultPath(taskContext.defaultNodeInstallDirectoryPath())
+                .nodeInstallDirectoryFromEnvironment(taskContext.getNodeInstallDirectoryFromEnvironment())
+                .defaultPath(taskContext.getDefaultNodeInstallDirectoryPath())
                 .build())
             .map(Path::toFile);
     }

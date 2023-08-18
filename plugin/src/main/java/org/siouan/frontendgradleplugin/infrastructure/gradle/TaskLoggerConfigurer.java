@@ -48,11 +48,11 @@ public class TaskLoggerConfigurer {
             return loggingLevel;
         }
 
-        loggingLevel = gradleSettings.projectLogLevel();
+        loggingLevel = gradleSettings.getProjectLogLevel();
         if (loggingLevel != null) {
             return loggingLevel;
         }
 
-        return gradleSettings.commandLineLogLevel();
+        return gradleSettings.getCommandLineLogLevel();
     }
 }

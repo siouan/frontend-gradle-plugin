@@ -86,13 +86,13 @@ public class TarArchiver extends AbstractArchiver<TarArchiverContext, TarEntry> 
 
     @Override
     protected String getSymbolicLinkTarget(final TarArchiverContext context, final TarEntry entry) {
-        return entry.lowLevelEntry().getLinkName();
+        return entry.getLowLevelEntry().getLinkName();
     }
 
     @Override
     protected void writeRegularFile(final TarArchiverContext context, final TarEntry entry, final Path filePath)
         throws IOException {
-        final long entrySize = entry.lowLevelEntry().getSize();
+        final long entrySize = entry.getLowLevelEntry().getSize();
         int bytesRead;
         int bytesToRead = (int) entrySize;
         try (final OutputStream outputStream = fileManager.newOutputStream(filePath)) {

@@ -50,27 +50,27 @@ public class InstallNodeDistribution {
         throws IOException, InvalidNodeDistributionException, NodeDistributionShasumNotFoundException,
         UnsupportedPlatformException, InvalidDistributionUrlException, ResourceDownloadException, ArchiverException,
         UnsupportedDistributionArchiveException {
-        logger.info("Removing install directory '{}'", command.installDirectoryPath());
-        fileManager.deleteFileTree(command.installDirectoryPath(), true);
+        logger.info("Removing install directory '{}'", command.getInstallDirectoryPath());
+        fileManager.deleteFileTree(command.getInstallDirectoryPath(), true);
 
-        final GetDistributionCommand getDistributionCommand = new GetDistributionCommand(command.platform(),
-            command.version(), command.distributionUrlRoot(), command.distributionUrlPathPattern(),
-            command.distributionServerCredentials(), command.proxySettings(), command.retrySettings(),
-            command.temporaryDirectoryPath());
+        final GetDistributionCommand getDistributionCommand = new GetDistributionCommand(command.getPlatform(),
+            command.getVersion(), command.getDistributionUrlRoot(), command.getDistributionUrlPathPattern(),
+            command.getDistributionServerCredentials(), command.getProxySettings(),
+            command.getRetrySettings(), command.getTemporaryDirectoryPath());
         final Path distributionFilePath = getDistribution.execute(getDistributionCommand);
 
         // Deploys the distribution
-        final Path temporaryExplodeDirectoryPath = command.temporaryDirectoryPath().resolve(EXTRACT_DIRECTORY_NAME);
+        final Path temporaryExplodeDirectoryPath = command.getTemporaryDirectoryPath().resolve(EXTRACT_DIRECTORY_NAME);
         // In case deployment fails, the plugin should leave the file system in a consistent state and delete
         // temporary resources created.
         logger.debug("Removing explode directory '{}'", temporaryExplodeDirectoryPath);
         fileManager.deleteFileTree(temporaryExplodeDirectoryPath, true);
-        deployDistribution.execute(new DeployDistributionCommand(command.platform(), temporaryExplodeDirectoryPath,
-            command.installDirectoryPath(), distributionFilePath));
+        deployDistribution.execute(new DeployDistributionCommand(command.getPlatform(), temporaryExplodeDirectoryPath,
+            command.getInstallDirectoryPath(), distributionFilePath));
 
         logger.info("Removing distribution file '{}'", distributionFilePath);
         fileManager.delete(distributionFilePath);
 
-        logger.info("Distribution installed in '{}'", command.installDirectoryPath());
+        logger.info("Distribution installed in '{}'", command.getInstallDirectoryPath());
     }
 }

@@ -24,10 +24,10 @@ public class ResolveNodeInstallDirectoryPath {
      */
     public Provider<Path> execute(final ResolveNodeInstallDirectoryPathCommand command) {
         final Provider<Path> nodeInstallDirectoryPath = command
-            .nodeDistributionProvided()
+            .getNodeDistributionProvided()
             .flatMap(nodeDistributionProvided -> Boolean.TRUE.equals(nodeDistributionProvided) ? command
-                .nodeInstallDirectoryFromUser()
-                .orElse(command.nodeInstallDirectoryFromEnvironment()) : command.nodeInstallDirectoryFromUser());
-        return nodeInstallDirectoryPath.orElse(command.defaultPath());
+                .getNodeInstallDirectoryFromUser()
+                .orElse(command.getNodeInstallDirectoryFromEnvironment()) : command.getNodeInstallDirectoryFromUser());
+        return nodeInstallDirectoryPath.orElse(command.getDefaultPath());
     }
 }

@@ -26,7 +26,7 @@ public class ResolveProxySettingsByUrl {
     private final SelectProxySettings selectProxySettings;
 
     public ProxySettings execute(final ResolveProxySettingsByUrlCommand command) {
-        final URL resourceUrl = command.resourceUrl();
+        final URL resourceUrl = command.getResourceUrl();
         final String resourceProtocol = resourceUrl.getProtocol();
         if (resourceProtocol.equals(HTTP_PROTOCOL) || resourceProtocol.equals(HTTPS_PROTOCOL)) {
             if (isNonProxyHost.execute(IsNonProxyHostCommand
@@ -41,16 +41,16 @@ public class ResolveProxySettingsByUrl {
                     selectProxySettingsCommandBuilder
                         .systemProxyHost(systemSettingsProvider.getHttpsProxyHost())
                         .systemProxyPort(systemSettingsProvider.getHttpsProxyPort())
-                        .proxyHost(command.httpsProxyHost())
-                        .proxyPort(command.httpsProxyPort())
-                        .proxyCredentials(command.httpsProxyCredentials());
+                        .proxyHost(command.getHttpsProxyHost())
+                        .proxyPort(command.getHttpsProxyPort())
+                        .proxyCredentials(command.getHttpsProxyCredentials());
                 } else {
                     selectProxySettingsCommandBuilder
                         .systemProxyHost(systemSettingsProvider.getHttpProxyHost())
                         .systemProxyPort(systemSettingsProvider.getHttpProxyPort())
-                        .proxyHost(command.httpProxyHost())
-                        .proxyPort(command.httpProxyPort())
-                        .proxyCredentials(command.httpProxyCredentials());
+                        .proxyHost(command.getHttpProxyHost())
+                        .proxyPort(command.getHttpProxyPort())
+                        .proxyCredentials(command.getHttpProxyCredentials());
                 }
                 return selectProxySettings.execute(selectProxySettingsCommandBuilder.build());
             }
