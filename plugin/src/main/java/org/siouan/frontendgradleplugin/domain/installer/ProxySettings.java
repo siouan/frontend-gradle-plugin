@@ -17,6 +17,11 @@ import lombok.Getter;
 public class ProxySettings {
 
     /**
+     * Settings that request a direct connection.
+     */
+    public static final ProxySettings NONE = ProxySettings.builder().proxyType(Proxy.Type.DIRECT).build();
+
+    /**
      * Proxy host.
      */
     @EqualsAndHashCode.Include

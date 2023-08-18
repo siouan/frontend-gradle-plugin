@@ -27,8 +27,8 @@ version = fgpVersion
 description = fgpDescription
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
     withJavadocJar()
     withSourcesJar()
 }
@@ -51,21 +51,22 @@ configurations["intTestRuntimeOnly"]
 
 dependencies {
     implementation(gradleApi())
+    implementation("io.github.resilience4j:resilience4j-retry:2.1.0")
     implementation("org.apache.httpcomponents.client5:httpclient5:5.2.1")
     implementation("org.apache.commons:commons-compress:1.23.0")
-    implementation("org.json:json:20230227")
-    compileOnly("org.projectlombok:lombok:1.18.26")
-    annotationProcessor("org.projectlombok:lombok:1.18.26")
+    implementation("org.json:json:20230618")
+    compileOnly("org.projectlombok:lombok:1.18.28")
+    annotationProcessor("org.projectlombok:lombok:1.18.28")
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.3")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.3")
-    testImplementation("org.mockito:mockito-core:5.3.1")
-    testImplementation("org.mockito:mockito-junit-jupiter:5.3.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.0")
+    testImplementation("org.mockito:mockito-core:5.4.0")
+    testImplementation("org.mockito:mockito-junit-jupiter:5.4.0")
     testImplementation("org.junit-pioneer:junit-pioneer:2.0.1")
     testImplementation("org.assertj:assertj-core:3.24.2")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.3")
-    testCompileOnly("org.projectlombok:lombok:1.18.26")
-    testAnnotationProcessor("org.projectlombok:lombok:1.18.26")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
+    testCompileOnly("org.projectlombok:lombok:1.18.28")
+    testAnnotationProcessor("org.projectlombok:lombok:1.18.28")
 
     intTestImplementation("com.github.tomakehurst:wiremock:2.27.2")
 }
@@ -77,6 +78,10 @@ tasks.named<Wrapper>("wrapper") {
 tasks.withType<Test> {
     useJUnitPlatform()
     outputs.upToDateWhen { false }
+    jvmArgs(
+        "--add-opens", "java.base/java.lang=ALL-UNNAMED",
+        "--add-opens", "java.base/java.util=ALL-UNNAMED"
+    )
 }
 
 tasks.register<Test>("integrationTest") {
@@ -140,7 +145,7 @@ sonarqube {
         property("sonar.organization", "siouan")
         property("sonar.projectKey", "siouan_frontend-gradle-plugin")
         property("sonar.projectName", "frontend-gradle-plugin")
-        property("sonar.projectVersion", "${fgpVersion}-jdk11")
+        property("sonar.projectVersion", "${fgpVersion}-jdk17")
 
         property("sonar.links.homepage", "https://github.com/siouan/frontend-gradle-plugin")
         property("sonar.links.ci", "https://travis-ci.com/siouan/frontend-gradle-plugin")

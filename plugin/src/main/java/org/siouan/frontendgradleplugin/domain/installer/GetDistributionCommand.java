@@ -54,6 +54,14 @@ public class GetDistributionCommand {
     private final ProxySettings proxySettings;
 
     /**
+     * Settings to retry a file download.
+     *
+     * @since 7.1.0
+     */
+    @EqualsAndHashCode.Include
+    private final RetrySettings retrySettings;
+
+    /**
      * Path to a temporary directory.
      */
     @EqualsAndHashCode.Include

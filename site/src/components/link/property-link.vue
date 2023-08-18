@@ -1,6 +1,7 @@
 <template>
     <fgp-site-link :path="`${fgp.paths.configuration}#${name}`">
-        <fgp-code>{{ name }}</fgp-code>
+        <template v-if="$slots.default"><slot /></template>
+        <fgp-code v-else>{{ name }}</fgp-code>
     </fgp-site-link>
 </template>
 

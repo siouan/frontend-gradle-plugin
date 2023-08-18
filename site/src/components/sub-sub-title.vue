@@ -1,6 +1,6 @@
 <template>
     <header>
-        <h3><slot /></h3>
+        <h3 class="px-2 rounded border bg-light"><slot /></h3>
     </header>
 </template>
 

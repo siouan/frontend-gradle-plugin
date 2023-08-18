@@ -14,32 +14,37 @@ public class ResolveNodeDistributionArchitectureId {
     /**
      * Architecture ID for a 64 bits Linux O/S.
      */
-    private static final String LINUX_64_ARCH = "linux-x64";
+    private static final String LINUX_X64_ARCH = "linux-x64";
+
+    /**
+     * Architecture ID for an ARM 64 bits Linux O/S.
+     */
+    private static final String LINUX_ARM64_ARCH = "linux-arm64";
 
     /**
      * Architecture ID for a 64 bits Linux O/S.
      */
-    private static final String LINUX_ARM_32_ARCH = "linux-armv7l";
+    private static final String LINUX_ARM32_ARCH = "linux-armv7l";
 
     /**
      * Architecture ID for a PPC 64 bits MacOS O/S.
      */
-    private static final String MACOS_PPC_64_ARCH = "darwin-x64";
+    private static final String MACOS_PPC_X64_ARCH = "darwin-x64";
 
     /**
      * Architecture ID for an ARM 64 bits MacOS O/S.
      */
-    private static final String MACOS_ARM_64_ARCH = "darwin-arm64";
+    private static final String MACOS_ARM64_ARCH = "darwin-arm64";
 
     /**
      * Architecture ID for a 32 bits Windows O/S.
      */
-    private static final String WINDOWS_32_ARCH = "win-x86";
+    private static final String WINDOWS_X86_ARCH = "win-x86";
 
     /**
      * Architecture ID for a 64 bits Linux O/S.
      */
-    private static final String WINDOWS_64_ARCH = "win-x64";
+    private static final String WINDOWS_X64_ARCH = "win-x64";
 
     /**
      * Resolves the architecture ID for a given platform.
@@ -51,19 +56,19 @@ public class ResolveNodeDistributionArchitectureId {
         final String extension;
         if (platform.is64BitsArch()) {
             if (platform.isWindowsOs()) {
-                extension = WINDOWS_64_ARCH;
+                extension = WINDOWS_X64_ARCH;
             } else if (platform.isLinuxOs()) {
-                extension = LINUX_64_ARCH;
+                extension = platform.isArm64BitsArch() ? LINUX_ARM64_ARCH : LINUX_X64_ARCH;
             } else if (platform.isMacOs()) {
-                extension = platform.isArm64BitsArch() ? MACOS_ARM_64_ARCH : MACOS_PPC_64_ARCH;
+                extension = platform.isArm64BitsArch() ? MACOS_ARM64_ARCH : MACOS_PPC_X64_ARCH;
             } else {
                 extension = null;
             }
         } else {
             if (platform.isWindowsOs()) {
-                extension = WINDOWS_32_ARCH;
+                extension = WINDOWS_X86_ARCH;
             } else if (platform.isLinuxOs() && platform.isArm32BitsArch()) {
-                extension = LINUX_ARM_32_ARCH;
+                extension = LINUX_ARM32_ARCH;
             } else {
                 extension = null;
             }

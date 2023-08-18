@@ -20,12 +20,13 @@ public class SelectProxySettings {
             resolvedProxyHost = command.getProxyHost();
             resolvedProxyPort = command.getProxyPort();
         }
-        return (resolvedProxyHost == null) ? null : ProxySettings
-            .builder()
-            .proxyType(Proxy.Type.HTTP)
-            .proxyHost(resolvedProxyHost)
-            .proxyPort(resolvedProxyPort)
-            .credentials(command.getProxyCredentials())
-            .build();
+        return (resolvedProxyHost == null) ? ProxySettings.NONE
+            : ProxySettings
+                .builder()
+                .proxyType(Proxy.Type.HTTP)
+                .proxyHost(resolvedProxyHost)
+                .proxyPort(resolvedProxyPort)
+                .credentials(command.getProxyCredentials())
+                .build();
     }
 }

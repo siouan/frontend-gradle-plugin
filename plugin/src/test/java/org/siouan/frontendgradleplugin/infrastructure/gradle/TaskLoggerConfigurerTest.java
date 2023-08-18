@@ -68,7 +68,7 @@ class TaskLoggerConfigurerTest {
         when(task.getName()).thenReturn(TASK_NAME);
         when(task.getLogger()).thenReturn(gradleLogger);
         when(task.getLogging()).thenReturn(taskLoggingManager);
-        when(gradleSettings.getProjectLogLevel()).thenReturn(LOGGING_LEVEL);
+        when(gradleSettings.projectLogLevel()).thenReturn(LOGGING_LEVEL);
         when(extension.getVerboseModeEnabled()).thenReturn(verboseModeEnabled);
         when(verboseModeEnabled.get()).thenReturn(true);
 
@@ -84,8 +84,8 @@ class TaskLoggerConfigurerTest {
         when(task.getName()).thenReturn(TASK_NAME);
         when(task.getLogger()).thenReturn(gradleLogger);
         when(task.getLogging()).thenReturn(taskLoggingManager);
-        when(gradleSettings.getProjectLogLevel()).thenReturn(null);
-        when(gradleSettings.getCommandLineLogLevel()).thenReturn(LOGGING_LEVEL);
+        when(gradleSettings.projectLogLevel()).thenReturn(null);
+        when(gradleSettings.commandLineLogLevel()).thenReturn(LOGGING_LEVEL);
         when(extension.getVerboseModeEnabled()).thenReturn(verboseModeEnabled);
         when(verboseModeEnabled.get()).thenReturn(true);
 

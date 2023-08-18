@@ -7,12 +7,12 @@
             The following tools must be installed to use the plugin:
         </p>
         <ul>
-            <li>JDK 17 build: <fgp-gradle-link /> 7.3+</li>
-            <li>JDK 11 build: <fgp-gradle-link /> 6.1+</li>
+            <li><fgp-gradle-plugins-link path="/plugin/org.siouan.frontend-jdk17">JDK 17 build</fgp-gradle-plugins-link>: <fgp-gradle-link /> 7.3+</li>
+            <li><fgp-gradle-plugins-link path="/plugin/org.siouan.frontend-jdk11">JDK 11 build</fgp-gradle-plugins-link>: <fgp-gradle-link /> 6.1+</li>
         </ul>
         <p>
             The plugin is built and tested on Linux, Mac OS, Windows (see the list of build environments used in
-            the <fgp-repo-link path="/blob/master/CONTRIBUTING.md">contributing notes</fgp-repo-link>).
+            the <fgp-repo-link path="/blob/main/CONTRIBUTING.md">contributing notes</fgp-repo-link>).
         </p>
 
         <fgp-sub-title>Supported distributions</fgp-sub-title>
@@ -39,17 +39,17 @@
                             <template #groovy>
 <pre><fgp-code>plugins {
     <fgp-code-comment>// For JDK 17+</fgp-code-comment>
-    id 'org.siouan.frontend-jdk17' version '7.0.0'
+    id 'org.siouan.frontend-jdk17' version '7.1.0'
     <fgp-code-comment>// For JDK 11+</fgp-code-comment>
-    id 'org.siouan.frontend-jdk11' version '7.0.0'
+    id 'org.siouan.frontend-jdk11' version '7.1.0'
 }</fgp-code></pre>
                             </template>
                             <template #kotlin>
 <pre><fgp-code>plugins {
     <fgp-code-comment>// For JDK 17+</fgp-code-comment>
-    id("org.siouan.frontend-jdk17") version "7.0.0"
+    id("org.siouan.frontend-jdk17") version "7.1.0"
     <fgp-code-comment>// For JDK 11+</fgp-code-comment>
-    id("org.siouan.frontend-jdk11") version "7.0.0"
+    id("org.siouan.frontend-jdk11") version "7.1.0"
 }</fgp-code></pre>
                             </template>
                         </fgp-gradle-scripts>
@@ -68,9 +68,9 @@
     }
     dependencies {
         <fgp-code-comment>// For JDK 17+</fgp-code-comment>
-        classpath 'org.siouan:frontend-gradle-plugin-jdk17:7.0.0'
+        classpath 'org.siouan:frontend-gradle-plugin-jdk17:7.1.0'
         <fgp-code-comment>// For JDK 11+</fgp-code-comment>
-        classpath 'org.siouan:frontend-gradle-plugin-jdk11:7.0.0'
+        classpath 'org.siouan:frontend-gradle-plugin-jdk11:7.1.0'
     }
 }
 
@@ -86,9 +86,9 @@ apply plugin: 'org.siouan.frontend-jdk11'</fgp-code></pre>
     }
     dependencies {
         <fgp-code-comment>// For JDK 17+</fgp-code-comment>
-        classpath("org.siouan:frontend-gradle-plugin-jdk17:7.0.0")
+        classpath("org.siouan:frontend-gradle-plugin-jdk17:7.1.0")
         <fgp-code-comment>// For JDK 11+</fgp-code-comment>
-        classpath("org.siouan:frontend-gradle-plugin-jdk11:7.0.0")
+        classpath("org.siouan:frontend-gradle-plugin-jdk11:7.1.0")
     }
 }
 
@@ -110,7 +110,7 @@ apply(plugin = "org.siouan.frontend-jdk11")</fgp-code></pre>
             </li>
             <li>
                 <fgp-site-link :path="fgp.paths.configuration">Configure</fgp-site-link> your project, optionally
-                with the help of <fgp-repo-link path="/tree/master/examples">examples</fgp-repo-link> provided for
+                with the help of <fgp-repo-link path="/tree/main/examples">examples</fgp-repo-link> provided for
                 typical use cases.
             </li>
             <li>Run <fgp-code>gradlew build</fgp-code>.</li>
@@ -131,6 +131,7 @@ import fgpCode from '@/components/code';
 import fgpCodeComment from '@/components/code-comment';
 import fgpGradleDocsLink from '@/components/link/gradle-docs-link';
 import fgpGradleLink from '@/components/link/gradle-link';
+import fgpGradlePluginsLink from '@/components/link/gradle-plugins-link';
 import fgpGradleScripts from '@/components/gradle-scripts';
 import fgpMainTitle from '@/components/main-title';
 import fgpNodejsLink from '@/components/link/nodejs-link';
@@ -148,6 +149,7 @@ export default Vue.component('fgp-getting-started', {
         fgpCodeComment,
         fgpGradleDocsLink,
         fgpGradleLink,
+        fgpGradlePluginsLink,
         fgpGradleScripts,
         fgpMainTitle,
         fgpNodejsLink,
@@ -163,7 +165,7 @@ export default Vue.component('fgp-getting-started', {
         return {
             htmlTitle: 'Getting started: building a Javascript application with the Gradle Node plugin',
             linkCanonicalHref: process.env.FGP_WEBSITE_URL + 'getting-started/',
-            metaDescription: 'Guide to get started with the plugin: requirements, supported Node.js and Yarn distributions, installation steps.'
+            metaDescription: 'Guide to get started with the plugin: requirements, supported Node.js, NPM, PNPM, Yarn distributions, installation steps.'
         }
     }
 });

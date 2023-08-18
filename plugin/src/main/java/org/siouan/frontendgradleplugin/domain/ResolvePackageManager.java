@@ -33,16 +33,16 @@ public class ResolvePackageManager {
         throws InvalidJsonFileException, UnsupportedPackageManagerException, IOException,
         MalformedPackageManagerSpecification {
         final PackageManager packageManager = parsePackageManagerFromPackageJsonFile.execute(
-            command.getPackageJsonFilePath());
-        fileManager.writeString(command.getPackageManagerSpecificationFilePath(),
-            packageManager.getType().getPackageManagerName() + '@' + packageManager.getVersion(),
-            StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-        fileManager.writeString(command.getPackageManagerExecutablePathFilePath(), getExecutablePath
+            command.packageJsonFilePath());
+        fileManager.writeString(command.packageManagerSpecificationFilePath(),
+            packageManager.type().getPackageManagerName() + '@' + packageManager.version(), StandardCharsets.UTF_8,
+            StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+        fileManager.writeString(command.packageManagerExecutablePathFilePath(), getExecutablePath
             .execute(GetExecutablePathCommand
                 .builder()
-                .executableType(packageManager.getType().getExecutableType())
-                .nodeInstallDirectoryPath(command.getNodeInstallDirectoryPath())
-                .platform(command.getPlatform())
+                .executableType(packageManager.type().getExecutableType())
+                .nodeInstallDirectoryPath(command.nodeInstallDirectoryPath())
+                .platform(command.platform())
                 .build())
             .toString(), StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
     }

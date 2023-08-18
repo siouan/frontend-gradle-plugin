@@ -40,6 +40,7 @@ public class DeployDistribution {
         throws UnsupportedDistributionArchiveException, ArchiverException, IOException {
         // Explodes the archive
         final Path temporaryDirectoryPath = fileManager.createDirectory(command.getTemporaryDirectoryPath());
+
         logger.info("Exploding distribution into '{}'", temporaryDirectoryPath);
         final Path distributionFilePath = command.getDistributionFilePath();
         archiverProvider
@@ -66,8 +67,5 @@ public class DeployDistribution {
             distributionRootDirectoryPath = temporaryDirectoryPath;
         }
         fileManager.moveFileTree(distributionRootDirectoryPath, installDirectoryPath);
-
-        logger.info("Removing explode directory '{}'", temporaryDirectoryPath);
-        fileManager.deleteIfExists(temporaryDirectoryPath);
     }
 }

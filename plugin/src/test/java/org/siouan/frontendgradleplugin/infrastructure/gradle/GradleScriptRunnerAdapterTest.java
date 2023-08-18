@@ -6,8 +6,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.siouan.frontendgradleplugin.test.PathFixture.ANY_PATH;
 import static org.siouan.frontendgradleplugin.domain.PlatformFixture.LOCAL_PLATFORM;
+import static org.siouan.frontendgradleplugin.test.PathFixture.ANY_PATH;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -63,11 +63,11 @@ class GradleScriptRunnerAdapterTest {
             .build();
         when(resolveExecutionSettings.execute(ResolveExecutionSettingsCommand
             .builder()
-            .packageJsonDirectoryPath(scriptProperties.getPackageJsonDirectoryPath())
-            .executableType(scriptProperties.getExecutableType())
-            .nodeInstallDirectoryPath(scriptProperties.getNodeInstallDirectoryPath())
-            .platform(scriptProperties.getPlatform())
-            .script(scriptProperties.getScript())
+            .packageJsonDirectoryPath(scriptProperties.packageJsonDirectoryPath())
+            .executableType(scriptProperties.executableType())
+            .nodeInstallDirectoryPath(scriptProperties.nodeInstallDirectoryPath())
+            .platform(scriptProperties.platform())
+            .script(scriptProperties.script())
             .build())).thenReturn(executionSettings);
         final ExecResult execResult = mock(ExecResult.class);
         when(execOperations.exec(any(ExecSpecAction.class))).thenReturn(execResult);

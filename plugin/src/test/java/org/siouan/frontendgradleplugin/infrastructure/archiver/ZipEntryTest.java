@@ -3,9 +3,13 @@ package org.siouan.frontendgradleplugin.infrastructure.archiver;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
+import java.util.stream.Stream;
+
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -24,66 +28,27 @@ class ZipEntryTest {
     @Mock
     private ZipArchiveEntry lowLevelEntry;
 
-    @Test
-    void should_map_entry_to_directory_archive_entry() {
-        final String name = NAME;
-        final int unixMode = UNIX_MODE;
-        final boolean isDirectory = true;
-        final boolean isSymbolicLink = false;
-        when(lowLevelEntry.getName()).thenReturn(name);
-        when(lowLevelEntry.isDirectory()).thenReturn(isDirectory);
-        when(lowLevelEntry.isUnixSymlink()).thenReturn(isSymbolicLink);
+    @ParameterizedTest
+    @MethodSource("generateArguments")
+    void should_map_entry_to_directory_archive_entry(final String entryName, final int unixMode,
+        final boolean directory, final boolean symbolicLink, final boolean regularFileExpected) {
+        when(lowLevelEntry.getName()).thenReturn(entryName);
         when(lowLevelEntry.getUnixMode()).thenReturn(unixMode);
+        when(lowLevelEntry.isDirectory()).thenReturn(directory);
+        when(lowLevelEntry.isUnixSymlink()).thenReturn(symbolicLink);
 
         final ZipEntry entry = new ZipEntry(lowLevelEntry);
 
         assertThat(entry.getLowLevelEntry()).isEqualTo(lowLevelEntry);
-        assertThat(entry.getName()).isEqualTo(name);
-        assertThat(entry.isDirectory()).isEqualTo(isDirectory);
-        assertThat(entry.isSymbolicLink()).isEqualTo(isSymbolicLink);
-        assertThat(entry.isFile()).isFalse();
+        assertThat(entry.getName()).isEqualTo(entryName);
         assertThat(entry.getUnixMode()).isEqualTo(unixMode);
+        assertThat(entry.isDirectory()).isEqualTo(directory);
+        assertThat(entry.isSymbolicLink()).isEqualTo(symbolicLink);
+        assertThat(entry.isFile()).isEqualTo(regularFileExpected);
     }
 
-    @Test
-    void should_map_entry_to_symbolic_link_archive_entry() {
-        final String name = NAME;
-        final int unixMode = UNIX_MODE;
-        final boolean isDirectory = false;
-        final boolean isSymbolicLink = true;
-        when(lowLevelEntry.getName()).thenReturn(name);
-        when(lowLevelEntry.isDirectory()).thenReturn(isDirectory);
-        when(lowLevelEntry.isUnixSymlink()).thenReturn(isSymbolicLink);
-        when(lowLevelEntry.getUnixMode()).thenReturn(unixMode);
-
-        final ZipEntry entry = new ZipEntry(lowLevelEntry);
-
-        assertThat(entry.getLowLevelEntry()).isEqualTo(lowLevelEntry);
-        assertThat(entry.getName()).isEqualTo(name);
-        assertThat(entry.isDirectory()).isEqualTo(isDirectory);
-        assertThat(entry.isSymbolicLink()).isEqualTo(isSymbolicLink);
-        assertThat(entry.isFile()).isFalse();
-        assertThat(entry.getUnixMode()).isEqualTo(unixMode);
-    }
-
-    @Test
-    void should_map_entry_to_file_archive_entry() {
-        final String name = NAME;
-        final int unixMode = UNIX_MODE;
-        final boolean isDirectory = false;
-        final boolean isSymbolicLink = false;
-        when(lowLevelEntry.getName()).thenReturn(name);
-        when(lowLevelEntry.isDirectory()).thenReturn(isDirectory);
-        when(lowLevelEntry.isUnixSymlink()).thenReturn(isSymbolicLink);
-        when(lowLevelEntry.getUnixMode()).thenReturn(unixMode);
-
-        final ZipEntry entry = new ZipEntry(lowLevelEntry);
-
-        assertThat(entry.getLowLevelEntry()).isEqualTo(lowLevelEntry);
-        assertThat(entry.getName()).isEqualTo(name);
-        assertThat(entry.isDirectory()).isEqualTo(isDirectory);
-        assertThat(entry.isSymbolicLink()).isEqualTo(isSymbolicLink);
-        assertThat(entry.isFile()).isTrue();
-        assertThat(entry.getUnixMode()).isEqualTo(unixMode);
+    private static Stream<Arguments> generateArguments() {
+        return Stream.of(Arguments.of(NAME, UNIX_MODE, true, false, false),
+            Arguments.of(NAME, UNIX_MODE, false, true, false), Arguments.of(NAME, UNIX_MODE, false, false, true));
     }
 }

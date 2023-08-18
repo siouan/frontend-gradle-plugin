@@ -1,4 +1,5 @@
-## Example: build multiple frontend applications with dedicated sub-projects using shared distributions
+## Example: build multiple frontend applications with different package managers and a shared [Node.js][nodejs]
+distribution.
 
 This example demonstrates how a single [Node.js][nodejs] distribution may be installed and shared among multiple
 subprojects, and how different package managers may be used in these subprojects.

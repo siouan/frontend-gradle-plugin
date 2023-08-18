@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.Objects;
+import java.util.Set;
 
 import org.gradle.api.Project;
 import org.gradle.api.plugins.BasePlugin;
@@ -71,6 +72,16 @@ class FrontendGradlePluginTest {
         assertThat(extension.getHttpsProxyPort().get()).isEqualTo(FrontendGradlePlugin.DEFAULT_HTTPS_PROXY_PORT);
         assertThat(extension.getHttpsProxyUsername().isPresent()).isFalse();
         assertThat(extension.getHttpsProxyPassword().isPresent()).isFalse();
+        assertThat(extension.getMaxDownloadAttempts().get()).isEqualTo(
+            FrontendGradlePlugin.DEFAULT_MAX_DOWNLOAD_ATTEMPTS);
+        assertThat(extension.getRetryHttpStatuses().get()).containsExactlyInAnyOrderElementsOf(
+            FrontendGradlePlugin.DEFAULT_RETRY_HTTP_STATUSES);
+        assertThat(extension.getRetryInitialIntervalMs().get()).isEqualTo(
+            FrontendGradlePlugin.DEFAULT_RETRY_INITIAL_INTERVAL_MS);
+        assertThat(extension.getRetryIntervalMultiplier().get()).isEqualTo(
+            FrontendGradlePlugin.DEFAULT_RETRY_INTERVAL_MULTIPLIER);
+        assertThat(extension.getRetryMaxIntervalMs().get()).isEqualTo(
+            FrontendGradlePlugin.DEFAULT_RETRY_MAX_INTERVAL_MS);
         assertThat(extension.getInternalPackageJsonFile().getAsFile().get()).isEqualTo(
             project.getProjectDir().toPath().resolve(FrontendGradlePlugin.PACKAGE_JSON_FILE_NAME).toFile());
         assertThat(extension.getInternalPackageManagerSpecificationFile().getAsFile().get()).isEqualTo(project
@@ -117,6 +128,11 @@ class FrontendGradlePluginTest {
         extension.getHttpProxyPort().set(8080);
         extension.getHttpProxyUsername().set("htrshPDA2v6ESar");
         extension.getHttpProxyPassword().set("hts`{(gK65geR5=a");
+        extension.getMaxDownloadAttempts().set(2);
+        extension.getRetryHttpStatuses().set(Set.of(404, 503));
+        extension.getRetryInitialIntervalMs().set(539);
+        extension.getRetryIntervalMultiplier().set(7.3);
+        extension.getRetryMaxIntervalMs().set(9623);
         extension.getVerboseModeEnabled().set(true);
         extension.getInternalPackageJsonFile().set(new File("metadata.json"));
 
@@ -152,6 +168,16 @@ class FrontendGradlePluginTest {
             extension.getHttpsProxyUsername().getOrNull());
         assertThat(installNodeTask.getHttpsProxyPassword().getOrNull()).isEqualTo(
             extension.getHttpsProxyPassword().getOrNull());
+        assertThat(installNodeTask.getMaxDownloadAttempts().getOrNull()).isEqualTo(
+            extension.getMaxDownloadAttempts().getOrNull());
+        assertThat(installNodeTask.getRetryHttpStatuses().getOrNull()).isEqualTo(
+            extension.getRetryHttpStatuses().getOrNull());
+        assertThat(installNodeTask.getRetryInitialIntervalMs().getOrNull()).isEqualTo(
+            extension.getRetryInitialIntervalMs().getOrNull());
+        assertThat(installNodeTask.getRetryIntervalMultiplier().getOrNull()).isEqualTo(
+            extension.getRetryIntervalMultiplier().getOrNull());
+        assertThat(installNodeTask.getRetryMaxIntervalMs().getOrNull()).isEqualTo(
+            extension.getRetryMaxIntervalMs().getOrNull());
         assertThat(installNodeTask.getDependsOn()).isEmpty();
 
         final ResolvePackageManagerTask resolvePackageManagerTask = project
