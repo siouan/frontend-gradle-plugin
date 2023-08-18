@@ -41,8 +41,8 @@ class PublishTaskFuncTest {
     void should_skip_plugin_task_when_script_is_not_defined() throws IOException {
         Files.copy(getResourcePath("package-any-manager.json"), packageJsonDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("18.16.0")
-            .nodeDistributionUrl(getResourceUrl("node-v18.16.0.zip"))
+            .nodeVersion("18.17.1")
+            .nodeDistributionUrl(getResourceUrl("node-v18.17.1.zip"))
             .packageJsonDirectory(packageJsonDirectoryPath);
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
@@ -61,8 +61,8 @@ class PublishTaskFuncTest {
     void should_skip_plugin_task_when_running_gradle_task_and_script_is_not_defined() throws IOException {
         Files.copy(getResourcePath("package-any-manager.json"), packageJsonDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("18.16.0")
-            .nodeDistributionUrl(getResourceUrl("node-v18.16.0.zip"))
+            .nodeVersion("18.17.1")
+            .nodeDistributionUrl(getResourceUrl("node-v18.17.1.zip"))
             .packageJsonDirectory(packageJsonDirectoryPath);
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
@@ -83,8 +83,8 @@ class PublishTaskFuncTest {
     void should_publish_frontend() throws IOException {
         Files.copy(getResourcePath("package-any-manager.json"), packageJsonDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("18.16.0")
-            .nodeDistributionUrl(getResourceUrl("node-v18.16.0.zip"))
+            .nodeVersion("18.17.1")
+            .nodeDistributionUrl(getResourceUrl("node-v18.17.1.zip"))
             .packageJsonDirectory(packageJsonDirectoryPath)
             .assembleScript("run assemble")
             .publishScript("run publish");
