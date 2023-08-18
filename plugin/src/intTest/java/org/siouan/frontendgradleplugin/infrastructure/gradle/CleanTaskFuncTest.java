@@ -31,8 +31,8 @@ class CleanTaskFuncTest {
     void should_skip_plugin_task_when_script_is_not_defined() throws IOException {
         Files.copy(getResourcePath("package-any-manager.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("18.16.0")
-            .nodeDistributionUrl(getResourceUrl("node-v18.16.0.zip"));
+            .nodeVersion("18.17.1")
+            .nodeDistributionUrl(getResourceUrl("node-v18.17.1.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, FrontendGradlePlugin.CLEAN_TASK_NAME);
@@ -50,8 +50,8 @@ class CleanTaskFuncTest {
     void should_skip_plugin_task_when_running_gradle_task_and_script_is_not_defined() throws IOException {
         Files.copy(getResourcePath("package-any-manager.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("18.16.0")
-            .nodeDistributionUrl(getResourceUrl("node-v18.16.0.zip"));
+            .nodeVersion("18.17.1")
+            .nodeDistributionUrl(getResourceUrl("node-v18.17.1.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, FrontendGradlePlugin.GRADLE_CLEAN_TASK_NAME);
@@ -70,8 +70,8 @@ class CleanTaskFuncTest {
     void should_clean_frontend() throws IOException {
         Files.copy(getResourcePath("package-npm.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("18.16.0")
-            .nodeDistributionUrl(getResourceUrl("node-v18.16.0.zip"))
+            .nodeVersion("18.17.1")
+            .nodeDistributionUrl(getResourceUrl("node-v18.17.1.zip"))
             .cleanScript("run clean");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 

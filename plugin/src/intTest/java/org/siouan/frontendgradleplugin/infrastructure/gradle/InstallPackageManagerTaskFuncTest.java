@@ -32,8 +32,8 @@ class InstallPackageManagerTaskFuncTest {
     void should_install_package_managers() throws IOException {
         Files.copy(getResourcePath("package-npm.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("18.16.0")
-            .nodeDistributionUrl(getResourceUrl("node-v18.16.0.zip"));
+            .nodeVersion("18.17.1")
+            .nodeDistributionUrl(getResourceUrl("node-v18.17.1.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult installNpmResult1 = runGradle(projectDirectoryPath,
