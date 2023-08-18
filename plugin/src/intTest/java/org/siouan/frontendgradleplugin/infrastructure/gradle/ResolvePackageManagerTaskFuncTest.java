@@ -86,8 +86,8 @@ class ResolvePackageManagerTaskFuncTest {
     void should_pass_when_package_manager_property_is_valid() throws IOException {
         Files.copy(getResourcePath("package-any-manager.json"), projectDirectoryPath.resolve("package.json"));
         createBuildFile(projectDirectoryPath, new FrontendMapBuilder()
-            .nodeVersion("18.16.0")
-            .nodeDistributionUrl(getResourceUrl("node-v18.16.0.zip"))
+            .nodeVersion("18.17.1")
+            .nodeDistributionUrl(getResourceUrl("node-v18.17.1.zip"))
             .toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath,

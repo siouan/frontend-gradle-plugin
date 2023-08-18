@@ -2,9 +2,9 @@ name: Build
 
 on:
   push:
-    branches: [ 'master', '*.*-jdk*' ]
+    branches: [ 'main', '*.*-jdk*' ]
   pull_request:
-    branches: [ 'master', '*.*-jdk*' ]
+    branches: [ 'main', '*.*-jdk*' ]
   workflow_dispatch:
 
 jobs:

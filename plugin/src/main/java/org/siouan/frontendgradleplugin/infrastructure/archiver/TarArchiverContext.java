@@ -15,7 +15,7 @@ import org.siouan.frontendgradleplugin.domain.installer.archiver.ExplodeCommand;
  */
 @Builder
 @Getter
-class TarArchiverContext implements ArchiverContext {
+public class TarArchiverContext implements ArchiverContext {
 
     /**
      * Explode settings.

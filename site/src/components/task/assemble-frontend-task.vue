@@ -17,7 +17,9 @@
 
             <div class="card my-3">
                 <div class="card-body">
-                    <h5 class="card-title">About task execution and up-to-date checks</h5>
+                    <h5 class="card-title">About
+                        <fgp-gradle-docs-link path="/current/userguide/incremental_build.html">incremental build</fgp-gradle-docs-link>
+                        and up-to-date checks</h5>
                     <p class="card-text">
                         If you execute this task several times in a row, you may notice the
                         <fgp-code>npm</fgp-code>/<fgp-code>pnpm</fgp-code>/<fgp-code>yarn</fgp-code> command is always

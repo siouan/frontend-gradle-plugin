@@ -34,7 +34,7 @@ public class ResolveProxySettingsByUrl {
                 .nonProxyHosts(systemSettingsProvider.getNonProxyHosts())
                 .hostNameOrIpAddress(resourceUrl.getHost())
                 .build())) {
-                return null;
+                return ProxySettings.NONE;
             } else {
                 final SelectProxySettingsCommand.SelectProxySettingsCommandBuilder selectProxySettingsCommandBuilder = SelectProxySettingsCommand.builder();
                 if (resourceProtocol.equals(HTTPS_PROTOCOL)) {
@@ -55,7 +55,7 @@ public class ResolveProxySettingsByUrl {
                 return selectProxySettings.execute(selectProxySettingsCommandBuilder.build());
             }
         } else if (resourceProtocol.equals(FILE_PROTOCOL)) {
-            return null;
+            return ProxySettings.NONE;
         } else {
             throw new IllegalArgumentException("Unsupported protocol: " + resourceUrl.getProtocol());
         }

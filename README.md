@@ -2,7 +2,7 @@
 <a href="https://www.npmjs.com/" title="npm">npm</a>, <a href="https://pnpm.io/" title="pnpm">pnpm</a>,
 <a href="https://yarnpkg.com/" title="Yarn">Yarn</a> builds</h2> 
 <p align="center">
-    <a href="https://github.com/siouan/frontend-gradle-plugin/releases/tag/v7.0.0"><img src="https://img.shields.io/badge/Latest%20release-7.0.0-blue.svg" alt="Latest release 7.0.0"/></a>
+    <a href="https://github.com/siouan/frontend-gradle-plugin/releases/tag/v7.1.0"><img src="https://img.shields.io/badge/Latest%20release-7.1.0-blue.svg" alt="Latest release 7.1.0"/></a>
     <a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-green.svg" alt="License Apache 2.0"/></a>
     <br/>
     <a href="https://github.com/siouan/frontend-gradle-plugin/actions/workflows/build.yml"><img src="https://github.com/siouan/frontend-gradle-plugin/actions/workflows/build.yml/badge.svg?branch=7.0-jdk17" alt="Build status"/></a>
@@ -67,6 +67,7 @@ With their feedback, plugin improvement is possible. Special thanks to:
 @[rolaca11](https://github.com/rolaca11),
 @[stephanebastian](https://github.com/stephanebastian),
 @[TapaiBalazs](https://github.com/TapaiBalazs),
+@[thebignet](https://github.com/thebignet)
 @[tngwoerleij](https://github.com/tngwoerleij),
 @[trohr](https://github.com/trohr),
 @[xehonk](https://github.com/xehonk)

@@ -6,8 +6,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.siouan.frontendgradleplugin.test.PathFixture.ANY_PATH;
 import static org.siouan.frontendgradleplugin.domain.PlatformFixture.LOCAL_PLATFORM;
+import static org.siouan.frontendgradleplugin.test.PathFixture.ANY_PATH;
 
 import java.nio.file.Path;
 import java.util.List;

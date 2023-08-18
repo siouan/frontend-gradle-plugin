@@ -46,6 +46,11 @@ public class InstallNodeDistributionCommand {
     private final ProxySettings proxySettings;
 
     /**
+     * Settings to retry a file download.
+     */
+    private final RetrySettings retrySettings;
+
+    /**
      * Path to a temporary directory.
      */
     private final Path temporaryDirectoryPath;

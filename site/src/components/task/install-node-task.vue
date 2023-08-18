@@ -25,7 +25,9 @@
                 also be used by defining <fgp-property-link name="httpsProxyHost" /> property (respectively
                 <fgp-property-link name="httpProxyHost" /> property) if the
                 <fgp-property-link name="nodeDistributionUrlRoot" /> property uses the <fgp-code>https</fgp-code>
-                protocol (resp. uses the <fgp-code>http</fgp-code> protocol).
+                protocol (resp. uses the <fgp-code>http</fgp-code> protocol). In case of connectivity/HTTP error,
+                download of the distribution file and the shasum file may be retried using property
+                <fgp-property-link name="maxDownloadAttempts" />.
             </p>
             <p>
                 If a <fgp-nodejs-link /> distribution is already installed in the system - either as a global
@@ -56,10 +58,11 @@ import fgpGradleGuidesLink from '@/components/link/gradle-guides-link';
 import fgpGradleTaskOutcomeLink from '@/components/link/gradle-task-outcome-link';
 import fgpInfo from '@/components/info';
 import fgpNodejsLink from '@/components/link/nodejs-link';
+import fgpPropertyLink from '@/components/link/property-link';
 import fgpTask from '@/components/task/task';
 
 export default Vue.component('fgp-install-node-task', {
-    components: { fgpGradleGuidesLink, fgpGradleTaskOutcomeLink, fgpInfo, fgpNodejsLink, fgpTask },
+    components: { fgpGradleGuidesLink, fgpGradleTaskOutcomeLink, fgpInfo, fgpNodejsLink, fgpPropertyLink, fgpTask },
     data() {
         return {
             inputs: [
