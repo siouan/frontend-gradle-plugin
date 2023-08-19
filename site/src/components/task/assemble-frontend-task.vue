@@ -2,7 +2,7 @@
     <fgp-task name="assembleFrontend" :inputs="inputs">
         <template #title>Assemble frontend artifacts</template>
         <template #skipConditions>
-            property <fgp-property-link name="assembleScript" /> is not <fgp-code>null</fgp-code>.
+            property <fgp-property-link name="assembleScript" /> is <fgp-code>null</fgp-code>.
         </template>
         <template #description>
             This task allows to execute a build script as part of a Gradle build. The build script shall be defined in

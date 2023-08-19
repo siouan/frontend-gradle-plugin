@@ -2,7 +2,7 @@
     <fgp-task name="cleanFrontend" :inputs="inputs">
         <template #title>Clean frontend artifacts</template>
         <template #skipConditions>
-            property <fgp-property-link name="cleanScript" /> is not <fgp-code>null</fgp-code>.
+            property <fgp-property-link name="cleanScript" /> is <fgp-code>null</fgp-code>.
         </template>
         <template #description>
             <p>

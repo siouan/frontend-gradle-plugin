@@ -59,6 +59,7 @@ With their feedback, plugin improvement is possible. Special thanks to:
 @[joschi](https://github.com/joschi),
 @[jorgheymans](https://github.com/jorgheymans),
 @[ludik0](https://github.com/ludik0),
+@[mhalbritter](https://github.com/mhalbritter),
 @[mike-howell](https://github.com/mike-howell),
 @[napstr](https://github.com/napstr),
 @[nitzan-n](https://github.com/nitzan-n),
