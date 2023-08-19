@@ -2,8 +2,8 @@
     <fgp-task name="publishFrontend" :inputs="inputs">
         <template #title>Publish frontend artifacts</template>
         <template #skipConditions>
-            properties <fgp-property-link name="assembleScript" /> and <fgp-property-link name="publishScript" /> are
-            both not <fgp-code>null</fgp-code>.
+            either property <fgp-property-link name="assembleScript" /> or property
+            <fgp-property-link name="publishScript" /> is <fgp-code>null</fgp-code>.
         </template>
         <template #description>
             <p>
