@@ -19,6 +19,12 @@
                 <fgp-site-link path="#app" class="small text-info">&uparrow;</fgp-site-link>
             </h4>
             <ul>
+                <li v-if="dependingTasks.length > 0">
+                    Depends on:
+                    <span v-for="(taskName, index) in dependingTasks" :key="taskName">
+                        <fgp-task-link :name="taskName" /><template v-if="index < dependingTasks.length - 1">, </template>
+                    </span>
+                </li>
                 <li v-if="inputs.length > 0">
                     Inputs:
                     <ul>
@@ -51,12 +57,16 @@
 
 <script>
 import Vue from 'vue';
-import fgpTaskPropertyType from '@/components/task/task-property-type';
+import fgpGradleDocsLink from '@/components/link/gradle-docs-link';
+import fgpPropertyLink from '@/components/link/property-link';
+import fgpSiteLink from '@/components/link/site-link';
+import fgpTaskLink from '@/components/link/task-link';
 import fgpTaskLinkAnchor from '@/components/link/task-link-anchor';
+import fgpTaskPropertyType from '@/components/task/task-property-type';
 
 export default Vue.component('fgp-task', {
     components: {
-        fgpTaskPropertyType, fgpTaskLinkAnchor
+        fgpGradleDocsLink, fgpPropertyLink, fgpSiteLink, fgpTaskLink, fgpTaskLinkAnchor, fgpTaskPropertyType
     },
     props: {
         name: {
@@ -66,6 +76,10 @@ export default Vue.component('fgp-task', {
         type: {
             type: Boolean,
             default: false
+        },
+        dependingTasks: {
+            type: Array,
+            default: () => []
         },
         inputs: {
             type: Array,

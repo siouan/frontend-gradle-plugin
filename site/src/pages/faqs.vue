@@ -8,7 +8,7 @@
                     <fgp-site-link path="#node-corepack-npm-pnpm-yarn-direct-use">
                         How to use <fgp-code>node</fgp-code>/<fgp-code>corepack</fgp-code>/<fgp-code
                         >npm</fgp-code>/<fgp-code>pnpm</fgp-code>/<fgp-code>yarn</fgp-code> executables apart from Gradle
-                        when the Node.js distribution is downloaded by the plugin?
+                        when the <fgp-code>Node.js</fgp-code> distribution is downloaded by the plugin?
                     </fgp-site-link>
                 </li>
                 <li>
@@ -28,6 +28,12 @@
                         each project?
                     </fgp-site-link>
                 </li>
+                <li>
+                    <fgp-site-link path="#node-install-directory-from-environment">
+                        How can I set the install directory of the <fgp-code>Node.js</fgp-code> distribution using an
+                        environment variable?
+                    </fgp-site-link>
+                </li>
             </ul>
         </nav>
 
@@ -35,6 +41,7 @@
         <fgp-unsupported-platform-exception-faq id="unsupported-platform-exception" />
         <fgp-custom-nodejs-distribution-server-faq id="custom-nodejs-distribution-server" />
         <fgp-cache-directory-faq id="cache-directory" />
+        <fgp-node-install-directory-from-environment-faq id="node-install-directory-from-environment" />
     </section>
 </template>
 
@@ -45,6 +52,7 @@ import fgpCode from '@/components/code';
 import fgpCustomNodejsDistributionServerFaq from '@/components/faq/custom-nodejs-distribution-server-faq';
 import fgpMainTitle from '@/components/main-title';
 import fgpNodeCorepackNpmPnpmYarnDirectUseFaq from '@/components/faq/node-corepack-npm-pnpm-yarn-direct-use-faq';
+import fgpNodeInstallDirectoryFromEnvironmentFaq from '@/components/faq/node-install-directory-from-environment-faq';
 import fgpPageMeta from '@/mixin/page-meta';
 import fgpSiteLink from '@/components/link/site-link';
 import fgpUnsupportedPlatformExceptionFaq from '@/components/faq/unsupported-platform-exception-faq';
@@ -56,6 +64,7 @@ export default Vue.component('fgp-faqs', {
         fgpCustomNodejsDistributionServerFaq,
         fgpMainTitle,
         fgpNodeCorepackNpmPnpmYarnDirectUseFaq,
+        fgpNodeInstallDirectoryFromEnvironmentFaq,
         fgpSiteLink,
         fgpUnsupportedPlatformExceptionFaq
     },

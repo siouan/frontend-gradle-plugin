@@ -102,7 +102,8 @@ apply(plugin = "org.siouan.frontend-jdk11")</fgp-code></pre>
                 </ul>
             </li>
             <li>
-                Define the <fgp-nodejs-link path="/api/packages.html#packagemanager" label="packageManager" />
+                Define the <fgp-code><fgp-nodejs-link path="/api/packages.html#packagemanager" label="packageManager"
+                /></fgp-code>
                 property in the <fgp-code>package.json</fgp-code> file.
             </li>
             <li>

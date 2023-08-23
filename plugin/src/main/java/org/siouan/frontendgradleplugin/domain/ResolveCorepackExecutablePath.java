@@ -4,16 +4,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * Gets the path to a PNPM executable given an install directory and a platform.
+ * Gets the path to a Corepack executable given an install directory and a platform.
  *
  * @since 7.0.0
  */
-public class ResolveGlobalPnpmExecutablePath extends AbstractResolveGlobalExecutablePath {
+public class ResolveCorepackExecutablePath extends AbstractResolveExecutablePath {
 
     /**
      * Relative executable path on Windows O/S.
      */
-    public static final String WINDOWS_EXECUTABLE_FILE_NAME = "pnpm.cmd";
+    public static final String WINDOWS_EXECUTABLE_FILE_NAME = "corepack.cmd";
 
     /**
      * Relative executable path on Windows O/S.
@@ -23,7 +23,7 @@ public class ResolveGlobalPnpmExecutablePath extends AbstractResolveGlobalExecut
     /**
      * Relative executable path on non-Windows O/S.
      */
-    public static final String NON_WINDOWS_EXECUTABLE_FILE_NAME = "pnpm";
+    public static final String NON_WINDOWS_EXECUTABLE_FILE_NAME = "corepack";
 
     /**
      * Relative executable path on non-Windows O/S.
@@ -32,7 +32,7 @@ public class ResolveGlobalPnpmExecutablePath extends AbstractResolveGlobalExecut
         .get("bin")
         .resolve(NON_WINDOWS_EXECUTABLE_FILE_NAME);
 
-    public ResolveGlobalPnpmExecutablePath(final Logger logger) {
+    public ResolveCorepackExecutablePath(final Logger logger) {
         super(logger);
     }
 
