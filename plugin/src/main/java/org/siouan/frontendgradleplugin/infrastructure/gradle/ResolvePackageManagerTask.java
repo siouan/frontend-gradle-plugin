@@ -53,12 +53,12 @@ public class ResolvePackageManagerTask extends DefaultTask {
     private final Property<File> nodeInstallDirectory;
 
     /**
-     * File that will contain information about the package manager.
+     * File that will contain the specification of the package manager for the project.
      */
     private final RegularFileProperty packageManagerSpecificationFile;
 
     /**
-     * File that will contain information about the package manager.
+     * File that will contain the path to the package manager executable file.
      */
     private final RegularFileProperty packageManagerExecutablePathFile;
 

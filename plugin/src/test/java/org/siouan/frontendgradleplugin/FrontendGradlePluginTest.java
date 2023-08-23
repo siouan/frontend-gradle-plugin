@@ -2,6 +2,8 @@ package org.siouan.frontendgradleplugin;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.Set;
@@ -43,7 +45,8 @@ class FrontendGradlePluginTest {
     }
 
     @Test
-    void should_register_tasks_with_default_extension_values_applied() {
+    void should_register_tasks_with_default_extension_values_applied() throws IOException {
+        Files.createDirectory(project.file(FrontendGradlePlugin.DEFAULT_NODE_INSTALL_DIRECTORY_NAME).toPath());
         plugin.apply(project);
 
         final FrontendExtension extension = Objects.requireNonNull(
@@ -106,7 +109,9 @@ class FrontendGradlePluginTest {
     }
 
     @Test
-    void should_register_tasks_with_custom_extension_values_applied() {
+    void should_register_tasks_with_custom_extension_values_applied() throws IOException {
+        final String nodeInstallDirectoryName = "node-dist";
+        Files.createDirectory(project.file(nodeInstallDirectoryName).toPath());
         plugin.apply(project);
 
         final FrontendExtension extension = Objects.requireNonNull(
@@ -115,7 +120,7 @@ class FrontendGradlePluginTest {
         extension.getNodeVersion().set("3.65.4");
         extension.getNodeDistributionUrlRoot().set("https://node");
         extension.getNodeDistributionUrlPathPattern().set("/node.tar.gz");
-        extension.getNodeInstallDirectory().set(project.file("node-dist"));
+        extension.getNodeInstallDirectory().set(project.file(nodeInstallDirectoryName));
         extension.getInstallScript().set("run ci");
         extension.getCleanScript().set("run clean");
         extension.getAssembleScript().set("run build");

@@ -390,7 +390,16 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.setGroup(TASK_GROUP);
         task.setDescription("Installs the package manager.");
         task.getPackageJsonDirectory().set(frontendExtension.getPackageJsonDirectory().getAsFile());
-        task.getNodeInstallDirectory().set(frontendExtension.getNodeInstallDirectory().getAsFile());
+        task.getNodeInstallDirectory().set(frontendExtension.getNodeInstallDirectory().map(nodeInstallDirectory -> {
+            final Path nodeInstallDirectoryPath = nodeInstallDirectory.getAsFile().toPath();
+            if (!Files.isDirectory(nodeInstallDirectoryPath)) {
+                // Performing this verification ahead of time avoids automatic creation of any parent directory by
+                // Gradle if the task is not skipped. This may be the case if the Node.js distribution is provided, but
+                // the install directory is not correctly configured and points to nowhere.
+                throw new GradleException("Node.js install directory not found: " + nodeInstallDirectoryPath);
+            }
+            return nodeInstallDirectory.getAsFile();
+        }));
         final Provider<ResolvePackageManagerTask> resolvePackageManagerTaskProvider = taskContainer.named(
             RESOLVE_PACKAGE_MANAGER_TASK_NAME, ResolvePackageManagerTask.class);
         task
@@ -399,27 +408,26 @@ public class FrontendGradlePlugin implements Plugin<Project> {
                 ResolvePackageManagerTask::getPackageManagerSpecificationFile));
         task
             .getPackageManagerExecutableFile()
-            .set(resolvePackageManagerTaskProvider
+            .fileProvider(resolvePackageManagerTaskProvider
                 .flatMap(ResolvePackageManagerTask::getPackageManagerExecutablePathFile)
                 .map(f -> {
                     final Path filePath = f.getAsFile().toPath();
                     if (!Files.exists(filePath)) {
-                        // Setting the output property to null avoids automatic creation of any parent directories by
+                        // Setting the output property to null avoids automatic creation of any parent directory by
                         // Gradle if the task is not skipped. If it is skipped, the file system would not have been
                         // touched by Gradle.
                         return null;
                     }
                     try {
-                        return getBeanOrFail(beanRegistryId, FileManager.class).readString(filePath,
-                            StandardCharsets.UTF_8);
+                        return Paths
+                            .get(getBeanOrFail(beanRegistryId, FileManager.class).readString(filePath,
+                                StandardCharsets.UTF_8))
+                            .toFile();
                     } catch (final IOException e) {
                         throw new GradleException(
                             "Cannot read path to package manager executable from file: " + filePath, e);
                     }
-                })
-                .map(packageManagerExecutablePathFilePath -> () -> Paths
-                    .get(packageManagerExecutablePathFilePath)
-                    .toFile()));
+                }));
         task.setOnlyIf(t -> isTaskExecuted(taskContainer, RESOLVE_PACKAGE_MANAGER_TASK_NAME));
     }
 
