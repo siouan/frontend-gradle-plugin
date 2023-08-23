@@ -2,7 +2,7 @@
   "name": "frontend-gradle-plugin-site",
   "description": "Frontend Gradle plugin's official site",
   "license": "Apache-2.0",
-  "version": "7.1.0",
+  "version": "8.0.0",
   "packageManager": "yarn@3.6.0",
   "scripts": {
     "dev": "nuxt",
