@@ -1,8 +1,5 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
-import java.io.File;
-import java.nio.file.Path;
-
 import org.gradle.api.GradleException;
 import org.gradle.api.file.ProjectLayout;
 import org.gradle.api.model.ObjectFactory;
@@ -19,24 +16,13 @@ public abstract class AbstractRunCommandTaskType extends AbstractRunCommandTask 
     AbstractRunCommandTaskType(final ProjectLayout projectLayout, final ObjectFactory objectFactory,
         final ExecOperations execOperations) {
         super(projectLayout, objectFactory, execOperations);
-        final TaskContext taskContext;
-        final ResolveNodeInstallDirectoryPath resolveNodeInstallDirectoryPath;
+        final FrontendExtension frontendExtension;
         try {
-            taskContext = Beans.getBean(beanRegistryId, TaskContext.class);
-            resolveNodeInstallDirectoryPath = Beans.getBean(beanRegistryId, ResolveNodeInstallDirectoryPath.class);
+            frontendExtension = Beans.getBean(beanRegistryId, FrontendExtension.class);
         } catch (final BeanRegistryException e) {
             throw new GradleException(e.getClass().getName() + ": " + e.getMessage(), e);
         }
-        final FrontendExtension extension = taskContext.getExtension();
-        this.packageJsonDirectory.set(extension.getPackageJsonDirectory().getAsFile());
-        this.nodeInstallDirectory.set(resolveNodeInstallDirectoryPath
-            .execute(ResolveNodeInstallDirectoryPathCommand
-                .builder()
-                .nodeInstallDirectoryFromUser(extension.getNodeInstallDirectory().getAsFile().map(File::toPath))
-                .nodeDistributionProvided(extension.getNodeDistributionProvided())
-                .nodeInstallDirectoryFromEnvironment(taskContext.getNodeInstallDirectoryFromEnvironment())
-                .defaultPath(taskContext.getDefaultNodeInstallDirectoryPath())
-                .build())
-            .map(Path::toFile));
+        this.packageJsonDirectory.set(frontendExtension.getPackageJsonDirectory().getAsFile());
+        this.nodeInstallDirectory.set(frontendExtension.getNodeInstallDirectory().getAsFile());
     }
 }

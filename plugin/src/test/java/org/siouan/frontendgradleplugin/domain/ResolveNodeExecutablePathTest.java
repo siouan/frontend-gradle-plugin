@@ -12,13 +12,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class ResolveGlobalNodeExecutablePathTest {
+class ResolveNodeExecutablePathTest {
 
     @Mock
     private FileManager fileManager;
 
     @InjectMocks
-    private ResolveGlobalNodeExecutablePath usecase;
+    private ResolveNodeExecutablePath usecase;
 
     @Test
     void should_return_relative_executable_path_when_os_is_windows() {

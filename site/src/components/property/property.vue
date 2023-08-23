@@ -27,7 +27,7 @@
                     Required: <fgp-code>{{ required }}</fgp-code>
                 </li>
                 <li>
-                    Default value: <fgp-code>{{ defaultScriptValue }}</fgp-code>
+                    Default value: <fgp-code v-if="!$slots.defaultValue">{{ defaultTypedValue }}</fgp-code><slot v-else name="defaultValue" />
                 </li>
                 <li v-if="example">
                     Example: <fgp-code>{{ scriptExample }}</fgp-code>
@@ -80,7 +80,7 @@ export default Vue.component('fgp-property', {
         },
     },
     computed: {
-        defaultScriptValue() {
+        defaultTypedValue() {
             if (this.defaultValue === null) {
                 return 'null';
             }

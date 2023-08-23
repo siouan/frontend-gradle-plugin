@@ -3,17 +3,15 @@
         name="nodeInstallDirectory"
         type="java.io.File"
         :required="false"
-        default-value="null"
+        default-value="${projectDir}/node"
         :tasks="['installNode', 'resolvePackageManager', 'installPackageManager', 'installFrontend', 'cleanFrontend', 'assembleFrontend', 'checkFrontend', 'publishFrontend']"
     >
         <p>
-            When property <fgp-property-link name="nodeDistributionProvided" /> is <fgp-code>false</fgp-code>, the
-            downloaded distribution is installed in the directory pointed by this property (defaults to
-            <fgp-code>file("${projectDir}/node")</fgp-code>). When property
-            <fgp-property-link name="nodeDistributionProvided" /> is <fgp-code>true</fgp-code>, this property may be
-            used to point the directory where the distribution is already installed. If <fgp-code>null</fgp-code>, the
-            plugin tries to find the installation directory with the <fgp-code>FGP_NODEJS_HOME</fgp-code> environment
-            variable.
+            Directory where the <fgp-nodejs-link /> distribution shall be installed or is already installed (depending
+            on the value of property <fgp-property-link name="nodeDistributionProvided" />). Despite its default
+            <fgp-code>null</fgp-code> value, when property <fgp-property-link name="nodeDistributionProvided" /> is
+            <fgp-code>false</fgp-code> or the <fgp-code>FGP_NODEJS_HOME</fgp-code> environment variable is undefined,
+            the distribution is installed or expected to be found in directory <fgp-code>${projectDir}/node</fgp-code>.
         </p>
     </fgp-property>
 </template>

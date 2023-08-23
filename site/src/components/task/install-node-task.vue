@@ -11,9 +11,10 @@
         <template #description>
             <p>
                 The task downloads a <fgp-nodejs-link /> distribution, verifies its integrity, and installs it in the
-                directory pointed by the <fgp-property-link name="nodeInstallDirectory" /> property. The URL used to
-                download the distribution is resolved using the
-                <fgp-property-link name="nodeDistributionUrlRoot" /> property and the
+                directory pointed by the <fgp-property-link name="nodeInstallDirectory" /> property (if this property is
+                <fgp-code>null</fgp-code>, the distribution is installed in directory
+                <fgp-code>${projectDir}/node</fgp-code>). The URL used to download the distribution is resolved using
+                the <fgp-property-link name="nodeDistributionUrlRoot" /> property and the
                 <fgp-property-link name="nodeDistributionUrlPathPattern" /> property. Checking the distribution
                 integrity consists of downloading a file providing the distribution shasum. This file is expected to be
                 in the same remote web directory than the distribution archive. For example, if the distribution is

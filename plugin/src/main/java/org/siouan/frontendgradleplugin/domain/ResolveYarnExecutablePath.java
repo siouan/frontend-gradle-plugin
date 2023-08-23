@@ -4,16 +4,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * Gets the path to a Corepack executable given an install directory and a platform.
+ * Gets the path to a Yarn executable given an install directory and a platform.
  *
- * @since 7.0.0
+ * @since 2.0.0
  */
-public class ResolveGlobalCorepackExecutablePath extends AbstractResolveGlobalExecutablePath {
+public class ResolveYarnExecutablePath extends AbstractResolveExecutablePath {
 
     /**
      * Relative executable path on Windows O/S.
      */
-    public static final String WINDOWS_EXECUTABLE_FILE_NAME = "corepack.cmd";
+    public static final String WINDOWS_EXECUTABLE_FILE_NAME = "yarn.cmd";
 
     /**
      * Relative executable path on Windows O/S.
@@ -23,7 +23,7 @@ public class ResolveGlobalCorepackExecutablePath extends AbstractResolveGlobalEx
     /**
      * Relative executable path on non-Windows O/S.
      */
-    public static final String NON_WINDOWS_EXECUTABLE_FILE_NAME = "corepack";
+    public static final String NON_WINDOWS_EXECUTABLE_FILE_NAME = "yarn";
 
     /**
      * Relative executable path on non-Windows O/S.
@@ -32,7 +32,7 @@ public class ResolveGlobalCorepackExecutablePath extends AbstractResolveGlobalEx
         .get("bin")
         .resolve(NON_WINDOWS_EXECUTABLE_FILE_NAME);
 
-    public ResolveGlobalCorepackExecutablePath(final Logger logger) {
+    public ResolveYarnExecutablePath(final Logger logger) {
         super(logger);
     }
 

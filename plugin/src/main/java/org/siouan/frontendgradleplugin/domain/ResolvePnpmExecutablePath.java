@@ -4,16 +4,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * Gets the path to a Node executable given an install directory and a platform.
+ * Gets the path to a PNPM executable given an install directory and a platform.
  *
- * @since 2.0.0
+ * @since 7.0.0
  */
-public class ResolveGlobalNodeExecutablePath extends AbstractResolveGlobalExecutablePath {
+public class ResolvePnpmExecutablePath extends AbstractResolveExecutablePath {
 
     /**
-     * Executable name on Windows O/S.
+     * Relative executable path on Windows O/S.
      */
-    public static final String WINDOWS_EXECUTABLE_FILE_NAME = "node.exe";
+    public static final String WINDOWS_EXECUTABLE_FILE_NAME = "pnpm.cmd";
 
     /**
      * Relative executable path on Windows O/S.
@@ -21,9 +21,9 @@ public class ResolveGlobalNodeExecutablePath extends AbstractResolveGlobalExecut
     public static final Path WINDOWS_EXECUTABLE_FILE_PATH = Paths.get(WINDOWS_EXECUTABLE_FILE_NAME);
 
     /**
-     * Executable name on non-Windows O/S.
+     * Relative executable path on non-Windows O/S.
      */
-    public static final String NON_WINDOWS_EXECUTABLE_FILE_NAME = "node";
+    public static final String NON_WINDOWS_EXECUTABLE_FILE_NAME = "pnpm";
 
     /**
      * Relative executable path on non-Windows O/S.
@@ -32,7 +32,7 @@ public class ResolveGlobalNodeExecutablePath extends AbstractResolveGlobalExecut
         .get("bin")
         .resolve(NON_WINDOWS_EXECUTABLE_FILE_NAME);
 
-    public ResolveGlobalNodeExecutablePath(final Logger logger) {
+    public ResolvePnpmExecutablePath(final Logger logger) {
         super(logger);
     }
 

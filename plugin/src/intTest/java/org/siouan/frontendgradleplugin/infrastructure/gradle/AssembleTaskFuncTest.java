@@ -36,7 +36,27 @@ class AssembleTaskFuncTest {
     }
 
     @Test
-    void should_skip_plugin_task_when_script_is_not_defined() throws IOException {
+    void should_skip_task_when_package_json_file_is_not_a_file() throws IOException {
+        final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
+            .nodeVersion("18.17.1")
+            .nodeDistributionUrl(getResourceUrl("node-v18.17.1.zip"))
+            .assembleScript("run assemble")
+            .packageJsonDirectory(packageJsonDirectoryPath);
+        createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
+
+        final BuildResult result1 = runGradle(projectDirectoryPath, FrontendGradlePlugin.ASSEMBLE_TASK_NAME);
+
+        assertAssembleTaskOutcomes(result1, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SKIPPED,
+            PluginTaskOutcome.SKIPPED, PluginTaskOutcome.SKIPPED, PluginTaskOutcome.SKIPPED, null);
+
+        final BuildResult result2 = runGradle(projectDirectoryPath, FrontendGradlePlugin.ASSEMBLE_TASK_NAME);
+
+        assertAssembleTaskOutcomes(result2, PluginTaskOutcome.UP_TO_DATE, PluginTaskOutcome.SKIPPED,
+            PluginTaskOutcome.SKIPPED, PluginTaskOutcome.SKIPPED, PluginTaskOutcome.SKIPPED, null);
+    }
+
+    @Test
+    void should_skip_task_when_script_is_not_defined() throws IOException {
         Files.copy(getResourcePath("package-any-manager.json"), packageJsonDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
             .nodeVersion("18.17.1")
@@ -56,7 +76,7 @@ class AssembleTaskFuncTest {
     }
 
     @Test
-    void should_skip_plugin_task_when_running_gradle_task_and_script_is_not_defined() throws IOException {
+    void should_skip_task_when_running_gradle_task_and_script_is_not_defined() throws IOException {
         Files.copy(getResourcePath("package-any-manager.json"), packageJsonDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
             .nodeVersion("18.17.1")
