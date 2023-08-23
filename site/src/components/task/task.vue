@@ -19,6 +19,12 @@
                 <fgp-site-link path="#app" class="small text-info">&uparrow;</fgp-site-link>
             </h4>
             <ul>
+                <li v-if="dependingTasks.length > 0">
+                    Depends on:
+                    <span v-for="(taskName, index) in dependingTasks" :key="taskName">
+                        <fgp-task-link :name="taskName" /><template v-if="index < dependingTasks.length - 1">, </template>
+                    </span>
+                </li>
                 <li v-if="inputs.length > 0">
                     Inputs:
                     <ul>

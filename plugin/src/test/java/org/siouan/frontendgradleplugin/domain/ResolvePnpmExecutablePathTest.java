@@ -12,38 +12,38 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class ResolveGlobalCorepackExecutablePathTest {
+class ResolvePnpmExecutablePathTest {
 
     @Mock
     private FileManager fileManager;
 
     @InjectMocks
-    private ResolveGlobalCorepackExecutablePath usecase;
+    private ResolvePnpmExecutablePath usecase;
 
     @Test
     void should_return_relative_executable_path_when_os_is_windows() {
-        assertThat(usecase.getWindowsRelativeExecutablePath()).isEqualTo(Paths.get("corepack.cmd"));
+        assertThat(usecase.getWindowsRelativeExecutablePath()).isEqualTo(Paths.get("pnpm.cmd"));
 
         verifyNoMoreInteractions(fileManager);
     }
 
     @Test
     void should_return_relative_executable_path_when_os_is_not_windows() {
-        assertThat(usecase.getNonWindowsRelativeExecutablePath()).isEqualTo(Paths.get("bin", "corepack"));
+        assertThat(usecase.getNonWindowsRelativeExecutablePath()).isEqualTo(Paths.get("bin", "pnpm"));
 
         verifyNoMoreInteractions(fileManager);
     }
 
     @Test
     void should_return_executable_file_name_when_os_is_windows() {
-        assertThat(usecase.getWindowsExecutableFileName()).isEqualTo("corepack.cmd");
+        assertThat(usecase.getWindowsExecutableFileName()).isEqualTo("pnpm.cmd");
 
         verifyNoMoreInteractions(fileManager);
     }
 
     @Test
     void should_return_executable_file_name_when_os_is_not_windows() {
-        assertThat(usecase.getNonWindowsExecutableFileName()).isEqualTo("corepack");
+        assertThat(usecase.getNonWindowsExecutableFileName()).isEqualTo("pnpm");
 
         verifyNoMoreInteractions(fileManager);
     }

@@ -21,19 +21,19 @@ class GetExecutablePathTest {
     private static final Path NODE_INSTALL_DIRECTORY_PATH = ANY_PATH.resolve("node");
 
     @Mock
-    private ResolveGlobalCorepackExecutablePath getCorepackExecutablePath;
+    private ResolveCorepackExecutablePath getCorepackExecutablePath;
 
     @Mock
-    private ResolveGlobalNodeExecutablePath getNodeExecutablePath;
+    private ResolveNodeExecutablePath getNodeExecutablePath;
 
     @Mock
-    private ResolveGlobalNpmExecutablePath getNpmExecutablePath;
+    private ResolveNpmExecutablePath getNpmExecutablePath;
 
     @Mock
-    private ResolveGlobalPnpmExecutablePath getPnpmExecutablePath;
+    private ResolvePnpmExecutablePath getPnpmExecutablePath;
 
     @Mock
-    private ResolveGlobalYarnExecutablePath getYarnExecutablePath;
+    private ResolveYarnExecutablePath getYarnExecutablePath;
 
     @InjectMocks
     private GetExecutablePath usecase;
@@ -42,7 +42,7 @@ class GetExecutablePathTest {
     void should_resolve_node_executable_path() {
         final Platform platform = aPlatform();
         final Path executablePath = Paths.get("node");
-        when(getNodeExecutablePath.execute(ResolveGlobalExecutablePathCommand
+        when(getNodeExecutablePath.execute(ResolveExecutablePathCommand
             .builder()
             .nodeInstallDirectoryPath(NODE_INSTALL_DIRECTORY_PATH)
             .platform(platform)
@@ -63,7 +63,7 @@ class GetExecutablePathTest {
     void should_resolve_corepack_executable_path() {
         final Platform platform = aPlatform();
         final Path executablePath = Paths.get("corepack");
-        when(getCorepackExecutablePath.execute(ResolveGlobalExecutablePathCommand
+        when(getCorepackExecutablePath.execute(ResolveExecutablePathCommand
             .builder()
             .nodeInstallDirectoryPath(NODE_INSTALL_DIRECTORY_PATH)
             .platform(platform)
@@ -84,7 +84,7 @@ class GetExecutablePathTest {
     void should_resolve_npm_executable_path() {
         final Platform platform = aPlatform();
         final Path executablePath = Paths.get("npm");
-        when(getNpmExecutablePath.execute(ResolveGlobalExecutablePathCommand
+        when(getNpmExecutablePath.execute(ResolveExecutablePathCommand
             .builder()
             .nodeInstallDirectoryPath(NODE_INSTALL_DIRECTORY_PATH)
             .platform(platform)
@@ -105,7 +105,7 @@ class GetExecutablePathTest {
     void should_resolve_pnpm_executable_path() {
         final Platform platform = aPlatform();
         final Path executablePath = Paths.get("pnpm");
-        when(getPnpmExecutablePath.execute(ResolveGlobalExecutablePathCommand
+        when(getPnpmExecutablePath.execute(ResolveExecutablePathCommand
             .builder()
             .nodeInstallDirectoryPath(NODE_INSTALL_DIRECTORY_PATH)
             .platform(platform)
@@ -126,7 +126,7 @@ class GetExecutablePathTest {
     void should_resolve_yarn_executable_path() {
         final Platform platform = aPlatform();
         final Path executablePath = Paths.get("yarn");
-        when(getYarnExecutablePath.execute(ResolveGlobalExecutablePathCommand
+        when(getYarnExecutablePath.execute(ResolveExecutablePathCommand
             .builder()
             .nodeInstallDirectoryPath(NODE_INSTALL_DIRECTORY_PATH)
             .platform(platform)

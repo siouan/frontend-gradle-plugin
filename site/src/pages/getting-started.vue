@@ -8,7 +8,7 @@
         </p>
         <ul>
             <li><fgp-gradle-plugins-link path="/plugin/org.siouan.frontend-jdk17">JDK 17 build</fgp-gradle-plugins-link>: <fgp-gradle-link /> 7.3+</li>
-            <li><fgp-gradle-plugins-link path="/plugin/org.siouan.frontend-jdk11">JDK 11 build</fgp-gradle-plugins-link>: <fgp-gradle-link /> 6.1+</li>
+            <li><fgp-gradle-plugins-link path="/plugin/org.siouan.frontend-jdk11">JDK 11 build</fgp-gradle-plugins-link>: <fgp-gradle-link /> 6.2+</li>
         </ul>
         <p>
             The plugin is built and tested on Linux, Mac OS, Windows (see the list of build environments used in
@@ -102,7 +102,8 @@ apply(plugin = "org.siouan.frontend-jdk11")</fgp-code></pre>
                 </ul>
             </li>
             <li>
-                Define the <fgp-nodejs-link path="/api/packages.html#packagemanager" label="packageManager" />
+                Define the <fgp-code><fgp-nodejs-link path="/api/packages.html#packagemanager" label="packageManager"
+                /></fgp-code>
                 property in the <fgp-code>package.json</fgp-code> file.
             </li>
             <li>

@@ -2,7 +2,8 @@
     <fgp-task name="checkFrontend" :inputs="inputs">
         <template #title>Check frontend application</template>
         <template #skipConditions>
-            property <fgp-property-link name="checkScript" /> is not <fgp-code>null</fgp-code>.
+            task <fgp-task-link name="installFrontend" /> was skipped or property
+            <fgp-property-link name="checkScript" /> is <fgp-code>null</fgp-code>.
         </template>
         <template #description>
             <p>

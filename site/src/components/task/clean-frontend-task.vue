@@ -1,8 +1,9 @@
 <template>
-    <fgp-task name="cleanFrontend" :inputs="inputs">
+    <fgp-task name="cleanFrontend" :depending-tasks="['installFrontend']" :inputs="inputs">
         <template #title>Clean frontend artifacts</template>
         <template #skipConditions>
-            property <fgp-property-link name="cleanScript" /> is not <fgp-code>null</fgp-code>.
+            task <fgp-task-link name="installFrontend" /> was skipped or property
+            <fgp-property-link name="cleanScript" /> is <fgp-code>null</fgp-code>.
         </template>
         <template #description>
             <p>

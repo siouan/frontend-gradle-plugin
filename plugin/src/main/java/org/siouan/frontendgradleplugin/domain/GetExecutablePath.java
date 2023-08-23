@@ -12,15 +12,15 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class GetExecutablePath {
 
-    private final ResolveGlobalCorepackExecutablePath getCorepackExecutablePath;
+    private final ResolveCorepackExecutablePath getCorepackExecutablePath;
 
-    private final ResolveGlobalNodeExecutablePath getNodeExecutablePath;
+    private final ResolveNodeExecutablePath getNodeExecutablePath;
 
-    private final ResolveGlobalNpmExecutablePath getNpmExecutablePath;
+    private final ResolveNpmExecutablePath getNpmExecutablePath;
 
-    private final ResolveGlobalPnpmExecutablePath getPnpmExecutablePath;
+    private final ResolvePnpmExecutablePath getPnpmExecutablePath;
 
-    private final ResolveGlobalYarnExecutablePath getYarnExecutablePath;
+    private final ResolveYarnExecutablePath getYarnExecutablePath;
 
     /**
      * Resolves the path of the executable.
@@ -30,7 +30,7 @@ public class GetExecutablePath {
      * @see ExecutableType
      */
     public Path execute(final GetExecutablePathCommand command) {
-        final ResolveGlobalExecutablePathCommand resolveGlobalExecutablePathCommand = ResolveGlobalExecutablePathCommand
+        final ResolveExecutablePathCommand resolveGlobalExecutablePathCommand = ResolveExecutablePathCommand
             .builder()
             .platform(command.getPlatform())
             .nodeInstallDirectoryPath(command.getNodeInstallDirectoryPath())

@@ -25,7 +25,7 @@ class ResolveExecutionSettingsTest {
     private static final String SCRIPT = " run script ";
 
     @Mock
-    private ResolveGlobalNodeExecutablePath getNodeExecutablePath;
+    private ResolveNodeExecutablePath getNodeExecutablePath;
 
     @Mock
     private GetExecutablePath getExecutablePath;
@@ -37,7 +37,7 @@ class ResolveExecutionSettingsTest {
     void should_resolve_exec_settings_with_windows_cmd_when_executable_is_node_in_distribution_and_os_is_windows() {
         final Platform platform = aPlatform(getSystemJvmArch(), "Windows NT");
         final Path nodeExecutablePath = NODE_INSTALL_DIRECTORY_PATH.resolve("node");
-        when(getNodeExecutablePath.execute(ResolveGlobalExecutablePathCommand
+        when(getNodeExecutablePath.execute(ResolveExecutablePathCommand
             .builder()
             .nodeInstallDirectoryPath(NODE_INSTALL_DIRECTORY_PATH)
             .platform(platform)
@@ -70,7 +70,7 @@ class ResolveExecutionSettingsTest {
         final Platform platform = aPlatform(getSystemJvmArch(), "Windows NT");
         final Path nodeExecutablePath = NODE_INSTALL_DIRECTORY_PATH.resolve("node");
         final Path npmExecutablePath = NODE_INSTALL_DIRECTORY_PATH.resolve("npm");
-        when(getNodeExecutablePath.execute(ResolveGlobalExecutablePathCommand
+        when(getNodeExecutablePath.execute(ResolveExecutablePathCommand
             .builder()
             .nodeInstallDirectoryPath(NODE_INSTALL_DIRECTORY_PATH)
             .platform(platform)
@@ -102,7 +102,7 @@ class ResolveExecutionSettingsTest {
     void should_resolve_exec_settings_with_unix_shell_when_executable_is_node_in_path_and_os_is_not_windows() {
         final Platform platform = aPlatform(getSystemJvmArch(), "Linux");
         final Path nodeExecutablePath = NODE_INSTALL_DIRECTORY_PATH.resolve("node");
-        when(getNodeExecutablePath.execute(ResolveGlobalExecutablePathCommand
+        when(getNodeExecutablePath.execute(ResolveExecutablePathCommand
             .builder()
             .nodeInstallDirectoryPath(NODE_INSTALL_DIRECTORY_PATH)
             .platform(platform)
@@ -135,7 +135,7 @@ class ResolveExecutionSettingsTest {
         final Platform platform = aPlatform(getSystemJvmArch(), "Linux");
         final Path nodeExecutablePath = NODE_INSTALL_DIRECTORY_PATH.resolve("node");
         final Path npmExecutablePath = nodeExecutablePath.resolveSibling("npm");
-        when(getNodeExecutablePath.execute(ResolveGlobalExecutablePathCommand
+        when(getNodeExecutablePath.execute(ResolveExecutablePathCommand
             .builder()
             .nodeInstallDirectoryPath(NODE_INSTALL_DIRECTORY_PATH)
             .platform(platform)

@@ -1,5 +1,5 @@
 <template>
-    <fgp-task name="installPackageManager" :inputs="inputs" :outputs="outputs">
+    <fgp-task name="installPackageManager" :depending-tasks="['resolvePackageManager']" :inputs="inputs" :outputs="outputs">
         <template #title>Install package manager</template>
         <template #packageManagerSpecificationFile>
             <fgp-property-link name="cacheDirectory" /><fgp-code>/resolvePackageManager/package-manager-specification.txt</fgp-code>
@@ -9,8 +9,7 @@
             <fgp-property-link name="nodeInstallDirectory" /><fgp-code>/bin/[npm|pnpm|yarn]</fgp-code> depending on the O/S.
         </template>
         <template #skipConditions>
-            file <fgp-property-link name="cacheDirectory" /><fgp-code
-            >/resolvePackageManager/package-manager-executable-path.txt</fgp-code> does not exist.
+            task <fgp-task-link name="resolvePackageManager" /> was skipped.
         </template>
         <template #description>
             <p>
