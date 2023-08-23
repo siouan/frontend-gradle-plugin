@@ -14,7 +14,7 @@ import lombok.Getter;
 @Builder
 @Getter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class ResolveGlobalExecutablePathCommand {
+public class ResolveExecutablePathCommand {
 
     /**
      * Path to the Node.js install directory.

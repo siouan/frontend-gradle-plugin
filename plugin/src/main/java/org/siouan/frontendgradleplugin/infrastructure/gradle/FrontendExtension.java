@@ -188,14 +188,6 @@ public class FrontendExtension {
 
     /**
      * WARNING: THIS IS AN INTERNAL PROPERTY, WHICH MUST NOT BE USED/OVERRIDDEN IN GRADLE BUILD FILES.
-     * <p>The {@code package.json} file derived from the {@link #packageJsonDirectory} property.</p>
-     *
-     * @since 7.0.0
-     */
-    private final RegularFileProperty internalPackageJsonFile;
-
-    /**
-     * WARNING: THIS IS AN INTERNAL PROPERTY, WHICH MUST NOT BE USED/OVERRIDDEN IN GRADLE BUILD FILES.
      * <p>File derived from the {@link #cacheDirectory} property where task "resolvePackageManager" stores the name and
      * the version of the package manager.</p>
      *
@@ -247,7 +239,6 @@ public class FrontendExtension {
         retryIntervalMultiplier = objectFactory.property(Double.class);
         retryMaxIntervalMs = objectFactory.property(Integer.class);
         cacheDirectory = objectFactory.directoryProperty();
-        internalPackageJsonFile = objectFactory.fileProperty();
         internalPackageManagerSpecificationFile = objectFactory.fileProperty();
         internalPackageManagerExecutablePathFile = objectFactory.fileProperty();
         verboseModeEnabled = objectFactory.property(Boolean.class);

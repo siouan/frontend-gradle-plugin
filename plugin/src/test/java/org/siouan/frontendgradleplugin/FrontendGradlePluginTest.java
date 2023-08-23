@@ -2,12 +2,12 @@ package org.siouan.frontendgradleplugin;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.io.File;
 import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.Set;
 
 import org.gradle.api.Project;
+import org.gradle.api.file.RegularFile;
 import org.gradle.api.plugins.BasePlugin;
 import org.gradle.api.publish.plugins.PublishingPlugin;
 import org.gradle.language.base.plugins.LifecycleBasePlugin;
@@ -51,7 +51,11 @@ class FrontendGradlePluginTest {
 
         assertThat(extension.getNodeDistributionProvided().get()).isFalse();
         assertThat(extension.getNodeVersion().isPresent()).isFalse();
-        assertThat(extension.getNodeInstallDirectory().getAsFile().isPresent()).isFalse();
+        assertThat(extension.getNodeInstallDirectory().getAsFile().get()).isEqualTo(project
+            .getLayout()
+            .getProjectDirectory()
+            .dir(FrontendGradlePlugin.DEFAULT_NODE_INSTALL_DIRECTORY_NAME)
+            .getAsFile());
         assertThat(extension.getNodeDistributionUrlRoot().get()).isEqualTo(
             FrontendGradlePlugin.DEFAULT_NODE_DISTRIBUTION_URL_ROOT);
         assertThat(extension.getNodeDistributionUrlPathPattern().get()).isEqualTo(
@@ -82,8 +86,6 @@ class FrontendGradlePluginTest {
             FrontendGradlePlugin.DEFAULT_RETRY_INTERVAL_MULTIPLIER);
         assertThat(extension.getRetryMaxIntervalMs().get()).isEqualTo(
             FrontendGradlePlugin.DEFAULT_RETRY_MAX_INTERVAL_MS);
-        assertThat(extension.getInternalPackageJsonFile().getAsFile().get()).isEqualTo(
-            project.getProjectDir().toPath().resolve(FrontendGradlePlugin.PACKAGE_JSON_FILE_NAME).toFile());
         assertThat(extension.getInternalPackageManagerSpecificationFile().getAsFile().get()).isEqualTo(project
             .getProjectDir()
             .toPath()
@@ -134,7 +136,6 @@ class FrontendGradlePluginTest {
         extension.getRetryIntervalMultiplier().set(7.3);
         extension.getRetryMaxIntervalMs().set(9623);
         extension.getVerboseModeEnabled().set(true);
-        extension.getInternalPackageJsonFile().set(new File("metadata.json"));
 
         assertThatTasksAreConfigured(project, extension);
     }
@@ -184,8 +185,11 @@ class FrontendGradlePluginTest {
             .getTasks()
             .named(FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME, ResolvePackageManagerTask.class)
             .get();
-        assertThat(resolvePackageManagerTask.getPackageJsonFile().getAsFile().get()).isEqualTo(
-            extension.getInternalPackageJsonFile().getAsFile().get());
+        assertThat(resolvePackageManagerTask.getPackageJsonFile().getAsFile().get()).isEqualTo(extension
+            .getPackageJsonDirectory()
+            .file(FrontendGradlePlugin.PACKAGE_JSON_FILE_NAME)
+            .map(RegularFile::getAsFile)
+            .get());
         assertThat(resolvePackageManagerTask.getNodeInstallDirectory().isPresent()).isTrue();
         assertThat(resolvePackageManagerTask.getPackageManagerSpecificationFile().getAsFile().get()).isEqualTo(
             extension.getInternalPackageManagerSpecificationFile().getAsFile().get());

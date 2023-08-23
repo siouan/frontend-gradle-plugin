@@ -4,16 +4,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * Gets the path to a Yarn executable given an install directory and a platform.
+ * Gets the path to a npm executable given an install directory and a platform.
  *
  * @since 2.0.0
  */
-public class ResolveGlobalYarnExecutablePath extends AbstractResolveGlobalExecutablePath {
+public class ResolveNpmExecutablePath extends AbstractResolveExecutablePath {
 
     /**
      * Relative executable path on Windows O/S.
      */
-    public static final String WINDOWS_EXECUTABLE_FILE_NAME = "yarn.cmd";
+    public static final String WINDOWS_EXECUTABLE_FILE_NAME = "npm.cmd";
 
     /**
      * Relative executable path on Windows O/S.
@@ -23,7 +23,7 @@ public class ResolveGlobalYarnExecutablePath extends AbstractResolveGlobalExecut
     /**
      * Relative executable path on non-Windows O/S.
      */
-    public static final String NON_WINDOWS_EXECUTABLE_FILE_NAME = "yarn";
+    public static final String NON_WINDOWS_EXECUTABLE_FILE_NAME = "npm";
 
     /**
      * Relative executable path on non-Windows O/S.
@@ -32,7 +32,7 @@ public class ResolveGlobalYarnExecutablePath extends AbstractResolveGlobalExecut
         .get("bin")
         .resolve(NON_WINDOWS_EXECUTABLE_FILE_NAME);
 
-    public ResolveGlobalYarnExecutablePath(final Logger logger) {
+    public ResolveNpmExecutablePath(final Logger logger) {
         super(logger);
     }
 

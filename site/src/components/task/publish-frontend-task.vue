@@ -1,8 +1,9 @@
 <template>
-    <fgp-task name="publishFrontend" :inputs="inputs">
+    <fgp-task name="publishFrontend" :depending-tasks="['assembleFrontend']" :inputs="inputs">
         <template #title>Publish frontend artifacts</template>
         <template #skipConditions>
-            either property <fgp-property-link name="assembleScript" /> or property
+            task <fgp-task-link name="installFrontend" /> was skipped or property
+            <fgp-property-link name="assembleScript" /> is <fgp-code>null</fgp-code> or property
             <fgp-property-link name="publishScript" /> is <fgp-code>null</fgp-code>.
         </template>
         <template #description>
