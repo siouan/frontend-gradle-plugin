@@ -48,15 +48,8 @@ class InstallPackageManagerTaskFuncTest {
     }
 
     @Test
-    void should_fail_when_corepack_executable_is_not_a_file() throws IOException {
-        // The fact that the corepack executable is not present is enough to simulate the following use cases:
-        // - The Node.js distribution is already provided, but the install directory was not set accordingly.
-        // - The Node.js distribution is already provided, but the install directory contains a non-supported release.
-        // - The Node.js distribution was downloaded but is a non-supported release.
-        // - The Node.js distribution was downloaded but was corrupted later so as the corepack executable is not
-        // present anymore.
+    void should_fail_when_node_install_directory_is_not_a_directory() throws IOException {
         Files.copy(getResourcePath("package-any-manager.json"), projectDirectoryPath.resolve("package.json"));
-        Files.createDirectory(projectDirectoryPath.resolve(FrontendGradlePlugin.DEFAULT_NODE_INSTALL_DIRECTORY_NAME));
         createBuildFile(projectDirectoryPath, new FrontendMapBuilder().nodeDistributionProvided(true).toMap());
 
         final BuildResult result = runGradleAndExpectFailure(projectDirectoryPath,
