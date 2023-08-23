@@ -4,7 +4,7 @@ buildscript {
     }
 
     dependencies {
-        classpath("org.siouan", "frontend-jdk17", "7.1.0")
+        classpath("org.siouan", "frontend-jdk17", "8.0.0")
     }
 }
 
