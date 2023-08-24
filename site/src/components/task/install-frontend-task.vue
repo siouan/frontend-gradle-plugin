@@ -1,9 +1,8 @@
 <template>
-    <fgp-task name="installFrontend" :inputs="inputs">
+    <fgp-task name="installFrontend" :depending-tasks="['installPackageManager']" :inputs="inputs">
         <template #title>Install frontend dependencies</template>
         <template #skipConditions>
-            file <fgp-property-link name="cacheDirectory" /><fgp-code
-        >/resolvePackageManager/package-manager-specification.txt</fgp-code> does not exist.
+            task <fgp-task-link name="installPackageManager" /> was skipped.
         </template>
         <template #description>
             <p>

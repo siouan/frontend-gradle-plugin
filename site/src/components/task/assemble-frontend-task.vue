@@ -1,8 +1,9 @@
 <template>
-    <fgp-task name="assembleFrontend" :inputs="inputs">
+    <fgp-task name="assembleFrontend" :depending-tasks="['installFrontend']" :inputs="inputs">
         <template #title>Assemble frontend artifacts</template>
         <template #skipConditions>
-            property <fgp-property-link name="assembleScript" /> is not <fgp-code>null</fgp-code>.
+            task <fgp-task-link name="installFrontend" /> was skipped or property
+            <fgp-property-link name="assembleScript" /> is <fgp-code>null</fgp-code>.
         </template>
         <template #description>
             This task allows to execute a build script as part of a Gradle build. The build script shall be defined in

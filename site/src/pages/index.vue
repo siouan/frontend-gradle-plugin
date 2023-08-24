@@ -7,9 +7,9 @@
                 builds
             </small>
             <fgp-image-link
-                href="https://github.com/siouan/frontend-gradle-plugin/releases/tag/v7.0.0"
-                src="https://img.shields.io/badge/Latest%20release-7.0.0-blue.svg"
-                alt="Latest release 7.0.0"
+                href="https://github.com/siouan/frontend-gradle-plugin/releases/tag/v8.0.0"
+                src="https://img.shields.io/badge/Latest%20release-8.0.0-blue.svg"
+                alt="Latest release 8.0.0"
                 class="ml-1"
             />
         </fgp-main-title>
@@ -32,11 +32,12 @@
 
         <fgp-feature-card title="Distribution management" icon-class="fa fa-cloud-download-alt text-primary">
             By default, the plugin downloads and installs a <fgp-nodejs-link /> distribution. Multiple Gradle
-            (sub-)projects may use the distribution downloaded by one of them, or even use a distribution already
+            (sub)projects may use the distribution downloaded by one of them, or even use a distribution already
             installed in the workstation to avoid network overhead and duplication. The plugin may also use a HTTP proxy
             server when downloading the <fgp-nodejs-link /> distribution, to take advantage of any caching facility, and
             submit to the organization's security rules. Basic authentication scheme is supported for both distribution
-            and proxy servers.
+            and proxy servers. In case of connectivity issues, downloading the <fgp-nodejs-link /> distribution is
+            also retryable, with a configurable exponential backoff strategy.
         </fgp-feature-card>
         <fgp-feature-card title="Support of multiple package managers" icon-class="fas fa-dice-d6">
             The plugin delegates installation of your favorite package manager to <fgp-corepack-link />. Choose your

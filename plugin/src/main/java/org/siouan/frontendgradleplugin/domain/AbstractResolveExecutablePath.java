@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
  * @since 2.0.0
  */
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class AbstractResolveGlobalExecutablePath {
+public abstract class AbstractResolveExecutablePath {
 
     private final Logger logger;
 
@@ -21,7 +21,7 @@ public abstract class AbstractResolveGlobalExecutablePath {
      * @param command Command providing resolution parameters.
      * @return The path, which may be a single file name if it must be resolved using the PATH environment variable.
      */
-    public Path execute(final ResolveGlobalExecutablePathCommand command) {
+    public Path execute(final ResolveExecutablePathCommand command) {
         final Path relativeExecutablePath;
         if (command.getPlatform().isWindowsOs()) {
             relativeExecutablePath = getWindowsRelativeExecutablePath();

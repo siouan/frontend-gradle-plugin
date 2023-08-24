@@ -1,6 +1,7 @@
 package org.siouan.frontendgradleplugin.infrastructure.httpclient;
 
 import java.io.IOException;
+import java.net.Proxy;
 import java.net.URL;
 
 import org.apache.hc.client5.http.ContextBuilder;
@@ -38,7 +39,7 @@ public class ApacheHttpClient extends AbstractHttpClient {
 
         // Proxy management
         final HttpHost proxyServerHost;
-        if (proxySettings == null) {
+        if (proxySettings.getProxyType() == Proxy.Type.DIRECT) {
             proxyServerHost = null;
         } else {
             proxyServerHost = new HttpHost(proxySettings.getProxyHost(), proxySettings.getProxyPort());

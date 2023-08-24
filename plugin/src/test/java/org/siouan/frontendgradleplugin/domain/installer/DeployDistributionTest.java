@@ -141,7 +141,6 @@ class DeployDistributionTest {
         usecase.execute(deployDistributionCommand);
 
         verify(fileManager).moveFileTree(extractDirectoryPath, installDirectoryPath);
-        verify(fileManager).deleteIfExists(extractDirectoryPath);
         verifyNoMoreInteractions(fileManager, archiverProvider, archiver);
     }
 
@@ -170,7 +169,6 @@ class DeployDistributionTest {
         final ArgumentCaptor<Path> sourcePathArgumentCaptor = ArgumentCaptor.forClass(Path.class);
         verify(fileManager).moveFileTree(sourcePathArgumentCaptor.capture(), eq(installDirectoryPath));
         assertThat(sourcePathArgumentCaptor.getValue()).hasParentRaw(extractDirectoryPath);
-        verify(fileManager).deleteIfExists(extractDirectoryPath);
         verifyNoMoreInteractions(fileManager, archiverProvider, archiver);
     }
 

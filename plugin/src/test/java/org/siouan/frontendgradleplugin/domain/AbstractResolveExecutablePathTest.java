@@ -14,7 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class AbstractResolveGlobalExecutablePathTest {
+class AbstractResolveExecutablePathTest {
 
     private static final Path WINDOWS_EXECUTABLE_FILE_PATH = ANY_PATH.resolve("windows-path");
 
@@ -22,11 +22,11 @@ class AbstractResolveGlobalExecutablePathTest {
 
     private static final Path INSTALL_DIRECTORY_PATH = ANY_PATH;
 
-    private ResolveGlobalExecutablePathImpl usecase;
+    private ResolveExecutablePathImpl usecase;
 
     @BeforeEach
     void setUp() {
-        usecase = new ResolveGlobalExecutablePathImpl(mock(Logger.class), WINDOWS_EXECUTABLE_FILE_PATH,
+        usecase = new ResolveExecutablePathImpl(mock(Logger.class), WINDOWS_EXECUTABLE_FILE_PATH,
             NON_WINDOWS_EXECUTABLE_FILE_PATH);
     }
 
@@ -34,7 +34,7 @@ class AbstractResolveGlobalExecutablePathTest {
     void should_return_executable_path_when_os_is_windows_and_executable_exists_in_install_directory() {
         final Path executablePath = INSTALL_DIRECTORY_PATH.resolve(WINDOWS_EXECUTABLE_FILE_PATH);
 
-        assertThat(usecase.execute(ResolveGlobalExecutablePathCommand
+        assertThat(usecase.execute(ResolveExecutablePathCommand
             .builder()
             .nodeInstallDirectoryPath(INSTALL_DIRECTORY_PATH)
             .platform(ANY_WINDOWS_PLATFORM)
@@ -45,20 +45,20 @@ class AbstractResolveGlobalExecutablePathTest {
     void should_return_executable_path_when_os_is_not_windows_and_executable_exists_in_install_directory() {
         final Path executablePath = INSTALL_DIRECTORY_PATH.resolve(NON_WINDOWS_EXECUTABLE_FILE_PATH);
 
-        assertThat(usecase.execute(ResolveGlobalExecutablePathCommand
+        assertThat(usecase.execute(ResolveExecutablePathCommand
             .builder()
             .nodeInstallDirectoryPath(INSTALL_DIRECTORY_PATH)
             .platform(ANY_NON_WINDOWS_PLATFORM)
             .build())).isEqualTo(executablePath);
     }
 
-    private static class ResolveGlobalExecutablePathImpl extends AbstractResolveGlobalExecutablePath {
+    private static class ResolveExecutablePathImpl extends AbstractResolveExecutablePath {
 
         private final Path windowsExecutablePath;
 
         private final Path nonWindowsExecutablePath;
 
-        ResolveGlobalExecutablePathImpl(final Logger logger, final Path windowsExecutablePath,
+        ResolveExecutablePathImpl(final Logger logger, final Path windowsExecutablePath,
             final Path nonWindowsExecutablePath) {
             super(logger);
             this.windowsExecutablePath = windowsExecutablePath;

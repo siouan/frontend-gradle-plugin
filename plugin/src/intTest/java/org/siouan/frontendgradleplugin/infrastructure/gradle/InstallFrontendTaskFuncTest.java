@@ -28,11 +28,29 @@ class InstallFrontendTaskFuncTest {
     Path projectDirectoryPath;
 
     @Test
+    void should_skip_task_when_package_json_file_is_not_a_file() throws IOException {
+        final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
+            .nodeVersion("18.17.1")
+            .nodeDistributionUrl(getResourceUrl("node-v18.17.1.zip"));
+        createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
+
+        final BuildResult result1 = runGradle(projectDirectoryPath, FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME);
+
+        assertTaskOutcomes(result1, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SKIPPED, PluginTaskOutcome.SKIPPED,
+            PluginTaskOutcome.SKIPPED);
+
+        final BuildResult result2 = runGradle(projectDirectoryPath, FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME);
+
+        assertTaskOutcomes(result2, PluginTaskOutcome.UP_TO_DATE, PluginTaskOutcome.SKIPPED, PluginTaskOutcome.SKIPPED,
+            PluginTaskOutcome.SKIPPED);
+    }
+
+    @Test
     void should_succeed_with_default_script() throws IOException {
         Files.copy(getResourcePath("package-any-manager.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("18.16.0")
-            .nodeDistributionUrl(getResourceUrl("node-v18.16.0.zip"));
+            .nodeVersion("18.17.1")
+            .nodeDistributionUrl(getResourceUrl("node-v18.17.1.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME);
@@ -50,8 +68,8 @@ class InstallFrontendTaskFuncTest {
     void should_succeed_with_custom_script() throws IOException {
         Files.copy(getResourcePath("package-any-manager.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("18.16.0")
-            .nodeDistributionUrl(getResourceUrl("node-v18.16.0.zip"))
+            .nodeVersion("18.17.1")
+            .nodeDistributionUrl(getResourceUrl("node-v18.17.1.zip"))
             .installScript("ci");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 

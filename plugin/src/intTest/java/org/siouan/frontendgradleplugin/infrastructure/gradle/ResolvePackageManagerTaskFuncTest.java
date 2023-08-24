@@ -32,7 +32,8 @@ class ResolvePackageManagerTaskFuncTest {
     Path projectDirectoryPath;
 
     @Test
-    void should_be_skipped_when_package_json_file_is_not_readable() throws IOException {
+    void should_skip_task_when_package_json_file_is_not_a_file() throws IOException {
+        Files.createDirectory(projectDirectoryPath.resolve(FrontendGradlePlugin.PACKAGE_JSON_FILE_NAME));
         createBuildFile(projectDirectoryPath, new FrontendMapBuilder().nodeDistributionProvided(true).toMap());
 
         final BuildResult result = runGradle(projectDirectoryPath,
@@ -50,7 +51,10 @@ class ResolvePackageManagerTaskFuncTest {
     @Test
     void should_fail_when_package_manager_property_is_not_set_in_package_json_file() throws IOException {
         Files.copy(getResourcePath("package-no-manager.json"), projectDirectoryPath.resolve("package.json"));
-        createBuildFile(projectDirectoryPath, new FrontendMapBuilder().nodeDistributionProvided(true).toMap());
+        createBuildFile(projectDirectoryPath, new FrontendMapBuilder()
+            .nodeDistributionProvided(true)
+            .nodeInstallDirectory(getResourcePath("node-dist-provided"))
+            .toMap());
 
         final BuildResult result = runGradleAndExpectFailure(projectDirectoryPath,
             FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME);
@@ -67,8 +71,10 @@ class ResolvePackageManagerTaskFuncTest {
     @Test
     void should_fail_when_package_manager_property_is_invalid_in_package_json_file() throws IOException {
         Files.copy(getResourcePath("package-invalid-manager.json"), projectDirectoryPath.resolve("package.json"));
-        createBuildFile(projectDirectoryPath,
-            new FrontendMapBuilder().nodeDistributionProvided(true).nodeDistributionProvided(true).toMap());
+        createBuildFile(projectDirectoryPath, new FrontendMapBuilder()
+            .nodeDistributionProvided(true)
+            .nodeInstallDirectory(getResourcePath("node-dist-provided"))
+            .toMap());
 
         final BuildResult result = runGradleAndExpectFailure(projectDirectoryPath,
             FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME);
@@ -86,8 +92,8 @@ class ResolvePackageManagerTaskFuncTest {
     void should_pass_when_package_manager_property_is_valid() throws IOException {
         Files.copy(getResourcePath("package-any-manager.json"), projectDirectoryPath.resolve("package.json"));
         createBuildFile(projectDirectoryPath, new FrontendMapBuilder()
-            .nodeVersion("18.16.0")
-            .nodeDistributionUrl(getResourceUrl("node-v18.16.0.zip"))
+            .nodeVersion("18.17.1")
+            .nodeDistributionUrl(getResourceUrl("node-v18.17.1.zip"))
             .toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath,

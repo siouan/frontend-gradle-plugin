@@ -11,7 +11,7 @@ import org.siouan.frontendgradleplugin.domain.Logger;
 import org.siouan.frontendgradleplugin.domain.UnsupportedPlatformException;
 
 /**
- * Downloads and optionally validates a distribution file.
+ * Downloads and validates a distribution file.
  *
  * @since 2.0.0
  */
@@ -74,14 +74,20 @@ public class GetDistribution {
             .resourceUrl(distributionUrl)
             .serverCredentials(command.getDistributionServerCredentials())
             .proxySettings(command.getProxySettings())
+            .retrySettings(command.getRetrySettings())
             .temporaryFilePath(temporaryFilePath)
             .destinationFilePath(distributionFilePath)
             .build());
 
-        final ValidateNodeDistributionCommand validateNodeDistributionCommand = new ValidateNodeDistributionCommand(
-            command.getTemporaryDirectoryPath(), distributionUrl, command.getDistributionServerCredentials(),
-            command.getProxySettings(), distributionFilePath);
-        validateNodeDistribution.execute(validateNodeDistributionCommand);
+        validateNodeDistribution.execute(ValidateNodeDistributionCommand
+            .builder()
+            .temporaryDirectoryPath(command.getTemporaryDirectoryPath())
+            .distributionUrl(distributionUrl)
+            .distributionServerCredentials(command.getDistributionServerCredentials())
+            .proxySettings(command.getProxySettings())
+            .retrySettings(command.getRetrySettings())
+            .distributionFilePath(distributionFilePath)
+            .build());
 
         return distributionFilePath;
     }

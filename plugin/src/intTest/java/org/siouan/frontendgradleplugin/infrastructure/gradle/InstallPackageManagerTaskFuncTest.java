@@ -3,6 +3,7 @@ package org.siouan.frontendgradleplugin.infrastructure.gradle;
 import static org.siouan.frontendgradleplugin.test.GradleBuildAssertions.assertTaskOutcomes;
 import static org.siouan.frontendgradleplugin.test.GradleBuildFiles.createBuildFile;
 import static org.siouan.frontendgradleplugin.test.GradleHelper.runGradle;
+import static org.siouan.frontendgradleplugin.test.GradleHelper.runGradleAndExpectFailure;
 import static org.siouan.frontendgradleplugin.test.Resources.getResourcePath;
 import static org.siouan.frontendgradleplugin.test.Resources.getResourceUrl;
 
@@ -29,11 +30,40 @@ class InstallPackageManagerTaskFuncTest {
     Path projectDirectoryPath;
 
     @Test
+    void should_skip_task_when_package_json_file_is_not_a_file() throws IOException {
+        final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
+            .nodeVersion("18.17.1")
+            .nodeDistributionUrl(getResourceUrl("node-v18.17.1.zip"));
+        createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
+
+        final BuildResult result1 = runGradle(projectDirectoryPath,
+            FrontendGradlePlugin.INSTALL_PACKAGE_MANAGER_TASK_NAME);
+
+        assertTaskOutcomes(result1, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SKIPPED, PluginTaskOutcome.SKIPPED);
+
+        final BuildResult result2 = runGradle(projectDirectoryPath,
+            FrontendGradlePlugin.INSTALL_PACKAGE_MANAGER_TASK_NAME);
+
+        assertTaskOutcomes(result2, PluginTaskOutcome.UP_TO_DATE, PluginTaskOutcome.SKIPPED, PluginTaskOutcome.SKIPPED);
+    }
+
+    @Test
+    void should_fail_when_node_install_directory_is_not_a_directory() throws IOException {
+        Files.copy(getResourcePath("package-any-manager.json"), projectDirectoryPath.resolve("package.json"));
+        createBuildFile(projectDirectoryPath, new FrontendMapBuilder().nodeDistributionProvided(true).toMap());
+
+        final BuildResult result = runGradleAndExpectFailure(projectDirectoryPath,
+            FrontendGradlePlugin.INSTALL_PACKAGE_MANAGER_TASK_NAME);
+
+        assertTaskOutcomes(result, PluginTaskOutcome.SKIPPED, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.FAILED);
+    }
+
+    @Test
     void should_install_package_managers() throws IOException {
         Files.copy(getResourcePath("package-npm.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("18.16.0")
-            .nodeDistributionUrl(getResourceUrl("node-v18.16.0.zip"));
+            .nodeVersion("18.17.1")
+            .nodeDistributionUrl(getResourceUrl("node-v18.17.1.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult installNpmResult1 = runGradle(projectDirectoryPath,

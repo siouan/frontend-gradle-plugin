@@ -4,16 +4,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * Gets the path to a npm executable given an install directory and a platform.
+ * Gets the path to a Node executable given an install directory and a platform.
  *
  * @since 2.0.0
  */
-public class ResolveGlobalNpmExecutablePath extends AbstractResolveGlobalExecutablePath {
+public class ResolveNodeExecutablePath extends AbstractResolveExecutablePath {
 
     /**
-     * Relative executable path on Windows O/S.
+     * Executable name on Windows O/S.
      */
-    public static final String WINDOWS_EXECUTABLE_FILE_NAME = "npm.cmd";
+    public static final String WINDOWS_EXECUTABLE_FILE_NAME = "node.exe";
 
     /**
      * Relative executable path on Windows O/S.
@@ -21,9 +21,9 @@ public class ResolveGlobalNpmExecutablePath extends AbstractResolveGlobalExecuta
     public static final Path WINDOWS_EXECUTABLE_FILE_PATH = Paths.get(WINDOWS_EXECUTABLE_FILE_NAME);
 
     /**
-     * Relative executable path on non-Windows O/S.
+     * Executable name on non-Windows O/S.
      */
-    public static final String NON_WINDOWS_EXECUTABLE_FILE_NAME = "npm";
+    public static final String NON_WINDOWS_EXECUTABLE_FILE_NAME = "node";
 
     /**
      * Relative executable path on non-Windows O/S.
@@ -32,7 +32,7 @@ public class ResolveGlobalNpmExecutablePath extends AbstractResolveGlobalExecuta
         .get("bin")
         .resolve(NON_WINDOWS_EXECUTABLE_FILE_NAME);
 
-    public ResolveGlobalNpmExecutablePath(final Logger logger) {
+    public ResolveNodeExecutablePath(final Logger logger) {
         super(logger);
     }
 

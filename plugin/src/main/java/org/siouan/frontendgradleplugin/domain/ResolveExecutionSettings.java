@@ -47,7 +47,7 @@ public class ResolveExecutionSettings {
      */
     public static final char UNIX_SCRIPT_ARG_ESCAPE_CHAR = '\\';
 
-    private final ResolveGlobalNodeExecutablePath getNodeExecutablePath;
+    private final ResolveNodeExecutablePath getNodeExecutablePath;
 
     private final GetExecutablePath getExecutablePath;
 
@@ -59,7 +59,7 @@ public class ResolveExecutionSettings {
      * @see ExecutableType
      */
     public ExecutionSettings execute(final ResolveExecutionSettingsCommand command) {
-        final Path nodeExecutablePath = getNodeExecutablePath.execute(ResolveGlobalExecutablePathCommand
+        final Path nodeExecutablePath = getNodeExecutablePath.execute(ResolveExecutablePathCommand
             .builder()
             .nodeInstallDirectoryPath(command.getNodeInstallDirectoryPath())
             .platform(command.getPlatform())

@@ -18,20 +18,16 @@
                 </li>
                 <li>
                     Type:
-                    <template v-if="jdkHref">
-                        <fgp-link :href="jdkHref">
-                            <fgp-code>{{ type }}</fgp-code>
-                        </fgp-link>
-                    </template>
-                    <template v-else>
+                    <fgp-link v-if="jdkHref" :href="jdkHref">
                         <fgp-code>{{ type }}</fgp-code>
-                    </template>
+                    </fgp-link>
+                    <fgp-code v-else>{{ type }}</fgp-code>
                 </li>
                 <li>
                     Required: <fgp-code>{{ required }}</fgp-code>
                 </li>
                 <li>
-                    Default value: <fgp-code>{{ defaultScriptValue }}</fgp-code>
+                    Default value: <fgp-code v-if="!$slots.defaultValue">{{ defaultTypedValue }}</fgp-code><slot v-else name="defaultValue" />
                 </li>
                 <li v-if="example">
                     Example: <fgp-code>{{ scriptExample }}</fgp-code>
@@ -52,7 +48,7 @@ import fgpPropertyLinkAnchor from '@/components/link/property-link-anchor';
 import fgpSiteLink from '@/components/link/site-link';
 import fgpTaskLink from '@/components/link/task-link';
 
-const QUALIFIED_JDK_CLASS_NAME_REGEXP = /^javax?\.([a-z]\w+\.)+[A-Z]\w+$/;
+const QUALIFIED_JDK_CLASS_NAME_REGEXP = /^(?<fqcn>javax?\.(?:[a-z]\w+\.)+[A-Z]\w+?)(?:<[\w.]+>)?$/;
 const JDK_STRING_CLASS_NAME = 'java.lang.String';
 
 export default Vue.component('fgp-property', {
@@ -84,15 +80,18 @@ export default Vue.component('fgp-property', {
         },
     },
     computed: {
-        defaultScriptValue() {
+        defaultTypedValue() {
             if (this.defaultValue === null) {
                 return 'null';
             }
             return this.type === JDK_STRING_CLASS_NAME ? `"${this.defaultValue}"` : this.defaultValue;
         },
         jdkHref() {
-            if (this.type && QUALIFIED_JDK_CLASS_NAME_REGEXP.test(this.type)) {
-                return `https://docs.oracle.com/javase/8/docs/api/index.html?${this.type.replace(/\./, '/')}.html`;
+            if (this.type) {
+                const matches = QUALIFIED_JDK_CLASS_NAME_REGEXP.exec(this.type);
+                if (matches && matches.groups.fqcn) {
+                    return `https://docs.oracle.com/en/java/javase/17/docs/api/java.base/${matches.groups.fqcn.replace(/\./g, '/')}.html`;
+                }
             }
             return null;
         },

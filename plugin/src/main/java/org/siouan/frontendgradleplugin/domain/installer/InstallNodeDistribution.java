@@ -55,13 +55,18 @@ public class InstallNodeDistribution {
 
         final GetDistributionCommand getDistributionCommand = new GetDistributionCommand(command.platform(),
             command.version(), command.distributionUrlRoot(), command.distributionUrlPathPattern(),
-            command.distributionServerCredentials(), command.proxySettings(), command.temporaryDirectoryPath());
+            command.distributionServerCredentials(), command.proxySettings(), command.retrySettings(),
+            command.temporaryDirectoryPath());
         final Path distributionFilePath = getDistribution.execute(getDistributionCommand);
 
         // Deploys the distribution
-        deployDistribution.execute(new DeployDistributionCommand(command.platform(),
-            command.temporaryDirectoryPath().resolve(EXTRACT_DIRECTORY_NAME), command.installDirectoryPath(),
-            distributionFilePath));
+        final Path temporaryExplodeDirectoryPath = command.temporaryDirectoryPath().resolve(EXTRACT_DIRECTORY_NAME);
+        // In case deployment fails, the plugin should leave the file system in a consistent state and delete
+        // temporary resources created.
+        logger.debug("Removing explode directory '{}'", temporaryExplodeDirectoryPath);
+        fileManager.deleteFileTree(temporaryExplodeDirectoryPath, true);
+        deployDistribution.execute(new DeployDistributionCommand(command.platform(), temporaryExplodeDirectoryPath,
+            command.installDirectoryPath(), distributionFilePath));
 
         logger.info("Removing distribution file '{}'", distributionFilePath);
         fileManager.delete(distributionFilePath);

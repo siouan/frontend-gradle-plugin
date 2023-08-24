@@ -12,7 +12,7 @@
             <template #groovy>
                 <pre><fgp-code>frontend {
     <fgp-property-link name="nodeDistributionProvided" /> = false
-    <fgp-property-link name="nodeVersion" /> = '18.16.0'
+    <fgp-property-link name="nodeVersion" /> = '18.17.1'
     <fgp-property-link name="nodeDistributionUrlRoot" /> = 'https://nodejs.org/dist/'
     <fgp-property-link name="nodeDistributionUrlPathPattern" /> = 'vVERSION/node-vVERSION-ARCH.TYPE'
     <fgp-property-link name="nodeDistributionServerUsername" /> = 'username'
@@ -47,6 +47,11 @@
     <fgp-property-link name="httpProxyPort" /> = 80
     <fgp-property-link name="httpProxyUsername" /> = 'username'
     <fgp-property-link name="httpProxyPassword" /> = 'password'
+    <fgp-property-link name="maxDownloadAttempts" /> = 1
+    <fgp-property-link name="retryHttpStatuses" /> = [408, 429, 500, 502, 503, 504]
+    <fgp-property-link name="retryInitialIntervalMs" /> = 1000
+    <fgp-property-link name="retryIntervalMultiplier" /> = 2.0
+    <fgp-property-link name="retryMaxIntervalMs" /> = 30000
     <fgp-property-link name="verboseModeEnabled" /> = false
     <fgp-property-link name="cacheDirectory" /> = file("${projectDir}/.frontend-gradle-plugin")
 }</fgp-code></pre>
@@ -54,7 +59,7 @@
             <template #kotlin>
                 <pre><fgp-code>frontend {
     <fgp-property-link name="nodeDistributionProvided" />.set(false)
-    <fgp-property-link name="nodeVersion" />.set("18.16.0")
+    <fgp-property-link name="nodeVersion" />.set("18.17.1")
     <fgp-property-link name="nodeDistributionUrlRoot" />.set("https://nodejs.org/dist/")
     <fgp-property-link name="nodeDistributionUrlPathPattern" />.set("vVERSION/node-vVERSION-ARCH.TYPE")
     <fgp-property-link name="nodeDistributionServerUsername" />.set("username")
@@ -89,6 +94,11 @@
     <fgp-property-link name="httpProxyPort" />.set(80)
     <fgp-property-link name="httpProxyUsername" />.set("username")
     <fgp-property-link name="httpProxyPassword" />.set("password")
+    <fgp-property-link name="maxDownloadAttempts" />.set(1)
+    <fgp-property-link name="retryHttpStatuses" />.set(setOf(408, 429, 500, 502, 503, 504))
+    <fgp-property-link name="retryInitialIntervalMs" />.set(1000)
+    <fgp-property-link name="retryIntervalMultiplier" />.set(2.0)
+    <fgp-property-link name="retryMaxIntervalMs" />.set(30000)
     <fgp-property-link name="verboseModeEnabled" />.set(false)
     <fgp-property-link name="cacheDirectory" />.set(project.layout.projectDirectory.dir(".frontend-gradle-plugin"))
 }</fgp-code></pre>
@@ -198,6 +208,11 @@ assembleScript.set("run build")
             <fgp-http-proxy-port-property />
             <fgp-http-proxy-username-property />
             <fgp-http-proxy-password-property />
+            <fgp-max-download-attempts-property />
+            <fgp-retry-http-statuses-property />
+            <fgp-retry-initial-interval-ms-property />
+            <fgp-retry-interval-multiplier-property />
+            <fgp-retry-max-interval-ms-property />
             <fgp-verbose-mode-enabled-property />
             <fgp-cache-directory-property />
         </section>
@@ -268,9 +283,18 @@ import fgpCleanScriptProperty from '@/components/property/clean-script-property'
 import fgpCode from '@/components/code';
 import fgpCodeComment from '@/components/code-comment';
 import fgpGradleScripts from '@/components/gradle-scripts';
+import fgpHttpProxyHostProperty from '@/components/property/http-proxy-host-property';
+import fgpHttpProxyPasswordProperty from '@/components/property/http-proxy-password-property';
+import fgpHttpProxyPortProperty from '@/components/property/http-proxy-port-property';
+import fgpHttpProxyUsernameProperty from '@/components/property/http-proxy-username-property';
+import fgpHttpsProxyHostProperty from '@/components/property/https-proxy-host-property';
+import fgpHttpsProxyPasswordProperty from '@/components/property/https-proxy-password-property';
+import fgpHttpsProxyPortProperty from '@/components/property/https-proxy-port-property';
+import fgpHttpsProxyUsernameProperty from '@/components/property/https-proxy-username-property';
 import fgpInstallScriptProperty from '@/components/property/install-script-property';
 import fgpJavaNetworkPropertiesLink from '@/components/link/java-network-properties-link';
 import fgpMainTitle from '@/components/main-title';
+import fgpMaxDownloadAttemptsProperty from '@/components/property/max-download-attempts-property';
 import fgpNodeDistributionProvidedProperty from '@/components/property/node-distribution-provided-property';
 import fgpNodeVersionProperty from '@/components/property/node-version-property';
 import fgpNodeDistributionUrlRootProperty from '@/components/property/node-distribution-url-root-property';
@@ -281,15 +305,11 @@ import fgpNodeInstallDirectoryProperty from '@/components/property/node-install-
 import fgpPageMeta from '@/mixin/page-meta';
 import fgpPackageJsonDirectoryProperty from '@/components/property/package-json-directory-property';
 import fgpPropertyLink from '@/components/link/property-link';
-import fgpHttpProxyHostProperty from '@/components/property/http-proxy-host-property';
-import fgpHttpProxyPasswordProperty from '@/components/property/http-proxy-password-property';
-import fgpHttpProxyPortProperty from '@/components/property/http-proxy-port-property';
-import fgpHttpProxyUsernameProperty from '@/components/property/http-proxy-username-property';
-import fgpHttpsProxyHostProperty from '@/components/property/https-proxy-host-property';
-import fgpHttpsProxyPasswordProperty from '@/components/property/https-proxy-password-property';
-import fgpHttpsProxyPortProperty from '@/components/property/https-proxy-port-property';
-import fgpHttpsProxyUsernameProperty from '@/components/property/https-proxy-username-property';
 import fgpPublishScriptProperty from '@/components/property/publish-script-property';
+import fgpRetryHttpStatusesProperty from '@/components/property/retry-http-statuses-property';
+import fgpRetryInitialIntervalMsProperty from '@/components/property/retry-initial-interval-ms-property';
+import fgpRetryIntervalMultiplierProperty from '@/components/property/retry-interval-multiplier-property';
+import fgpRetryMaxIntervalMsProperty from '@/components/property/retry-max-interval-ms-property';
 import fgpSubSubTitle from '@/components/sub-sub-title';
 import fgpSubTitle from '@/components/sub-title';
 import fgpVerboseModeEnabledProperty from '@/components/property/verbose-mode-enabled-property';
@@ -314,6 +334,7 @@ export default Vue.component('fgp-configuration', {
         fgpInstallScriptProperty,
         fgpJavaNetworkPropertiesLink,
         fgpMainTitle,
+        fgpMaxDownloadAttemptsProperty,
         fgpNodeDistributionProvidedProperty,
         fgpNodeVersionProperty,
         fgpNodeDistributionUrlRootProperty,
@@ -332,6 +353,10 @@ export default Vue.component('fgp-configuration', {
         fgpHttpsProxyPortProperty,
         fgpHttpsProxyUsernameProperty,
         fgpPublishScriptProperty,
+        fgpRetryHttpStatusesProperty,
+        fgpRetryInitialIntervalMsProperty,
+        fgpRetryIntervalMultiplierProperty,
+        fgpRetryMaxIntervalMsProperty,
         fgpSubSubTitle,
         fgpSubTitle,
         fgpVerboseModeEnabledProperty,

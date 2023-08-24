@@ -80,7 +80,7 @@ class GetDistributionTest {
             .build())).thenThrow(expectedException);
         final GetDistributionCommand getDistributionCommand = new GetDistributionCommand(platform, version,
             distributionUrlRoot, distributionUrlPathPattern, CredentialsFixture.someCredentials(),
-            ProxySettingsFixture.someProxySettings(), temporaryDirectoryPath);
+            ProxySettingsFixture.someProxySettings(), RetrySettingsFixture.someRetrySettings(), temporaryDirectoryPath);
 
         assertThatThrownBy(() -> usecase.execute(getDistributionCommand)).isEqualTo(expectedException);
 
@@ -105,7 +105,7 @@ class GetDistributionTest {
             .build())).thenThrow(expectedException);
         final GetDistributionCommand getDistributionCommand = new GetDistributionCommand(platform, version,
             distributionUrlRoot, distributionUrlPathPattern, CredentialsFixture.someCredentials(),
-            ProxySettingsFixture.someProxySettings(), temporaryDirectoryPath);
+            ProxySettingsFixture.someProxySettings(), RetrySettingsFixture.someRetrySettings(), temporaryDirectoryPath);
 
         assertThatThrownBy(() -> usecase.execute(getDistributionCommand)).isEqualTo(expectedException);
 
@@ -129,7 +129,7 @@ class GetDistributionTest {
             .build())).thenReturn(new URL("https://domain.com/"));
         final GetDistributionCommand getDistributionCommand = new GetDistributionCommand(platform, version,
             distributionUrlRoot, distributionUrlPathPattern, CredentialsFixture.someCredentials(),
-            ProxySettingsFixture.someProxySettings(), temporaryDirectoryPath);
+            ProxySettingsFixture.someProxySettings(), RetrySettingsFixture.someRetrySettings(), temporaryDirectoryPath);
 
         assertThatThrownBy(() -> usecase.execute(getDistributionCommand)).isInstanceOf(
             InvalidDistributionUrlException.class);
@@ -147,6 +147,7 @@ class GetDistributionTest {
         final String distributionUrlPathPattern = DISTRIBUTION_URL_PATH_PATTERN;
         final Credentials distributionServerCredentials = CredentialsFixture.someCredentials();
         final ProxySettings proxySettings = ProxySettingsFixture.someProxySettings();
+        final RetrySettings retrySettings = RetrySettingsFixture.someRetrySettings();
         final URL downloadUrl = new URL(distributionUrlRoot + distributionUrlPathPattern);
         when(resolveNodeDistributionUrl.execute(ResolveNodeDistributionUrlCommand
             .builder()
@@ -166,11 +167,12 @@ class GetDistributionTest {
                 .temporaryFilePath(temporaryDirectoryPath.resolve(TMP_DISTRIBUTION_NAME))
                 .destinationFilePath(distributionFilePath)
                 .proxySettings(proxySettings)
+                .retrySettings(retrySettings)
                 .serverCredentials(distributionServerCredentials)
                 .build());
         final GetDistributionCommand getDistributionCommand = new GetDistributionCommand(platform, version,
             distributionUrlRoot, distributionUrlPathPattern, distributionServerCredentials, proxySettings,
-            temporaryDirectoryPath);
+            retrySettings, temporaryDirectoryPath);
 
         assertThatThrownBy(() -> usecase.execute(getDistributionCommand)).isEqualTo(expectedException);
 
@@ -187,6 +189,7 @@ class GetDistributionTest {
         final String distributionUrlPathPattern = DISTRIBUTION_URL_PATH_PATTERN;
         final Credentials distributionServerCredentials = CredentialsFixture.someCredentials();
         final ProxySettings proxySettings = ProxySettingsFixture.someProxySettings();
+        final RetrySettings retrySettings = RetrySettingsFixture.someRetrySettings();
         final URL downloadUrl = new URL(distributionUrlRoot + distributionUrlPathPattern);
         when(resolveNodeDistributionUrl.execute(ResolveNodeDistributionUrlCommand
             .builder()
@@ -206,11 +209,12 @@ class GetDistributionTest {
                 .distributionUrl(downloadUrl)
                 .distributionServerCredentials(distributionServerCredentials)
                 .proxySettings(proxySettings)
+                .retrySettings(retrySettings)
                 .temporaryDirectoryPath(temporaryDirectoryPath)
                 .build());
         final GetDistributionCommand getDistributionCommand = new GetDistributionCommand(platform, version,
             distributionUrlRoot, distributionUrlPathPattern, distributionServerCredentials, proxySettings,
-            temporaryDirectoryPath);
+            retrySettings, temporaryDirectoryPath);
 
         assertThatThrownBy(() -> usecase.execute(getDistributionCommand)).isEqualTo(expectedException);
 
@@ -220,6 +224,7 @@ class GetDistributionTest {
             .temporaryFilePath(temporaryDirectoryPath.resolve(TMP_DISTRIBUTION_NAME))
             .destinationFilePath(distributionFilePath)
             .proxySettings(proxySettings)
+            .retrySettings(retrySettings)
             .serverCredentials(distributionServerCredentials)
             .build());
         verifyNoMoreInteractions(resolveNodeDistributionUrl, buildTemporaryFileName, downloadResource,
@@ -234,6 +239,7 @@ class GetDistributionTest {
         final String distributionUrlPathPattern = DISTRIBUTION_URL_PATH_PATTERN;
         final Credentials distributionServerCredentials = CredentialsFixture.someCredentials();
         final ProxySettings proxySettings = ProxySettingsFixture.someProxySettings();
+        final RetrySettings retrySettings = RetrySettingsFixture.someRetrySettings();
         final URL downloadUrl = new URL(distributionUrlRoot + distributionUrlPathPattern);
         when(resolveNodeDistributionUrl.execute(ResolveNodeDistributionUrlCommand
             .builder()
@@ -245,7 +251,7 @@ class GetDistributionTest {
         when(buildTemporaryFileName.execute(DISTRIBUTION_NAME)).thenReturn(TMP_DISTRIBUTION_NAME);
         final GetDistributionCommand getDistributionCommand = new GetDistributionCommand(platform, version,
             distributionUrlRoot, distributionUrlPathPattern, distributionServerCredentials, proxySettings,
-            temporaryDirectoryPath);
+            retrySettings, temporaryDirectoryPath);
         final Path distributionFilePath = temporaryDirectoryPath.resolve(DISTRIBUTION_NAME);
 
         assertThat(usecase.execute(getDistributionCommand)).isEqualTo(distributionFilePath);
@@ -256,6 +262,7 @@ class GetDistributionTest {
             .temporaryFilePath(temporaryDirectoryPath.resolve(TMP_DISTRIBUTION_NAME))
             .destinationFilePath(distributionFilePath)
             .proxySettings(proxySettings)
+            .retrySettings(retrySettings)
             .serverCredentials(distributionServerCredentials)
             .build());
         verify(validateNodeDistribution).execute(ValidateNodeDistributionCommand
@@ -264,6 +271,7 @@ class GetDistributionTest {
             .distributionUrl(downloadUrl)
             .distributionServerCredentials(distributionServerCredentials)
             .proxySettings(proxySettings)
+            .retrySettings(retrySettings)
             .temporaryDirectoryPath(temporaryDirectoryPath)
             .build());
         verifyNoMoreInteractions(resolveNodeDistributionUrl, buildTemporaryFileName, downloadResource,

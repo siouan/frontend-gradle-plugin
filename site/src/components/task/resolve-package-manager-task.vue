@@ -1,5 +1,5 @@
 <template>
-    <fgp-task name="resolvePackageManager" :inputs="inputs" :outputs="outputs" cacheable>
+    <fgp-task name="resolvePackageManager" :depending-tasks="['installNode']" :inputs="inputs" :outputs="outputs" cacheable>
         <template #title>Resolve package manager</template>
         <template #packageJsonFile>
             <fgp-property-link name="packageJsonDirectory" /><fgp-code>/package.json</fgp-code>
@@ -11,7 +11,7 @@
             <fgp-property-link name="cacheDirectory" /><fgp-code>/resolvePackageManager/package-manager-executable-path.txt</fgp-code>
         </template>
         <template #skipConditions>
-            file <fgp-property-link name="packageJsonDirectory" /><fgp-code>/package.json</fgp-code> does not exist.
+            <fgp-property-link name="packageJsonDirectory" /><fgp-code>/package.json</fgp-code> file does not exist.
         </template>
         <template #description>
             <p>

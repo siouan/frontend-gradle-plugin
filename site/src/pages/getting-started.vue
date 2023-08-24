@@ -8,7 +8,7 @@
         </p>
         <ul>
             <li><fgp-gradle-plugins-link path="/plugin/org.siouan.frontend-jdk17">JDK 17 build</fgp-gradle-plugins-link>: <fgp-gradle-link /> 7.3+</li>
-            <li><fgp-gradle-plugins-link path="/plugin/org.siouan.frontend-jdk11">JDK 11 build</fgp-gradle-plugins-link>: <fgp-gradle-link /> 6.1+</li>
+            <li><fgp-gradle-plugins-link path="/plugin/org.siouan.frontend-jdk11">JDK 11 build</fgp-gradle-plugins-link>: <fgp-gradle-link /> 6.2+</li>
         </ul>
         <p>
             The plugin is built and tested on Linux, Mac OS, Windows (see the list of build environments used in
@@ -39,17 +39,17 @@
                             <template #groovy>
 <pre><fgp-code>plugins {
     <fgp-code-comment>// For JDK 17+</fgp-code-comment>
-    id 'org.siouan.frontend-jdk17' version '7.0.0'
+    id 'org.siouan.frontend-jdk17' version '8.0.0'
     <fgp-code-comment>// For JDK 11+</fgp-code-comment>
-    id 'org.siouan.frontend-jdk11' version '7.0.0'
+    id 'org.siouan.frontend-jdk11' version '8.0.0'
 }</fgp-code></pre>
                             </template>
                             <template #kotlin>
 <pre><fgp-code>plugins {
     <fgp-code-comment>// For JDK 17+</fgp-code-comment>
-    id("org.siouan.frontend-jdk17") version "7.0.0"
+    id("org.siouan.frontend-jdk17") version "8.0.0"
     <fgp-code-comment>// For JDK 11+</fgp-code-comment>
-    id("org.siouan.frontend-jdk11") version "7.0.0"
+    id("org.siouan.frontend-jdk11") version "8.0.0"
 }</fgp-code></pre>
                             </template>
                         </fgp-gradle-scripts>
@@ -68,9 +68,9 @@
     }
     dependencies {
         <fgp-code-comment>// For JDK 17+</fgp-code-comment>
-        classpath 'org.siouan:frontend-gradle-plugin-jdk17:7.0.0'
+        classpath 'org.siouan:frontend-gradle-plugin-jdk17:8.0.0'
         <fgp-code-comment>// For JDK 11+</fgp-code-comment>
-        classpath 'org.siouan:frontend-gradle-plugin-jdk11:7.0.0'
+        classpath 'org.siouan:frontend-gradle-plugin-jdk11:8.0.0'
     }
 }
 
@@ -86,9 +86,9 @@ apply plugin: 'org.siouan.frontend-jdk11'</fgp-code></pre>
     }
     dependencies {
         <fgp-code-comment>// For JDK 17+</fgp-code-comment>
-        classpath("org.siouan:frontend-gradle-plugin-jdk17:7.0.0")
+        classpath("org.siouan:frontend-gradle-plugin-jdk17:8.0.0")
         <fgp-code-comment>// For JDK 11+</fgp-code-comment>
-        classpath("org.siouan:frontend-gradle-plugin-jdk11:7.0.0")
+        classpath("org.siouan:frontend-gradle-plugin-jdk11:8.0.0")
     }
 }
 
@@ -102,7 +102,8 @@ apply(plugin = "org.siouan.frontend-jdk11")</fgp-code></pre>
                 </ul>
             </li>
             <li>
-                Define the <fgp-nodejs-link path="/api/packages.html#packagemanager" label="packageManager" />
+                Define the <fgp-code><fgp-nodejs-link path="/api/packages.html#packagemanager" label="packageManager"
+                /></fgp-code>
                 property in the <fgp-code>package.json</fgp-code> file.
             </li>
             <li>

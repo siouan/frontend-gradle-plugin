@@ -2,11 +2,14 @@ package org.siouan.frontendgradleplugin;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Objects;
+import java.util.Set;
 
 import org.gradle.api.Project;
+import org.gradle.api.file.RegularFile;
 import org.gradle.api.plugins.BasePlugin;
 import org.gradle.api.publish.plugins.PublishingPlugin;
 import org.gradle.language.base.plugins.LifecycleBasePlugin;
@@ -42,7 +45,8 @@ class FrontendGradlePluginTest {
     }
 
     @Test
-    void should_register_tasks_with_default_extension_values_applied() {
+    void should_register_tasks_with_default_extension_values_applied() throws IOException {
+        Files.createDirectory(project.file(FrontendGradlePlugin.DEFAULT_NODE_INSTALL_DIRECTORY_NAME).toPath());
         plugin.apply(project);
 
         final FrontendExtension extension = Objects.requireNonNull(
@@ -50,7 +54,11 @@ class FrontendGradlePluginTest {
 
         assertThat(extension.getNodeDistributionProvided().get()).isFalse();
         assertThat(extension.getNodeVersion().isPresent()).isFalse();
-        assertThat(extension.getNodeInstallDirectory().getAsFile().isPresent()).isFalse();
+        assertThat(extension.getNodeInstallDirectory().getAsFile().get()).isEqualTo(project
+            .getLayout()
+            .getProjectDirectory()
+            .dir(FrontendGradlePlugin.DEFAULT_NODE_INSTALL_DIRECTORY_NAME)
+            .getAsFile());
         assertThat(extension.getNodeDistributionUrlRoot().get()).isEqualTo(
             FrontendGradlePlugin.DEFAULT_NODE_DISTRIBUTION_URL_ROOT);
         assertThat(extension.getNodeDistributionUrlPathPattern().get()).isEqualTo(
@@ -71,8 +79,16 @@ class FrontendGradlePluginTest {
         assertThat(extension.getHttpsProxyPort().get()).isEqualTo(FrontendGradlePlugin.DEFAULT_HTTPS_PROXY_PORT);
         assertThat(extension.getHttpsProxyUsername().isPresent()).isFalse();
         assertThat(extension.getHttpsProxyPassword().isPresent()).isFalse();
-        assertThat(extension.getInternalPackageJsonFile().getAsFile().get()).isEqualTo(
-            project.getProjectDir().toPath().resolve(FrontendGradlePlugin.PACKAGE_JSON_FILE_NAME).toFile());
+        assertThat(extension.getMaxDownloadAttempts().get()).isEqualTo(
+            FrontendGradlePlugin.DEFAULT_MAX_DOWNLOAD_ATTEMPTS);
+        assertThat(extension.getRetryHttpStatuses().get()).containsExactlyInAnyOrderElementsOf(
+            FrontendGradlePlugin.DEFAULT_RETRY_HTTP_STATUSES);
+        assertThat(extension.getRetryInitialIntervalMs().get()).isEqualTo(
+            FrontendGradlePlugin.DEFAULT_RETRY_INITIAL_INTERVAL_MS);
+        assertThat(extension.getRetryIntervalMultiplier().get()).isEqualTo(
+            FrontendGradlePlugin.DEFAULT_RETRY_INTERVAL_MULTIPLIER);
+        assertThat(extension.getRetryMaxIntervalMs().get()).isEqualTo(
+            FrontendGradlePlugin.DEFAULT_RETRY_MAX_INTERVAL_MS);
         assertThat(extension.getInternalPackageManagerSpecificationFile().getAsFile().get()).isEqualTo(project
             .getProjectDir()
             .toPath()
@@ -93,7 +109,9 @@ class FrontendGradlePluginTest {
     }
 
     @Test
-    void should_register_tasks_with_custom_extension_values_applied() {
+    void should_register_tasks_with_custom_extension_values_applied() throws IOException {
+        final String nodeInstallDirectoryName = "node-dist";
+        Files.createDirectory(project.file(nodeInstallDirectoryName).toPath());
         plugin.apply(project);
 
         final FrontendExtension extension = Objects.requireNonNull(
@@ -102,7 +120,7 @@ class FrontendGradlePluginTest {
         extension.getNodeVersion().set("3.65.4");
         extension.getNodeDistributionUrlRoot().set("https://node");
         extension.getNodeDistributionUrlPathPattern().set("/node.tar.gz");
-        extension.getNodeInstallDirectory().set(project.file("node-dist"));
+        extension.getNodeInstallDirectory().set(project.file(nodeInstallDirectoryName));
         extension.getInstallScript().set("run ci");
         extension.getCleanScript().set("run clean");
         extension.getAssembleScript().set("run build");
@@ -117,8 +135,12 @@ class FrontendGradlePluginTest {
         extension.getHttpProxyPort().set(8080);
         extension.getHttpProxyUsername().set("htrshPDA2v6ESar");
         extension.getHttpProxyPassword().set("hts`{(gK65geR5=a");
+        extension.getMaxDownloadAttempts().set(2);
+        extension.getRetryHttpStatuses().set(Set.of(404, 503));
+        extension.getRetryInitialIntervalMs().set(539);
+        extension.getRetryIntervalMultiplier().set(7.3);
+        extension.getRetryMaxIntervalMs().set(9623);
         extension.getVerboseModeEnabled().set(true);
-        extension.getInternalPackageJsonFile().set(new File("metadata.json"));
 
         assertThatTasksAreConfigured(project, extension);
     }
@@ -152,14 +174,27 @@ class FrontendGradlePluginTest {
             extension.getHttpsProxyUsername().getOrNull());
         assertThat(installNodeTask.getHttpsProxyPassword().getOrNull()).isEqualTo(
             extension.getHttpsProxyPassword().getOrNull());
+        assertThat(installNodeTask.getMaxDownloadAttempts().getOrNull()).isEqualTo(
+            extension.getMaxDownloadAttempts().getOrNull());
+        assertThat(installNodeTask.getRetryHttpStatuses().getOrNull()).isEqualTo(
+            extension.getRetryHttpStatuses().getOrNull());
+        assertThat(installNodeTask.getRetryInitialIntervalMs().getOrNull()).isEqualTo(
+            extension.getRetryInitialIntervalMs().getOrNull());
+        assertThat(installNodeTask.getRetryIntervalMultiplier().getOrNull()).isEqualTo(
+            extension.getRetryIntervalMultiplier().getOrNull());
+        assertThat(installNodeTask.getRetryMaxIntervalMs().getOrNull()).isEqualTo(
+            extension.getRetryMaxIntervalMs().getOrNull());
         assertThat(installNodeTask.getDependsOn()).isEmpty();
 
         final ResolvePackageManagerTask resolvePackageManagerTask = project
             .getTasks()
             .named(FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME, ResolvePackageManagerTask.class)
             .get();
-        assertThat(resolvePackageManagerTask.getPackageJsonFile().getAsFile().get()).isEqualTo(
-            extension.getInternalPackageJsonFile().getAsFile().get());
+        assertThat(resolvePackageManagerTask.getPackageJsonFile().getAsFile().get()).isEqualTo(extension
+            .getPackageJsonDirectory()
+            .file(FrontendGradlePlugin.PACKAGE_JSON_FILE_NAME)
+            .map(RegularFile::getAsFile)
+            .get());
         assertThat(resolvePackageManagerTask.getNodeInstallDirectory().isPresent()).isTrue();
         assertThat(resolvePackageManagerTask.getPackageManagerSpecificationFile().getAsFile().get()).isEqualTo(
             extension.getInternalPackageManagerSpecificationFile().getAsFile().get());

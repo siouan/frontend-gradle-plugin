@@ -65,7 +65,7 @@
             <fgp-gradle-scripts id="lazy-configuration-examples" class="mt-3">
                 <template #groovy>
                     <pre><fgp-code><fgp-code-comment>// Configuring a predefined task.
-// FORMER SYNTAX: task 'installFrontend' is immediately created and configured, as well as task
+// LEGACY SYNTAX: task 'installFrontend' is immediately created and configured, as well as task
 // 'otherTask', even if both tasks are not executed.</fgp-code-comment>
 installFrontend {
     dependsOn 'otherTask'
@@ -94,7 +94,7 @@ tasks.register('lazyTask') {
                 </template>
                 <template #kotlin>
                     <pre><fgp-code><fgp-code-comment>// Configuring a predefined task.
-// FORMER SYNTAX: task 'installFrontend' is immediately created and configured, as well as task
+// LEGACY SYNTAX: task 'installFrontend' is immediately created and configured, as well as task
 // 'otherTask', even if both tasks are not executed.</fgp-code-comment>
 installFrontend {
     dependsOn("otherTask")
