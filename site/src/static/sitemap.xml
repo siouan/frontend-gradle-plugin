@@ -4,27 +4,27 @@
     xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
         <loc>https://siouan.github.io/frontend-gradle-plugin/</loc>
-        <lastmod>2023-08-18</lastmod>
+        <lastmod>2023-08-24</lastmod>
         <changefreq>weekly</changefreq>
     </url>
     <url>
         <loc>https://siouan.github.io/frontend-gradle-plugin/getting-started/</loc>
-        <lastmod>2023-08-18</lastmod>
+        <lastmod>2023-08-24</lastmod>
         <changefreq>weekly</changefreq>
     </url>
     <url>
         <loc>https://siouan.github.io/frontend-gradle-plugin/configuration/</loc>
-        <lastmod>2023-08-18</lastmod>
+        <lastmod>2023-08-24</lastmod>
         <changefreq>weekly</changefreq>
     </url>
     <url>
         <loc>https://siouan.github.io/frontend-gradle-plugin/node-corepack-npm-pnpm-yarn-tasks/</loc>
-        <lastmod>2023-08-18</lastmod>
+        <lastmod>2023-08-24</lastmod>
         <changefreq>weekly</changefreq>
     </url>
     <url>
         <loc>https://siouan.github.io/frontend-gradle-plugin/faqs/</loc>
-        <lastmod>2023-07-08</lastmod>
+        <lastmod>2023-07-24</lastmod>
         <changefreq>weekly</changefreq>
     </url>
 </urlset>
