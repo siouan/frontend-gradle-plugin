@@ -19,7 +19,7 @@
                 <li>
                     <fgp-site-link path="#custom-nodejs-distribution-server">
                         How to configure plugin so as I can download <fgp-code>Node.js</fgp-code> distribution from a
-                        customserver?
+                        custom server?
                     </fgp-site-link>
                 </li>
                 <li>
