@@ -14,15 +14,14 @@
                 the <fgp-property-link name="nodeInstallDirectory" /> property.
             </li>
             <li>
-                When <fgp-code>true</fgp-code>, the plugin relies on the directory pointed by the
+                <p>When <fgp-code>true</fgp-code>, the plugin relies on the directory pointed by the
                 <fgp-property-link name="nodeInstallDirectory" /> property to locate the <fgp-nodejs-link />
-                distribution.
+                distribution. Other <fgp-code>node*</fgp-code> properties should not be used for clarity.</p>
 
                 <fgp-warning>CAUTION: globally installed distribution is modified when using the plugin and
                 <fgp-corepack-link />. Executables <fgp-code>npm</fgp-code>, <fgp-code>pnpm</fgp-code>,
                 <fgp-code>yarn</fgp-code> that may already exists within <fgp-nodejs-link /> install directory are
                 overwritten when task <fgp-task-link name="installPackageManager" /> is run.</fgp-warning>
-                Other <fgp-code>node*</fgp-code> properties should not be used for clarity.
             </li>
         </ol>
     </fgp-property>

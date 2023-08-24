@@ -5,8 +5,12 @@
             <fgp-property-link name="cacheDirectory" /><fgp-code>/resolvePackageManager/package-manager-specification.txt</fgp-code>
         </template>
         <template #packageManagerExecutableFile>
+            the package manager executable, whose path is provided by file
+            <fgp-property-link name="cacheDirectory" /><fgp-code
+            >/resolvePackageManager/package-manager-executable-path.txt</fgp-code> (generally
             <fgp-property-link name="nodeInstallDirectory" /><fgp-code>/[npm|pnpm|yarn].cmd</fgp-code> or
-            <fgp-property-link name="nodeInstallDirectory" /><fgp-code>/bin/[npm|pnpm|yarn]</fgp-code> depending on the O/S.
+            <fgp-property-link name="nodeInstallDirectory" /><fgp-code>/bin/[npm|pnpm|yarn]</fgp-code> depending on the
+            O/S).
         </template>
         <template #skipConditions>
             task <fgp-task-link name="resolvePackageManager" /> was skipped.
@@ -42,6 +46,8 @@ export default Vue.component('fgp-install-package-manager-task', {
     data() {
         return {
             inputs: [
+                { name: 'packageJsonDirectory', type: 'F', binding: 'P', property: 'packageJsonDirectory' },
+                { name: 'nodeInstallDirectory', type: 'F', binding: 'P', property: 'nodeInstallDirectory' },
                 { name: 'packageManagerSpecificationFile', type: 'RF', binding: 'C' },
             ],
             outputs: [
