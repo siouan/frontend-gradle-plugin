@@ -102,12 +102,12 @@ tasks.named<Task>("check") {
 tasks.named<JacocoReport>("jacocoTestReport") {
     dependsOn(tasks.named("test"), tasks.named("integrationTest"))
     executionData.setFrom(
-        file("${project.buildDir}/jacoco/test.exec"),
-        file("${project.buildDir}/jacoco/integrationTest.exec")
+        project.layout.buildDirectory.file("jacoco/test.exec"),
+        project.layout.buildDirectory.file("jacoco/integrationTest.exec")
     )
     reports {
         xml.required.set(true)
-        xml.outputLocation.set(file("${buildDir}/reports/jacoco/report.xml"))
+        xml.outputLocation.set(project.layout.buildDirectory.file("reports/jacoco/report.xml"))
     }
 }
 
@@ -158,7 +158,7 @@ sonarqube {
         property("sonar.java.binaries", "build/classes/java/main")
         property("sonar.java.test.binaries", "build/classes/java/test,build/classes/java/intTest")
         property("sonar.junit.reportPaths", "build/test-results/test/,build/test-results/integrationTest/")
-        property("sonar.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco/report.xml")
+        property("sonar.jacoco.xmlReportPaths", project.layout.buildDirectory.file("reports/jacoco/report.xml").get())
         property("sonar.verbose", true)
 
         // Irrelevant duplications detected on task inputs
