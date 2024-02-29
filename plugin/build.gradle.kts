@@ -53,7 +53,7 @@ dependencies {
     implementation(gradleApi())
     implementation("io.github.resilience4j:resilience4j-retry:2.1.0")
     implementation("org.apache.httpcomponents.client5:httpclient5:5.2.1")
-    implementation("org.apache.commons:commons-compress:1.23.0")
+    implementation("org.apache.commons:commons-compress:1.26.0")
     implementation("org.json:json:20230618")
     compileOnly("org.projectlombok:lombok:1.18.28")
     annotationProcessor("org.projectlombok:lombok:1.18.28")
@@ -102,12 +102,12 @@ tasks.named<Task>("check") {
 tasks.named<JacocoReport>("jacocoTestReport") {
     dependsOn(tasks.named("test"), tasks.named("integrationTest"))
     executionData.setFrom(
-        file("${project.buildDir}/jacoco/test.exec"),
-        file("${project.buildDir}/jacoco/integrationTest.exec")
+        project.layout.buildDirectory.file("jacoco/test.exec"),
+        project.layout.buildDirectory.file("jacoco/integrationTest.exec")
     )
     reports {
         xml.required.set(true)
-        xml.outputLocation.set(file("${buildDir}/reports/jacoco/report.xml"))
+        xml.outputLocation.set(project.layout.buildDirectory.file("reports/jacoco/report.xml"))
     }
 }
 
@@ -158,7 +158,7 @@ sonarqube {
         property("sonar.java.binaries", "build/classes/java/main")
         property("sonar.java.test.binaries", "build/classes/java/test,build/classes/java/intTest")
         property("sonar.junit.reportPaths", "build/test-results/test/,build/test-results/integrationTest/")
-        property("sonar.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco/report.xml")
+        property("sonar.jacoco.xmlReportPaths", project.layout.buildDirectory.file("reports/jacoco/report.xml").get())
         property("sonar.verbose", true)
 
         // Irrelevant duplications detected on task inputs
