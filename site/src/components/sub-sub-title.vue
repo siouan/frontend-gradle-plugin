@@ -1,11 +1,3 @@
 <template>
-    <header>
-        <h3 class="px-2 rounded border bg-info"><slot /></h3>
-    </header>
+    <h3 class="mb-3 px-2 rounded border bg-dark-subtle"><slot /></h3>
 </template>
-
-<script>
-import Vue from 'vue';
-
-export default Vue.component('fgp-sub-sub-title', {});
-</script>

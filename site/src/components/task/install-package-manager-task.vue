@@ -1,59 +1,59 @@
 <template>
-    <fgp-task name="installPackageManager" :depending-tasks="['resolvePackageManager']" :inputs="inputs" :outputs="outputs">
+    <FgpTask
+        name="installPackageManager"
+        :depending-task-names="['resolvePackageManager']"
+        :inputs="inputs"
+        :outputs="outputs"
+    >
         <template #title>Install package manager</template>
         <template #packageManagerSpecificationFile>
-            <fgp-property-link name="cacheDirectory" /><fgp-code>/resolvePackageManager/package-manager-specification.txt</fgp-code>
+            <FgpPropertyLink name="cacheDirectory" /><FgpCode
+                >/resolvePackageManager/package-manager-specification.txt</FgpCode
+            >
         </template>
         <template #packageManagerExecutableFile>
             the package manager executable, whose path is provided by file
-            <fgp-property-link name="cacheDirectory" /><fgp-code
-            >/resolvePackageManager/package-manager-executable-path.txt</fgp-code> (generally
-            <fgp-property-link name="nodeInstallDirectory" /><fgp-code>/[npm|pnpm|yarn].cmd</fgp-code> or
-            <fgp-property-link name="nodeInstallDirectory" /><fgp-code>/bin/[npm|pnpm|yarn]</fgp-code> depending on the
-            O/S).
+            <FgpPropertyLink name="cacheDirectory" /><FgpCode
+                >/resolvePackageManager/package-manager-executable-path.txt</FgpCode
+            >
+            (generally <FgpPropertyLink name="nodeInstallDirectory" /><FgpCode>/[npm|pnpm|yarn].cmd</FgpCode> or
+            <FgpPropertyLink name="nodeInstallDirectory" /><FgpCode>/bin/[npm|pnpm|yarn]</FgpCode>
+            depending on the O/S).
         </template>
-        <template #skipConditions>
-            task <fgp-task-link name="resolvePackageManager" /> was skipped.
-        </template>
+        <template #skipConditions> task <FgpTaskLink name="resolvePackageManager" /> was skipped. </template>
         <template #description>
             <p>
-                The task installs the package manager resolved with task <fgp-task-link name="resolvePackageManager" />,
-                by executing command <fgp-code>corepack enable &lt;package-manager&gt;</fgp-code>.
+                The task installs the package manager resolved with task
+                <FgpTaskLink name="resolvePackageManager" />, by executing command
+                <FgpCode>corepack enable &lt;package-manager&gt;</FgpCode>.
             </p>
             <p>
                 The task takes advantage of
                 <fgp-gradle-guides-link path="/performance/#incremental_build"
-                >Gradle incremental build</fgp-gradle-guides-link>, and is not executed again unless one of its
-                inputs/outputs changed. Consequently, if the task takes part of a Gradle build, its outcome will be
-                <fgp-gradle-task-outcome-link outcome="UP-TO-DATE" />.
+                    >Gradle incremental build</fgp-gradle-guides-link
+                >, and is not executed again unless one of its inputs/outputs changed. Consequently, if the task takes
+                part of a Gradle build, its outcome will be <FgpGradleTaskOutcomeLink outcome="UP-TO-DATE" />.
             </p>
-            <fgp-info>
-                This task should not be executed directly. Gradle executes it if the build requires it.
-            </fgp-info>
+            <FgpInfo> This task should not be executed directly. Gradle executes it if the build requires it. </FgpInfo>
         </template>
-    </fgp-task>
+    </FgpTask>
 </template>
 
-<script>
-import Vue from 'vue';
-import fgpCode from '@/components/code';
-import fgpInfo from '@/components/info';
-import fgpTask from '@/components/task/task';
-import fgpTaskLink from '@/components/link/task-link';
-
-export default Vue.component('fgp-install-package-manager-task', {
-    components: { fgpCode, fgpInfo, fgpTask, fgpTaskLink },
-    data() {
-        return {
-            inputs: [
-                { name: 'packageJsonDirectory', type: 'F', binding: 'P', property: 'packageJsonDirectory' },
-                { name: 'nodeInstallDirectory', type: 'F', binding: 'P', property: 'nodeInstallDirectory' },
-                { name: 'packageManagerSpecificationFile', type: 'RF', binding: 'C' },
-            ],
-            outputs: [
-                { name: 'packageManagerExecutableFile', type: 'RF', binding: 'C' }
-            ]
-        };
-    }
-});
+<script setup lang="ts">
+const inputs = [
+    {
+        name: 'packageJsonDirectory',
+        type: 'F',
+        binding: 'P',
+        property: 'packageJsonDirectory',
+    },
+    {
+        name: 'nodeInstallDirectory',
+        type: 'F',
+        binding: 'P',
+        property: 'nodeInstallDirectory',
+    },
+    { name: 'packageManagerSpecificationFile', type: 'RF', binding: 'C' },
+];
+const outputs = [{ name: 'packageManagerExecutableFile', type: 'RF', binding: 'C' }];
 </script>

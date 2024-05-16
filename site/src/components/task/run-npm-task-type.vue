@@ -1,61 +1,54 @@
 <template>
-    <fgp-task name="RunNpm" type :inputs="inputs">
-        <template #title>Run a custom command with <fgp-code>npm</fgp-code></template>
+    <FgpTask name="RunNpm" type :inputs="inputs">
+        <template #title>Run a custom command with <FgpCode>npm</FgpCode></template>
         <template #description>
             <p>
                 The plugin provides task type
-                <fgp-code>org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpm</fgp-code> that allows creating
-                a custom task to run a <fgp-code>npm</fgp-code> command. The <fgp-code>script</fgp-code> property must
-                be set with the corresponding command. Then, choose whether additional dependencies located in the
-                <fgp-code>package.json</fgp-code> file should be installed: make the task either depends on
-                <fgp-task-link name="installPackageManager" /> task or on <fgp-task-link name="installFrontend" /> task.
-                The code hereafter shows the configuration required to output the version of <fgp-code>npm</fgp-code>:
+                <FgpCode>org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpm</FgpCode>
+                that allows creating a custom task to run a
+                <FgpCode>npm</FgpCode> command. The <FgpCode>script</FgpCode> property must be set with the
+                corresponding command. Then, choose whether additional dependencies located in the
+                <FgpCode>package.json</FgpCode> file should be installed: make the task either depends on
+                <FgpTaskLink name="installPackageManager" /> task or on <FgpTaskLink name="installFrontend" /> task. The
+                code hereafter shows the configuration required to output the version of <FgpCode>npm</FgpCode>:
             </p>
 
-            <fgp-gradle-scripts id="run-npm-example" class="my-3">
+            <FgpGradleScripts id="run-npm-example">
                 <template #groovy>
-                    <pre><fgp-code>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpm
+                    <pre><FgpCode>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpm
 tasks.register('npmVersion', RunNpm) {
-    <fgp-code-comment>// dependsOn tasks.named('installPackageManager')
-    // dependsOn tasks.named('installFrontend')</fgp-code-comment>
+    <FgpCodeComment>// dependsOn tasks.named('installPackageManager')
+    // dependsOn tasks.named('installFrontend')</FgpCodeComment>
     script = '--version'
-}</fgp-code></pre>
+}</FgpCode></pre>
                 </template>
                 <template #kotlin>
-                    <pre><fgp-code>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpm
+                    <pre><FgpCode>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpm
 tasks.register&lt;RunNpm&gt;("npmVersion") {
-    <fgp-code-comment>// dependsOn(tasks.named("installPackageManager"))
-    // dependsOn(tasks.named("installFrontend"))</fgp-code-comment>
+    <FgpCodeComment>// dependsOn(tasks.named("installPackageManager"))
+    // dependsOn(tasks.named("installFrontend"))</FgpCodeComment>
     script.set("--version")
-}</fgp-code></pre>
+}</FgpCode></pre>
                 </template>
-            </fgp-gradle-scripts>
+            </FgpGradleScripts>
         </template>
-    </fgp-task>
+    </FgpTask>
 </template>
 
-<script>
-import Vue from 'vue';
-import fgpCode from '@/components/code';
-import fgpGradleScripts from '@/components/gradle-scripts';
-import fgpTask from '@/components/task/task';
-import fgpTaskLink from '@/components/link/task-link';
-
-export default Vue.component('fgp-run-npm-task-type', {
-    components: {
-        fgpCode,
-        fgpGradleScripts,
-        fgpTask,
-        fgpTaskLink
+<script setup lang="ts">
+const inputs = [
+    {
+        name: 'packageJsonDirectory',
+        type: 'F',
+        binding: 'P',
+        property: 'packageJsonDirectory',
     },
-    data() {
-        return {
-            inputs: [
-                { name: 'packageJsonDirectory', type: 'F', binding: 'P', property: 'packageJsonDirectory' },
-                { name: 'nodeInstallDirectory', type: 'F', binding: 'P', property: 'nodeInstallDirectory' },
-                { name: 'script', type: 'S', binding: 'P', property: 'script' }
-            ]
-        };
-    }
-});
+    {
+        name: 'nodeInstallDirectory',
+        type: 'F',
+        binding: 'P',
+        property: 'nodeInstallDirectory',
+    },
+    { name: 'script', type: 'S', binding: 'P', property: 'script' },
+];
 </script>

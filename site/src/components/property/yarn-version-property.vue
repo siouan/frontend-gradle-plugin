@@ -1,28 +1,17 @@
 <template>
-    <fgp-property
+    <FgpProperty
         name="yarnVersion"
         type="java.lang.String"
         :required="false"
         example="3.5.1"
-        :tasks="['installYarn']"
+        :task-names="['installYarn']"
     >
         <p>
             The version number is used to build the exact URL to download the distribution, as long as the
-            <fgp-property-link name="yarnDistributionUrlPathPattern" /> property contains the
-            <fgp-code>VERSION</fgp-code> token. The property is required when the
-            <fgp-property-link name="yarnEnabled" /> property is <fgp-code>true</fgp-code> and the
-            <fgp-property-link name="yarnDistributionProvided" /> property is <fgp-code>false</fgp-code>.
+            <FgpPropertyLink name="yarnDistributionUrlPathPattern" /> property contains the
+            <FgpCode>VERSION</FgpCode> token. The property is required when the
+            <FgpPropertyLink name="yarnEnabled" /> property is <FgpCode>true</FgpCode> and the
+            <FgpPropertyLink name="yarnDistributionProvided" /> property is <FgpCode>false</FgpCode>.
         </p>
-    </fgp-property>
+    </FgpProperty>
 </template>
-
-<script>
-import Vue from 'vue';
-import fgpCode from '@/components/code';
-import fgpProperty from '@/components/property/property';
-import fgpPropertyLink from '@/components/link/property-link';
-
-export default Vue.component('fgp-yarn-version-property', {
-    components: { fgpCode, fgpProperty, fgpPropertyLink }
-});
-</script>

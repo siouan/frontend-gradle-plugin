@@ -1,33 +1,21 @@
 <template>
-    <fgp-property
+    <FgpProperty
         name="yarnEnabled"
         type="boolean"
         default-value="false"
-        :tasks="[
+        :task-names="[
             'installYarn',
             'installFrontend',
             'cleanFrontend',
             'assembleFrontend',
             'checkFrontend',
-            'publishFrontend'
+            'publishFrontend',
         ]"
     >
         <p>
-            Whether <fgp-code>yarn</fgp-code> executable shall be used instead of <fgp-code>npm</fgp-code> executable
-            when executing frontend tasks. Consequently, a <fgp-yarn-link /> distribution is required, and the plugin
-            will locate it depending on the value of the <fgp-property-link name="yarnDistributionProvided" /> property.
+            Whether <FgpCode>yarn</FgpCode> executable shall be used instead of <FgpCode>npm</FgpCode> executable when
+            executing frontend tasks. Consequently, a <FgpYarnLink /> distribution is required, and the plugin will
+            locate it depending on the value of the <FgpPropertyLink name="yarnDistributionProvided" /> property.
         </p>
-    </fgp-property>
+    </FgpProperty>
 </template>
-
-<script>
-import Vue from 'vue';
-import fgpCode from '@/components/code';
-import fgpProperty from '@/components/property/property';
-import fgpPropertyLink from '@/components/link/property-link';
-import fgpYarnLink from '@/components/link/yarn-link';
-
-export default Vue.component('fgp-yarn-enabled-property', {
-    components: { fgpCode, fgpProperty, fgpPropertyLink, fgpYarnLink }
-});
-</script>

@@ -1,24 +1,14 @@
 <template>
-    <fgp-site-link :path="`${fgp.paths.configuration}#${name}`">
+    <FgpSiteLink :path="`${$config.public.paths.configuration}#${name}`">
         <template v-if="$slots.default"><slot /></template>
-        <fgp-code v-else>{{ name }}</fgp-code>
-    </fgp-site-link>
+        <FgpCode v-else>{{ name }}</FgpCode>
+    </FgpSiteLink>
 </template>
 
-<script>
-import Vue from 'vue';
-import fgpCode from '@/components/code';
-import fgpSiteLink from '@/components/link/site-link';
-import fgpAppConfig from '@/mixin/app-config';
+<script setup lang="ts">
+interface Props {
+    readonly name: string;
+}
 
-export default Vue.component('fgp-property-link', {
-    components: { fgpCode, fgpSiteLink },
-    mixins: [fgpAppConfig],
-    props: {
-        name: {
-            type: String,
-            required: true
-        }
-    }
-});
+defineProps<Props>();
 </script>

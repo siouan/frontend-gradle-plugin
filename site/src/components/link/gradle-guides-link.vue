@@ -1,18 +1,13 @@
 <template>
-    <fgp-link :href="`https://guides.gradle.org${path}`"><slot /></fgp-link>
+    <FgpLink :href="`https://guides.gradle.org${path}`"><slot /></FgpLink>
 </template>
 
-<script>
-import Vue from 'vue';
-import fgpLink from '@/components/link/link';
+<script setup lang="ts">
+interface Props {
+    readonly path?: string | null;
+}
 
-export default Vue.component('fgp-gradle-guides-link', {
-    components: { fgpLink },
-    props: {
-        path: {
-            type: String,
-            default: null
-        }
-    }
+withDefaults(defineProps<Props>(), {
+    path: null,
 });
 </script>

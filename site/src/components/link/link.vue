@@ -2,26 +2,18 @@
     <a :href="href" :class="hoverClass"><slot /></a>
 </template>
 
-<script>
-import Vue from 'vue';
+<script setup lang="ts">
+import { computed } from 'vue';
 
-export default Vue.component('fgp-link', {
-    props: {
-        href: {
-            type: String,
-            required: true
-        },
-        hoverStyleDisabled: {
-            type: Boolean,
-            default: false
-        }
-    },
-    computed: {
-        hoverClass() {
-            return this.hoverStyleDisabled ? 'fgp-link-no-hover' : null;
-        }
-    }
+interface Props {
+    readonly href: string;
+    readonly hoverStyleDisabled?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+    hoverStyleDisabled: false,
 });
+const hoverClass = computed<string | null>(() => (props.hoverStyleDisabled ? 'fgp-link-no-hover' : null));
 </script>
 
 <style scoped>

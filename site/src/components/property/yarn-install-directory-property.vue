@@ -1,25 +1,15 @@
 <template>
-    <fgp-property
+    <FgpProperty
         name="yarnInstallDirectory"
         type="java.io.File"
         :required="false"
-        default-value='file("${projectDir}/yarn")'
-        :tasks="['installYarn']"
+        default-value="project.layout.projectDirectory.dir(&quot;yarn&quot;)"
+        :task-names="['installYarn']"
     >
         <p>
             Directory where the downloaded distribution shall be installed, or where a provided distribution is located
-            if the <fgp-property-link name="yarnDistributionProvided" /> property is <fgp-code>true</fgp-code>.
+            if the
+            <FgpPropertyLink name="yarnDistributionProvided" /> property is <FgpCode>true</FgpCode>.
         </p>
-    </fgp-property>
+    </FgpProperty>
 </template>
-
-<script>
-import Vue from 'vue';
-import fgpCode from '@/components/code';
-import fgpProperty from '@/components/property/property';
-import fgpPropertyLink from '@/components/link/property-link';
-
-export default Vue.component('fgp-yarn-install-directory-property', {
-    components: { fgpCode, fgpProperty, fgpPropertyLink }
-});
-</script>
