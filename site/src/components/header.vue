@@ -1,114 +1,113 @@
 <template>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-light">
-            <a class="navbar-brand" href="https://github.com/siouan" :title="$t('siouan.organizationTooltip')">
-                <img alt="Siouan logo" src="@/assets/siouan-icon.svg" width="32" height="32" />
-            </a>
-            <a
-                class="text-dark"
-                href="https://github.com/siouan/frontend-gradle-plugin"
-                :title="$t('siouan.projectTooltip')"
-            >
-                <i class="fab fa-github fa-2x"></i>
-            </a>
+        <nav class="navbar navbar-expand-sm justify-content-between text-center">
+            <FgpImageLink
+                href="https://github.com/siouan"
+                class="navbar-item"
+                :title="$t('siouan.organizationTooltip')"
+                src="siouan-icon.svg"
+                alt="Siouan logo"
+                :width="32"
+                :height="32"
+            />
+
             <button
                 class="navbar-toggler"
                 type="button"
-                data-toggle="collapse"
-                data-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent"
+                data-bs-toggle="collapse"
+                data-bs-target="#fgp-navbar"
+                aria-controls="fgp-navbar"
                 aria-expanded="false"
-                aria-label="Toggle navigation"
+                aria-label="Toggle navbar"
                 @click="toggleMenuVisible()"
             >
-                <span class="navbar-toggler-icon"></span>
+                <span class="navbar-toggler-icon" />
             </button>
 
-            <div id="navbarSupportedContent" class="collapse navbar-collapse" :class="{ show: menuVisible }">
-                <ul class="navbar-nav ml-auto mr-auto">
+            <div id="fgp-navbar" class="collapse navbar-collapse justify-content-center" :class="{ show: menuVisible }">
+                <ul class="navbar-nav">
                     <li class="nav-item">
-                        <fgp-site-link
-                            :path="fgp.paths.overview"
-                            class="nav-link fgp-menu-item"
-                            @click.native="hideMenu()"
-                        >
-                            {{ $t("menu.overview") }}
-                        </fgp-site-link>
+                        <FgpSiteLink
+                            :path="$config.public.paths.overview"
+                            class="nav-link"
+                            @click="hideMenu()"
+                        >{{ $t('menu.overview') }}</FgpSiteLink>
                     </li>
                     <li class="nav-item">
-                        <fgp-site-link
-                            :path="fgp.paths.gettingStarted"
-                            class="nav-link fgp-menu-item"
-                            @click.native="hideMenu()"
-                        >
-                            {{ $t("menu.installation") }}
-                        </fgp-site-link>
+                        <FgpSiteLink
+                            :path="$config.public.paths.gettingStarted"
+                            class="nav-link"
+                            @click="hideMenu()"
+                        >{{ $t('menu.installation') }}</FgpSiteLink>
                     </li>
                     <li class="nav-item">
-                        <fgp-site-link
-                            :path="fgp.paths.configuration"
-                            class="nav-link fgp-menu-item"
-                            @click.native="hideMenu()"
-                        >
-                            {{ $t("menu.configuration") }}
-                        </fgp-site-link>
+                        <FgpSiteLink
+                            :path="$config.public.paths.configuration"
+                            class="nav-link"
+                            @click="hideMenu()"
+                        >{{ $t('menu.configuration') }}</FgpSiteLink>
                     </li>
                     <li class="nav-item">
-                        <fgp-site-link
-                            :path="fgp.paths.tasks"
-                            class="nav-link fgp-menu-item"
-                            @click.native="hideMenu()"
-                        >
-                            {{ $t("menu.tasks") }}
-                        </fgp-site-link>
+                        <FgpSiteLink
+                            :path="$config.public.paths.tasks"
+                            class="nav-link"
+                            @click="hideMenu()"
+                        >{{ $t('menu.tasks') }}</FgpSiteLink>
                     </li>
                     <li class="nav-item">
-                        <fgp-site-link :path="fgp.paths.faqs" class="nav-link fgp-menu-item" @click.native="hideMenu()">
-                            {{ $t("menu.faq") }}
-                        </fgp-site-link>
+                        <FgpSiteLink
+                            :path="$config.public.paths.faqs"
+                            class="nav-link"
+                            @click="hideMenu()"
+                        >{{ $t('menu.faq') }}</FgpSiteLink>
                     </li>
                 </ul>
             </div>
 
-            <form v-show="fgp.i18nEnabled">
+            <form v-if="$config.public.i18nEnabled">
                 <label>
-                    <select class="custom-select" @change="selectLang($event.target.value)">
-                        <option value="en" selected>{{ $t("lang.english") }}</option>
-                        <option value="fr">{{ $t("lang.french") }}</option>
+                    <select class="custom-select" @change="selectLang($event)">
+                        <option value="en" selected>{{ $t('lang.english') }}</option>
+                        <option value="fr">{{ $t('lang.french') }}</option>
                     </select>
                 </label>
             </form>
+            <FgpLink
+                href="https://github.com/siouan/frontend-gradle-plugin"
+                class="navbar-item"
+                :title="$t('siouan.projectTooltip')"
+            ><i class="fab fa-github fa-2x text-dark" /></FgpLink>
         </nav>
     </header>
 </template>
 
-<script>
-import Vue from 'vue';
-import fgpAppConfig from '@/mixin/app-config';
-import fgpSiteLink from '@/components/link/site-link';
+<script setup lang="ts">
+const emit = defineEmits(['lang-change']);
+// Actually, builtin toggling feature of Bootstrap's navbar component is not working because Bootstrap JS file may
+// conflict with Vue when modifying the DOM. That's why toggling feature is implemented again here.
+// See https://getbootstrap.com/docs/5.3/getting-started/javascript/#usage-with-javascript-frameworks
+const menuVisible = ref(false);
 
-export default Vue.component('fgp-header', {
-    components: { fgpSiteLink },
-    mixins: [fgpAppConfig],
-    data: () => ({
-        menuVisible: false,
-    }),
-    methods: {
-        hideMenu() {
-            this.toggleMenuVisible(false);
-        },
-        selectLang(lang) {
-            this.$emit('lang-change', lang);
-        },
-        toggleMenuVisible() {
-            this.menuVisible = !this.menuVisible;
-        },
+function selectLang(event: Event): void {
+    if (event.target instanceof HTMLSelectElement) {
+        emit('lang-change', event.target.value);
     }
-});
+}
+
+function toggleMenuVisible() {
+    menuVisible.value = !menuVisible.value;
+}
+
+function hideMenu() {
+    menuVisible.value = false;
+}
 </script>
 
-<style scoped>
-.fgp-menu-item {
-    font-family: EtelkaTextPro, Helvetica, Arial, sans-serif;
+<style scoped lang="scss">
+@import '@/assets/scss/variables';
+
+.nav-link {
+    font-family: $headings-font-family;
+    color: $navbar-link-color;
 }
 </style>

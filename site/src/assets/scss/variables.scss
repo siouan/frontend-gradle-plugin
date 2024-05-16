@@ -1,5 +1,4 @@
-// Bootstrap variables override (full list in _variables.scss)
-$font-family-base: SegoeUI, Helvetica, Arial, sans-serif;
+// // Bootstrap variables override (full list in _variables.scss)
 $font-size-base: 1rem;
 $headings-font-family: EtelkaTextPro, Helvetica, Arial, sans-serif;
 $h1-font-size: $font-size-base * 1.75;
@@ -9,6 +8,6 @@ $h4-font-size: $font-size-base;
 $h5-font-size: $font-size-base;
 $h6-font-size: $font-size-base;
 
-// Custom variables
-$etelkaTextProFontFile: "~@/assets/EtelkaTextPro.otf";
-$segoeUiFontFile: "~@/assets/SegoeUi.woff";
+// // Custom variables
+$etelkaTextProFontFile: 'public/EtelkaTextPro.otf';
+$navbar-link-color: var(--bs-tertiary-color);

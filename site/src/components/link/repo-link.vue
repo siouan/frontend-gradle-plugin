@@ -1,28 +1,23 @@
 <template>
-    <fgp-link :href="href"><slot /></fgp-link>
+    <FgpLink :href="href"><slot /></FgpLink>
 </template>
 
-<script>
-import Vue from 'vue';
-import fgpLink from '@/components/link/link';
+<script setup lang="ts">
+import { computed } from 'vue';
 
 const REPO_BASE_URL = 'https://github.com/siouan/frontend-gradle-plugin';
 
-export default Vue.component('fgp-repo-link', {
-    components: { fgpLink },
-    props: {
-        path: {
-            type: String,
-            default: null
-        }
-    },
-    computed: {
-        href() {
-            if (this.path === null) {
-                return REPO_BASE_URL;
-            }
-            return `${REPO_BASE_URL}${this.path}`;
-        }
+interface Props {
+    readonly path?: string | null;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+    path: null,
+});
+const href = computed<string>(() => {
+    if (props.path === null) {
+        return REPO_BASE_URL;
     }
+    return `${REPO_BASE_URL}${props.path}`;
 });
 </script>

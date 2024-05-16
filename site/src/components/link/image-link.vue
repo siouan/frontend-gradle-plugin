@@ -1,28 +1,17 @@
 <template>
-    <fgp-link :href="href" :title="title"><img :src="src" :alt="alt"/></fgp-link>
+    <FgpLink :href="href"><img :src="src" :alt="alt!" :width="width!" :height="height!" /></FgpLink>
 </template>
 
-<script>
-import Vue from 'vue';
+<script setup lang="ts">
+interface Props {
+    readonly href: string;
+    readonly src: string;
+    readonly alt?: string | null;
+    readonly width?: number | null;
+    readonly height?: number | null;
+}
 
-export default Vue.component('fgp-image-link', {
-    props: {
-        href: {
-            type: String,
-            required: true
-        },
-        title: {
-            type: String,
-            default: null
-        },
-        src: {
-            type: String,
-            required: true
-        },
-        alt: {
-            type: String,
-            default: null
-        }
-    }
+withDefaults(defineProps<Props>(), {
+    alt: null,
 });
 </script>

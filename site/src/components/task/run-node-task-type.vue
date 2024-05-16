@@ -1,62 +1,54 @@
 <template>
-    <fgp-task name="RunNode" type :inputs="inputs">
-        <template #title>Run a custom command with <fgp-code>node</fgp-code></template>
+    <FgpTask name="RunNode" type :inputs="inputs">
+        <template #title>Run a custom command with <FgpCode>node</FgpCode></template>
         <template #description>
             <p>
                 The plugin provides task type
-                <fgp-code>org.siouan.frontendgradleplugin.infrastructure.gradle.RunNode</fgp-code> that allows creating
-                a custom task to run a JS script. The <fgp-code>script</fgp-code> property must be set with the
-                corresponding command. Then, choose whether <fgp-nodejs-link /> only is required, or if additional
-                dependencies located in the <fgp-code>package.json</fgp-code> file should be installed: make the task
-                either depends on <fgp-task-link name="installNode" /> task or on
-                <fgp-task-link name="installFrontend" /> task. The code hereafter shows the configuration required to
-                run a JS script:
+                <FgpCode>org.siouan.frontendgradleplugin.infrastructure.gradle.RunNode</FgpCode>
+                that allows creating a custom task to run a JS script. The
+                <FgpCode>script</FgpCode> property must be set with the corresponding command. Then, choose whether
+                <FgpNodejsLink /> only is required, or if additional dependencies located in the
+                <FgpCode>package.json</FgpCode> file should be installed: make the task either depends on
+                <FgpTaskLink name="installNode" /> task or on <FgpTaskLink name="installFrontend" /> task. The code
+                hereafter shows the configuration required to run a JS script:
             </p>
 
-            <fgp-gradle-scripts id="run-node-example" class="my-3">
+            <FgpGradleScripts id="run-node-example">
                 <template #groovy>
-                    <pre><fgp-code>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNode
+                    <pre><FgpCode>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNode
 tasks.register('myScript', RunNode) {
-    <fgp-code-comment>// dependsOn tasks.named('installNode')
-    // dependsOn tasks.named('installFrontend')</fgp-code-comment>
+    <FgpCodeComment>// dependsOn tasks.named('installNode')
+    // dependsOn tasks.named('installFrontend')</FgpCodeComment>
     script = 'my-script.js'
-}</fgp-code></pre>
+}</FgpCode></pre>
                 </template>
                 <template #kotlin>
-                    <pre><fgp-code>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNode
+                    <pre><FgpCode>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNode
 tasks.register&lt;RunNode&gt;("myScript") {
-    <fgp-code-comment>// dependsOn(tasks.named("installNode"))
-    // dependsOn(tasks.named("installFrontend"))</fgp-code-comment>
+    <FgpCodeComment>// dependsOn(tasks.named("installNode"))
+    // dependsOn(tasks.named("installFrontend"))</FgpCodeComment>
     script.set("my-script.js")
-}</fgp-code></pre>
+}</FgpCode></pre>
                 </template>
-            </fgp-gradle-scripts>
+            </FgpGradleScripts>
         </template>
-    </fgp-task>
+    </FgpTask>
 </template>
 
-<script>
-import Vue from 'vue';
-import fgpCode from '@/components/code';
-import fgpGradleScripts from '@/components/gradle-scripts';
-import fgpTask from '@/components/task/task';
-import fgpTaskLink from '@/components/link/task-link';
-
-export default Vue.component('fgp-run-node-task-type', {
-    components: {
-        fgpCode,
-        fgpGradleScripts,
-        fgpTask,
-        fgpTaskLink
+<script setup lang="ts">
+const inputs = [
+    {
+        name: 'packageJsonDirectory',
+        type: 'F',
+        binding: 'P',
+        property: 'packageJsonDirectory',
     },
-    data() {
-        return {
-            inputs: [
-                { name: 'packageJsonDirectory', type: 'F', binding: 'P', property: 'packageJsonDirectory' },
-                { name: 'nodeInstallDirectory', type: 'F', binding: 'P', property: 'nodeInstallDirectory' },
-                { name: 'script', type: 'S', binding: 'P', property: 'script' }
-            ]
-        };
-    }
-});
+    {
+        name: 'nodeInstallDirectory',
+        type: 'F',
+        binding: 'P',
+        property: 'nodeInstallDirectory',
+    },
+    { name: 'script', type: 'S', binding: 'P', property: 'script' },
+];
 </script>

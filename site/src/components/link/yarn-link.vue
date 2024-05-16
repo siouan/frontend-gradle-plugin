@@ -1,41 +1,26 @@
 <template>
-    <fgp-link :href="href" :title="internalTitle">{{ internalLabel }}</fgp-link>
+    <FgpLink :href="href" :title="title">{{ internalLabel }}</FgpLink>
 </template>
 
-<script>
-import Vue from 'vue';
-import fgpLink from '@/components/link/link';
+<script setup lang="ts">
+import { computed } from 'vue';
 
-export default Vue.component('fgp-yarn-link', {
-    components: { fgpLink },
-    props: {
-        label: {
-            type: String,
-            default: null,
-        },
-        labelKey: {
-            type: String,
-            default: 'navigation.yarnBerry.label'
-        },
-        path: {
-            type: String,
-            default: ''
-        },
-        title: {
-            type: String,
-            default: null
-        }
-    },
-    computed: {
-        href() {
-            return `https://yarnpkg.com/${this.path}`;
-        },
-        internalLabel() {
-            return this.label || this.$t(this.labelKey);
-        },
-        internalTitle() {
-            return this.title || this.$t('navigation.yarnBerry.title');
-        }
-    }
+const { t } = useI18n();
+
+interface Props {
+    readonly label?: string | null;
+    readonly labelKey?: string;
+    readonly path?: string;
+    readonly title?: string | null;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+    label: null,
+    labelKey: 'navigation.yarnBerry.label',
+    path: '',
+    title: null,
 });
+
+const href = computed<string>(() => `https://yarnpkg.com/${props.path}`);
+const internalLabel = computed<string>(() => props.label || t(props.labelKey));
 </script>

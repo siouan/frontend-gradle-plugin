@@ -1,30 +1,18 @@
 <template>
-    <fgp-property
+    <FgpProperty
         name="yarnDistributionServerUsername"
         type="java.lang.String"
         :required="false"
-        :tasks="['installYarn']"
+        :task-names="['installYarn']"
     >
         <p>
             This property may be used to download the distribution with a given identity (BASIC scheme server-side).
-            When not <fgp-code>null</fgp-code>, the <fgp-property-link name="yarnDistributionServerPassword" /> property
-            is also required.
+            When not <FgpCode>null</FgpCode>, the <FgpPropertyLink name="yarnDistributionServerPassword" /> property is
+            also required.
         </p>
-        <fgp-warning>
+        <FgpWarning>
             SECURITY: do not to store a plain text username in the build script. Store it in an environment variable or
             an external user property, and use one or the other as the value of this property.
-        </fgp-warning>
-    </fgp-property>
+        </FgpWarning>
+    </FgpProperty>
 </template>
-
-<script>
-import Vue from 'vue';
-import fgpCode from '@/components/code';
-import fgpProperty from '@/components/property/property';
-import fgpPropertyLink from '@/components/link/property-link';
-import fgpWarning from '@/components/warning';
-
-export default Vue.component('fgp-yarn-distribution-server-username-property', {
-    components: { fgpCode, fgpProperty, fgpPropertyLink, fgpWarning }
-});
-</script>
