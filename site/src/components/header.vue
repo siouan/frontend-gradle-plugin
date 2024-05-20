@@ -1,18 +1,23 @@
 <template>
     <header>
-        <nav class="navbar navbar-expand-sm justify-content-between text-center">
+        <nav class="navbar navbar-expand-md text-center">
             <FgpImageLink
                 href="https://github.com/siouan"
-                class="navbar-item"
+                class="navbar-item me-3"
                 :title="$t('siouan.organizationTooltip')"
                 src="siouan-icon.svg"
                 alt="Siouan logo"
                 :width="32"
                 :height="32"
             />
+            <FgpLink
+                href="https://github.com/siouan/frontend-gradle-plugin"
+                class="navbar-item"
+                :title="$t('siouan.projectTooltip')"
+            ><i class="fab fa-github fa-2x text-body" /></FgpLink>
 
             <button
-                class="navbar-toggler"
+                class="navbar-toggler mx-auto"
                 type="button"
                 data-bs-toggle="collapse"
                 data-bs-target="#fgp-navbar"
@@ -24,45 +29,7 @@
                 <span class="navbar-toggler-icon" />
             </button>
 
-            <div id="fgp-navbar" class="collapse navbar-collapse justify-content-center" :class="{ show: menuVisible }">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <FgpSiteLink
-                            :path="$config.public.paths.overview"
-                            class="nav-link"
-                            @click="hideMenu()"
-                        >{{ $t('menu.overview') }}</FgpSiteLink>
-                    </li>
-                    <li class="nav-item">
-                        <FgpSiteLink
-                            :path="$config.public.paths.gettingStarted"
-                            class="nav-link"
-                            @click="hideMenu()"
-                        >{{ $t('menu.installation') }}</FgpSiteLink>
-                    </li>
-                    <li class="nav-item">
-                        <FgpSiteLink
-                            :path="$config.public.paths.configuration"
-                            class="nav-link"
-                            @click="hideMenu()"
-                        >{{ $t('menu.configuration') }}</FgpSiteLink>
-                    </li>
-                    <li class="nav-item">
-                        <FgpSiteLink
-                            :path="$config.public.paths.tasks"
-                            class="nav-link"
-                            @click="hideMenu()"
-                        >{{ $t('menu.tasks') }}</FgpSiteLink>
-                    </li>
-                    <li class="nav-item">
-                        <FgpSiteLink
-                            :path="$config.public.paths.faqs"
-                            class="nav-link"
-                            @click="hideMenu()"
-                        >{{ $t('menu.faq') }}</FgpSiteLink>
-                    </li>
-                </ul>
-            </div>
+            <FgpMenubar class="d-none d-md-flex justify-content-center flex-grow-1" />
 
             <form v-if="$config.public.i18nEnabled">
                 <label>
@@ -72,12 +39,11 @@
                     </select>
                 </label>
             </form>
-            <FgpLink
-                href="https://github.com/siouan/frontend-gradle-plugin"
-                class="navbar-item"
-                :title="$t('siouan.projectTooltip')"
-            ><i class="fab fa-github fa-2x text-dark" /></FgpLink>
+            <FgpThemeSelector />
         </nav>
+        <div id="fgp-navbar" class="collapse navbar-collapse text-center border-bottom mb-3" :class="{ show: menuVisible }">
+            <FgpMenubar @item-click="hideMenu()" />
+        </div>
     </header>
 </template>
 
@@ -108,6 +74,6 @@ function hideMenu() {
 
 .nav-link {
     font-family: $headings-font-family;
-    color: $navbar-link-color;
+    color: var(--bs-tertiary-color);
 }
 </style>
