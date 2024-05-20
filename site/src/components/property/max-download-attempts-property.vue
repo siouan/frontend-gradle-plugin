@@ -16,7 +16,9 @@
             trigger a retry of the download if more attempts are permitted thanks to this property. The retry strategy
             is based on the exponential backoff algorithm to determine the waiting time before the next download
             attempt:
-            <math display="block" class="mt-1 text-monospace">
+        </p>
+        <p class="text-center overflow-x-auto">
+            <math class="text-monospace">
                 <mrow>
                     <mi><FgpCode>waiting time (ms)</FgpCode></mi>
                     <mo>=</mo>

@@ -25,6 +25,7 @@
 *.sql           text
 *.txt           text
 *.ts            text
+*.vue           text
 *.xml           text
 *.yaml          text
 *.yml           text
