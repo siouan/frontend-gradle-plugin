@@ -38,7 +38,7 @@
                         SCSS...), the directory layout, the build utilities (Webpack...), etc., chosen by the team.
                         Moreover, some build utilities are already able to build artifacts incrementally. The plugin
                         does not duplicate this logic. If you are about to tweak this task, take a look at these
-                        <FgpSiteLink path="#tweaking-tasks">recommendations</FgpSiteLink>.
+                        <FgpSiteLink :path="`${$config.public.paths.tasks}#tweaking-tasks`">recommendations</FgpSiteLink>.
                     </p>
                 </div>
             </div>

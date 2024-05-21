@@ -1,26 +1,23 @@
 <template>
-    <FgpLink :href="href" :title="title">{{ internalLabel }}</FgpLink>
+    <FgpLink :href="href">{{ $t(internalLabelKey) }}</FgpLink>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-
-const { t } = useI18n();
-
 interface Props {
-    readonly label?: string | null;
-    readonly labelKey?: string;
-    readonly path?: string;
-    readonly title?: string | null;
+    readonly labelKey?: string | null;
+    readonly version?: 1 | 2 | null;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-    label: null,
-    labelKey: 'navigation.yarnBerry.label',
-    path: '',
-    title: null,
+    labelKey: null,
+    version: 2
 });
 
-const href = computed<string>(() => `https://yarnpkg.com/${props.path}`);
-const internalLabel = computed<string>(() => props.label || t(props.labelKey));
+const href = computed(() => (props.version === 1) ? 'https://classic.yarnpkg.com/' : 'https://yarnpkg.com/' );
+const internalLabelKey = computed<string>(() => {
+    if (props.labelKey) {
+        return props.labelKey;
+    }
+    return (props.version === 1) ? 'navigation.yarnClassic.label' : 'navigation.yarnBerry.label';
+});
 </script>

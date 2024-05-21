@@ -53,7 +53,7 @@ const inputs = [
         binding: 'P',
         property: 'nodeInstallDirectory',
     },
-    { name: 'packageManagerSpecificationFile', type: 'RF', binding: 'C' },
+    { name: 'packageManagerSpecificationFile', type: 'RF', binding: 'C' }
 ];
 const outputs = [{ name: 'packageManagerExecutableFile', type: 'RF', binding: 'C' }];
 </script>

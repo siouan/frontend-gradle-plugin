@@ -1,9 +1,9 @@
 <template>
-    <article class="mt-4 pb-2 border-bottom">
+    <article class="mb-3 pb-3 border-bottom">
         <header>
             <h4>
                 <slot name="question" />
-                <FgpSiteLink path="#app" class="small text-info">&uparrow;</FgpSiteLink>
+                <FgpSiteLink :path="`${$config.public.paths.faqs}#app`" class="small text-info">&uparrow;</FgpSiteLink>
             </h4>
         </header>
         <section class="px-3">

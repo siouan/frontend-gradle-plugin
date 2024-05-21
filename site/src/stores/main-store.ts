@@ -3,11 +3,22 @@ import { defineStore } from 'pinia';
 const PREFERED_SCRIPT_LANGUAGE_ID_STORAGE_KEY = 'preferedScriptLanguageId';
 const PREFERED_THEME_ID_STORAGE_KEY = 'preferedThemeId';
 
+export interface StoreInitializeOptions {
+    localStorage: Storage;
+    systemThemeId: ThemeIdType;
+    latestMajorRelease: number;
+    selectedRelease: number;
+}
+
 export const useMainStore = defineStore('mainStore', () => {
     let localStorage: Storage;
+    const latestMajorRelease = ref(0);
     const systemThemeId: Ref<ThemeIdType | null> = ref(null);
     const preferedScriptLanguageId: Ref<ScriptLanguageIdType> = ref(ScriptLanguageId.GROOVY);
     const preferedThemeId: Ref<PreferedThemeIdType> = ref(PreferedThemeId.SYSTEM);
+    const selectedRelease: Ref<number | null> = ref(null);
+    const selectedReleasePath = computed(() =>
+        !selectedRelease.value || (selectedRelease.value === latestMajorRelease.value) ? '' : `/${selectedRelease.value}`);
     const themeId: Ref<ThemeIdType> = computed(() => {
         switch (preferedThemeId.value) {
         case PreferedThemeId.DARK:
@@ -20,9 +31,9 @@ export const useMainStore = defineStore('mainStore', () => {
         }
     });
 
-    function initialize(storage: Storage, themeId: ThemeIdType): void {
-        localStorage = storage;
-        systemThemeId.value = themeId;
+    function initialize(options: StoreInitializeOptions): void {
+        localStorage = options.localStorage;
+        systemThemeId.value = options.systemThemeId;
         const preferedThemeIdFromLocalStorageAsString: string | null = localStorage.getItem(PREFERED_THEME_ID_STORAGE_KEY);
         const preferedThemeIdFromLocalStorage =
             preferedThemeIdFromLocalStorageAsString && (<any>Object).values(PreferedThemeId).includes(preferedThemeIdFromLocalStorageAsString)
@@ -35,7 +46,10 @@ export const useMainStore = defineStore('mainStore', () => {
             ? preferedLanguageIdFromLocalStorageAsString as ScriptLanguageIdType
             : ScriptLanguageId.GROOVY;
         setPreferedScriptLanguageId(preferedLanguageIdFromLocalStorage);
+        latestMajorRelease.value = options.latestMajorRelease;
+        setSelectedRelease(options.selectedRelease);
     }
+
     function setPreferedThemeId(themeId: PreferedThemeIdType): void {
         if (themeId === PreferedThemeId.SYSTEM) {
             localStorage.removeItem(PREFERED_THEME_ID_STORAGE_KEY);
@@ -44,17 +58,25 @@ export const useMainStore = defineStore('mainStore', () => {
         }
         preferedThemeId.value = themeId;
     }
+
     function setPreferedScriptLanguageId(scriptLanguageId: ScriptLanguageIdType): void {
         localStorage.setItem(PREFERED_SCRIPT_LANGUAGE_ID_STORAGE_KEY, scriptLanguageId);
         preferedScriptLanguageId.value = scriptLanguageId;
+    }
+
+    function setSelectedRelease(release: number): void {
+        selectedRelease.value = release;
     }
 
     return {
         initialize,
         preferedScriptLanguageId,
         preferedThemeId,
+        selectedRelease,
+        selectedReleasePath,
         setPreferedScriptLanguageId,
         setPreferedThemeId,
+        setSelectedRelease,
         themeId
     };
 });

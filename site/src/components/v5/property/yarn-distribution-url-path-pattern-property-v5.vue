@@ -23,7 +23,7 @@
                 <p class="card-text">
                     The <FgpPropertyLink name="yarnDistributionUrlRoot" /> property and this property offer a convenient
                     way to download distributions from a custom website - e.g. a website mirroring the official
-                    <FgpYarnLink /> website, and still take advantage of the automatic resolution of the exact URL. The
+                    <FgpYarnLink :version="1" /> website, and still take advantage of the automatic resolution of the exact URL. The
                     property may contain the following token:
                 </p>
                 <ul class="card-text">

@@ -135,28 +135,28 @@
             <g id="frontendGradlePlugin">
                 <rect x="0" y="80" width="640" height="360" fill="none" stroke="grey" />
                 <text text-anchor="end" x="620" y="238" font-size="0.5rem" fill="grey">Frontend Gradle plugin</text>
-                <FgpSiteLink path="#cleanFrontend">
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#cleanFrontend`">
                     <use x="20" y="90" xlink:href="#cleanFrontendTask" />
                 </FgpSiteLink>
-                <FgpSiteLink path="#checkFrontend">
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#checkFrontend`">
                     <use x="170" y="90" xlink:href="#checkFrontendTask" />
                 </FgpSiteLink>
-                <FgpSiteLink path="#assembleFrontend">
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#assembleFrontend`">
                     <use x="320" y="90" xlink:href="#assembleFrontendTask" />
                 </FgpSiteLink>
-                <FgpSiteLink path="#publishFrontend">
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#publishFrontend`">
                     <use x="500" y="90" xlink:href="#publishFrontendTask" />
                 </FgpSiteLink>
-                <FgpSiteLink path="#installFrontend">
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#installFrontend`">
                     <use x="170" y="150" xlink:href="#installFrontendTask" />
                 </FgpSiteLink>
-                <FgpSiteLink path="#installPackageManager">
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#installPackageManager`">
                     <use x="170" y="210" xlink:href="#installPackageManagerTask" />
                 </FgpSiteLink>
-                <FgpSiteLink path="#resolvePackageManager">
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#resolvePackageManager`">
                     <use x="170" y="270" xlink:href="#resolvePackageManagerTask" />
                 </FgpSiteLink>
-                <FgpSiteLink path="#installNode">
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#installNode`">
                     <use x="170" y="330" xlink:href="#installNodeTask" />
                 </FgpSiteLink>
 
@@ -164,19 +164,19 @@
                 <text text-anchor="middle" x="320" y="388" font-size="0.5rem" fill="darkgrey">
                     Additional task types
                 </text>
-                <FgpSiteLink path="#RunNode">
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#RunNode`">
                     <use x="10" y="400" xlink:href="#RunNodeTaskType" />
                 </FgpSiteLink>
-                <FgpSiteLink path="#RunCorepack">
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#RunCorepack`">
                     <use x="140" y="400" xlink:href="#RunCorepackTaskType" />
                 </FgpSiteLink>
-                <FgpSiteLink path="#RunNpm">
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#RunNpm`">
                     <use x="270" y="400" xlink:href="#RunNpmTaskType" />
                 </FgpSiteLink>
-                <FgpSiteLink path="#RunPnpm">
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#RunPnpm`">
                     <use x="400" y="400" xlink:href="#RunPnpmTaskType" />
                 </FgpSiteLink>
-                <FgpSiteLink path="#RunYarn">
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#RunYarn`">
                     <use x="530" y="400" xlink:href="#RunYarnTaskType" />
                 </FgpSiteLink>
             </g>

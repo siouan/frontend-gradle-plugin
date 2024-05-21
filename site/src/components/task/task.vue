@@ -8,10 +8,10 @@
                     v-if="cacheable"
                     path="/current/userguide/build_cache.html#sec:task_output_caching_details"
                     title="Cacheable task"
-                    class="badge text-bg-dark"
+                    class="badge fgp-cacheable-task"
                     hover-style-disabled
                     >C</FgpGradleDocsLink
-                > <FgpSiteLink path="#app" class="small text-info">&uparrow;</FgpSiteLink>
+                > <FgpSiteLink :path="`${$config.public.paths.tasks}#app`" class="small text-info">&uparrow;</FgpSiteLink>
             </h4>
             <ul>
                 <li v-if="dependingTaskNames.length > 0">
@@ -53,8 +53,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed, useSlots } from 'vue';
-
 interface Input {
     readonly name: string;
     readonly type: TaskPropertyTypeType;
@@ -87,3 +85,10 @@ withDefaults(defineProps<Props>(), {
 });
 const skippable = computed(() => !!slots.skipConditions);
 </script>
+
+<style scoped>
+.fgp-cacheable-task {
+    color: var(--bs-body-bg);
+    background-color: var(--bs-emphasis-color);
+}
+</style>

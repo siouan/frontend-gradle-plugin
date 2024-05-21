@@ -32,6 +32,9 @@ export default defineI18nConfig(() => ({
                 npm: {
                     label: 'npm',
                 },
+                npx: {
+                    label: "npx"
+                },
                 pnpm: {
                     label: 'pnpm',
                 },
@@ -41,18 +44,17 @@ export default defineI18nConfig(() => ({
                     },
                 },
                 yarnBerry: {
+                    baseline: 'Berry',
                     label: 'Yarn',
-                    originalName: 'Berry',
+                    originalName: 'Yarn Berry',
                     title: 'Yarn Berry',
                 },
-                yarn1: {
-                    label: 'Yarn 1',
+                yarnClassic: {
+                    baseline: 'Classic',
+                    label: 'Yarn',
+                    originalName: 'Classic Yarn',
                     title: 'Classic Yarn',
-                },
-                yarn2: {
-                    label: 'Yarn 2+',
-                    title: 'Yarn',
-                },
+                }
             },
             siouan: {
                 organizationTooltip: 'Siouan at GitHub.com',

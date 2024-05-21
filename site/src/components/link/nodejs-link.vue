@@ -3,8 +3,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-
 const { t } = useI18n();
 const NODEJS_BASE_URL = 'https://nodejs.org';
 

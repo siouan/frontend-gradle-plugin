@@ -3,8 +3,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-
 const REPO_BASE_URL = 'https://github.com/siouan/frontend-gradle-plugin';
 
 interface Props {

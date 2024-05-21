@@ -11,7 +11,7 @@
             HTTP protocol (e.g. the
             <FgpPropertyLink name="nodeDistributionUrlRoot" /> property and/or the
             <FgpPropertyLink name="yarnDistributionUrlRoot" /> property use the <FgpCode>http</FgpCode> protocol). The
-            <FgpSiteLink path="#proxy-resolution-process">proxy resolution process</FgpSiteLink>
+            <FgpSiteLink :path="`${$config.public.paths.configuration}#proxy-resolution-process`">proxy resolution process</FgpSiteLink>
             hereafter explains how this setting apply.
         </p>
     </FgpProperty>

@@ -1,6 +1,6 @@
 <template>
     <FgpProperty name="yarnDistributionProvided" type="boolean" default-value="false" :task-names="['installYarn']">
-        <p>Whether the <FgpYarnLink /> distribution is already provided, and shall not be downloaded.</p>
+        <p>Whether the <FgpYarnLink :version="1" /> distribution is already provided, and shall not be downloaded.</p>
         <ol>
             <li>
                 When <FgpCode>false</FgpCode>, at least the <FgpPropertyLink name="yarnVersion" /> property must be set.

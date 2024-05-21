@@ -74,7 +74,7 @@
                         <p>
                             If you are about to tweak this task to declare additional inputs and outputs, take a look at
                             these
-                            <FgpSiteLink path="#tweaking-tasks">recommendations</FgpSiteLink>.
+                            <FgpSiteLink :path="`${$config.public.paths.tasks}#tweaking-tasks`">recommendations</FgpSiteLink>.
                         </p>
                     </div>
                 </div>

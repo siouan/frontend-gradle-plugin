@@ -31,12 +31,10 @@
                     clarity.
                 </p>
 
-                <FgpWarning
-                    >CAUTION: globally installed distribution is modified when using the plugin and <FgpCorepackLink />.
-                    Executables <FgpCode>npm</FgpCode>, <FgpCode>pnpm</FgpCode>, <FgpCode>yarn</FgpCode> that may
-                    already exists within <FgpNodejsLink /> install directory are overwritten when task
-                    <FgpTaskLink name="installPackageManager" /> is run.</FgpWarning
-                >
+                <FgpWarning>CAUTION: globally installed distribution is modified when using the plugin and
+                <FgpCorepackLink />. Executables <FgpCode>npm</FgpCode>, <FgpCode>pnpm</FgpCode>,
+                <FgpCode>yarn</FgpCode> that may already exists within <FgpNodejsLink /> install directory are
+                overwritten when task <FgpTaskLink name="installPackageManager" /> is run.</FgpWarning>
             </li>
         </ol>
     </FgpProperty>
