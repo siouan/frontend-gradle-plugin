@@ -4,7 +4,11 @@
             <h4>
                 <FgpPropertyLinkAnchor :name="name" />
                 Property
-                <FgpCode> {{ name }} </FgpCode> <FgpSiteLink path="#app" class="small text-info">&uparrow;</FgpSiteLink>
+                <FgpCode> {{ name }} </FgpCode
+                > <FgpSiteLink
+                    :path="`${$config.public.paths.configuration}#app`"
+                    class="small text-info"
+                >&uparrow;</FgpSiteLink>
             </h4>
             <ul>
                 <li v-if="taskNames.length > 0">
@@ -38,8 +42,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-
 const QUALIFIED_JDK_CLASS_NAME_REGEXP = /^(?<fqcn>javax?\.(?:[a-z]\w+\.)+[A-Z]\w+?)(?:<[\w.]+>)?$/;
 const JDK_STRING_CLASS_NAME = 'java.lang.String';
 
@@ -57,6 +59,7 @@ const props = withDefaults(defineProps<Props>(), {
     defaultValue: null,
     example: null,
 });
+
 const defaultTypedValue = computed(() => {
     if (props.defaultValue === null) {
         return 'null';

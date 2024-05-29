@@ -38,19 +38,11 @@ export default defineNuxtConfig({
     devtools: {
         enabled: true,
     },
-    hooks: {
-        'pages:extend' (routes) {
-            routes.push({
-                name: 'node-npm-npx-yarn-tasks',
-                path: '/node-npm-npx-yarn-tasks',
-                file: '~/pages/node-corepack-npm-pnpm-yarn-tasks.vue'
-            })
-        }
-    },
     modules: ['@nuxtjs/i18n', '@pinia/nuxt', '@nuxt/eslint'],
     runtimeConfig: {
         public: {
             i18nEnabled: false,
+            latestMajorRelease: 8,
             paths: {
                 configuration: '/configuration',
                 faqs: '/faqs',

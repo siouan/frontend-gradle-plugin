@@ -19,19 +19,6 @@
     <FgpPropertyLink name="nodeDistributionServerPassword" /> = 'password'
     <FgpPropertyLink name="nodeInstallDirectory" /> = project.layout.projectDirectory.dir("node")
 
-    <FgpCodeComment>// REMOVED PROPERTIES - PRIOR TO RELEASE 7.0.0</FgpCodeComment>
-    <FgpPropertyLink name="yarnEnabled" /> = false
-    <FgpPropertyLink name="yarnVersion" /> = '3.5.1'
-    <FgpCodeComment>// END OF REMOVED PROPERTIES</FgpCodeComment>
-    <FgpCodeComment>// REMOVED PROPERTIES - PRIOR TO RELEASE 6.0.0</FgpCodeComment>
-    <FgpPropertyLink name="yarnDistributionProvided" /> = false
-    <FgpPropertyLink name="yarnDistributionUrlRoot" /> = 'https://github.com/yarnpkg/yarn/releases/download/'
-    <FgpPropertyLink name="yarnDistributionUrlPathPattern" /> = 'vVERSION/yarn-vVERSION.tar.gz'
-    <FgpPropertyLink name="yarnDistributionServerUsername" /> = 'username'
-    <FgpPropertyLink name="yarnDistributionServerPassword" /> = 'password'
-    <FgpPropertyLink name="yarnInstallDirectory" /> = project.layout.projectDirectory.dir("yarn")
-    <FgpCodeComment>// END OF REMOVED PROPERTIES</FgpCodeComment>
-
     <FgpPropertyLink name="installScript" /> = 'install'
     <FgpPropertyLink name="cleanScript" /> = 'run clean'
     <FgpPropertyLink name="assembleScript" /> = 'run assemble'
@@ -65,19 +52,6 @@
     <FgpPropertyLink name="nodeDistributionServerUsername" />.set("username")
     <FgpPropertyLink name="nodeDistributionServerPassword" />.set("password")
     <FgpPropertyLink name="nodeInstallDirectory" />.set(project.layout.projectDirectory.dir("node"))
-
-    <FgpCodeComment>// REMOVED PROPERTIES - PRIOR TO RELEASE 7.0.0</FgpCodeComment>
-    <FgpPropertyLink name="yarnEnabled" />.set(false)
-    <FgpPropertyLink name="yarnVersion" />.set("3.5.1")
-    <FgpCodeComment>// END OF REMOVED PROPERTIES</FgpCodeComment>
-    <FgpCodeComment>// REMOVED PROPERTIES - PRIOR TO RELEASE 6.0.0</FgpCodeComment>
-    <FgpPropertyLink name="yarnDistributionProvided" />.set(false)
-    <FgpPropertyLink name="yarnDistributionUrlRoot" />.set("https://github.com/yarnpkg/yarn/releases/download/")
-    <FgpPropertyLink name="yarnDistributionUrlPathPattern" />.set("vVERSION/yarn-vVERSION.tar.gz")
-    <FgpPropertyLink name="yarnDistributionServerUsername" />.set("username")
-    <FgpPropertyLink name="yarnDistributionServerPassword" />.set("password")
-    <FgpPropertyLink name="yarnInstallDirectory" />.set(project.layout.projectDirectory.dir("yarn"))
-    <FgpCodeComment>// END OF REMOVED PROPERTIES</FgpCodeComment>
 
     <FgpPropertyLink name="installScript" />.set("install")
     <FgpPropertyLink name="cleanScript" />.set("run clean")
@@ -120,28 +94,9 @@
         </section>
 
         <section>
-            <FgpSubSubTitle>Yarn settings</FgpSubSubTitle>
-
-            <FgpYarnEnabledProperty />
-            <FgpYarnDistributionProvidedProperty />
-            <FgpYarnVersionProperty />
-            <FgpYarnDistributionUrlRootProperty />
-            <FgpYarnDistributionUrlPathPatternProperty />
-            <FgpYarnDistributionServerUsernameProperty />
-            <FgpYarnDistributionServerPasswordProperty />
-            <FgpYarnInstallDirectoryProperty />
-        </section>
-
-        <section>
             <FgpSubSubTitle id="script-settings">Script settings</FgpSubSubTitle>
             <p>
-                Starting from release 7.0.0, the value for each property hereafter is provided as arguments of the
-                package manager executable.
-            </p>
-            <p>
-                Before release 7.0.0, Depending on the value of the
-                <FgpPropertyLink name="yarnEnabled" /> property, the value for each property hereafter is provided as
-                argument either of the <FgpCode>npm</FgpCode> executable or the <FgpCode>yarn</FgpCode> executable.
+                The value for each property hereafter is provided as arguments of the package manager executable.
             </p>
             <p>
                 Under Unix-like O/S, white space characters <FgpCode>' '</FgpCode> in an argument value must be escaped
@@ -226,7 +181,7 @@ assembleScript.set("run build")
         <section>
             <FgpSubSubTitle id="proxy-resolution-process">
                 About proxy resolution
-                <FgpSiteLink path="#app" class="small text-info">&uparrow;</FgpSiteLink>
+                <FgpSiteLink :path="`${$config.public.paths.configuration}#app`" class="small text-info">&uparrow;</FgpSiteLink>
             </FgpSubSubTitle>
 
             <p>

@@ -1,8 +1,10 @@
 <template>
-    <NuxtLink :to="path" @click="propagateEvent($event)"><slot /></NuxtLink>
+    <NuxtLink :to="`${mainStore.selectedReleasePath}${path}`" @click="propagateEvent($event)"><slot /></NuxtLink>
 </template>
 
 <script setup lang="ts">
+const mainStore = useMainStore();
+
 interface Emits {
     (e: 'click', value: MouseEvent): void
 }

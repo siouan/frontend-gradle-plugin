@@ -3,8 +3,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-
 interface Props {
     readonly name: string;
     readonly path: string;
@@ -12,6 +10,5 @@ interface Props {
 
 const props = defineProps<Props>();
 
-const runtimeConfig = useRuntimeConfig();
 const pathWithAnchor = computed(() => `${props.path}#${props.name}`);
 </script>

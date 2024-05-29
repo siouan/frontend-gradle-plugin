@@ -1,45 +1,47 @@
 <template>
     <header>
-        <nav class="navbar navbar-expand-md text-center">
-            <FgpImageLink
-                href="https://github.com/siouan"
-                class="navbar-item me-3"
-                :title="$t('siouan.organizationTooltip')"
-                src="siouan-icon.svg"
-                alt="Siouan logo"
-                :width="32"
-                :height="32"
-            />
-            <FgpLink
-                href="https://github.com/siouan/frontend-gradle-plugin"
-                class="navbar-item"
-                :title="$t('siouan.projectTooltip')"
-            ><i class="fab fa-github fa-2x text-body" /></FgpLink>
+        <nav class="navbar navbar-expand-md text-center debug">
+            <div class="d-flex fgp-flex-1">
+                <FgpImageLink
+                    href="https://github.com/siouan"
+                    :title="$t('siouan.organizationTooltip')"
+                    src="siouan-icon.svg"
+                    alt="Siouan logo"
+                    :width="32"
+                    :height="32"
+                    class="d-none d-sm-inline me-1"
+                />
+                <FgpLink
+                    href="https://github.com/siouan/frontend-gradle-plugin"
+                    :title="$t('siouan.projectTooltip')"
+                ><i class="fab fa-github fa-2x text-body" /></FgpLink>
+            </div>
+            <div class="d-flex">
+                <button
+                    class="navbar-toggler mx-auto"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#fgp-navbar"
+                    aria-controls="fgp-navbar"
+                    aria-expanded="false"
+                    aria-label="Toggle navbar"
+                    @click="toggleMenuVisible()"
+                >
+                    <span class="navbar-toggler-icon" />
+                </button>
 
-            <button
-                class="navbar-toggler mx-auto"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#fgp-navbar"
-                aria-controls="fgp-navbar"
-                aria-expanded="false"
-                aria-label="Toggle navbar"
-                @click="toggleMenuVisible()"
-            >
-                <span class="navbar-toggler-icon" />
-            </button>
-
-            <FgpMenubar class="d-none d-md-flex justify-content-center flex-grow-1" />
-
-            <form v-if="$config.public.i18nEnabled">
-                <label>
+                <FgpMenubar class="d-none d-md-flex justify-content-center" />
+            </div>
+            <form class="d-flex fgp-flex-1 justify-content-end">
+                <label v-if="$config.public.i18nEnabled">
                     <select class="custom-select" @change="selectLang($event)">
                         <option value="en" selected>{{ $t('lang.english') }}</option>
                         <option value="fr">{{ $t('lang.french') }}</option>
                     </select>
                 </label>
+                <FgpReleaseSelector class="w-auto me-1" />
+                <FgpThemeSelector />
             </form>
-            <FgpThemeSelector />
         </nav>
         <div id="fgp-navbar" class="collapse navbar-collapse text-center border-bottom mb-3" :class="{ show: menuVisible }">
             <FgpMenubar @item-click="hideMenu()" />
@@ -75,5 +77,9 @@ function hideMenu() {
 .nav-link {
     font-family: $headings-font-family;
     color: var(--bs-tertiary-color);
+}
+
+.fgp-flex-1 {
+    flex: 1;
 }
 </style>

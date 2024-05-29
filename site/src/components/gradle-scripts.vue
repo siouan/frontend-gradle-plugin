@@ -30,8 +30,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-
 const mainStore = useMainStore();
 
 const groovyTabVisible = computed(() => mainStore.preferedScriptLanguageId === ScriptLanguageId.GROOVY);

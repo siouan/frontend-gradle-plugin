@@ -8,7 +8,7 @@
         <p>
             This property is used to build the exact URL to download the distribution, by appending the value of the
             <FgpCode>yarnDistributionUrlPathPattern</FgpCode> property to its value. By default, the plugin attempts to
-            download the distribution from the <FgpYarnLink /> website.
+            download the distribution from the <FgpYarnLink :version="1" /> website.
         </p>
     </FgpProperty>
 </template>

@@ -7,8 +7,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-
+const runtimeConfig = useRuntimeConfig();
+const router = useRouter();
 const mainStore = useMainStore();
 
 const afterMounted = ref(false);
@@ -21,9 +21,13 @@ const containerClass = computed(() => {
 });
 
 onMounted(() => {
-    mainStore.initialize(
+    const selectedRelease = parseReleaseAndCanonicalPath(router.currentRoute.value.path, runtimeConfig.public.latestMajorRelease)[0];
+    mainStore.initialize({
         localStorage,
-        window.matchMedia('(prefers-color-scheme: dark)').matches ? ThemeId.DARK : ThemeId.LIGHT);
+        systemThemeId: window.matchMedia('(prefers-color-scheme: dark)').matches ? ThemeId.DARK : ThemeId.LIGHT,
+        latestMajorRelease: runtimeConfig.public.latestMajorRelease,
+        selectedRelease
+    });
     afterMounted.value = true;
 });
 </script>

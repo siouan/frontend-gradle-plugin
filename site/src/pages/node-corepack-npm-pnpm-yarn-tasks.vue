@@ -49,7 +49,7 @@
         <section>
             <FgpSubSubTitle id="tweaking-tasks">
                 Tweaking the built-in tasks
-                <FgpSiteLink path="#app" class="small text-info">&uparrow;</FgpSiteLink>
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#app`" class="small text-info">&uparrow;</FgpSiteLink>
             </FgpSubSubTitle>
 
             <p>

@@ -5,7 +5,7 @@
         <nav>
             <ul>
                 <li>
-                    <FgpSiteLink path="#node-corepack-npm-pnpm-yarn-direct-use">
+                    <FgpSiteLink :path="`${$config.public.paths.faqs}#node-corepack-npm-pnpm-yarn-direct-use`">
                         How to use
                         <FgpCode>node</FgpCode
                         >/<FgpCode>corepack</FgpCode>/<FgpCode>npm</FgpCode>/<FgpCode>pnpm</FgpCode>/<FgpCode
@@ -16,25 +16,25 @@
                     </FgpSiteLink>
                 </li>
                 <li>
-                    <FgpSiteLink path="#unsupported-platform-exception">
+                    <FgpSiteLink :path="`${$config.public.paths.faqs}#unsupported-platform-exception`">
                         What should I do when error
                         <FgpCode>UnsupportedPlatformException</FgpCode> occurs?
                     </FgpSiteLink>
                 </li>
                 <li>
-                    <FgpSiteLink path="#custom-nodejs-distribution-server">
+                    <FgpSiteLink :path="`${$config.public.paths.faqs}#custom-nodejs-distribution-server`">
                         How to configure plugin so as I can download
                         <FgpCode>Node.js</FgpCode> distribution from a custom server?
                     </FgpSiteLink>
                 </li>
                 <li>
-                    <FgpSiteLink path="#cache-directory">
+                    <FgpSiteLink :path="`${$config.public.paths.faqs}#cache-directory`">
                         What's the purpose of the
                         <FgpCode>.frontend-gradle-plugin</FgpCode> directory generated in each project?
                     </FgpSiteLink>
                 </li>
                 <li>
-                    <FgpSiteLink path="#node-install-directory-from-environment">
+                    <FgpSiteLink :path="`${$config.public.paths.faqs}#node-install-directory-from-environment`">
                         How can I set the install directory of the
                         <FgpCode>Node.js</FgpCode> distribution using an environment variable?
                     </FgpSiteLink>
