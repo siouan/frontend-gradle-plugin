@@ -32,18 +32,23 @@ public class ResolvePackageManager {
     public void execute(final ResolvePackageManagerCommand command)
         throws InvalidJsonFileException, UnsupportedPackageManagerException, IOException,
         MalformedPackageManagerSpecification {
-        final PackageManager packageManager = parsePackageManagerFromPackageJsonFile.execute(
-            command.packageJsonFilePath());
-        fileManager.writeString(command.packageManagerSpecificationFilePath(),
-            packageManager.type().getPackageManagerName() + '@' + packageManager.version(), StandardCharsets.UTF_8,
-            StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-        fileManager.writeString(command.packageManagerExecutablePathFilePath(), getExecutablePath
-            .execute(GetExecutablePathCommand
-                .builder()
-                .executableType(packageManager.type().getExecutableType())
-                .nodeInstallDirectoryPath(command.nodeInstallDirectoryPath())
-                .platform(command.platform())
-                .build())
-            .toString(), StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+        if (command.packageJsonFilePath() == null) {
+            fileManager.deleteIfExists(command.packageManagerSpecificationFilePath());
+            fileManager.deleteIfExists(command.packageManagerExecutablePathFilePath());
+        } else {
+            final PackageManager packageManager = parsePackageManagerFromPackageJsonFile.execute(
+                command.packageJsonFilePath());
+            fileManager.writeString(command.packageManagerSpecificationFilePath(),
+                packageManager.type().getPackageManagerName() + '@' + packageManager.version(), StandardCharsets.UTF_8,
+                StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            fileManager.writeString(command.packageManagerExecutablePathFilePath(), getExecutablePath
+                .execute(GetExecutablePathCommand
+                    .builder()
+                    .executableType(packageManager.type().getExecutableType())
+                    .nodeInstallDirectoryPath(command.nodeInstallDirectoryPath())
+                    .platform(command.platform())
+                    .build())
+                .toString(), StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+        }
     }
 }

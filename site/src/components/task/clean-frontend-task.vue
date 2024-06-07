@@ -2,7 +2,7 @@
     <FgpTask name="cleanFrontend" :depending-task-names="['installFrontend']" :inputs="inputs">
         <template #title>Clean frontend artifacts</template>
         <template #skipConditions>
-            task <FgpTaskLink name="installFrontend" /> was skipped or property
+            <FgpPropertyLink name="packageJsonDirectory" /><FgpCode>/package.json</FgpCode> file does not exist, or
             <FgpPropertyLink name="cleanScript" /> is <FgpCode>null</FgpCode>.
         </template>
         <template #description>
@@ -13,10 +13,7 @@
                 clean the relevant directory. A clean script shall be defined in the
                 <FgpCode>package.json</FgpCode> file, and the <FgpPropertyLink name="cleanScript" /> property shall be
                 set with the corresponding <FgpCode>npm</FgpCode>/<FgpCode>pnpm</FgpCode>/<FgpCode>yarn</FgpCode>
-                command. This task depends on the
-                <FgpTaskLink name="installFrontend" /> task, and is skipped if the
-                <FgpPropertyLink name="cleanScript" /> property is <FgpCode>null</FgpCode>. Apart from direct execution,
-                the task is also executed when the Gradle lifecycle
+                command. Apart from direct execution, the task is also executed when the Gradle lifecycle
                 <FgpGradleDocsLink path="/current/userguide/base_plugin.html#sec:base_tasks">clean</FgpGradleDocsLink>
                 task is executed.
             </p>

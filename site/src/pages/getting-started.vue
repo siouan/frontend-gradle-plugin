@@ -7,11 +7,11 @@
         <ul>
             <li>
                 <FgpGradlePluginsLink path="/plugin/org.siouan.frontend-jdk17">JDK 17 build</FgpGradlePluginsLink>:
-                <FgpGradleLink /> 7.3+
+                <FgpGradleLink /> 8.5+
             </li>
             <li>
                 <FgpGradlePluginsLink path="/plugin/org.siouan.frontend-jdk11">JDK 11 build</FgpGradlePluginsLink>:
-                <FgpGradleLink /> 6.2+
+                <FgpGradleLink /> 8.5+
             </li>
         </ul>
         <p>

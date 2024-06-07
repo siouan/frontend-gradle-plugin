@@ -19,7 +19,7 @@ public final class SystemPropertiesFixture {
      * @return String describing the JVM architecture.
      */
     public static String getSystemJvmArch() {
-        return getPropertyAndAssertNotNull(SystemProperties.JVM_ARCH_PROPERTY);
+        return getPropertyAndAssertNotNull(SystemProperties.JVM_ARCH);
     }
 
     /**
@@ -28,7 +28,7 @@ public final class SystemPropertiesFixture {
      * @return String describing the O/S.
      */
     public static String getSystemOsName() {
-        return getPropertyAndAssertNotNull(SystemProperties.OS_NAME_PROPERTY);
+        return getPropertyAndAssertNotNull(SystemProperties.OS_NAME);
     }
 
     private static String getPropertyAndAssertNotNull(final String property) {

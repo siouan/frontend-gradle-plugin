@@ -1,7 +1,9 @@
 <template>
     <FgpTask name="installFrontend" :depending-task-names="['installPackageManager']" :inputs="inputs">
         <template #title>Install frontend dependencies</template>
-        <template #skipConditions> task <FgpTaskLink name="installPackageManager" /> was skipped. </template>
+        <template #skipConditions>
+            <FgpPropertyLink name="packageJsonDirectory" /><FgpCode>/package.json</FgpCode> file does not exist.
+        </template>
         <template #description>
             <p>
                 Depending on the package manager, this task executes either command
@@ -37,8 +39,7 @@
                             since it depends on the package manager, the value of the
                             <FgpPropertyLink name="installScript" /> property, and the files present in the project.
                             That's why incremental build for this task is not available out-of-the-box by now. However,
-                            some
-                            <FgpRepoLink path="/tree/main/examples">examples</FgpRepoLink>
+                            some <FgpRepoLink path="/tree/main/examples">examples</FgpRepoLink>
                             provide guidelines to customize this task and limit executions under certain circumstances.
                             Notes hereafter provide also some unofficial ideas:
                         </p>
@@ -49,11 +50,11 @@
                                 <FgpCode>yarn.lock</FgpCode>, while outputs may be the
                                 <FgpCode>node_modules</FgpCode> directory and the
                                 <FgpCode>package-lock.json</FgpCode> file (see
-                                <FgpNpmDocsLink path="/cli/v9/commands/npm-install">npm install</FgpNpmDocsLink>). If
+                                <FgpNpmDocsLink path="/cli/v10/commands/npm-install">npm install</FgpNpmDocsLink>). If
                                 the <FgpPropertyLink name="installScript" /> property is set with <FgpCode>ci</FgpCode>,
-                                files <FgpCode>npm-shrinkwrap.json</FgpCode> and
-                                <FgpCode>package-lock.json</FgpCode> may be the only possible input file, if one or the
-                                other exists, and the <FgpCode>node_modules</FgpCode> directory the only output.
+                                file <FgpCode>package-lock.json</FgpCode> or file <FgpCode>npm-shrinkwrap.json</FgpCode>
+                                may be the only possible input file, if one or the other exists, and the
+                                <FgpCode>node_modules</FgpCode> directory the only output.
                             </li>
                             <li>
                                 <FgpPnpmLink />: inputs may be one or more of files <FgpCode>package.json</FgpCode>,
@@ -73,8 +74,8 @@
                         </ul>
                         <p>
                             If you are about to tweak this task to declare additional inputs and outputs, take a look at
-                            these
-                            <FgpSiteLink :path="`${$config.public.paths.tasks}#tweaking-tasks`">recommendations</FgpSiteLink>.
+                            these <FgpSiteLink :path="`${$config.public.paths.tasks}#tweaking-tasks`"
+                            >recommendations</FgpSiteLink>.
                         </p>
                     </div>
                 </div>

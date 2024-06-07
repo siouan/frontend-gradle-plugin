@@ -7,7 +7,7 @@ import lombok.Builder;
 /**
  * Parameters to resolve the package manager in a project.
  *
- * @param packageJsonFilePath Path to the metadata file (i.e. {@code package.json} file).
+ * @param packageJsonFilePath Optional path to the metadata file (i.e. {@code package.json} file).
  * @param nodeInstallDirectoryPath Path to a Node.js install directory.
  * @param platform Underlying platform.
  * @param packageManagerSpecificationFilePath Path to the file providing the name of the package manager.
