@@ -22,7 +22,7 @@ jobs:
 
       - name: Init MacOS environment
         if: matrix.os == 'macos-14'
-        run: sudo rm -f /usr/local/bin/node /usr/local/bin/npm /usr/local/bin/pnpm /usr/bin/yarn /Users/runner/.yarn/bin/yarn
+        run: sudo rm -f /opt/homebrew/bin/node /usr/local/bin/npm /usr/local/bin/pnpm /usr/bin/yarn /Users/runner/.yarn/bin/yarn
 
       - name: Init Windows environment
         if: matrix.os == 'windows-2022'
