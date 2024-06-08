@@ -43,17 +43,17 @@
                             <template #groovy>
                                 <pre><FgpCode>plugins {
     <FgpCodeComment>// For JDK 17+</FgpCodeComment>
-    id 'org.siouan.frontend-jdk17' version '8.0.0'
+    id 'org.siouan.frontend-jdk17' version '8.1.0'
     <FgpCodeComment>// For JDK 11+</FgpCodeComment>
-    id 'org.siouan.frontend-jdk11' version '8.0.0'
+    id 'org.siouan.frontend-jdk11' version '8.1.0'
 }</FgpCode></pre>
                             </template>
                             <template #kotlin>
                                 <pre><FgpCode>plugins {
     <FgpCodeComment>// For JDK 17+</FgpCodeComment>
-    id("org.siouan.frontend-jdk17") version "8.0.0"
+    id("org.siouan.frontend-jdk17") version "8.1.0"
     <FgpCodeComment>// For JDK 11+</FgpCodeComment>
-    id("org.siouan.frontend-jdk11") version "8.0.0"
+    id("org.siouan.frontend-jdk11") version "8.1.0"
 }</FgpCode></pre>
                             </template>
                         </FgpGradleScripts>
@@ -74,9 +74,9 @@
     }
     dependencies {
         <FgpCodeComment>// For JDK 17+</FgpCodeComment>
-        classpath 'org.siouan:frontend-gradle-plugin-jdk17:8.0.0'
+        classpath 'org.siouan:frontend-gradle-plugin-jdk17:8.1.0'
         <FgpCodeComment>// For JDK 11+</FgpCodeComment>
-        classpath 'org.siouan:frontend-gradle-plugin-jdk11:8.0.0'
+        classpath 'org.siouan:frontend-gradle-plugin-jdk11:8.1.0'
     }
 }
 
@@ -92,9 +92,9 @@ apply plugin: 'org.siouan.frontend-jdk11'</FgpCode></pre>
     }
     dependencies {
         <FgpCodeComment>// For JDK 17+</FgpCodeComment>
-        classpath("org.siouan:frontend-gradle-plugin-jdk17:8.0.0")
+        classpath("org.siouan:frontend-gradle-plugin-jdk17:8.1.0")
         <FgpCodeComment>// For JDK 11+</FgpCodeComment>
-        classpath("org.siouan:frontend-gradle-plugin-jdk11:8.0.0")
+        classpath("org.siouan:frontend-gradle-plugin-jdk11:8.1.0")
     }
 }
 
