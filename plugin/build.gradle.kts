@@ -51,24 +51,24 @@ configurations["intTestRuntimeOnly"]
 
 dependencies {
     implementation(gradleApi())
-    implementation("io.github.resilience4j:resilience4j-retry:2.1.0")
-    implementation("org.apache.httpcomponents.client5:httpclient5:5.2.1")
-    implementation("org.apache.commons:commons-compress:1.23.0")
-    implementation("org.json:json:20230618")
-    compileOnly("org.projectlombok:lombok:1.18.28")
-    annotationProcessor("org.projectlombok:lombok:1.18.28")
+    implementation("io.github.resilience4j:resilience4j-retry:2.2.0")
+    implementation("org.apache.httpcomponents.client5:httpclient5:5.3.1")
+    implementation("org.apache.commons:commons-compress:1.26.2")
+    implementation("org.json:json:20240303")
+    compileOnly("org.projectlombok:lombok:1.18.32")
+    annotationProcessor("org.projectlombok:lombok:1.18.32")
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.0")
-    testImplementation("org.mockito:mockito-core:5.4.0")
-    testImplementation("org.mockito:mockito-junit-jupiter:5.4.0")
-    testImplementation("org.junit-pioneer:junit-pioneer:2.0.1")
-    testImplementation("org.assertj:assertj-core:3.24.2")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
-    testCompileOnly("org.projectlombok:lombok:1.18.28")
-    testAnnotationProcessor("org.projectlombok:lombok:1.18.28")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.2")
+    testImplementation("org.mockito:mockito-core:5.12.0")
+    testImplementation("org.mockito:mockito-junit-jupiter:5.12.0")
+    testImplementation("org.junit-pioneer:junit-pioneer:2.2.0")
+    testImplementation("org.assertj:assertj-core:3.26.0")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.2")
+    testCompileOnly("org.projectlombok:lombok:1.18.32")
+    testAnnotationProcessor("org.projectlombok:lombok:1.18.32")
 
-    intTestImplementation("com.github.tomakehurst:wiremock:2.27.2")
+    intTestImplementation("org.wiremock:wiremock:3.6.0")
 }
 
 tasks.named<Wrapper>("wrapper") {
@@ -122,7 +122,7 @@ idea {
 }
 
 jacoco {
-    toolVersion = "0.8.10"
+    toolVersion = "0.8.11"
 }
 
 gradlePlugin {
