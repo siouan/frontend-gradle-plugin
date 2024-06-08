@@ -20,7 +20,10 @@
             <FgpPropertyLink name="nodeInstallDirectory" /><FgpCode>/bin/[npm|pnpm|yarn]</FgpCode>
             depending on the O/S).
         </template>
-        <template #skipConditions> task <FgpTaskLink name="resolvePackageManager" /> was skipped. </template>
+        <template #skipConditions>
+            <FgpPropertyLink name="packageJsonDirectory" /><FgpCode>/package.json</FgpCode>
+            file does not exist.
+        </template>
         <template #description>
             <p>
                 The task installs the package manager resolved with task

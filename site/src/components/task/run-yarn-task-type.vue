@@ -19,7 +19,7 @@
 tasks.register('yarnVersion', RunYarn) {
     <FgpCodeComment>// dependsOn tasks.named('installPackageManager')
     // dependsOn tasks.named('installFrontend')</FgpCodeComment>
-    script = '--version'
+    script = '-v'
 }</FgpCode></pre>
                 </template>
                 <template #kotlin>
@@ -27,7 +27,7 @@ tasks.register('yarnVersion', RunYarn) {
 tasks.register&lt;RunYarn&gt;("yarnVersion") {
     <FgpCodeComment>// dependsOn(tasks.named("installPackageManager"))
     // dependsOn(tasks.named("installFrontend"))</FgpCodeComment>
-    script.set("--version")
+    script.set("-v")
 }</FgpCode></pre>
                 </template>
             </FgpGradleScripts>

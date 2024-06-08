@@ -2,7 +2,6 @@ package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
 import lombok.Getter;
 import org.gradle.api.file.DirectoryProperty;
-import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.SetProperty;
@@ -187,24 +186,6 @@ public class FrontendExtension {
     private final DirectoryProperty cacheDirectory;
 
     /**
-     * WARNING: THIS IS AN INTERNAL PROPERTY, WHICH MUST NOT BE USED/OVERRIDDEN IN GRADLE BUILD FILES.
-     * <p>File derived from the {@link #cacheDirectory} property where task "resolvePackageManager" stores the name and
-     * the version of the package manager.</p>
-     *
-     * @since 7.0.0
-     */
-    private final RegularFileProperty internalPackageManagerSpecificationFile;
-
-    /**
-     * WARNING: THIS IS AN INTERNAL PROPERTY, WHICH MUST NOT BE USED/OVERRIDDEN IN GRADLE BUILD FILES.
-     * <p>File derived from the {@link #cacheDirectory} property where task "resolvePackageManager" stores the path of
-     * the package manager executable.</p>
-     *
-     * @since 7.0.0
-     */
-    private final RegularFileProperty internalPackageManagerExecutablePathFile;
-
-    /**
      * Whether verbose mode is enabled.
      *
      * @since 2.0.0
@@ -239,8 +220,6 @@ public class FrontendExtension {
         retryIntervalMultiplier = objectFactory.property(Double.class);
         retryMaxIntervalMs = objectFactory.property(Integer.class);
         cacheDirectory = objectFactory.directoryProperty();
-        internalPackageManagerSpecificationFile = objectFactory.fileProperty();
-        internalPackageManagerExecutablePathFile = objectFactory.fileProperty();
         verboseModeEnabled = objectFactory.property(Boolean.class);
     }
 }

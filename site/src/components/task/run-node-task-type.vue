@@ -16,18 +16,18 @@
             <FgpGradleScripts id="run-node-example">
                 <template #groovy>
                     <pre><FgpCode>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNode
-tasks.register('myScript', RunNode) {
+tasks.register('nodeVersion', RunNode) {
     <FgpCodeComment>// dependsOn tasks.named('installNode')
     // dependsOn tasks.named('installFrontend')</FgpCodeComment>
-    script = 'my-script.js'
+    script = '-v'
 }</FgpCode></pre>
                 </template>
                 <template #kotlin>
                     <pre><FgpCode>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNode
-tasks.register&lt;RunNode&gt;("myScript") {
+tasks.register&lt;RunNode&gt;("nodeVersion") {
     <FgpCodeComment>// dependsOn(tasks.named("installNode"))
     // dependsOn(tasks.named("installFrontend"))</FgpCodeComment>
-    script.set("my-script.js")
+    script.set("-v")
 }</FgpCode></pre>
                 </template>
             </FgpGradleScripts>

@@ -2,17 +2,14 @@
     <FgpTask name="assembleFrontend" :depending-task-names="['installFrontend']" :inputs="inputs">
         <template #title>Assemble frontend artifacts</template>
         <template #skipConditions>
-            task <FgpTaskLink name="installFrontend" /> was skipped or property
+            <FgpPropertyLink name="packageJsonDirectory" /><FgpCode>/package.json</FgpCode> file does not exist, or
             <FgpPropertyLink name="assembleScript" /> is <FgpCode>null</FgpCode>.
         </template>
         <template #description>
             This task allows to execute a build script as part of a Gradle build. The build script shall be defined in
             the <FgpCode>package.json</FgpCode> file, and the <FgpPropertyLink name="assembleScript" /> property shall
             be set with the corresponding <FgpCode>npm</FgpCode>/<FgpCode>pnpm</FgpCode>/<FgpCode>yarn</FgpCode>
-            command. This task depends on the
-            <FgpTaskLink name="installFrontend" /> task, and is skipped if the
-            <FgpPropertyLink name="assembleScript" /> property is <FgpCode>null</FgpCode>. Apart from direct execution,
-            the task is also executed when the Gradle lifecycle
+            command. Apart from direct execution, the task is also executed when the Gradle lifecycle
             <FgpGradleDocsLink path="/current/userguide/base_plugin.html#sec:base_tasks">assemble</FgpGradleDocsLink>
             task is executed.
 

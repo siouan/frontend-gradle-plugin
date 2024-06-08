@@ -3,6 +3,7 @@ package org.siouan.frontendgradleplugin.infrastructure.bean;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import lombok.Getter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,7 +24,7 @@ class BeanRegistryTest {
     @Test
     void should_not_replace_registry_when_registering_other_registry_class()
         throws BeanInstanciationException, TooManyCandidateBeansException, ZeroOrMultiplePublicConstructorsException {
-        beanRegistry.registerBean(BeanRegistry.class);
+        beanRegistry.registerBeanClass(BeanRegistry.class);
 
         assertThat(beanRegistry.getBean(BeanRegistry.class)).isSameAs(beanRegistry);
     }
@@ -134,11 +135,11 @@ class BeanRegistryTest {
     void should_get_same_instance_when_registering_bean_instance_multiple_times()
         throws BeanInstanciationException, TooManyCandidateBeansException, ZeroOrMultiplePublicConstructorsException {
         // First call triggers internally bean registration and instanciation.
-        beanRegistry.registerBean(DefaultPublicConstructorBean.class);
+        beanRegistry.registerBeanClass(DefaultPublicConstructorBean.class);
         // Second call shall return exactly the same bean.
         final DefaultPublicConstructorBean bean1 = beanRegistry.getBean(DefaultPublicConstructorBean.class);
         // Third call shall return exactly the same bean, even if we tried to register another instance.
-        beanRegistry.registerBean(DefaultPublicConstructorBean.class);
+        beanRegistry.registerBeanClass(DefaultPublicConstructorBean.class);
         final DefaultPublicConstructorBean bean2 = beanRegistry.getBean(DefaultPublicConstructorBean.class);
 
         assertThat(bean1).isNotNull();
@@ -210,16 +211,13 @@ class BeanRegistryTest {
         }
     }
 
+    @Getter
     private static class PublicConstructorWithValidParameterBean {
 
         private final DefaultPublicConstructorBean parameter;
 
         public PublicConstructorWithValidParameterBean(final DefaultPublicConstructorBean parameter) {
             this.parameter = parameter;
-        }
-
-        public DefaultPublicConstructorBean getParameter() {
-            return parameter;
         }
     }
 

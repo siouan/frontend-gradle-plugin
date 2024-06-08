@@ -10,7 +10,7 @@
             />
         </FgpMainTitle>
 
-        <p class="fs-2 text-center">Build <FgpNodejsLink />-based applications with <FgpGradleLink /></p>
+        <p class="fs-2 text-center">Build <FgpNodejsLink />-based applications with <FgpGradleLink /> and <FgpCorepackLink /></p>
 
         <p>
             This plugin allows to build a <FgpNodejsLink />-based application relying on a package manager supported by

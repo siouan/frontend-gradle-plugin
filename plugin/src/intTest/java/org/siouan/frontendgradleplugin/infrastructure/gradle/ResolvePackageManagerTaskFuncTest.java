@@ -1,10 +1,19 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.siouan.frontendgradleplugin.FrontendGradlePlugin.DEFAULT_CACHE_DIRECTORY_NAME;
+import static org.siouan.frontendgradleplugin.FrontendGradlePlugin.PACKAGE_JSON_FILE_NAME;
+import static org.siouan.frontendgradleplugin.FrontendGradlePlugin.PACKAGE_MANAGER_EXECUTABLE_PATH_FILE_NAME;
+import static org.siouan.frontendgradleplugin.FrontendGradlePlugin.PACKAGE_MANAGER_SPECIFICATION_FILE_NAME;
+import static org.siouan.frontendgradleplugin.FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME;
 import static org.siouan.frontendgradleplugin.test.GradleBuildAssertions.assertTaskOutcomes;
 import static org.siouan.frontendgradleplugin.test.GradleBuildFiles.createBuildFile;
 import static org.siouan.frontendgradleplugin.test.GradleHelper.runGradle;
 import static org.siouan.frontendgradleplugin.test.GradleHelper.runGradleAndExpectFailure;
+import static org.siouan.frontendgradleplugin.test.PluginTaskOutcome.FAILED;
+import static org.siouan.frontendgradleplugin.test.PluginTaskOutcome.SKIPPED;
+import static org.siouan.frontendgradleplugin.test.PluginTaskOutcome.SUCCESS;
+import static org.siouan.frontendgradleplugin.test.PluginTaskOutcome.UP_TO_DATE;
 import static org.siouan.frontendgradleplugin.test.Resources.getResourcePath;
 import static org.siouan.frontendgradleplugin.test.Resources.getResourceUrl;
 
@@ -17,9 +26,7 @@ import java.nio.file.Paths;
 import org.gradle.testkit.runner.BuildResult;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
 import org.siouan.frontendgradleplugin.test.FrontendMapBuilder;
-import org.siouan.frontendgradleplugin.test.PluginTaskOutcome;
 
 /**
  * Functional tests to verify the {@link ResolvePackageManagerTask} integration in a Gradle build.
@@ -32,20 +39,30 @@ class ResolvePackageManagerTaskFuncTest {
     Path projectDirectoryPath;
 
     @Test
-    void should_skip_task_when_package_json_file_is_not_a_file() throws IOException {
-        Files.createDirectory(projectDirectoryPath.resolve(FrontendGradlePlugin.PACKAGE_JSON_FILE_NAME));
+    void should_delete_output_files_when_package_json_file_does_not_exist() throws IOException {
+        Files.createDirectory(projectDirectoryPath.resolve(PACKAGE_JSON_FILE_NAME));
         createBuildFile(projectDirectoryPath, new FrontendMapBuilder().nodeDistributionProvided(true).toMap());
+        final Path packageManagerSpecificationFilePath = projectDirectoryPath.resolve(
+            Paths.get(DEFAULT_CACHE_DIRECTORY_NAME, RESOLVE_PACKAGE_MANAGER_TASK_NAME,
+                PACKAGE_MANAGER_SPECIFICATION_FILE_NAME));
+        Files.createDirectories(packageManagerSpecificationFilePath.getParent());
+        Files.createFile(packageManagerSpecificationFilePath);
+        final Path packageManagerExecutablePathFilePath = projectDirectoryPath.resolve(
+            Paths.get(DEFAULT_CACHE_DIRECTORY_NAME, RESOLVE_PACKAGE_MANAGER_TASK_NAME,
+                PACKAGE_MANAGER_EXECUTABLE_PATH_FILE_NAME));
+        Files.createFile(packageManagerExecutablePathFilePath);
 
-        final BuildResult result = runGradle(projectDirectoryPath,
-            FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME);
+        final BuildResult result1 = runGradle(projectDirectoryPath, RESOLVE_PACKAGE_MANAGER_TASK_NAME);
 
-        assertTaskOutcomes(result, PluginTaskOutcome.SKIPPED, PluginTaskOutcome.SKIPPED);
-        assertThat(projectDirectoryPath.resolve(Paths.get(FrontendGradlePlugin.DEFAULT_CACHE_DIRECTORY_NAME,
-            FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME,
-            FrontendGradlePlugin.PACKAGE_MANAGER_SPECIFICATION_FILE_NAME))).doesNotExist();
-        assertThat(projectDirectoryPath.resolve(Paths.get(FrontendGradlePlugin.DEFAULT_CACHE_DIRECTORY_NAME,
-            FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME,
-            FrontendGradlePlugin.PACKAGE_MANAGER_EXECUTABLE_PATH_FILE_NAME))).doesNotExist();
+        assertTaskOutcomes(result1, SKIPPED, SUCCESS);
+        assertThat(packageManagerSpecificationFilePath).doesNotExist();
+        assertThat(packageManagerExecutablePathFilePath).doesNotExist();
+
+        final BuildResult result2 = runGradle(projectDirectoryPath, RESOLVE_PACKAGE_MANAGER_TASK_NAME);
+
+        assertTaskOutcomes(result2, SKIPPED, UP_TO_DATE);
+        assertThat(packageManagerSpecificationFilePath).doesNotExist();
+        assertThat(packageManagerExecutablePathFilePath).doesNotExist();
     }
 
     @Test
@@ -56,16 +73,15 @@ class ResolvePackageManagerTaskFuncTest {
             .nodeInstallDirectory(getResourcePath("node-dist-provided"))
             .toMap());
 
-        final BuildResult result = runGradleAndExpectFailure(projectDirectoryPath,
-            FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME);
+        final BuildResult result = runGradleAndExpectFailure(projectDirectoryPath, RESOLVE_PACKAGE_MANAGER_TASK_NAME);
 
-        assertTaskOutcomes(result, PluginTaskOutcome.SKIPPED, PluginTaskOutcome.FAILED);
-        assertThat(projectDirectoryPath.resolve(Paths.get(FrontendGradlePlugin.DEFAULT_CACHE_DIRECTORY_NAME,
-            FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME,
-            FrontendGradlePlugin.PACKAGE_MANAGER_SPECIFICATION_FILE_NAME))).doesNotExist();
-        assertThat(projectDirectoryPath.resolve(Paths.get(FrontendGradlePlugin.DEFAULT_CACHE_DIRECTORY_NAME,
-            FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME,
-            FrontendGradlePlugin.PACKAGE_MANAGER_EXECUTABLE_PATH_FILE_NAME))).doesNotExist();
+        assertTaskOutcomes(result, SKIPPED, FAILED);
+        assertThat(projectDirectoryPath.resolve(
+            Paths.get(DEFAULT_CACHE_DIRECTORY_NAME, RESOLVE_PACKAGE_MANAGER_TASK_NAME,
+                PACKAGE_MANAGER_SPECIFICATION_FILE_NAME))).doesNotExist();
+        assertThat(projectDirectoryPath.resolve(
+            Paths.get(DEFAULT_CACHE_DIRECTORY_NAME, RESOLVE_PACKAGE_MANAGER_TASK_NAME,
+                PACKAGE_MANAGER_EXECUTABLE_PATH_FILE_NAME))).doesNotExist();
     }
 
     @Test
@@ -76,16 +92,15 @@ class ResolvePackageManagerTaskFuncTest {
             .nodeInstallDirectory(getResourcePath("node-dist-provided"))
             .toMap());
 
-        final BuildResult result = runGradleAndExpectFailure(projectDirectoryPath,
-            FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME);
+        final BuildResult result = runGradleAndExpectFailure(projectDirectoryPath, RESOLVE_PACKAGE_MANAGER_TASK_NAME);
 
-        assertTaskOutcomes(result, PluginTaskOutcome.SKIPPED, PluginTaskOutcome.FAILED);
-        assertThat(projectDirectoryPath.resolve(Paths.get(FrontendGradlePlugin.DEFAULT_CACHE_DIRECTORY_NAME,
-            FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME,
-            FrontendGradlePlugin.PACKAGE_MANAGER_SPECIFICATION_FILE_NAME))).doesNotExist();
-        assertThat(projectDirectoryPath.resolve(Paths.get(FrontendGradlePlugin.DEFAULT_CACHE_DIRECTORY_NAME,
-            FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME,
-            FrontendGradlePlugin.PACKAGE_MANAGER_EXECUTABLE_PATH_FILE_NAME))).doesNotExist();
+        assertTaskOutcomes(result, SKIPPED, FAILED);
+        assertThat(projectDirectoryPath.resolve(
+            Paths.get(DEFAULT_CACHE_DIRECTORY_NAME, RESOLVE_PACKAGE_MANAGER_TASK_NAME,
+                PACKAGE_MANAGER_SPECIFICATION_FILE_NAME))).doesNotExist();
+        assertThat(projectDirectoryPath.resolve(
+            Paths.get(DEFAULT_CACHE_DIRECTORY_NAME, RESOLVE_PACKAGE_MANAGER_TASK_NAME,
+                PACKAGE_MANAGER_EXECUTABLE_PATH_FILE_NAME))).doesNotExist();
     }
 
     @Test
@@ -96,25 +111,21 @@ class ResolvePackageManagerTaskFuncTest {
             .nodeDistributionUrl(getResourceUrl("node-v18.17.1.zip"))
             .toMap());
 
-        final BuildResult result1 = runGradle(projectDirectoryPath,
-            FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME);
+        final BuildResult result1 = runGradle(projectDirectoryPath, RESOLVE_PACKAGE_MANAGER_TASK_NAME);
 
-        assertTaskOutcomes(result1, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS);
+        assertTaskOutcomes(result1, SUCCESS, SUCCESS);
         final Path packageManagerNameFilePath = projectDirectoryPath.resolve(
-            Paths.get(FrontendGradlePlugin.DEFAULT_CACHE_DIRECTORY_NAME,
-                FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME,
-                FrontendGradlePlugin.PACKAGE_MANAGER_SPECIFICATION_FILE_NAME));
+            Paths.get(DEFAULT_CACHE_DIRECTORY_NAME, RESOLVE_PACKAGE_MANAGER_TASK_NAME,
+                PACKAGE_MANAGER_SPECIFICATION_FILE_NAME));
         assertThat(packageManagerNameFilePath).content(StandardCharsets.UTF_8).isEqualTo("npm@9.6.7");
         final Path packageManagerExecutablePathFilePath = projectDirectoryPath.resolve(
-            Paths.get(FrontendGradlePlugin.DEFAULT_CACHE_DIRECTORY_NAME,
-                FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME,
-                FrontendGradlePlugin.PACKAGE_MANAGER_EXECUTABLE_PATH_FILE_NAME));
+            Paths.get(DEFAULT_CACHE_DIRECTORY_NAME, RESOLVE_PACKAGE_MANAGER_TASK_NAME,
+                PACKAGE_MANAGER_EXECUTABLE_PATH_FILE_NAME));
         assertThat(packageManagerExecutablePathFilePath).exists();
 
-        final BuildResult result2 = runGradle(projectDirectoryPath,
-            FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME);
+        final BuildResult result2 = runGradle(projectDirectoryPath, RESOLVE_PACKAGE_MANAGER_TASK_NAME);
 
-        assertTaskOutcomes(result2, PluginTaskOutcome.UP_TO_DATE, PluginTaskOutcome.UP_TO_DATE);
+        assertTaskOutcomes(result2, UP_TO_DATE, UP_TO_DATE);
         assertThat(packageManagerNameFilePath).content(StandardCharsets.UTF_8).isEqualTo("npm@9.6.7");
         assertThat(packageManagerExecutablePathFilePath).exists();
     }

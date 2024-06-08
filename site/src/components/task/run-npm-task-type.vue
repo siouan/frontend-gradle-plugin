@@ -19,7 +19,7 @@
 tasks.register('npmVersion', RunNpm) {
     <FgpCodeComment>// dependsOn tasks.named('installPackageManager')
     // dependsOn tasks.named('installFrontend')</FgpCodeComment>
-    script = '--version'
+    script = '-v'
 }</FgpCode></pre>
                 </template>
                 <template #kotlin>
@@ -27,7 +27,7 @@ tasks.register('npmVersion', RunNpm) {
 tasks.register&lt;RunNpm&gt;("npmVersion") {
     <FgpCodeComment>// dependsOn(tasks.named("installPackageManager"))
     // dependsOn(tasks.named("installFrontend"))</FgpCodeComment>
-    script.set("--version")
+    script.set("-v")
 }</FgpCode></pre>
                 </template>
             </FgpGradleScripts>

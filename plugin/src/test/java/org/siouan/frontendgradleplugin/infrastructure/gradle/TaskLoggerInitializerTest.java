@@ -10,22 +10,17 @@ import org.gradle.api.Task;
 import org.gradle.api.logging.LogLevel;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.LoggingManager;
-import org.gradle.api.provider.Property;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class TaskLoggerConfigurerTest {
+class TaskLoggerInitializerTest {
 
     private static final String TASK_NAME = "task";
 
     private static final LogLevel LOGGING_LEVEL = LogLevel.WARN;
-
-    @Mock
-    private Property<Boolean> verboseModeEnabled;
 
     @Mock
     private Logger gradleLogger;
@@ -37,16 +32,10 @@ class TaskLoggerConfigurerTest {
     private LoggingManager taskLoggingManager;
 
     @Mock
-    private GradleLoggerAdapter adapter;
-
-    @Mock
-    private FrontendExtension extension;
+    private GradleLoggerAdapter gradleLoggerAdapter;
 
     @Mock
     private GradleSettings gradleSettings;
-
-    @InjectMocks
-    private TaskLoggerConfigurer taskLoggerConfigurer;
 
     @Test
     void should_init_logger_before_task_execution_with_task_level() {
@@ -54,13 +43,11 @@ class TaskLoggerConfigurerTest {
         when(task.getLogger()).thenReturn(gradleLogger);
         when(task.getLogging()).thenReturn(taskLoggingManager);
         when(taskLoggingManager.getLevel()).thenReturn(LOGGING_LEVEL);
-        when(extension.getVerboseModeEnabled()).thenReturn(verboseModeEnabled);
-        when(verboseModeEnabled.get()).thenReturn(true);
 
-        taskLoggerConfigurer.initLoggerAdapter(task);
+        TaskLoggerInitializer.initAdapter(task, true, gradleLoggerAdapter, gradleSettings);
 
-        verify(adapter).init(eq(gradleLogger), eq(LOGGING_LEVEL), eq(true), anyString());
-        verifyNoMoreInteractions(task, taskLoggingManager, adapter, gradleSettings);
+        verify(gradleLoggerAdapter).init(eq(gradleLogger), eq(LOGGING_LEVEL), eq(true), anyString());
+        verifyNoMoreInteractions(task, taskLoggingManager, gradleLoggerAdapter, gradleSettings);
     }
 
     @Test
@@ -68,15 +55,13 @@ class TaskLoggerConfigurerTest {
         when(task.getName()).thenReturn(TASK_NAME);
         when(task.getLogger()).thenReturn(gradleLogger);
         when(task.getLogging()).thenReturn(taskLoggingManager);
-        when(gradleSettings.projectLogLevel()).thenReturn(LOGGING_LEVEL);
-        when(extension.getVerboseModeEnabled()).thenReturn(verboseModeEnabled);
-        when(verboseModeEnabled.get()).thenReturn(true);
+        when(gradleSettings.getProjectLogLevel()).thenReturn(LOGGING_LEVEL);
 
-        taskLoggerConfigurer.initLoggerAdapter(task);
+        TaskLoggerInitializer.initAdapter(task, true, gradleLoggerAdapter, gradleSettings);
 
-        verify(adapter).init(eq(gradleLogger), eq(LOGGING_LEVEL), eq(true), anyString());
+        verify(gradleLoggerAdapter).init(eq(gradleLogger), eq(LOGGING_LEVEL), eq(true), anyString());
         verify(taskLoggingManager).getLevel();
-        verifyNoMoreInteractions(task, taskLoggingManager, adapter, gradleSettings);
+        verifyNoMoreInteractions(task, taskLoggingManager, gradleLoggerAdapter, gradleSettings);
     }
 
     @Test
@@ -84,15 +69,13 @@ class TaskLoggerConfigurerTest {
         when(task.getName()).thenReturn(TASK_NAME);
         when(task.getLogger()).thenReturn(gradleLogger);
         when(task.getLogging()).thenReturn(taskLoggingManager);
-        when(gradleSettings.projectLogLevel()).thenReturn(null);
-        when(gradleSettings.commandLineLogLevel()).thenReturn(LOGGING_LEVEL);
-        when(extension.getVerboseModeEnabled()).thenReturn(verboseModeEnabled);
-        when(verboseModeEnabled.get()).thenReturn(true);
+        when(gradleSettings.getProjectLogLevel()).thenReturn(null);
+        when(gradleSettings.getCommandLineLogLevel()).thenReturn(LOGGING_LEVEL);
 
-        taskLoggerConfigurer.initLoggerAdapter(task);
+        TaskLoggerInitializer.initAdapter(task, true, gradleLoggerAdapter, gradleSettings);
 
-        verify(adapter).init(eq(gradleLogger), eq(LOGGING_LEVEL), eq(true), anyString());
+        verify(gradleLoggerAdapter).init(eq(gradleLogger), eq(LOGGING_LEVEL), eq(true), anyString());
         verify(taskLoggingManager).getLevel();
-        verifyNoMoreInteractions(task, taskLoggingManager, adapter, gradleSettings);
+        verifyNoMoreInteractions(task, taskLoggingManager, gradleLoggerAdapter, gradleSettings);
     }
 }

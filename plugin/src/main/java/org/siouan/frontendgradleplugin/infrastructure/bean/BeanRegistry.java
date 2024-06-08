@@ -2,12 +2,18 @@ package org.siouan.frontendgradleplugin.infrastructure.bean;
 
 import static java.util.stream.Collectors.toSet;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This class is a simple implementation of Inversion of Control and dependency injection: it provides a minimal set of
@@ -16,12 +22,16 @@ import java.util.concurrent.ConcurrentHashMap;
  * plugins with modularity. Bean classes are instanciated when needed using the one and only one public constructor
  * available. The registry handles recursive instanciation of constructor parameters, using reflection. However, the
  * registry does not provide a package-scan feature, e.g. to search for implementations of non-instanciable classes.
- * Some implementations must be registered explicitly using the {@link #registerBean(Class)} method or the
+ * Some implementations must be registered explicitly using the {@link #registerBeanClass(Class)} method or the
  * {@link #registerBean(Object)} method. The registry handles singleton instances only.
  *
  * @since 2.0.0
  */
-public class BeanRegistry {
+@Slf4j
+public class BeanRegistry implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 8882478289468756368L;
 
     /**
      * Set of types available for injection. When a bean is instanciated, it is placed in the map of {@link #singletons}
@@ -40,7 +50,9 @@ public class BeanRegistry {
      * Builds an initializes the registry with {@link #init()}.
      */
     public BeanRegistry() {
-        this.registeredBeanTypes = ConcurrentHashMap.newKeySet();
+        // Do not use method "ConcurrentHashMap.newKeySet()" since serialization of class KeySetView requires
+        // '--add-opens' JVM arg.
+        this.registeredBeanTypes = Collections.newSetFromMap(new ConcurrentHashMap<>());
         this.singletons = new ConcurrentHashMap<>();
         init();
     }
@@ -75,18 +87,41 @@ public class BeanRegistry {
      */
     public <T> T getBean(final Class<T> beanClass)
         throws BeanInstanciationException, TooManyCandidateBeansException, ZeroOrMultiplePublicConstructorsException {
+        LOGGER.debug("Requesting: {}", beanClass.getSimpleName());
+        return getBean(beanClass, 0);
+    }
+
+    /**
+     * Gets an instance of a bean of the given class. If no instance is found, the class is registered and a new
+     * instance is created and returned. If no bean with the exact same class is registered, this method looks up for an
+     * assignable child class registered.
+     *
+     * @param beanClass Bean class.
+     * @param <T> Type of bean.
+     * @return Bean.
+     * @throws ZeroOrMultiplePublicConstructorsException If the bean class does not contain one and only one public
+     * constructor, or if a parameter class in the public constructor does not match the same requirement.
+     * @throws TooManyCandidateBeansException If multiple instances of the bean class are available in the registry,
+     * generally because these instances are child classes of the bean class.
+     * @throws BeanInstanciationException If the bean cannot be instanciated.
+     */
+    private <T> T getBean(final Class<T> beanClass, final int nestedLevel)
+        throws BeanInstanciationException, TooManyCandidateBeansException, ZeroOrMultiplePublicConstructorsException {
+        final String logEnteringPrefix = "  ".repeat(nestedLevel + 1);
         final T existingBean = (T) singletons.get(beanClass);
         if (existingBean != null) {
+            LOGGER.debug("{}< Found: {}", logEnteringPrefix, beanClass.getSimpleName());
             return existingBean;
         }
 
         final Class<? extends T> assignableClass = getAssignableClass(beanClass);
         if (assignableClass != null) {
-            return getBean(assignableClass);
+            return getBean(assignableClass, nestedLevel);
         }
 
+        LOGGER.debug("{}+ Instantiating: {}", logEnteringPrefix, beanClass.getSimpleName());
         assertBeanClassIsInstanciable(beanClass);
-        final T newBean = createInstance(beanClass);
+        final T newBean = createInstance(beanClass, nestedLevel);
         registerBean(beanClass, newBean);
         return newBean;
     }
@@ -99,8 +134,9 @@ public class BeanRegistry {
      * @param beanClass Bean class.
      * @param <T> Type of bean.
      */
-    public <T> void registerBean(final Class<T> beanClass) {
-        if (isBeanRegistered(beanClass)) {
+    public <T> void registerBeanClass(final Class<T> beanClass) {
+        LOGGER.debug("Registering class: {}", beanClass.getSimpleName());
+        if (isBeanClassRegistered(beanClass)) {
             return;
         }
         assertBeanClassIsInstanciable(beanClass);
@@ -116,7 +152,8 @@ public class BeanRegistry {
      */
     public <T> void registerBean(final T bean) {
         final Class<T> beanClass = (Class<T>) bean.getClass();
-        if (isBeanRegistered(beanClass)) {
+        LOGGER.debug("Registering bean: {}", beanClass.getSimpleName());
+        if (isBeanClassRegistered(beanClass)) {
             return;
         }
         registerBean(beanClass, bean);
@@ -145,7 +182,7 @@ public class BeanRegistry {
      * @param <T> Type of bean.
      * @return {@code true} if the bean class is already registered, or is an instance of a bean registry.
      */
-    private <T> boolean isBeanRegistered(final Class<T> beanClass) {
+    private <T> boolean isBeanClassRegistered(final Class<T> beanClass) {
         return getClass().isAssignableFrom(beanClass) || registeredBeanTypes.contains(beanClass);
     }
 
@@ -202,7 +239,7 @@ public class BeanRegistry {
      * @throws TooManyCandidateBeansException If multiple valid child candidates were found in the registry for a
      * constructor parameter.
      */
-    private <T> T createInstance(final Class<T> beanClass)
+    private <T> T createInstance(final Class<T> beanClass, final int nestedLevel)
         throws BeanInstanciationException, ZeroOrMultiplePublicConstructorsException, TooManyCandidateBeansException {
         final Constructor<?>[] constructors = beanClass.getConstructors();
         if (constructors.length != 1) {
@@ -212,12 +249,19 @@ public class BeanRegistry {
         final Class<?>[] parameterTypes = constructors[0].getParameterTypes();
         final Object[] parameters = new Object[parameterTypes.length];
         for (int i = 0; i < parameterTypes.length; i++) {
-            parameters[i] = getBean(parameterTypes[i]);
+            parameters[i] = getBean(parameterTypes[i], nestedLevel + 1);
         }
         try {
             return (T) beanClass.getConstructors()[0].newInstance(parameters);
         } catch (final InvocationTargetException | InstantiationException | IllegalAccessException e) {
             throw new BeanInstanciationException(beanClass, e);
         }
+    }
+
+    @Override
+    public String toString() {
+        return BeanRegistry.class.getName() + " {\n" + "registeredBeanTypes=" + Arrays.toString(
+            registeredBeanTypes.stream().map(Class::getSimpleName).toArray()) + ", singletons=" + Arrays.toString(
+            singletons.keySet().stream().map(Class::getSimpleName).toArray()) + "}";
     }
 }

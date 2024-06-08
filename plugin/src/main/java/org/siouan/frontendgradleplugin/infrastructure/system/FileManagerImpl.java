@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serial;
 import java.nio.charset.Charset;
 import java.nio.file.CopyOption;
 import java.nio.file.FileVisitResult;
@@ -29,6 +30,9 @@ import org.siouan.frontendgradleplugin.domain.Platform;
  * @since 2.0.0
  */
 public class FileManagerImpl implements FileManager {
+
+    @Serial
+    private static final long serialVersionUID = -4492951623732511344L;
 
     @Override
     public long copy(final InputStream inputStream, final Path filePath) throws IOException {

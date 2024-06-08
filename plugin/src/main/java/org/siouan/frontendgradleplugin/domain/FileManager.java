@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.nio.file.CopyOption;
 import java.nio.file.OpenOption;
@@ -17,7 +18,7 @@ import java.util.stream.Stream;
  *
  * @since 2.0.0
  */
-public interface FileManager {
+public interface FileManager extends Serializable {
 
     /**
      * Copies all bytes from an input stream into a file.

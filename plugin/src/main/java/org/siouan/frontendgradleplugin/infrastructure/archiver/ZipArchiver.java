@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serial;
 import java.nio.file.Path;
 import java.util.Optional;
 
@@ -26,13 +27,17 @@ import org.siouan.frontendgradleplugin.domain.installer.archiver.ExplodeCommand;
  */
 public class ZipArchiver extends AbstractArchiver<ZipArchiverContext, ZipEntry> {
 
+    @Serial
+    private static final long serialVersionUID = -6879163434284590850L;
+
     public ZipArchiver(final FileManager fileManager) {
         super(fileManager);
     }
 
     @Override
     protected ZipArchiverContext initializeContext(final ExplodeCommand explodeCommand) throws IOException {
-        return new ZipArchiverContext(explodeCommand, new ZipFile(explodeCommand.getArchiveFilePath().toFile()));
+        return new ZipArchiverContext(explodeCommand,
+            ZipFile.builder().setFile(explodeCommand.getArchiveFilePath().toFile()).get());
     }
 
     @Override

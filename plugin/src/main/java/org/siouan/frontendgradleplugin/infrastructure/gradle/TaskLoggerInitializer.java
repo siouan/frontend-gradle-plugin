@@ -1,5 +1,7 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.gradle.api.Task;
 import org.gradle.api.logging.LogLevel;
 import org.gradle.api.logging.LoggingManager;
@@ -9,27 +11,15 @@ import org.gradle.api.logging.LoggingManager;
  *
  * @since 2.0.0
  */
-public class TaskLoggerConfigurer {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class TaskLoggerInitializer {
 
-    private final FrontendExtension extension;
-
-    private final GradleLoggerAdapter gradleLoggerAdapter;
-
-    private final GradleSettings gradleSettings;
-
-    public TaskLoggerConfigurer(final FrontendExtension extension, final GradleLoggerAdapter gradleLoggerAdapter,
-        final GradleSettings gradleSettings) {
-        this.extension = extension;
-        this.gradleLoggerAdapter = gradleLoggerAdapter;
-        this.gradleSettings = gradleSettings;
-    }
-
-    public void initLoggerAdapter(final Task task) {
+    public static void initAdapter(final Task task, final boolean verboseModeEnabled,
+        final GradleLoggerAdapter gradleLoggerAdapter, final GradleSettings gradleSettings) {
         task
             .getLogger()
-            .debug("Configuring logger for task '{}': verboseModeEnabled={}", task.getName(),
-                extension.getVerboseModeEnabled().get());
-        gradleLoggerAdapter.init(task.getLogger(), resolveLogLevel(task), extension.getVerboseModeEnabled().get(),
+            .debug("Configuring logger for task '{}': verboseModeEnabled={}", task.getName(), verboseModeEnabled);
+        gradleLoggerAdapter.init(task.getLogger(), resolveLogLevel(task, gradleSettings), verboseModeEnabled,
             '[' + task.getName() + "] ");
     }
 
@@ -42,17 +32,17 @@ public class TaskLoggerConfigurer {
      * @param task Task.
      * @return Logging level.
      */
-    private LogLevel resolveLogLevel(final Task task) {
+    private static LogLevel resolveLogLevel(final Task task, final GradleSettings gradleSettings) {
         LogLevel loggingLevel = task.getLogging().getLevel();
         if (loggingLevel != null) {
             return loggingLevel;
         }
 
-        loggingLevel = gradleSettings.projectLogLevel();
+        loggingLevel = gradleSettings.getProjectLogLevel();
         if (loggingLevel != null) {
             return loggingLevel;
         }
 
-        return gradleSettings.commandLineLogLevel();
+        return gradleSettings.getCommandLineLogLevel();
     }
 }

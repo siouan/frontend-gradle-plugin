@@ -1,9 +1,14 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
+import static org.siouan.frontendgradleplugin.FrontendGradlePlugin.INSTALL_PACKAGE_MANAGER_TASK_NAME;
 import static org.siouan.frontendgradleplugin.test.GradleBuildAssertions.assertTaskOutcomes;
 import static org.siouan.frontendgradleplugin.test.GradleBuildFiles.createBuildFile;
 import static org.siouan.frontendgradleplugin.test.GradleHelper.runGradle;
 import static org.siouan.frontendgradleplugin.test.GradleHelper.runGradleAndExpectFailure;
+import static org.siouan.frontendgradleplugin.test.PluginTaskOutcome.FAILED;
+import static org.siouan.frontendgradleplugin.test.PluginTaskOutcome.SKIPPED;
+import static org.siouan.frontendgradleplugin.test.PluginTaskOutcome.SUCCESS;
+import static org.siouan.frontendgradleplugin.test.PluginTaskOutcome.UP_TO_DATE;
 import static org.siouan.frontendgradleplugin.test.Resources.getResourcePath;
 import static org.siouan.frontendgradleplugin.test.Resources.getResourceUrl;
 
@@ -15,9 +20,7 @@ import java.nio.file.StandardCopyOption;
 import org.gradle.testkit.runner.BuildResult;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
 import org.siouan.frontendgradleplugin.test.FrontendMapBuilder;
-import org.siouan.frontendgradleplugin.test.PluginTaskOutcome;
 
 /**
  * Functional tests to verify the {@link InstallPackageManagerTask} integration in a Gradle build. Test cases uses a
@@ -30,21 +33,19 @@ class InstallPackageManagerTaskFuncTest {
     Path projectDirectoryPath;
 
     @Test
-    void should_skip_task_when_package_json_file_is_not_a_file() throws IOException {
+    void should_skip_task_when_package_json_file_does_not_exist() throws IOException {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
             .nodeVersion("18.17.1")
             .nodeDistributionUrl(getResourceUrl("node-v18.17.1.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
-        final BuildResult result1 = runGradle(projectDirectoryPath,
-            FrontendGradlePlugin.INSTALL_PACKAGE_MANAGER_TASK_NAME);
+        final BuildResult result1 = runGradle(projectDirectoryPath, INSTALL_PACKAGE_MANAGER_TASK_NAME);
 
-        assertTaskOutcomes(result1, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SKIPPED, PluginTaskOutcome.SKIPPED);
+        assertTaskOutcomes(result1, SUCCESS, SUCCESS, SKIPPED);
 
-        final BuildResult result2 = runGradle(projectDirectoryPath,
-            FrontendGradlePlugin.INSTALL_PACKAGE_MANAGER_TASK_NAME);
+        final BuildResult result2 = runGradle(projectDirectoryPath, INSTALL_PACKAGE_MANAGER_TASK_NAME);
 
-        assertTaskOutcomes(result2, PluginTaskOutcome.UP_TO_DATE, PluginTaskOutcome.SKIPPED, PluginTaskOutcome.SKIPPED);
+        assertTaskOutcomes(result2, UP_TO_DATE, UP_TO_DATE, SKIPPED);
     }
 
     @Test
@@ -52,10 +53,9 @@ class InstallPackageManagerTaskFuncTest {
         Files.copy(getResourcePath("package-any-manager.json"), projectDirectoryPath.resolve("package.json"));
         createBuildFile(projectDirectoryPath, new FrontendMapBuilder().nodeDistributionProvided(true).toMap());
 
-        final BuildResult result = runGradleAndExpectFailure(projectDirectoryPath,
-            FrontendGradlePlugin.INSTALL_PACKAGE_MANAGER_TASK_NAME);
+        final BuildResult result = runGradleAndExpectFailure(projectDirectoryPath, INSTALL_PACKAGE_MANAGER_TASK_NAME);
 
-        assertTaskOutcomes(result, PluginTaskOutcome.SKIPPED, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.FAILED);
+        assertTaskOutcomes(result, SKIPPED, SUCCESS, FAILED);
     }
 
     @Test
@@ -66,48 +66,36 @@ class InstallPackageManagerTaskFuncTest {
             .nodeDistributionUrl(getResourceUrl("node-v18.17.1.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
-        final BuildResult installNpmResult1 = runGradle(projectDirectoryPath,
-            FrontendGradlePlugin.INSTALL_PACKAGE_MANAGER_TASK_NAME);
+        final BuildResult installNpmResult1 = runGradle(projectDirectoryPath, INSTALL_PACKAGE_MANAGER_TASK_NAME);
 
-        assertTaskOutcomes(installNpmResult1, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS,
-            PluginTaskOutcome.SUCCESS);
+        assertTaskOutcomes(installNpmResult1, SUCCESS, SUCCESS, SUCCESS);
 
-        final BuildResult installNpmResult2 = runGradle(projectDirectoryPath,
-            FrontendGradlePlugin.INSTALL_PACKAGE_MANAGER_TASK_NAME);
+        final BuildResult installNpmResult2 = runGradle(projectDirectoryPath, INSTALL_PACKAGE_MANAGER_TASK_NAME);
 
-        assertTaskOutcomes(installNpmResult2, PluginTaskOutcome.UP_TO_DATE, PluginTaskOutcome.UP_TO_DATE,
-            PluginTaskOutcome.UP_TO_DATE);
+        assertTaskOutcomes(installNpmResult2, UP_TO_DATE, UP_TO_DATE, UP_TO_DATE);
 
         Files.copy(getResourcePath("package-pnpm.json"), projectDirectoryPath.resolve("package.json"),
             StandardCopyOption.REPLACE_EXISTING);
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
-        final BuildResult installPnpmResult1 = runGradle(projectDirectoryPath,
-            FrontendGradlePlugin.INSTALL_PACKAGE_MANAGER_TASK_NAME);
+        final BuildResult installPnpmResult1 = runGradle(projectDirectoryPath, INSTALL_PACKAGE_MANAGER_TASK_NAME);
 
-        assertTaskOutcomes(installPnpmResult1, PluginTaskOutcome.UP_TO_DATE, PluginTaskOutcome.SUCCESS,
-            PluginTaskOutcome.SUCCESS);
+        assertTaskOutcomes(installPnpmResult1, UP_TO_DATE, SUCCESS, SUCCESS);
 
-        final BuildResult installPnpmResult2 = runGradle(projectDirectoryPath,
-            FrontendGradlePlugin.INSTALL_PACKAGE_MANAGER_TASK_NAME);
+        final BuildResult installPnpmResult2 = runGradle(projectDirectoryPath, INSTALL_PACKAGE_MANAGER_TASK_NAME);
 
-        assertTaskOutcomes(installPnpmResult2, PluginTaskOutcome.UP_TO_DATE, PluginTaskOutcome.UP_TO_DATE,
-            PluginTaskOutcome.UP_TO_DATE);
+        assertTaskOutcomes(installPnpmResult2, UP_TO_DATE, UP_TO_DATE, UP_TO_DATE);
 
         Files.copy(getResourcePath("package-yarn.json"), projectDirectoryPath.resolve("package.json"),
             StandardCopyOption.REPLACE_EXISTING);
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
-        final BuildResult installYarnResult1 = runGradle(projectDirectoryPath,
-            FrontendGradlePlugin.INSTALL_PACKAGE_MANAGER_TASK_NAME);
+        final BuildResult installYarnResult1 = runGradle(projectDirectoryPath, INSTALL_PACKAGE_MANAGER_TASK_NAME);
 
-        assertTaskOutcomes(installYarnResult1, PluginTaskOutcome.UP_TO_DATE, PluginTaskOutcome.SUCCESS,
-            PluginTaskOutcome.SUCCESS);
+        assertTaskOutcomes(installYarnResult1, UP_TO_DATE, SUCCESS, SUCCESS);
 
-        final BuildResult installYarnResult2 = runGradle(projectDirectoryPath,
-            FrontendGradlePlugin.INSTALL_PACKAGE_MANAGER_TASK_NAME);
+        final BuildResult installYarnResult2 = runGradle(projectDirectoryPath, INSTALL_PACKAGE_MANAGER_TASK_NAME);
 
-        assertTaskOutcomes(installYarnResult2, PluginTaskOutcome.UP_TO_DATE, PluginTaskOutcome.UP_TO_DATE,
-            PluginTaskOutcome.UP_TO_DATE);
+        assertTaskOutcomes(installYarnResult2, UP_TO_DATE, UP_TO_DATE, UP_TO_DATE);
     }
 }

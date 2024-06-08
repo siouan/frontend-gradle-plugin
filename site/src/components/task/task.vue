@@ -26,8 +26,9 @@
                     Inputs:
                     <ul>
                         <li v-for="(input, index) in inputs" :key="index">
-                            <FgpTaskPropertyType :type="input.type" /> <FgpCode>{{ input.name }}</FgpCode
-                            >:
+                            <FgpTaskPropertyType :type="input.type" />
+                            <FgpOptionalTaskPropertyBadge v-if="input.optionalHint" :title="input.optionalHint"
+                            /> <FgpCode>{{ input.name }}</FgpCode>:
                             <template v-if="input.binding === 'P'">
                                 <FgpPropertyLink :name="input.property" /> property
                             </template>
@@ -49,6 +50,14 @@
             </ul>
         </header>
         <section class="px-3"><slot name="description" /></section>
+        <footer v-if="outcomeHints.length > 0">
+            <h6>Possible outcomes:</h6>
+            <ul>
+                <li v-for="outcomeHint in outcomeHints">
+                    <FgpGradleTaskOutcomeLink :outcome="outcomeHint.outcome" />: {{ outcomeHint.description }}
+                </li>
+            </ul>
+        </footer>
     </article>
 </template>
 
@@ -58,12 +67,18 @@ interface Input {
     readonly type: TaskPropertyTypeType;
     readonly binding: TaskPropertyBindingType;
     readonly property?: string;
+    readonly optionalHint?: string;
 }
 
 interface Output {
     readonly name: string;
     readonly type: TaskPropertyTypeType;
     readonly binding: TaskPropertyBindingType;
+}
+
+interface OutcomeHint {
+    readonly outcome: TaskOutcomeType;
+    readonly description: string;
 }
 
 interface Props {
@@ -73,6 +88,7 @@ interface Props {
     readonly inputs?: any[];
     readonly outputs?: any[];
     readonly cacheable?: boolean;
+    readonly outcomeHints?: OutcomeHint[];
 }
 
 const slots = useSlots();
@@ -82,6 +98,7 @@ withDefaults(defineProps<Props>(), {
     inputs: () => [],
     outputs: () => [],
     cacheable: false,
+    outcomeHints: () => []
 });
 const skippable = computed(() => !!slots.skipConditions);
 </script>

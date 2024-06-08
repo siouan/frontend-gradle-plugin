@@ -1,8 +1,13 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
+import static org.siouan.frontendgradleplugin.FrontendGradlePlugin.CLEAN_TASK_NAME;
+import static org.siouan.frontendgradleplugin.FrontendGradlePlugin.GRADLE_CLEAN_TASK_NAME;
 import static org.siouan.frontendgradleplugin.test.GradleBuildAssertions.assertCleanTaskOutcomes;
 import static org.siouan.frontendgradleplugin.test.GradleBuildFiles.createBuildFile;
 import static org.siouan.frontendgradleplugin.test.GradleHelper.runGradle;
+import static org.siouan.frontendgradleplugin.test.PluginTaskOutcome.SKIPPED;
+import static org.siouan.frontendgradleplugin.test.PluginTaskOutcome.SUCCESS;
+import static org.siouan.frontendgradleplugin.test.PluginTaskOutcome.UP_TO_DATE;
 import static org.siouan.frontendgradleplugin.test.Resources.getResourcePath;
 import static org.siouan.frontendgradleplugin.test.Resources.getResourceUrl;
 
@@ -13,9 +18,7 @@ import java.nio.file.Path;
 import org.gradle.testkit.runner.BuildResult;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
 import org.siouan.frontendgradleplugin.test.FrontendMapBuilder;
-import org.siouan.frontendgradleplugin.test.PluginTaskOutcome;
 
 /**
  * Functional tests to verify the {@link CleanTask} integration in a Gradle build. Test cases uses fake Node/Yarn
@@ -28,22 +31,20 @@ class CleanFrontendTaskFuncTest {
     Path projectDirectoryPath;
 
     @Test
-    void should_skip_task_when_package_json_file_is_not_a_file() throws IOException {
+    void should_skip_task_when_package_json_file_does_not_exist() throws IOException {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
             .nodeVersion("18.17.1")
             .nodeDistributionUrl(getResourceUrl("node-v18.17.1.zip"))
             .cleanScript("run clean");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
-        final BuildResult result1 = runGradle(projectDirectoryPath, FrontendGradlePlugin.CLEAN_TASK_NAME);
+        final BuildResult result1 = runGradle(projectDirectoryPath, CLEAN_TASK_NAME);
 
-        assertCleanTaskOutcomes(result1, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SKIPPED,
-            PluginTaskOutcome.SKIPPED, PluginTaskOutcome.SKIPPED, PluginTaskOutcome.SKIPPED, null);
+        assertCleanTaskOutcomes(result1, SUCCESS, SUCCESS, SKIPPED, SKIPPED, SKIPPED, null);
 
-        final BuildResult result2 = runGradle(projectDirectoryPath, FrontendGradlePlugin.CLEAN_TASK_NAME);
+        final BuildResult result2 = runGradle(projectDirectoryPath, CLEAN_TASK_NAME);
 
-        assertCleanTaskOutcomes(result2, PluginTaskOutcome.UP_TO_DATE, PluginTaskOutcome.SKIPPED,
-            PluginTaskOutcome.SKIPPED, PluginTaskOutcome.SKIPPED, PluginTaskOutcome.SKIPPED, null);
+        assertCleanTaskOutcomes(result2, UP_TO_DATE, UP_TO_DATE, SKIPPED, SKIPPED, SKIPPED, null);
     }
 
     @Test
@@ -54,15 +55,13 @@ class CleanFrontendTaskFuncTest {
             .nodeDistributionUrl(getResourceUrl("node-v18.17.1.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
-        final BuildResult result1 = runGradle(projectDirectoryPath, FrontendGradlePlugin.CLEAN_TASK_NAME);
+        final BuildResult result1 = runGradle(projectDirectoryPath, CLEAN_TASK_NAME);
 
-        assertCleanTaskOutcomes(result1, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS,
-            PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SKIPPED, null);
+        assertCleanTaskOutcomes(result1, SUCCESS, SUCCESS, SUCCESS, SUCCESS, SKIPPED, null);
 
-        final BuildResult result2 = runGradle(projectDirectoryPath, FrontendGradlePlugin.CLEAN_TASK_NAME);
+        final BuildResult result2 = runGradle(projectDirectoryPath, CLEAN_TASK_NAME);
 
-        assertCleanTaskOutcomes(result2, PluginTaskOutcome.UP_TO_DATE, PluginTaskOutcome.UP_TO_DATE,
-            PluginTaskOutcome.UP_TO_DATE, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SKIPPED, null);
+        assertCleanTaskOutcomes(result2, UP_TO_DATE, UP_TO_DATE, UP_TO_DATE, SUCCESS, SKIPPED, null);
     }
 
     @Test
@@ -73,16 +72,13 @@ class CleanFrontendTaskFuncTest {
             .nodeDistributionUrl(getResourceUrl("node-v18.17.1.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
-        final BuildResult result1 = runGradle(projectDirectoryPath, FrontendGradlePlugin.GRADLE_CLEAN_TASK_NAME);
+        final BuildResult result1 = runGradle(projectDirectoryPath, GRADLE_CLEAN_TASK_NAME);
 
-        assertCleanTaskOutcomes(result1, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS,
-            PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SKIPPED, PluginTaskOutcome.SUCCESS);
+        assertCleanTaskOutcomes(result1, SUCCESS, SUCCESS, SUCCESS, SUCCESS, SKIPPED, SUCCESS);
 
-        final BuildResult result2 = runGradle(projectDirectoryPath, FrontendGradlePlugin.GRADLE_CLEAN_TASK_NAME);
+        final BuildResult result2 = runGradle(projectDirectoryPath, GRADLE_CLEAN_TASK_NAME);
 
-        assertCleanTaskOutcomes(result2, PluginTaskOutcome.UP_TO_DATE, PluginTaskOutcome.UP_TO_DATE,
-            PluginTaskOutcome.UP_TO_DATE, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SKIPPED,
-            PluginTaskOutcome.UP_TO_DATE);
+        assertCleanTaskOutcomes(result2, UP_TO_DATE, UP_TO_DATE, UP_TO_DATE, SUCCESS, SKIPPED, UP_TO_DATE);
     }
 
     @Test
@@ -94,15 +90,12 @@ class CleanFrontendTaskFuncTest {
             .cleanScript("run clean");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
-        final BuildResult result1 = runGradle(projectDirectoryPath, FrontendGradlePlugin.GRADLE_CLEAN_TASK_NAME);
+        final BuildResult result1 = runGradle(projectDirectoryPath, GRADLE_CLEAN_TASK_NAME);
 
-        assertCleanTaskOutcomes(result1, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS,
-            PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS);
+        assertCleanTaskOutcomes(result1, SUCCESS, SUCCESS, SUCCESS, SUCCESS, SUCCESS, SUCCESS);
 
-        final BuildResult result2 = runGradle(projectDirectoryPath, FrontendGradlePlugin.GRADLE_CLEAN_TASK_NAME);
+        final BuildResult result2 = runGradle(projectDirectoryPath, GRADLE_CLEAN_TASK_NAME);
 
-        assertCleanTaskOutcomes(result2, PluginTaskOutcome.UP_TO_DATE, PluginTaskOutcome.UP_TO_DATE,
-            PluginTaskOutcome.UP_TO_DATE, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS,
-            PluginTaskOutcome.UP_TO_DATE);
+        assertCleanTaskOutcomes(result2, UP_TO_DATE, UP_TO_DATE, UP_TO_DATE, SUCCESS, SUCCESS, UP_TO_DATE);
     }
 }

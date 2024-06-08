@@ -16,7 +16,7 @@ import org.gradle.testkit.runner.GradleRunner;
  */
 public final class GradleHelper {
 
-    private static final String MINIMAL_GRADLE_VERSION = "7.3";
+    private static final String MINIMAL_GRADLE_VERSION = "8.5";
 
     private GradleHelper() {
     }

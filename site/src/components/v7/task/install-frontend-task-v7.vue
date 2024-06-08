@@ -52,7 +52,7 @@
                                 <FgpCode>yarn.lock</FgpCode>, while outputs may be the
                                 <FgpCode>node_modules</FgpCode> directory and the
                                 <FgpCode>package-lock.json</FgpCode> file (see
-                                <FgpNpmDocsLink path="/cli/v9/commands/npm-install">npm install</FgpNpmDocsLink>). If
+                                <FgpNpmDocsLink path="/cli/v10/commands/npm-install">npm install</FgpNpmDocsLink>). If
                                 the <FgpPropertyLink name="installScript" /> property is set with <FgpCode>ci</FgpCode>,
                                 files <FgpCode>npm-shrinkwrap.json</FgpCode> and
                                 <FgpCode>package-lock.json</FgpCode> may be the only possible input file, if one or the

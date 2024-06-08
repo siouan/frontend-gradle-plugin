@@ -27,8 +27,9 @@ version = fgpVersion
 description = fgpDescription
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
     withJavadocJar()
     withSourcesJar()
 }
@@ -102,12 +103,12 @@ tasks.named<Task>("check") {
 tasks.named<JacocoReport>("jacocoTestReport") {
     dependsOn(tasks.named("test"), tasks.named("integrationTest"))
     executionData.setFrom(
-        file("${project.buildDir}/jacoco/test.exec"),
-        file("${project.buildDir}/jacoco/integrationTest.exec")
+        file("${project.layout.buildDirectory}/jacoco/test.exec"),
+        file("${project.layout.buildDirectory}/jacoco/integrationTest.exec")
     )
     reports {
         xml.required.set(true)
-        xml.outputLocation.set(file("${buildDir}/reports/jacoco/report.xml"))
+        xml.outputLocation.set(file("${project.layout.buildDirectory}/reports/jacoco/report.xml"))
     }
 }
 
@@ -118,6 +119,8 @@ idea {
         // Force integration test source set as test folder
         testSources.from(project.sourceSets.getByName("intTest").java.srcDirs)
         testResources.from(project.sourceSets.getByName("intTest").resources.srcDirs)
+        isDownloadJavadoc = true
+        isDownloadSources = true
     }
 }
 
@@ -158,13 +161,14 @@ sonarqube {
         property("sonar.java.binaries", "build/classes/java/main")
         property("sonar.java.test.binaries", "build/classes/java/test,build/classes/java/intTest")
         property("sonar.junit.reportPaths", "build/test-results/test/,build/test-results/integrationTest/")
-        property("sonar.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco/report.xml")
+        property("sonar.jacoco.xmlReportPaths", "${project.layout.buildDirectory}/reports/jacoco/report.xml")
+        property("sonar.java.test.binaries", "build/classes/java/test,build/classes/java/intTest")
         property("sonar.verbose", true)
 
         // Irrelevant duplications detected on task inputs
         property(
             "sonar.cpd.exclusions",
-            "**/org/siouan/frontendgradleplugin/domain/model/*.java,**/org/siouan/frontendgradleplugin/domain/usecase/Get*ExecutablePath.java"
+            "**/org/siouan/frontendgradleplugin/domain/model/*.java,**/org/siouan/frontendgradleplugin/domain/usecase/Resolve*ExecutablePath.java,**/org/siouan/frontendgradleplugin/infrastructure/gradle/FrontendExtension.java"
         )
     }
 }

@@ -13,7 +13,7 @@ import org.siouan.frontendgradleplugin.domain.installer.archiver.ArchiveEntry;
  * @since 1.1.3
  */
 @Builder
-record TarEntry(TarArchiveEntry lowLevelEntry) implements ArchiveEntry {
+public record TarEntry(TarArchiveEntry lowLevelEntry) implements ArchiveEntry {
 
     @Override
     public String getName() {

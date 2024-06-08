@@ -5,4 +5,3 @@ ECHO %~dp0 %*
 ) ELSE (
     node %*
 )
-

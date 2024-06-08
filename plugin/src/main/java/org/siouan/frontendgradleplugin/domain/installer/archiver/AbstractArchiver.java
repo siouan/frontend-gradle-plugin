@@ -3,6 +3,8 @@ package org.siouan.frontendgradleplugin.domain.installer.archiver;
 import static java.util.stream.Collectors.toSet;
 
 import java.io.IOException;
+import java.io.Serial;
+import java.io.Serializable;
 import java.nio.file.Path;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.Map;
@@ -27,7 +29,11 @@ import org.siouan.frontendgradleplugin.domain.FileManager;
  * @since 1.1.3
  */
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class AbstractArchiver<C extends ArchiverContext, E extends ArchiveEntry> implements Archiver {
+public abstract class AbstractArchiver<C extends ArchiverContext, E extends ArchiveEntry>
+    implements Archiver, Serializable {
+
+    @Serial
+    private static final long serialVersionUID = -3028639659907720045L;
 
     /**
      * Map of binary masks used on Unix modes to extract a single permission.
