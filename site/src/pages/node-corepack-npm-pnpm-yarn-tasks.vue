@@ -27,6 +27,7 @@
             <FgpSubSubTitle>Built-in tasks</FgpSubSubTitle>
 
             <FgpInstallNodeTask />
+            <FgpInstallCorepackTask />
             <FgpResolvePackageManagerTask />
             <FgpInstallPackageManagerTask />
             <FgpInstallFrontendTask />

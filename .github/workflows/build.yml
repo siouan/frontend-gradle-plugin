@@ -68,7 +68,7 @@ jobs:
           key: ${{ runner.os }}-sonar-${{ hashFiles('**/*.gradle*') }}
 
       - name: Grant executable permission
-        run: chmod +x gradlew plugin/src/intTest/resources/*/bin/*
+        run: chmod +x gradlew plugin/src/integrationTest/resources/*/bin/*
 
       - name: Build plugin on Linux (with test coverage)
         if: matrix.os == 'ubuntu-22.04'
@@ -89,4 +89,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew :plugin:sonar --console=plain -Dorg.gradle.jvmargs=-Xmx512m -Dsonar.verbose=true
+        run: ./gradlew :plugin:sonar --console=plain -Dorg.gradle.jvmargs=-Xmx512m

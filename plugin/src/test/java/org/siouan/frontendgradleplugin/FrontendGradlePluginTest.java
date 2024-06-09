@@ -34,6 +34,7 @@ import org.siouan.frontendgradleplugin.infrastructure.gradle.AssembleTask;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.CheckTask;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.CleanTask;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.FrontendExtension;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.InstallCorepackTask;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.InstallFrontendTask;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.InstallNodeTask;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.InstallPackageManagerTask;
@@ -73,6 +74,7 @@ class FrontendGradlePluginTest {
             DEFAULT_NODE_DISTRIBUTION_URL_PATH_PATTERN);
         assertThat(extension.getNodeDistributionServerUsername().isPresent()).isFalse();
         assertThat(extension.getNodeDistributionServerPassword().isPresent()).isFalse();
+        assertThat(extension.getCorepackVersion().isPresent()).isFalse();
         assertThat(extension.getInstallScript().get()).isEqualTo(DEFAULT_INSTALL_SCRIPT);
         assertThat(extension.getCleanScript().isPresent()).isFalse();
         assertThat(extension.getAssembleScript().isPresent()).isFalse();
@@ -130,6 +132,7 @@ class FrontendGradlePluginTest {
         extension.getNodeDistributionUrlRoot().set("https://node");
         extension.getNodeDistributionUrlPathPattern().set("/node.tar.gz");
         extension.getNodeInstallDirectory().set(project.file(nodeInstallDirectoryName));
+        extension.getCorepackVersion().set("latest");
         extension.getInstallScript().set("run ci");
         extension.getCleanScript().set("run clean");
         extension.getAssembleScript().set("run build");
@@ -220,6 +223,23 @@ class FrontendGradlePluginTest {
         assertThat(installNodeTask.getSystemOsName().get()).isEqualTo(expectedSystemProperties.get(OS_NAME));
         assertThat(installNodeTask.getDependsOn()).isEmpty();
 
+        final InstallCorepackTask installCorepackTask = project
+            .getTasks()
+            .named(INSTALL_COREPACK_TASK_NAME, InstallCorepackTask.class)
+            .get();
+        assertThat(installCorepackTask.getBeanRegistryBuildService().get().getBeanRegistry()).isNotNull();
+        assertThat(installCorepackTask.getPackageJsonDirectory().get()).isEqualTo(
+            extension.getPackageJsonDirectory().getAsFile().get());
+        assertThat(installCorepackTask.getNodeInstallDirectory().get()).isEqualTo(
+            extension.getNodeInstallDirectory().getAsFile().get());
+        assertThat(installCorepackTask.getCorepackVersion().getOrNull()).isEqualTo(
+            extension.getCorepackVersion().getOrNull());
+        assertThat(installCorepackTask.getVerboseModeEnabled().get()).isEqualTo(
+            extension.getVerboseModeEnabled().get());
+        assertThat(installCorepackTask.getSystemJvmArch().get()).isEqualTo(expectedSystemProperties.get(JVM_ARCH));
+        assertThat(installCorepackTask.getSystemOsName().get()).isEqualTo(expectedSystemProperties.get(OS_NAME));
+        assertThat(installCorepackTask.getDependsOn()).containsExactlyInAnyOrder(INSTALL_NODE_TASK_NAME);
+
         final ResolvePackageManagerTask resolvePackageManagerTask = project
             .getTasks()
             .named(RESOLVE_PACKAGE_MANAGER_TASK_NAME, ResolvePackageManagerTask.class)
@@ -268,7 +288,7 @@ class FrontendGradlePluginTest {
         assertThat(installPackageManagerTask.getSystemJvmArch().get()).isEqualTo(
             expectedSystemProperties.get(JVM_ARCH));
         assertThat(installPackageManagerTask.getSystemOsName().get()).isEqualTo(expectedSystemProperties.get(OS_NAME));
-        assertThat(installPackageManagerTask.getDependsOn()).isEmpty();
+        assertThat(installPackageManagerTask.getDependsOn()).containsExactlyInAnyOrder(INSTALL_COREPACK_TASK_NAME);
 
         final InstallFrontendTask installFrontendTask = project
             .getTasks()

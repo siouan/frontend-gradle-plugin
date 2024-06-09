@@ -1,9 +1,17 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
+import static org.siouan.frontendgradleplugin.FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME;
+import static org.siouan.frontendgradleplugin.FrontendGradlePlugin.INSTALL_PACKAGE_MANAGER_TASK_NAME;
+import static org.siouan.frontendgradleplugin.test.GradleBuildAssertions.assertTaskFailed;
 import static org.siouan.frontendgradleplugin.test.GradleBuildAssertions.assertTaskOutcomes;
 import static org.siouan.frontendgradleplugin.test.GradleBuildFiles.createBuildFile;
 import static org.siouan.frontendgradleplugin.test.GradleHelper.runGradle;
 import static org.siouan.frontendgradleplugin.test.GradleHelper.runGradleAndExpectFailure;
+import static org.siouan.frontendgradleplugin.test.PluginTaskOutcome.FAILED;
+import static org.siouan.frontendgradleplugin.test.PluginTaskOutcome.IGNORED;
+import static org.siouan.frontendgradleplugin.test.PluginTaskOutcome.SKIPPED;
+import static org.siouan.frontendgradleplugin.test.PluginTaskOutcome.SUCCESS;
+import static org.siouan.frontendgradleplugin.test.PluginTaskOutcome.UP_TO_DATE;
 import static org.siouan.frontendgradleplugin.test.Resources.getResourcePath;
 import static org.siouan.frontendgradleplugin.test.TaskTypes.buildCorepackTaskDefinition;
 import static org.siouan.frontendgradleplugin.test.TaskTypes.buildNodeTaskDefinition;
@@ -19,9 +27,7 @@ import org.gradle.testkit.runner.BuildResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
 import org.siouan.frontendgradleplugin.test.FrontendMapBuilder;
-import org.siouan.frontendgradleplugin.test.PluginTaskOutcome;
 
 /**
  * Functional tests to verify task types {@link RunNode}, {@link RunNpm},  {@link RunYarn} in a Gradle build, with a
@@ -59,13 +65,25 @@ class TaskTypesWithProvidedDistributionsFuncTest {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
             .nodeDistributionProvided(true)
             .nodeInstallDirectory(getResourcePath("node-dist-without-node"));
-        final String runCorepackTaskDefinition = buildCorepackTaskDefinition(RUN_COREPACK_TASK_NAME,
-            FrontendGradlePlugin.INSTALL_NODE_TASK_NAME, "disable");
+        final String runCorepackTaskDefinition = buildCorepackTaskDefinition(RUN_COREPACK_TASK_NAME, "disable");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap(), runCorepackTaskDefinition);
 
         final BuildResult result = runGradleAndExpectFailure(projectDirectoryPath, RUN_COREPACK_TASK_NAME);
 
-        assertTaskOutcomes(result, PluginTaskOutcome.SKIPPED, RUN_COREPACK_TASK_NAME, PluginTaskOutcome.FAILED);
+        assertTaskOutcomes(result, SKIPPED, RUN_COREPACK_TASK_NAME, FAILED);
+    }
+
+    @Test
+    void should_fail_running_custom_corepack_task_when_script_is_undefined() throws IOException {
+        final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
+            .nodeDistributionProvided(true)
+            .nodeInstallDirectory(getResourcePath("node-dist-provided"));
+        final String runCorepackTaskDefinition = buildCorepackTaskDefinition(RUN_COREPACK_TASK_NAME, null);
+        createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap(), runCorepackTaskDefinition);
+
+        final BuildResult result = runGradleAndExpectFailure(projectDirectoryPath, RUN_COREPACK_TASK_NAME);
+
+        assertTaskOutcomes(result, SKIPPED, RUN_COREPACK_TASK_NAME, FAILED);
     }
 
     @Test
@@ -79,7 +97,20 @@ class TaskTypesWithProvidedDistributionsFuncTest {
 
         final BuildResult result = runGradleAndExpectFailure(projectDirectoryPath, RUN_NODE_TASK_NAME);
 
-        assertTaskOutcomes(result, PluginTaskOutcome.SKIPPED, RUN_NODE_TASK_NAME, PluginTaskOutcome.FAILED);
+        assertTaskOutcomes(result, SKIPPED, RUN_NODE_TASK_NAME, FAILED);
+    }
+
+    @Test
+    void should_fail_running_custom_node_task_when_script_is_undefined() throws IOException {
+        final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
+            .nodeDistributionProvided(true)
+            .nodeInstallDirectory(getResourcePath("node-dist-provided"));
+        final String runNodeTaskDefinition = buildNodeTaskDefinition(RUN_NODE_TASK_NAME, null);
+        createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap(), runNodeTaskDefinition);
+
+        final BuildResult result = runGradleAndExpectFailure(projectDirectoryPath, RUN_NODE_TASK_NAME);
+
+        assertTaskFailed(result, RUN_NODE_TASK_NAME);
     }
 
     @Test
@@ -88,14 +119,26 @@ class TaskTypesWithProvidedDistributionsFuncTest {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
             .nodeDistributionProvided(true)
             .nodeInstallDirectory(getResourcePath("node-dist-without-node"));
-        final String runNpmTaskDefinition = buildNpmTaskDefinition(RUN_NPM_TASK_NAME,
-            FrontendGradlePlugin.INSTALL_PACKAGE_MANAGER_TASK_NAME, "run npm-script");
+        final String runNpmTaskDefinition = buildNpmTaskDefinition(RUN_NPM_TASK_NAME, INSTALL_PACKAGE_MANAGER_TASK_NAME,
+            "run npm-script");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap(), runNpmTaskDefinition);
 
         final BuildResult result = runGradleAndExpectFailure(projectDirectoryPath, RUN_NPM_TASK_NAME);
 
-        assertTaskOutcomes(result, PluginTaskOutcome.SKIPPED, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.FAILED,
-            RUN_NPM_TASK_NAME, PluginTaskOutcome.IGNORED);
+        assertTaskOutcomes(result, SKIPPED, SKIPPED, SUCCESS, FAILED, RUN_NPM_TASK_NAME, IGNORED);
+    }
+
+    @Test
+    void should_fail_running_custom_npm_task_when_script_is_undefined() throws IOException {
+        final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
+            .nodeDistributionProvided(true)
+            .nodeInstallDirectory(getResourcePath("node-dist-provided"));
+        final String runNpmTaskDefinition = buildNpmTaskDefinition(RUN_NPM_TASK_NAME, null);
+        createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap(), runNpmTaskDefinition);
+
+        final BuildResult result = runGradleAndExpectFailure(projectDirectoryPath, RUN_NPM_TASK_NAME);
+
+        assertTaskFailed(result, RUN_NPM_TASK_NAME);
     }
 
     @Test
@@ -105,13 +148,25 @@ class TaskTypesWithProvidedDistributionsFuncTest {
             .nodeDistributionProvided(true)
             .nodeInstallDirectory(getResourcePath("node-dist-without-node"));
         final String runNpmTaskDefinition = buildPnpmTaskDefinition(RUN_PNPM_TASK_NAME,
-            FrontendGradlePlugin.INSTALL_PACKAGE_MANAGER_TASK_NAME, "run pnpm-script");
+            INSTALL_PACKAGE_MANAGER_TASK_NAME, "run pnpm-script");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap(), runNpmTaskDefinition);
 
         final BuildResult result = runGradleAndExpectFailure(projectDirectoryPath, RUN_PNPM_TASK_NAME);
 
-        assertTaskOutcomes(result, PluginTaskOutcome.SKIPPED, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.FAILED,
-            RUN_PNPM_TASK_NAME, PluginTaskOutcome.IGNORED);
+        assertTaskOutcomes(result, SKIPPED, SKIPPED, SUCCESS, FAILED, RUN_PNPM_TASK_NAME, IGNORED);
+    }
+
+    @Test
+    void should_fail_running_custom_pnpm_task_when_script_is_undefined() throws IOException {
+        final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
+            .nodeDistributionProvided(true)
+            .nodeInstallDirectory(getResourcePath("node-dist-provided"));
+        final String runPnpmTaskDefinition = buildPnpmTaskDefinition(RUN_PNPM_TASK_NAME, null);
+        createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap(), runPnpmTaskDefinition);
+
+        final BuildResult result = runGradleAndExpectFailure(projectDirectoryPath, RUN_PNPM_TASK_NAME);
+
+        assertTaskFailed(result, RUN_PNPM_TASK_NAME);
     }
 
     @Test
@@ -121,13 +176,25 @@ class TaskTypesWithProvidedDistributionsFuncTest {
             .nodeDistributionProvided(true)
             .nodeInstallDirectory(getResourcePath("node-dist-without-node"));
         final String runNpmTaskDefinition = buildYarnTaskDefinition(RUN_YARN_TASK_NAME,
-            FrontendGradlePlugin.INSTALL_PACKAGE_MANAGER_TASK_NAME, "run yarn-script");
+            INSTALL_PACKAGE_MANAGER_TASK_NAME, "run yarn-script");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap(), runNpmTaskDefinition);
 
         final BuildResult result = runGradleAndExpectFailure(projectDirectoryPath, RUN_YARN_TASK_NAME);
 
-        assertTaskOutcomes(result, PluginTaskOutcome.SKIPPED, PluginTaskOutcome.SUCCESS, PluginTaskOutcome.FAILED,
-            RUN_YARN_TASK_NAME, PluginTaskOutcome.IGNORED);
+        assertTaskOutcomes(result, SKIPPED, SKIPPED, SUCCESS, FAILED, RUN_YARN_TASK_NAME, IGNORED);
+    }
+
+    @Test
+    void should_fail_running_custom_yarn_task_when_script_is_undefined() throws IOException {
+        final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
+            .nodeDistributionProvided(true)
+            .nodeInstallDirectory(getResourcePath("node-dist-provided"));
+        final String customTaskDefinition = buildYarnTaskDefinition(RUN_YARN_TASK_NAME, null);
+        createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap(), customTaskDefinition);
+
+        final BuildResult result = runGradleAndExpectFailure(projectDirectoryPath, RUN_YARN_TASK_NAME);
+
+        assertTaskFailed(result, RUN_YARN_TASK_NAME);
     }
 
     @Test
@@ -138,40 +205,37 @@ class TaskTypesWithProvidedDistributionsFuncTest {
             .nodeInstallDirectory(getResourcePath("node-dist-provided"));
         final String runNodeTaskDefinition = buildNodeTaskDefinition(RUN_NODE_TASK_NAME,
             temporaryScriptPath.toString().replace("\\", "\\\\"));
-        final String runCorepackTaskDefinition = buildCorepackTaskDefinition(RUN_COREPACK_TASK_NAME,
-            FrontendGradlePlugin.INSTALL_NODE_TASK_NAME, "disable");
-        final String runNpmTaskDefinition = buildNpmTaskDefinition(RUN_NPM_TASK_NAME,
-            FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME, "run npm-script");
-        final String runPnpmTaskDefinition = buildPnpmTaskDefinition(RUN_PNPM_TASK_NAME,
-            FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME, "run pnpm-script");
-        final String runYarnTaskDefinition = buildYarnTaskDefinition(RUN_YARN_TASK_NAME,
-            FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME, "run yarn-script");
+        final String runCorepackTaskDefinition = buildCorepackTaskDefinition(RUN_COREPACK_TASK_NAME, "disable");
+        final String runNpmTaskDefinition = buildNpmTaskDefinition(RUN_NPM_TASK_NAME, INSTALL_FRONTEND_TASK_NAME,
+            "run npm-script");
+        final String runPnpmTaskDefinition = buildPnpmTaskDefinition(RUN_PNPM_TASK_NAME, INSTALL_FRONTEND_TASK_NAME,
+            "run pnpm-script");
+        final String runYarnTaskDefinition = buildYarnTaskDefinition(RUN_YARN_TASK_NAME, INSTALL_FRONTEND_TASK_NAME,
+            "run yarn-script");
         final String additionalContent = String.join("\n", runNodeTaskDefinition, runCorepackTaskDefinition,
             runNpmTaskDefinition, runPnpmTaskDefinition, runYarnTaskDefinition);
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap(), additionalContent);
 
         final BuildResult nodeTaskResult = runGradle(projectDirectoryPath, RUN_NODE_TASK_NAME);
 
-        assertTaskOutcomes(nodeTaskResult, PluginTaskOutcome.SKIPPED, RUN_NODE_TASK_NAME, PluginTaskOutcome.SUCCESS);
+        assertTaskOutcomes(nodeTaskResult, SKIPPED, RUN_NODE_TASK_NAME, SUCCESS);
 
         final BuildResult corepackTaskResult = runGradle(projectDirectoryPath, RUN_COREPACK_TASK_NAME);
 
-        assertTaskOutcomes(corepackTaskResult, PluginTaskOutcome.SKIPPED, RUN_COREPACK_TASK_NAME,
-            PluginTaskOutcome.SUCCESS);
+        assertTaskOutcomes(corepackTaskResult, SKIPPED, SKIPPED, RUN_COREPACK_TASK_NAME, SUCCESS);
 
         final BuildResult npmTaskResult = runGradle(projectDirectoryPath, RUN_NPM_TASK_NAME);
 
-        assertTaskOutcomes(npmTaskResult, PluginTaskOutcome.SKIPPED, PluginTaskOutcome.SUCCESS,
-            PluginTaskOutcome.SUCCESS, PluginTaskOutcome.SUCCESS, RUN_NPM_TASK_NAME, PluginTaskOutcome.SUCCESS);
+        assertTaskOutcomes(npmTaskResult, SKIPPED, SKIPPED, SUCCESS, SUCCESS, SUCCESS, RUN_NPM_TASK_NAME, SUCCESS);
 
         final BuildResult pnpmTaskResult = runGradle(projectDirectoryPath, RUN_PNPM_TASK_NAME);
 
-        assertTaskOutcomes(pnpmTaskResult, PluginTaskOutcome.SKIPPED, PluginTaskOutcome.UP_TO_DATE,
-            PluginTaskOutcome.UP_TO_DATE, PluginTaskOutcome.SUCCESS, RUN_PNPM_TASK_NAME, PluginTaskOutcome.SUCCESS);
+        assertTaskOutcomes(pnpmTaskResult, SKIPPED, SKIPPED, UP_TO_DATE, UP_TO_DATE, SUCCESS, RUN_PNPM_TASK_NAME,
+            SUCCESS);
 
         final BuildResult yarnTaskResult = runGradle(projectDirectoryPath, RUN_YARN_TASK_NAME);
 
-        assertTaskOutcomes(yarnTaskResult, PluginTaskOutcome.SKIPPED, PluginTaskOutcome.UP_TO_DATE,
-            PluginTaskOutcome.UP_TO_DATE, PluginTaskOutcome.SUCCESS, RUN_YARN_TASK_NAME, PluginTaskOutcome.SUCCESS);
+        assertTaskOutcomes(yarnTaskResult, SKIPPED, SKIPPED, UP_TO_DATE, UP_TO_DATE, SUCCESS, RUN_YARN_TASK_NAME,
+            SUCCESS);
     }
 }

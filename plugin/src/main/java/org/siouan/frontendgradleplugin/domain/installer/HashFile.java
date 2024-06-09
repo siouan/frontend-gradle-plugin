@@ -32,7 +32,7 @@ public class HashFile {
     private final MessageDigest messageDigest;
 
     /**
-     * Builds a hasher using the SHA-256 algorithm.
+     * Builds a hash service using the SHA-256 algorithm.
      *
      * @param channelProvider Channel provider.
      * @param convertToHexadecimalString Converter of byte buffer to hexadecimal string.
