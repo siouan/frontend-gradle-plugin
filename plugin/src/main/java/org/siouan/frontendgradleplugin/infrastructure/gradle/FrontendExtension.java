@@ -88,6 +88,13 @@ public class FrontendExtension {
     private final DirectoryProperty packageJsonDirectory;
 
     /**
+     * Version of Corepack.
+     *
+     * @since 8.1.0
+     */
+    private final Property<String> corepackVersion;
+
+    /**
      * Proxy host used to download resources with HTTP protocol.
      *
      * @since 5.0.0
@@ -206,6 +213,7 @@ public class FrontendExtension {
         checkScript = objectFactory.property(String.class);
         publishScript = objectFactory.property(String.class);
         packageJsonDirectory = objectFactory.directoryProperty();
+        corepackVersion = objectFactory.property(String.class);
         httpProxyHost = objectFactory.property(String.class);
         httpProxyPort = objectFactory.property(Integer.class);
         httpProxyUsername = objectFactory.property(String.class);

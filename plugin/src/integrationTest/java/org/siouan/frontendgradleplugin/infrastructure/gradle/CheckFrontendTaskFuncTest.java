@@ -33,69 +33,69 @@ class CheckFrontendTaskFuncTest {
     @Test
     void should_skip_task_when_package_json_file_does_not_exist() throws IOException {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("18.17.1")
-            .nodeDistributionUrl(getResourceUrl("node-v18.17.1.zip"))
+            .nodeVersion("20.14.0")
+            .nodeDistributionUrl(getResourceUrl("node-v20.14.0.zip"))
             .checkScript("run check");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, CHECK_TASK_NAME);
 
-        assertCheckTaskOutcomes(result1, SUCCESS, SUCCESS, SKIPPED, SKIPPED, SKIPPED, null);
+        assertCheckTaskOutcomes(result1, SUCCESS, SKIPPED, SUCCESS, SKIPPED, SKIPPED, SKIPPED, null);
 
         final BuildResult result2 = runGradle(projectDirectoryPath, CHECK_TASK_NAME);
 
-        assertCheckTaskOutcomes(result2, UP_TO_DATE, UP_TO_DATE, SKIPPED, SKIPPED, SKIPPED, null);
+        assertCheckTaskOutcomes(result2, UP_TO_DATE, SKIPPED, UP_TO_DATE, SKIPPED, SKIPPED, SKIPPED, null);
     }
 
     @Test
     void should_skip_task_when_script_is_not_defined() throws IOException {
         Files.copy(getResourcePath("package-any-manager.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("18.17.1")
-            .nodeDistributionUrl(getResourceUrl("node-v18.17.1.zip"));
+            .nodeVersion("20.14.0")
+            .nodeDistributionUrl(getResourceUrl("node-v20.14.0.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, CHECK_TASK_NAME);
 
-        assertCheckTaskOutcomes(result1, SUCCESS, SUCCESS, SUCCESS, SUCCESS, SKIPPED, null);
+        assertCheckTaskOutcomes(result1, SUCCESS, SKIPPED, SUCCESS, SUCCESS, SUCCESS, SKIPPED, null);
 
         final BuildResult result2 = runGradle(projectDirectoryPath, CHECK_TASK_NAME);
 
-        assertCheckTaskOutcomes(result2, UP_TO_DATE, UP_TO_DATE, UP_TO_DATE, SUCCESS, SKIPPED, null);
+        assertCheckTaskOutcomes(result2, UP_TO_DATE, SKIPPED, UP_TO_DATE, UP_TO_DATE, SUCCESS, SKIPPED, null);
     }
 
     @Test
     void should_skip_task_when_running_gradle_task_and_script_is_not_defined() throws IOException {
         Files.copy(getResourcePath("package-any-manager.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("18.17.1")
-            .nodeDistributionUrl(getResourceUrl("node-v18.17.1.zip"));
+            .nodeVersion("20.14.0")
+            .nodeDistributionUrl(getResourceUrl("node-v20.14.0.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, GRADLE_CHECK_TASK_NAME);
 
-        assertCheckTaskOutcomes(result1, SUCCESS, SUCCESS, SUCCESS, SUCCESS, SKIPPED, UP_TO_DATE);
+        assertCheckTaskOutcomes(result1, SUCCESS, SKIPPED, SUCCESS, SUCCESS, SUCCESS, SKIPPED, UP_TO_DATE);
 
         final BuildResult result2 = runGradle(projectDirectoryPath, GRADLE_CHECK_TASK_NAME);
 
-        assertCheckTaskOutcomes(result2, UP_TO_DATE, UP_TO_DATE, UP_TO_DATE, SUCCESS, SKIPPED, UP_TO_DATE);
+        assertCheckTaskOutcomes(result2, UP_TO_DATE, SKIPPED, UP_TO_DATE, UP_TO_DATE, SUCCESS, SKIPPED, UP_TO_DATE);
     }
 
     @Test
     void should_check_frontend() throws IOException {
         Files.copy(getResourcePath("package-any-manager.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("18.17.1")
-            .nodeDistributionUrl(getResourceUrl("node-v18.17.1.zip"))
+            .nodeVersion("20.14.0")
+            .nodeDistributionUrl(getResourceUrl("node-v20.14.0.zip"))
             .checkScript("run check");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, GRADLE_CHECK_TASK_NAME);
 
-        assertCheckTaskOutcomes(result1, SUCCESS, SUCCESS, SUCCESS, SUCCESS, SUCCESS, SUCCESS);
+        assertCheckTaskOutcomes(result1, SUCCESS, SKIPPED, SUCCESS, SUCCESS, SUCCESS, SUCCESS, SUCCESS);
 
         final BuildResult result2 = runGradle(projectDirectoryPath, GRADLE_CHECK_TASK_NAME);
 
-        assertCheckTaskOutcomes(result2, UP_TO_DATE, UP_TO_DATE, UP_TO_DATE, SUCCESS, SUCCESS, SUCCESS);
+        assertCheckTaskOutcomes(result2, UP_TO_DATE, SKIPPED, UP_TO_DATE, UP_TO_DATE, SUCCESS, SUCCESS, SUCCESS);
     }
 }

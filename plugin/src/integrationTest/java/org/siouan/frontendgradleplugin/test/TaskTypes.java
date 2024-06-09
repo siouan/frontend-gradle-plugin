@@ -1,12 +1,14 @@
 package org.siouan.frontendgradleplugin.test;
 
+import static org.siouan.frontendgradleplugin.FrontendGradlePlugin.INSTALL_COREPACK_TASK_NAME;
+import static org.siouan.frontendgradleplugin.FrontendGradlePlugin.INSTALL_NODE_TASK_NAME;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
 
-import org.siouan.frontendgradleplugin.FrontendGradlePlugin;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.RunCorepack;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNode;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpm;
@@ -22,22 +24,11 @@ public final class TaskTypes {
     }
 
     public static String buildCorepackTaskDefinition(final String taskName, final String script) {
-        return buildTaskDefinition(taskName, RunCorepack.class, Set.of(), script);
-    }
-
-    public static String buildCorepackTaskDefinition(final String taskName, final String dependsOnTaskName,
-        final String script) {
-        return buildTaskDefinition(taskName, RunCorepack.class, Set.of(dependsOnTaskName), script);
+        return buildTaskDefinition(taskName, RunCorepack.class, Set.of(INSTALL_COREPACK_TASK_NAME), script);
     }
 
     public static String buildNodeTaskDefinition(final String taskName, final String script) {
-        return buildNodeTaskDefinition(taskName, FrontendGradlePlugin.INSTALL_NODE_TASK_NAME, script);
-    }
-
-    public static String buildNodeTaskDefinition(final String taskName, final String dependsOnTaskName,
-        final String script) {
-        return buildTaskDefinition(taskName, RunNode.class,
-            (dependsOnTaskName == null) ? Set.of() : Set.of(dependsOnTaskName), script);
+        return buildTaskDefinition(taskName, RunNode.class, Set.of(INSTALL_NODE_TASK_NAME), script);
     }
 
     public static String buildNpmTaskDefinition(final String taskName, final String script) {

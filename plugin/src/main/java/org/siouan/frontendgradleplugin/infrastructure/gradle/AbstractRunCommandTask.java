@@ -30,12 +30,13 @@ public abstract class AbstractRunCommandTask extends DefaultTask {
     protected final Property<BeanRegistryBuildService> beanRegistryBuildService;
 
     /**
-     * Directory where the 'package.json' file is located.
+     * Directory where the 'package.json' file is located, and used as the working directory when the command is
+     * executed.
      */
     protected final Property<File> packageJsonDirectory;
 
     /**
-     * Directory where the Node.js distribution is installed.
+     * Directory where the Node.js distribution is installed, and used to find the executables.
      */
     protected final Property<File> nodeInstallDirectory;
 

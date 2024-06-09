@@ -5,7 +5,7 @@ plugins {
 }
 
 frontend {
-    nodeVersion.set("18.17.1")
+    nodeVersion.set("20.14.0")
     nodeInstallDirectory.set(file(rootProject.ext.get("nodeInstallDirectory")!!))
 }
 

@@ -35,18 +35,18 @@ java {
 }
 
 sourceSets {
-    create("intTest") {
+    create("integrationTest") {
         compileClasspath += sourceSets.main.get().output + sourceSets.test.get().output
         runtimeClasspath += sourceSets.main.get().output + sourceSets.test.get().output
     }
 }
 
-val intTestImplementation: Configuration by configurations.getting {
+val integrationTestImplementation: Configuration by configurations.getting {
     extendsFrom(configurations.implementation.get())
     extendsFrom(configurations.testImplementation.get())
 }
 
-configurations["intTestRuntimeOnly"]
+configurations["integrationTestRuntimeOnly"]
     .extendsFrom(configurations.runtimeOnly.get())
     .extendsFrom(configurations.testRuntimeOnly.get())
 
@@ -69,56 +69,14 @@ dependencies {
     testCompileOnly("org.projectlombok:lombok:1.18.32")
     testAnnotationProcessor("org.projectlombok:lombok:1.18.32")
 
-    intTestImplementation("org.wiremock:wiremock:3.6.0")
+    integrationTestImplementation("org.wiremock:wiremock:3.6.0")
 }
-
-tasks.named<Wrapper>("wrapper") {
-    distributionType = Wrapper.DistributionType.ALL
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
-    jvmArgs(
-        "--add-opens", "java.base/java.lang=ALL-UNNAMED",
-        "--add-opens", "java.base/java.util=ALL-UNNAMED"
-    )
-    outputs.upToDateWhen { false }
-}
-
-tasks.register<Test>("integrationTest") {
-    description = "Runs integration tests."
-    group = "verification"
-    testClassesDirs = sourceSets["intTest"].output.classesDirs
-    classpath = sourceSets["intTest"].runtimeClasspath
-    // Yarn immutable installs prevents failures in integration tests due to missing yarn.lock file.
-    environment["YARN_ENABLE_IMMUTABLE_INSTALLS"] = "false"
-    shouldRunAfter("test")
-    outputs.upToDateWhen { false }
-}
-
-tasks.named<Task>("check") {
-    dependsOn(tasks.named("integrationTest"))
-}
-
-tasks.named<JacocoReport>("jacocoTestReport") {
-    dependsOn(tasks.named("test"), tasks.named("integrationTest"))
-    executionData.setFrom(
-        file("${project.layout.buildDirectory}/jacoco/test.exec"),
-        file("${project.layout.buildDirectory}/jacoco/integrationTest.exec")
-    )
-    reports {
-        xml.required.set(true)
-        xml.outputLocation.set(file("${project.layout.buildDirectory}/reports/jacoco/report.xml"))
-    }
-}
-
-gradle.addListener(GradleTestListener(logger))
 
 idea {
     module {
         // Force integration test source set as test folder
-        testSources.from(project.sourceSets.getByName("intTest").java.srcDirs)
-        testResources.from(project.sourceSets.getByName("intTest").resources.srcDirs)
+        testSources.from(project.sourceSets.getByName("integrationTest").java.srcDirs)
+        testResources.from(project.sourceSets.getByName("integrationTest").resources.srcDirs)
         isDownloadJavadoc = true
         isDownloadSources = true
     }
@@ -151,24 +109,67 @@ sonarqube {
         property("sonar.projectVersion", "${fgpVersion}-jdk17")
 
         property("sonar.links.homepage", "https://github.com/siouan/frontend-gradle-plugin")
-        property("sonar.links.ci", "https://travis-ci.com/siouan/frontend-gradle-plugin")
+        property("sonar.links.ci", "https://github.com/siouan/frontend-gradle-plugin/actions")
         property("sonar.links.scm", "https://github.com/siouan/frontend-gradle-plugin")
         property("sonar.links.issue", "https://github.com/siouan/frontend-gradle-plugin/issues")
 
         property("sonar.sources", "src/main")
-        property("sonar.tests", "src/test,src/intTest")
+        property("sonar.tests", "src/test,src/integrationTest")
 
         property("sonar.java.binaries", "build/classes/java/main")
-        property("sonar.java.test.binaries", "build/classes/java/test,build/classes/java/intTest")
+        property("sonar.java.test.binaries", "build/classes/java/test,build/classes/java/integrationTest")
         property("sonar.junit.reportPaths", "build/test-results/test/,build/test-results/integrationTest/")
-        property("sonar.jacoco.xmlReportPaths", "${project.layout.buildDirectory}/reports/jacoco/report.xml")
-        property("sonar.java.test.binaries", "build/classes/java/test,build/classes/java/intTest")
+        property("sonar.jacoco.xmlReportPaths", "build/reports/jacoco/report.xml")
         property("sonar.verbose", true)
 
         // Irrelevant duplications detected on task inputs
         property(
             "sonar.cpd.exclusions",
-            "**/org/siouan/frontendgradleplugin/domain/model/*.java,**/org/siouan/frontendgradleplugin/domain/usecase/Resolve*ExecutablePath.java,**/org/siouan/frontendgradleplugin/infrastructure/gradle/FrontendExtension.java"
+            "**/org/siouan/frontendgradleplugin/domain/Resolve*ExecutablePath.java,**/org/siouan/frontendgradleplugin/infrastructure/gradle/FrontendExtension.java"
         )
     }
 }
+
+tasks.named<Wrapper>("wrapper") {
+    distributionType = Wrapper.DistributionType.ALL
+}
+
+tasks.withType<Test>() {
+    useJUnitPlatform()
+}
+
+tasks.named<Test>("test") {
+    jvmArgs(
+        "--add-opens", "java.base/java.lang=ALL-UNNAMED",
+        "--add-opens", "java.base/java.util=ALL-UNNAMED"
+    )
+    outputs.upToDateWhen { false }
+}
+
+tasks.register<Test>("integrationTest") {
+    description = "Runs integration tests."
+    group = "verification"
+    testClassesDirs = sourceSets["integrationTest"].output.classesDirs
+    classpath = sourceSets["integrationTest"].runtimeClasspath
+    // Yarn immutable installs prevents failures in integration tests due to missing yarn.lock file.
+    environment["YARN_ENABLE_IMMUTABLE_INSTALLS"] = "false"
+    shouldRunAfter("test")
+    outputs.upToDateWhen { false }
+}
+
+tasks.named<Task>("check") {
+    dependsOn(tasks.named("integrationTest"))
+}
+
+tasks.named<JacocoReport>("jacocoTestReport") {
+    dependsOn(tasks.named("test"), tasks.named("integrationTest"))
+    executionData.setFrom(
+        project.layout.buildDirectory.files("jacoco/test.exec", "jacoco/integrationTest.exec"),
+    )
+    reports {
+        xml.required.set(true)
+        xml.outputLocation.set(project.layout.buildDirectory.file("reports/jacoco/report.xml"))
+    }
+}
+
+gradle.addListener(GradleTestListener(logger))

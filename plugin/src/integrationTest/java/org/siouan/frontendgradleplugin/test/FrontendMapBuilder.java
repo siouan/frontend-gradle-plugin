@@ -24,6 +24,8 @@ public final class FrontendMapBuilder {
 
     private Path nodeInstallDirectory;
 
+    private String corepackVersion;
+
     private String installScript;
 
     private String cleanScript;
@@ -85,6 +87,11 @@ public final class FrontendMapBuilder {
 
     public FrontendMapBuilder nodeInstallDirectory(final Path nodeInstallDirectory) {
         this.nodeInstallDirectory = nodeInstallDirectory;
+        return this;
+    }
+
+    public FrontendMapBuilder corepackVersion(final String corepackVersion) {
+        this.corepackVersion = corepackVersion;
         return this;
     }
 
@@ -165,6 +172,9 @@ public final class FrontendMapBuilder {
         }
         if (nodeInstallDirectory != null) {
             properties.put("nodeInstallDirectory", nodeInstallDirectory);
+        }
+        if (corepackVersion != null) {
+            properties.put("corepackVersion", corepackVersion);
         }
         if (installScript != null) {
             properties.put("installScript", installScript);

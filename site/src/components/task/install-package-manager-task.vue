@@ -1,7 +1,7 @@
 <template>
     <FgpTask
         name="installPackageManager"
-        :depending-task-names="['resolvePackageManager']"
+        :depending-task-names="['installCorepack', 'resolvePackageManager']"
         :inputs="inputs"
         :outputs="outputs"
     >

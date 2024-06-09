@@ -41,73 +41,73 @@ class AssembleFrontedTaskFuncTest {
     @Test
     void should_skip_task_when_package_json_file_does_not_exist() throws IOException {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("18.17.1")
-            .nodeDistributionUrl(getResourceUrl("node-v18.17.1.zip"))
+            .nodeVersion("20.14.0")
+            .nodeDistributionUrl(getResourceUrl("node-v20.14.0.zip"))
             .assembleScript("run assemble")
             .packageJsonDirectory(packageJsonDirectoryPath);
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, ASSEMBLE_TASK_NAME);
 
-        assertAssembleTaskOutcomes(result1, SUCCESS, SUCCESS, SKIPPED, SKIPPED, SKIPPED, null);
+        assertAssembleTaskOutcomes(result1, SUCCESS, SKIPPED, SUCCESS, SKIPPED, SKIPPED, SKIPPED, null);
 
         final BuildResult result2 = runGradle(projectDirectoryPath, ASSEMBLE_TASK_NAME);
 
-        assertAssembleTaskOutcomes(result2, UP_TO_DATE, UP_TO_DATE, SKIPPED, SKIPPED, SKIPPED, null);
+        assertAssembleTaskOutcomes(result2, UP_TO_DATE, SKIPPED, UP_TO_DATE, SKIPPED, SKIPPED, SKIPPED, null);
     }
 
     @Test
     void should_skip_task_when_script_is_not_defined() throws IOException {
         Files.copy(getResourcePath("package-any-manager.json"), packageJsonDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("18.17.1")
-            .nodeDistributionUrl(getResourceUrl("node-v18.17.1.zip"))
+            .nodeVersion("20.14.0")
+            .nodeDistributionUrl(getResourceUrl("node-v20.14.0.zip"))
             .packageJsonDirectory(packageJsonDirectoryPath);
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, ASSEMBLE_TASK_NAME);
 
-        assertAssembleTaskOutcomes(result1, SUCCESS, SUCCESS, SUCCESS, SUCCESS, SKIPPED, null);
+        assertAssembleTaskOutcomes(result1, SUCCESS, SKIPPED, SUCCESS, SUCCESS, SUCCESS, SKIPPED, null);
 
         final BuildResult result2 = runGradle(projectDirectoryPath, ASSEMBLE_TASK_NAME);
 
-        assertAssembleTaskOutcomes(result2, UP_TO_DATE, UP_TO_DATE, UP_TO_DATE, SUCCESS, SKIPPED, null);
+        assertAssembleTaskOutcomes(result2, UP_TO_DATE, SKIPPED, UP_TO_DATE, UP_TO_DATE, SUCCESS, SKIPPED, null);
     }
 
     @Test
     void should_skip_task_when_running_gradle_task_and_script_is_not_defined() throws IOException {
         Files.copy(getResourcePath("package-any-manager.json"), packageJsonDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("18.17.1")
-            .nodeDistributionUrl(getResourceUrl("node-v18.17.1.zip"))
+            .nodeVersion("20.14.0")
+            .nodeDistributionUrl(getResourceUrl("node-v20.14.0.zip"))
             .packageJsonDirectory(packageJsonDirectoryPath);
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, GRADLE_ASSEMBLE_TASK_NAME);
 
-        assertAssembleTaskOutcomes(result1, SUCCESS, SUCCESS, SUCCESS, SUCCESS, SKIPPED, UP_TO_DATE);
+        assertAssembleTaskOutcomes(result1, SUCCESS, SKIPPED, SUCCESS, SUCCESS, SUCCESS, SKIPPED, UP_TO_DATE);
 
         final BuildResult result2 = runGradle(projectDirectoryPath, GRADLE_ASSEMBLE_TASK_NAME);
 
-        assertAssembleTaskOutcomes(result2, UP_TO_DATE, UP_TO_DATE, UP_TO_DATE, SUCCESS, SKIPPED, UP_TO_DATE);
+        assertAssembleTaskOutcomes(result2, UP_TO_DATE, SKIPPED, UP_TO_DATE, UP_TO_DATE, SUCCESS, SKIPPED, UP_TO_DATE);
     }
 
     @Test
     void should_assemble_frontend() throws IOException {
         Files.copy(getResourcePath("package-any-manager.json"), packageJsonDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("18.17.1")
-            .nodeDistributionUrl(getResourceUrl("node-v18.17.1.zip"))
+            .nodeVersion("20.14.0")
+            .nodeDistributionUrl(getResourceUrl("node-v20.14.0.zip"))
             .packageJsonDirectory(packageJsonDirectoryPath)
             .assembleScript("run assemble");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, GRADLE_ASSEMBLE_TASK_NAME);
 
-        assertAssembleTaskOutcomes(result1, SUCCESS, SUCCESS, SUCCESS, SUCCESS, SUCCESS, SUCCESS);
+        assertAssembleTaskOutcomes(result1, SUCCESS, SKIPPED, SUCCESS, SUCCESS, SUCCESS, SUCCESS, SUCCESS);
 
         final BuildResult result2 = runGradle(projectDirectoryPath, GRADLE_ASSEMBLE_TASK_NAME);
 
-        assertAssembleTaskOutcomes(result2, UP_TO_DATE, UP_TO_DATE, UP_TO_DATE, SUCCESS, SUCCESS, SUCCESS);
+        assertAssembleTaskOutcomes(result2, UP_TO_DATE, SKIPPED, UP_TO_DATE, UP_TO_DATE, SUCCESS, SUCCESS, SUCCESS);
     }
 }

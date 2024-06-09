@@ -32,51 +32,51 @@ class InstallFrontendTaskFuncTest {
     @Test
     void should_skip_task_when_package_json_file_does_not_exist() throws IOException {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("18.17.1")
-            .nodeDistributionUrl(getResourceUrl("node-v18.17.1.zip"));
+            .nodeVersion("20.14.0")
+            .nodeDistributionUrl(getResourceUrl("node-v20.14.0.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, INSTALL_FRONTEND_TASK_NAME);
 
-        assertTaskOutcomes(result1, SUCCESS, SUCCESS, SKIPPED, SKIPPED);
+        assertTaskOutcomes(result1, SUCCESS, SKIPPED, SUCCESS, SKIPPED, SKIPPED);
 
         final BuildResult result2 = runGradle(projectDirectoryPath, INSTALL_FRONTEND_TASK_NAME);
 
-        assertTaskOutcomes(result2, UP_TO_DATE, UP_TO_DATE, SKIPPED, SKIPPED);
+        assertTaskOutcomes(result2, UP_TO_DATE, SKIPPED, UP_TO_DATE, SKIPPED, SKIPPED);
     }
 
     @Test
     void should_succeed_with_default_script() throws IOException {
         Files.copy(getResourcePath("package-any-manager.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("18.17.1")
-            .nodeDistributionUrl(getResourceUrl("node-v18.17.1.zip"));
+            .nodeVersion("20.14.0")
+            .nodeDistributionUrl(getResourceUrl("node-v20.14.0.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, INSTALL_FRONTEND_TASK_NAME);
 
-        assertTaskOutcomes(result1, SUCCESS, SUCCESS, SUCCESS, SUCCESS);
+        assertTaskOutcomes(result1, SUCCESS, SKIPPED, SUCCESS, SUCCESS, SUCCESS);
 
         final BuildResult result2 = runGradle(projectDirectoryPath, INSTALL_FRONTEND_TASK_NAME);
 
-        assertTaskOutcomes(result2, UP_TO_DATE, UP_TO_DATE, UP_TO_DATE, SUCCESS);
+        assertTaskOutcomes(result2, UP_TO_DATE, SKIPPED, UP_TO_DATE, UP_TO_DATE, SUCCESS);
     }
 
     @Test
     void should_succeed_with_custom_script() throws IOException {
         Files.copy(getResourcePath("package-any-manager.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("18.17.1")
-            .nodeDistributionUrl(getResourceUrl("node-v18.17.1.zip"))
+            .nodeVersion("20.14.0")
+            .nodeDistributionUrl(getResourceUrl("node-v20.14.0.zip"))
             .installScript("ci");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, INSTALL_FRONTEND_TASK_NAME);
 
-        assertTaskOutcomes(result1, SUCCESS, SUCCESS, SUCCESS, SUCCESS);
+        assertTaskOutcomes(result1, SUCCESS, SKIPPED, SUCCESS, SUCCESS, SUCCESS);
 
         final BuildResult result2 = runGradle(projectDirectoryPath, INSTALL_FRONTEND_TASK_NAME);
 
-        assertTaskOutcomes(result2, UP_TO_DATE, UP_TO_DATE, UP_TO_DATE, SUCCESS);
+        assertTaskOutcomes(result2, UP_TO_DATE, SKIPPED, UP_TO_DATE, UP_TO_DATE, SUCCESS);
     }
 }

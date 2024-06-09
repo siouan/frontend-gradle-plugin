@@ -35,17 +35,17 @@ class InstallPackageManagerTaskFuncTest {
     @Test
     void should_skip_task_when_package_json_file_does_not_exist() throws IOException {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("18.17.1")
-            .nodeDistributionUrl(getResourceUrl("node-v18.17.1.zip"));
+            .nodeVersion("20.14.0")
+            .nodeDistributionUrl(getResourceUrl("node-v20.14.0.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, INSTALL_PACKAGE_MANAGER_TASK_NAME);
 
-        assertTaskOutcomes(result1, SUCCESS, SUCCESS, SKIPPED);
+        assertTaskOutcomes(result1, SUCCESS, SKIPPED, SUCCESS, SKIPPED);
 
         final BuildResult result2 = runGradle(projectDirectoryPath, INSTALL_PACKAGE_MANAGER_TASK_NAME);
 
-        assertTaskOutcomes(result2, UP_TO_DATE, UP_TO_DATE, SKIPPED);
+        assertTaskOutcomes(result2, UP_TO_DATE, SKIPPED, UP_TO_DATE, SKIPPED);
     }
 
     @Test
@@ -55,24 +55,24 @@ class InstallPackageManagerTaskFuncTest {
 
         final BuildResult result = runGradleAndExpectFailure(projectDirectoryPath, INSTALL_PACKAGE_MANAGER_TASK_NAME);
 
-        assertTaskOutcomes(result, SKIPPED, SUCCESS, FAILED);
+        assertTaskOutcomes(result, SKIPPED, SKIPPED, SUCCESS, FAILED);
     }
 
     @Test
     void should_install_package_managers() throws IOException {
         Files.copy(getResourcePath("package-npm.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("18.17.1")
-            .nodeDistributionUrl(getResourceUrl("node-v18.17.1.zip"));
+            .nodeVersion("20.14.0")
+            .nodeDistributionUrl(getResourceUrl("node-v20.14.0.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult installNpmResult1 = runGradle(projectDirectoryPath, INSTALL_PACKAGE_MANAGER_TASK_NAME);
 
-        assertTaskOutcomes(installNpmResult1, SUCCESS, SUCCESS, SUCCESS);
+        assertTaskOutcomes(installNpmResult1, SUCCESS, SKIPPED, SUCCESS, SUCCESS);
 
         final BuildResult installNpmResult2 = runGradle(projectDirectoryPath, INSTALL_PACKAGE_MANAGER_TASK_NAME);
 
-        assertTaskOutcomes(installNpmResult2, UP_TO_DATE, UP_TO_DATE, UP_TO_DATE);
+        assertTaskOutcomes(installNpmResult2, UP_TO_DATE, SKIPPED, UP_TO_DATE, UP_TO_DATE);
 
         Files.copy(getResourcePath("package-pnpm.json"), projectDirectoryPath.resolve("package.json"),
             StandardCopyOption.REPLACE_EXISTING);
@@ -80,11 +80,11 @@ class InstallPackageManagerTaskFuncTest {
 
         final BuildResult installPnpmResult1 = runGradle(projectDirectoryPath, INSTALL_PACKAGE_MANAGER_TASK_NAME);
 
-        assertTaskOutcomes(installPnpmResult1, UP_TO_DATE, SUCCESS, SUCCESS);
+        assertTaskOutcomes(installPnpmResult1, UP_TO_DATE, SKIPPED, SUCCESS, SUCCESS);
 
         final BuildResult installPnpmResult2 = runGradle(projectDirectoryPath, INSTALL_PACKAGE_MANAGER_TASK_NAME);
 
-        assertTaskOutcomes(installPnpmResult2, UP_TO_DATE, UP_TO_DATE, UP_TO_DATE);
+        assertTaskOutcomes(installPnpmResult2, UP_TO_DATE, SKIPPED, UP_TO_DATE, UP_TO_DATE);
 
         Files.copy(getResourcePath("package-yarn.json"), projectDirectoryPath.resolve("package.json"),
             StandardCopyOption.REPLACE_EXISTING);
@@ -92,10 +92,10 @@ class InstallPackageManagerTaskFuncTest {
 
         final BuildResult installYarnResult1 = runGradle(projectDirectoryPath, INSTALL_PACKAGE_MANAGER_TASK_NAME);
 
-        assertTaskOutcomes(installYarnResult1, UP_TO_DATE, SUCCESS, SUCCESS);
+        assertTaskOutcomes(installYarnResult1, UP_TO_DATE, SKIPPED, SUCCESS, SUCCESS);
 
         final BuildResult installYarnResult2 = runGradle(projectDirectoryPath, INSTALL_PACKAGE_MANAGER_TASK_NAME);
 
-        assertTaskOutcomes(installYarnResult2, UP_TO_DATE, UP_TO_DATE, UP_TO_DATE);
+        assertTaskOutcomes(installYarnResult2, UP_TO_DATE, SKIPPED, UP_TO_DATE, UP_TO_DATE);
     }
 }

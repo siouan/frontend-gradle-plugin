@@ -41,6 +41,7 @@ import org.siouan.frontendgradleplugin.infrastructure.gradle.CleanTask;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.FrontendExtension;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.GradleLoggerAdapter;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.GradleSettings;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.InstallCorepackTask;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.InstallFrontendTask;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.InstallNodeTask;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.InstallPackageManagerTask;
@@ -164,6 +165,13 @@ public class FrontendGradlePlugin implements Plugin<Project> {
     public static final String PACKAGE_JSON_FILE_NAME = "package.json";
 
     /**
+     * Name of the task that installs a specific version of Corepack.
+     *
+     * @since 8.1.0
+     */
+    public static final String INSTALL_COREPACK_TASK_NAME = "installCorepack";
+
+    /**
      * Name of the task that installs a Node distribution.
      */
     public static final String INSTALL_NODE_TASK_NAME = "installNode";
@@ -255,7 +263,8 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         return project
             .getGradle()
             .getSharedServices()
-            .registerIfAbsent(BEAN_REGISTRY_BUILD_SERVICE_NAME_PREFIX + project.getLayout().getProjectDirectory(), BeanRegistryBuildService.class,
+            .registerIfAbsent(BEAN_REGISTRY_BUILD_SERVICE_NAME_PREFIX + project.getLayout().getProjectDirectory(),
+                BeanRegistryBuildService.class,
                 buildServiceSpec -> buildServiceSpec.getParameters().getBeanRegistry().set(beanRegistry));
     }
 
@@ -274,6 +283,9 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         taskContainer.register(INSTALL_NODE_TASK_NAME, InstallNodeTask.class,
             task -> configureInstallNodeTask(task, beanRegistryBuildServiceProvider, frontendExtension,
                 systemProviders));
+        taskContainer.register(INSTALL_COREPACK_TASK_NAME, InstallCorepackTask.class,
+            task -> configureInstallCorepackTask(task, taskContainer, beanRegistryBuildServiceProvider,
+                frontendExtension, systemProviders));
         taskContainer.register(RESOLVE_PACKAGE_MANAGER_TASK_NAME, ResolvePackageManagerTask.class,
             task -> configureResolvePackageManagerTask(task, taskContainer, beanRegistryBuildServiceProvider,
                 frontendExtension, systemProviders));
@@ -394,6 +406,33 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      * @param beanRegistryBuildServiceProvider Bean registry build service provider.
      * @param frontendExtension Plugin extension.
      */
+    protected void configureInstallCorepackTask(final InstallCorepackTask task, final TaskContainer taskContainer,
+        final Provider<BeanRegistryBuildService> beanRegistryBuildServiceProvider,
+        final FrontendExtension frontendExtension, final SystemProviders systemProviders) {
+        task.setGroup(TASK_GROUP);
+        task.setDescription(
+            "Installs a specific version of Corepack, overriding the one provided by default in Node.js distribution.");
+        task.getBeanRegistryBuildService().set(beanRegistryBuildServiceProvider);
+        task.usesService(beanRegistryBuildServiceProvider);
+
+        task.getPackageJsonDirectory().set(frontendExtension.getPackageJsonDirectory().getAsFile());
+        task.getNodeInstallDirectory().set(frontendExtension.getNodeInstallDirectory().getAsFile());
+        task.getCorepackVersion().set(frontendExtension.getCorepackVersion());
+        task.getVerboseModeEnabled().set(frontendExtension.getVerboseModeEnabled());
+        bindSystemArchPropertiesToTaskInputs(systemProviders, task.getSystemJvmArch(), task.getSystemOsName());
+        task.setOnlyIf(t -> frontendExtension.getCorepackVersion().isPresent());
+
+        configureDependency(taskContainer, task, INSTALL_NODE_TASK_NAME, InstallNodeTask.class);
+    }
+
+    /**
+     * Configures the given task with the plugin extension.
+     *
+     * @param task Task.
+     * @param taskContainer Gradle task container.
+     * @param beanRegistryBuildServiceProvider Bean registry build service provider.
+     * @param frontendExtension Plugin extension.
+     */
     protected void configureResolvePackageManagerTask(final ResolvePackageManagerTask task,
         final TaskContainer taskContainer, final Provider<BeanRegistryBuildService> beanRegistryBuildServiceProvider,
         final FrontendExtension frontendExtension, final SystemProviders systemProviders) {
@@ -480,6 +519,8 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         // The task is skipped when there's no package.json file. It allows to define a project that installs only a
         // Node.js distribution.
         task.setOnlyIf(t -> packageJsonFileExists(frontendExtension));
+
+        configureDependency(taskContainer, task, INSTALL_COREPACK_TASK_NAME, InstallCorepackTask.class);
     }
 
     /**

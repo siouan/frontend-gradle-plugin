@@ -15,14 +15,14 @@
                 <template #groovy>
                     <pre><FgpCode>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunCorepack
 tasks.register('corepackVersion', RunCorepack) {
-    dependsOn tasks.named('installNode')
+    dependsOn tasks.named('installCorepack')
     script = '-v'
 }</FgpCode></pre>
                 </template>
                 <template #kotlin>
                     <pre><FgpCode>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunCorepack
 tasks.register&lt;RunCorepack&gt;("corepackVersion") {
-    dependsOn(tasks.named("installNode"))
+    dependsOn(tasks.named("installCorepack"))
     script.set("-v")
 }</FgpCode></pre>
                 </template>
