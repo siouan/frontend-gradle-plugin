@@ -1,5 +1,5 @@
 <template>
-    <FgpTask name="RunYarn" type :inputs="inputs">
+    <FgpTask name="RunYarn" type :inputs="inputs" custom-environment-variables-supported>
         <template #title>Run a custom command with <FgpCode>yarn</FgpCode></template>
         <template #description>
             <p>

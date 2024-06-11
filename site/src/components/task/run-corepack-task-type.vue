@@ -1,5 +1,5 @@
 <template>
-    <FgpTask name="RunCorepack" type :inputs="inputs">
+    <FgpTask name="RunCorepack" type :inputs="inputs" custom-environment-variables-supported>
         <template #title>Run a custom command with <FgpCode>corepack</FgpCode></template>
         <template #description>
             <p>

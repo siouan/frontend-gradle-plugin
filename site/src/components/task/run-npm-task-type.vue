@@ -1,5 +1,5 @@
 <template>
-    <FgpTask name="RunNpm" type :inputs="inputs">
+    <FgpTask name="RunNpm" type :inputs="inputs" custom-environment-variables-supported>
         <template #title>Run a custom command with <FgpCode>npm</FgpCode></template>
         <template #description>
             <p>

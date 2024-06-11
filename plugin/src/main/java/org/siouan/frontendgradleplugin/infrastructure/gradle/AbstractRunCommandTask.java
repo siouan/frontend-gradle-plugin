@@ -1,9 +1,11 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
 import java.io.File;
+import java.util.Map;
 
 import org.gradle.api.DefaultTask;
 import org.gradle.api.model.ObjectFactory;
+import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Internal;
@@ -71,6 +73,13 @@ public abstract class AbstractRunCommandTask extends DefaultTask {
      */
     protected final Property<String> systemOsName;
 
+    /**
+     * Additional environment variables to pass when executing the script.
+     *
+     * @since 8.1.0
+     */
+    protected final MapProperty<String, String> environmentVariables;
+
     AbstractRunCommandTask(final ObjectFactory objectFactory, final ExecOperations execOperations) {
         this.execOperations = execOperations;
         this.beanRegistryBuildService = objectFactory.property(BeanRegistryBuildService.class);
@@ -81,6 +90,7 @@ public abstract class AbstractRunCommandTask extends DefaultTask {
         this.verboseModeEnabled = objectFactory.property(Boolean.class);
         this.systemJvmArch = objectFactory.property(String.class);
         this.systemOsName = objectFactory.property(String.class);
+        this.environmentVariables = objectFactory.mapProperty(String.class, String.class);
     }
 
     @Internal
@@ -106,6 +116,12 @@ public abstract class AbstractRunCommandTask extends DefaultTask {
     @Internal
     public Property<String> getSystemOsName() {
         return systemOsName;
+    }
+
+    @Internal
+    @SuppressWarnings("unused")
+    public MapProperty<String, String> getEnvironmentVariables() {
+        return environmentVariables;
     }
 
     @Input
@@ -156,6 +172,7 @@ public abstract class AbstractRunCommandTask extends DefaultTask {
                 .nodeInstallDirectoryPath(nodeInstallDirectory.map(File::toPath).get())
                 .script(script.get())
                 .platform(platform)
+                .environmentVariables(environmentVariables.getOrElse(Map.of()))
                 .build());
     }
 }

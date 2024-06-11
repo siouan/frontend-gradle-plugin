@@ -2,7 +2,6 @@
     <FgpProperty
         name="maxDownloadAttempts"
         type="java.lang.Integer"
-        :required="true"
         default-value="1"
         :task-names="['installNode']"
     >

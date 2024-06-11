@@ -47,17 +47,12 @@
                     </ul>
                 </li>
                 <li v-if="skippable">Skipped when <slot name="skipConditions" /></li>
+                <li v-if="customEnvironmentVariablesSupported">Supports <FgpSiteLink
+                    :path="`${$config.public.paths.tasks}#custom-environment-variables`"
+                >custom environment variables</FgpSiteLink></li>
             </ul>
         </header>
         <section class="px-3"><slot name="description" /></section>
-        <footer v-if="outcomeHints.length > 0">
-            <h6>Possible outcomes:</h6>
-            <ul>
-                <li v-for="outcomeHint in outcomeHints">
-                    <FgpGradleTaskOutcomeLink :outcome="outcomeHint.outcome" />: {{ outcomeHint.description }}
-                </li>
-            </ul>
-        </footer>
     </article>
 </template>
 
@@ -88,7 +83,7 @@ interface Props {
     readonly inputs?: any[];
     readonly outputs?: any[];
     readonly cacheable?: boolean;
-    readonly outcomeHints?: OutcomeHint[];
+    readonly customEnvironmentVariablesSupported?: boolean;
 }
 
 const slots = useSlots();
@@ -98,7 +93,7 @@ withDefaults(defineProps<Props>(), {
     inputs: () => [],
     outputs: () => [],
     cacheable: false,
-    outcomeHints: () => []
+    customEnvironmentVariableSupported: false
 });
 const skippable = computed(() => !!slots.skipConditions);
 </script>

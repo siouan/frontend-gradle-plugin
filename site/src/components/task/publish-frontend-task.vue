@@ -1,5 +1,10 @@
 <template>
-    <FgpTask name="publishFrontend" :depending-task-names="['assembleFrontend']" :inputs="inputs">
+    <FgpTask
+        name="publishFrontend"
+        :depending-task-names="['assembleFrontend']"
+        :inputs="inputs"
+        custom-environment-variables-supported
+    >
         <template #title>Publish frontend artifacts</template>
         <template #skipConditions>
             <FgpPropertyLink name="packageJsonDirectory" /><FgpCode>/package.json</FgpCode> file does not exist, or
