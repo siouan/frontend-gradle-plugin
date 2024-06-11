@@ -1,5 +1,10 @@
 <template>
-    <FgpTask name="installFrontend" :depending-task-names="['installPackageManager']" :inputs="inputs">
+    <FgpTask
+        name="installFrontend"
+        :depending-task-names="['installPackageManager']"
+        :inputs="inputs"
+        custom-environment-variables-supported
+    >
         <template #title>Install frontend dependencies</template>
         <template #skipConditions>
             <FgpPropertyLink name="packageJsonDirectory" /><FgpCode>/package.json</FgpCode> file does not exist.

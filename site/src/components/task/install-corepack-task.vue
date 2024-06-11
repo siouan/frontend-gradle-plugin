@@ -4,6 +4,7 @@
         :depending-task-names="['installNode']"
         :inputs="inputs"
         :outputs="outputs"
+        custom-environment-variables-supported
     >
         <template #title>Install/upgrade Corepack</template>
         <template #corepackModuleDirectory>
@@ -16,6 +17,8 @@
             <p>
                The task overrides the default version of <FgpCorepackLink /> embedded in the <FgpNodejsLink />
                distribution if the <FgpPropertyLink name="corepackVersion" /> property is not <FgpCode>null</FgpCode>.
+               To do so, the plugin executes command <FgpCode>npm install -g
+               corepack[@&lt;corepackVersion&gt;]</FgpCode>.
                Apart from a specific version number, if this property is set with the <FgpCode>latest</FgpCode> value,
                the plugin will always install the latest version available. Note that this task will not be executed
                again and update Corepack automatically if a newer version is released after this task has run once

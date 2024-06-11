@@ -48,6 +48,63 @@
         </section>
 
         <section>
+            <FgpSubSubTitle id="custom-environment-variables">
+                Environment variables in <FgpCode>node</FgpCode>-based tasks.
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#app`" class="small text-info">&uparrow;</FgpSiteLink>
+            </FgpSubSubTitle>
+
+            <p>
+                The plugin provides multiple tasks or types that execute under-the-hood a <FgpCode>node</FgpCode>-based
+                command: <FgpTaskLink name="installCorepack" />, <FgpTaskLink name="installPackageManager" />,
+                <FgpTaskLink name="installFrontend" />, <FgpTaskLink name="cleanFrontend" />,
+                <FgpTaskLink name="assembleFrontend" />, <FgpTaskLink name="checkFrontend" />,
+                <FgpTaskLink name="publishFrontend" />, <FgpTaskLink name="RunNode" />,
+                <FgpTaskLink name="RunCorepack" />, <FgpTaskLink name="RunNpm" />, <FgpTaskLink name="RunPnpm" />,
+                <FgpTaskLink name="RunYarn" />. These tasks forward environment variables visible by the Gradle process
+                to <FgpCode>node</FgpCode>, <FgpCode>corepack</FgpCode>, <FgpCode>npm</FgpCode>,
+                <FgpCode>pnpm</FgpCode>, <FgpCode>yarn</FgpCode> commands. These variables may be overwritten and/or new
+                variables may be added to the environment forwarded to the command. If you need to alter the
+                <FgpCode>PATH</FgpCode> environment variable, and though this is generally a rare situation, keep in
+                mind the plugin adds its own paths so as the relevant <FgpCode>node</FgpCode> executable can be found.
+            </p>
+            <p>Example hereafter shows how to customize the environment for a given task:</p>
+            <FgpGradleScripts id="lazy-configuration-examples">
+                <template #groovy>
+                    <pre><FgpCode>
+import org.siouan.frontendgradleplugin.infrastructure.gradle.AssembleTask
+tasks.named('assembleFrontend', AssembleTask) {
+    environmentVariables.put('NODE_OPTIONS', '--max_old_space_size=50 --title="Assembling frontend"')
+}</FgpCode></pre>
+                </template>
+                <template #kotlin>
+                    <pre><FgpCode>
+import org.siouan.frontendgradleplugin.infrastructure.gradle.AssembleTask
+tasks.named&lt;AssembleTask&gt;("assembleFrontend") {
+    environmentVariables.put("NODE_OPTIONS", "--max_old_space_size=50 --title=\"Assembling frontend\"")
+}</FgpCode></pre>
+                </template>
+            </FgpGradleScripts>
+            <p>
+                Example hereafter shows how to apply an environment variable to all tasks running a <FgpCode
+                >node</FgpCode>-based command:
+            </p>
+            <FgpGradleScripts id="lazy-configuration-examples">
+                <template #groovy>
+                    <pre><FgpCode>
+import org.siouan.frontendgradleplugin.infrastructure.gradle.AbstractRunCommandTask
+tasks.withType(AbstractRunCommandTask) {
+    environmentVariables.put('NODE_DEBUG', 'module')
+}</FgpCode></pre>
+                </template>
+                <template #kotlin>
+                    <pre><FgpCode>
+import org.siouan.frontendgradleplugin.infrastructure.gradle.AbstractRunCommandTask
+tasks.withType&lt;AbstractRunCommandTask&gt; {
+    environmentVariables.put("NODE_DEBUG", "module")
+}</FgpCode></pre>
+                </template>
+            </FgpGradleScripts>
+
             <FgpSubSubTitle id="tweaking-tasks">
                 Tweaking the built-in tasks
                 <FgpSiteLink :path="`${$config.public.paths.tasks}#app`" class="small text-info">&uparrow;</FgpSiteLink>
@@ -103,7 +160,7 @@ installFrontend {
 }
 <FgpCodeComment>// MODERN SYNTAX: task 'installFrontend' is created and configured only when Gradle is about to execute it.
 // Consequently, task 'otherTask' is also created and configured later.</FgpCodeComment>
-tasks.named&lt;InstallTask&gt;("installFrontend") {
+tasks.named&lt;InstallFrontendTask&gt;("installFrontend") {
     dependsOn(tasks.named("otherTask"))
     inputs.files("package.json", "package-lock.json")
 }

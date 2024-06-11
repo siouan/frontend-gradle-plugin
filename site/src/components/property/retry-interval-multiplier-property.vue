@@ -2,7 +2,6 @@
     <FgpProperty
         name="retryIntervalMultiplier"
         type="java.lang.Double"
-        :required="true"
         default-value="2.0"
         :task-names="['installNode']"
     >

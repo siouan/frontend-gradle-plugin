@@ -2,6 +2,7 @@ package org.siouan.frontendgradleplugin.domain;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import lombok.Builder;
@@ -43,6 +44,14 @@ public class ExecutionSettings {
     private final List<String> arguments;
 
     /**
+     * Additional environment variables to pass to the process.
+     *
+     * @since 8.1.0
+     */
+    @ToString.Include
+    private final Map<String, String> environmentVariables;
+
+    /**
      * Builds execution settings.
      *
      * @param workingDirectoryPath Path to the current working directory used at execution.
@@ -51,10 +60,11 @@ public class ExecutionSettings {
      * @param arguments List of arguments.
      */
     public ExecutionSettings(final Path workingDirectoryPath, final Set<Path> additionalExecutablePaths,
-        final Path executablePath, final List<String> arguments) {
+        final Path executablePath, final List<String> arguments, final Map<String, String> environmentVariables) {
         this.workingDirectoryPath = workingDirectoryPath;
         this.additionalExecutablePaths = Set.copyOf(additionalExecutablePaths);
         this.executablePath = executablePath;
         this.arguments = List.copyOf(arguments);
+        this.environmentVariables = Map.copyOf(environmentVariables);
     }
 }

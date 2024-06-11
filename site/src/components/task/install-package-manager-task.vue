@@ -4,6 +4,7 @@
         :depending-task-names="['installCorepack', 'resolvePackageManager']"
         :inputs="inputs"
         :outputs="outputs"
+        custom-environment-variables-supported
     >
         <template #title>Install package manager</template>
         <template #packageManagerSpecificationFile>

@@ -1,5 +1,5 @@
 <template>
-    <FgpTask name="RunNode" type :inputs="inputs">
+    <FgpTask name="RunNode" type :inputs="inputs" custom-environment-variables-supported>
         <template #title>Run a custom command with <FgpCode>node</FgpCode></template>
         <template #description>
             <p>

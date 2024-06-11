@@ -1,5 +1,6 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.siouan.frontendgradleplugin.FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME;
 import static org.siouan.frontendgradleplugin.FrontendGradlePlugin.INSTALL_NODE_TASK_NAME;
 import static org.siouan.frontendgradleplugin.infrastructure.gradle.InstallCorepackTask.LATEST_VERSION_ARGUMENT;
@@ -14,12 +15,13 @@ import static org.siouan.frontendgradleplugin.test.TaskTypes.buildNodeTaskDefini
 import static org.siouan.frontendgradleplugin.test.TaskTypes.buildNpmTaskDefinition;
 import static org.siouan.frontendgradleplugin.test.TaskTypes.buildPnpmTaskDefinition;
 import static org.siouan.frontendgradleplugin.test.TaskTypes.buildYarnTaskDefinition;
-import static org.siouan.frontendgradleplugin.test.TaskTypes.createJavascriptFile;
+import static org.siouan.frontendgradleplugin.test.TaskTypes.createJavascriptFileLoggingProcessTitle;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.Map;
 import java.util.Set;
 
 import org.gradle.testkit.runner.BuildResult;
@@ -55,19 +57,20 @@ class TaskTypesWithDownloadedDistributionsFuncTest {
     }
 
     @Test
-    void should_run_custom_tasks() throws IOException {
+    void should_run_custom_tasks_and_forward_environment_variables() throws IOException {
         final Path packageJsonDirectoryPath = Files.createDirectory(projectDirectoryPath.resolve("frontend"));
         Files.copy(getResourcePath("package-npm.json"), packageJsonDirectoryPath.resolve("package.json"));
-        final Path temporaryScriptPath = createJavascriptFile(temporaryDirectoryPath.resolve("script.js"));
+        final Path temporaryScriptPath = createJavascriptFileLoggingProcessTitle(
+            temporaryDirectoryPath.resolve("script.js"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
             .nodeVersion("20.14.0")
             .nodeInstallDirectory(projectDirectoryPath.resolve("node-dist"))
             .corepackVersion(LATEST_VERSION_ARGUMENT)
-            .packageJsonDirectory(packageJsonDirectoryPath)
-            .verboseModeEnabled(false);
-        final String runCorepackTaskDefinition = buildCorepackTaskDefinition(RUN_COREPACK_TASK_NAME, "-v");
+            .packageJsonDirectory(packageJsonDirectoryPath);
         final String runNodeTaskDefinition = buildNodeTaskDefinition(RUN_NODE_TASK_NAME,
-            temporaryScriptPath.toString().replace("\\", "\\\\"));
+            temporaryScriptPath.toString().replace("\\", "\\\\"),
+            Map.of("NODE_OPTIONS", "--title=\\\"Run custom node task\\\""));
+        final String runCorepackTaskDefinition = buildCorepackTaskDefinition(RUN_COREPACK_TASK_NAME, "-v");
         final String runNpmTaskDefinition = buildNpmTaskDefinition(RUN_NPM_TASK_NAME, INSTALL_FRONTEND_TASK_NAME,
             "run another-script");
         final String runPnpmTaskDefinition = buildPnpmTaskDefinition(RUN_PNPM_TASK_NAME, INSTALL_FRONTEND_TASK_NAME,
@@ -81,6 +84,10 @@ class TaskTypesWithDownloadedDistributionsFuncTest {
         final BuildResult runNodeTaskResult1 = runGradle(projectDirectoryPath, RUN_NODE_TASK_NAME);
 
         assertTaskOutcomes(runNodeTaskResult1, SUCCESS, RUN_NODE_TASK_NAME, SUCCESS);
+        assertThat(runNodeTaskResult1.getOutput()).containsIgnoringNewLines("""
+            > Task :customNodeTask
+            Run custom node task
+            """);
 
         final BuildResult runNodeTaskResult2 = runGradle(projectDirectoryPath, RUN_NODE_TASK_NAME);
 
