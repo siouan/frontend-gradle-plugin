@@ -63,8 +63,9 @@ public abstract class AbstractArchiver<C extends ArchiverContext, E extends Arch
     protected final FileManager fileManager;
 
     /**
-     * Initializes a context to explode an archive. If initialization fails, the archiver is responsible to leave this
-     * method with no resources opened, because the context {@link ArchiverContext#close()} method won't be called.
+     * Initializes a context to explode an archive. If initialization fails, the archiver is responsible to close any
+     * resources that may have been created, because the context {@link ArchiverContext#close()} method won't be
+     * called.
      *
      * @param explodeCommand Parameters to explode archive content.
      * @return Context.

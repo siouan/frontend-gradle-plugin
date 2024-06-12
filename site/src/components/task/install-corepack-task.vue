@@ -15,20 +15,24 @@
         </template>
         <template #description>
             <p>
-               The task overrides the default version of <FgpCorepackLink /> embedded in the <FgpNodejsLink />
-               distribution if the <FgpPropertyLink name="corepackVersion" /> property is not <FgpCode>null</FgpCode>.
-               To do so, the plugin executes command <FgpCode>npm install -g
-               corepack[@&lt;corepackVersion&gt;]</FgpCode>.
-               Apart from a specific version number, if this property is set with the <FgpCode>latest</FgpCode> value,
-               the plugin will always install the latest version available. Note that this task will not be executed
-               again and update Corepack automatically if a newer version is released after this task has run once
-               successfully.
+                The purpose of this task is to allow replacing the default version of <FgpCorepackLink /> embedded in
+                <FgpNodejsLink />. This may be necessary in case of <FgpCorepackLink /> fails to install the package
+                manager used by the project, or to continuously benefit from the latest improvements and bug fixes.
+                By default, this task is not executed unless property <FgpPropertyLink name="corepackVersion" /> is
+                defined with a non-<FgpCode>null</FgpCode> value. In the latter case, the plugin executes command
+                <FgpCode>npm install -g corepack[@&lt;corepackVersion&gt;]</FgpCode>. Apart from a specific version
+                number, if this property is set with the <FgpCode>latest</FgpCode> value, the plugin installs the latest
+                version available. Note that this task will not be executed again and update Corepack automatically if a
+                newer version is released after this task has run once successfully. Since the project may use a
+                package manager that is not <FgpNpmLink />, the task disables Corepack strict behavior when running
+                <FgpCode>npm</FgpCode> (see environment variable
+                <FgpCorepackLink path="#environment-variables" label="COREPACK_ENABLE_STRICT" />).
            </p>
             <p>
                As the task touches the <FgpNodejsLink /> install directory, please pay attention when using a shared
                <FgpNodejsLink /> distribution (<FgpPropertyLink name="nodeDistributionProvided" /> is <FgpCode
-               >true</FgpCode>), since this task will impact other Gradle (sub-)projects. Depending on the project, this
-               may be the expected behavior or have a side-effect.
+               >true</FgpCode>), because this task will impact other projects using <FgpCorepackLink />. This may be an
+               expected behavior, or lead to an undesirable side-effect.
            </p>
            <p>
                The task takes advantage of <fgp-gradle-guides-link path="/performance/#incremental_build"

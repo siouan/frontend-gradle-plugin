@@ -39,6 +39,13 @@
                         <FgpCode>Node.js</FgpCode> distribution using an environment variable?
                     </FgpSiteLink>
                 </li>
+                <li>
+                    <FgpSiteLink :path="`${$config.public.paths.faqs}#custom-environment-variables`">
+                        How can I provide additional environment variables to <FgpCode>node</FgpCode>/<FgpCode
+                        >corepack</FgpCode>/<FgpCode>npm</FgpCode>/<FgpCode>pnpm</FgpCode>/<FgpCode>yarn</FgpCode>
+                        processes?
+                    </FgpSiteLink>
+                </li>
             </ul>
         </nav>
 
@@ -47,6 +54,7 @@
         <FgpCustomNodejsDistributionServerFaq id="custom-nodejs-distribution-server" />
         <FgpCacheDirectoryFaq id="cache-directory" />
         <FgpNodeInstallDirectoryFromEnvironmentFaq id="node-install-directory-from-environment" />
+        <FgpCustomEnvironmentVariablesFaq id="custom-environment-variables" />
     </section>
 </template>
 

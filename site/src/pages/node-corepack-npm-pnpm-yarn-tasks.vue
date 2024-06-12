@@ -49,7 +49,7 @@
 
         <section>
             <FgpSubSubTitle id="custom-environment-variables">
-                Environment variables in <FgpCode>node</FgpCode>-based tasks.
+                Environment variables in <FgpCode>node</FgpCode>-based tasks
                 <FgpSiteLink :path="`${$config.public.paths.tasks}#app`" class="small text-info">&uparrow;</FgpSiteLink>
             </FgpSubSubTitle>
 
@@ -68,7 +68,7 @@
                 mind the plugin adds its own paths so as the relevant <FgpCode>node</FgpCode> executable can be found.
             </p>
             <p>Example hereafter shows how to customize the environment for a given task:</p>
-            <FgpGradleScripts id="lazy-configuration-examples">
+            <FgpGradleScripts>
                 <template #groovy>
                     <pre><FgpCode>
 import org.siouan.frontendgradleplugin.infrastructure.gradle.AssembleTask
@@ -88,7 +88,7 @@ tasks.named&lt;AssembleTask&gt;("assembleFrontend") {
                 Example hereafter shows how to apply an environment variable to all tasks running a <FgpCode
                 >node</FgpCode>-based command:
             </p>
-            <FgpGradleScripts id="lazy-configuration-examples">
+            <FgpGradleScripts>
                 <template #groovy>
                     <pre><FgpCode>
 import org.siouan.frontendgradleplugin.infrastructure.gradle.AbstractRunCommandTask
@@ -105,8 +105,8 @@ tasks.withType&lt;AbstractRunCommandTask&gt; {
                 </template>
             </FgpGradleScripts>
 
-            <FgpSubSubTitle id="tweaking-tasks">
-                Tweaking the built-in tasks
+            <FgpSubSubTitle id="builtin-tasks-customization">
+                Built-in tasks customization
                 <FgpSiteLink :path="`${$config.public.paths.tasks}#app`" class="small text-info">&uparrow;</FgpSiteLink>
             </FgpSubSubTitle>
 
@@ -120,7 +120,7 @@ tasks.withType&lt;AbstractRunCommandTask&gt; {
                 lazy configuration strategy the plugin already implements. The examples below introduce the
                 implementation expected with simple cases:
             </p>
-            <FgpGradleScripts id="lazy-configuration-examples">
+            <FgpGradleScripts>
                 <template #groovy>
                     <pre><FgpCode><FgpCodeComment>// Configuring a predefined task.
 // LEGACY SYNTAX: task 'installFrontend' is immediately created and configured, as well as task

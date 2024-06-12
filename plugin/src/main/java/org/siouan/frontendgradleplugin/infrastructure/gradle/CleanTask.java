@@ -10,8 +10,6 @@ import org.gradle.process.ExecOperations;
 
 /**
  * This task cleans project artifacts.
- * <p>
- * NOTE: this task will be renamed {@code CleanFrontendTask} to conform with naming convention of other tasks.
  */
 public class CleanTask extends AbstractRunCommandTask {
 

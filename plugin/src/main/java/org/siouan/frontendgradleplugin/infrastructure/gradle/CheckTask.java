@@ -10,8 +10,6 @@ import org.gradle.process.ExecOperations;
 
 /**
  * This task checks the project.
- * <p>
- * NOTE: this task will be renamed {@code CheckFrontendTask} to conform with naming convention of other tasks.
  */
 public class CheckTask extends AbstractRunCommandTask {
 

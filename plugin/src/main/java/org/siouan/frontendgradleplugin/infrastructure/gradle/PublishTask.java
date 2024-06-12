@@ -10,10 +10,6 @@ import org.gradle.process.ExecOperations;
 
 /**
  * This task publishes project artifacts.
- * <p>
- * NOTE: this task will be renamed {@code PublishFrontendTask} to conform with naming convention of other tasks.
- *
- * @since 1.4.0
  */
 public class PublishTask extends AbstractRunCommandTask {
 

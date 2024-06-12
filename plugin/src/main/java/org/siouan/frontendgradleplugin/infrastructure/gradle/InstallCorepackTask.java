@@ -36,6 +36,12 @@ public class InstallCorepackTask extends AbstractRunCommandTask {
     public static final String COREPACK_MODULE_PATH = "node_modules/corepack";
 
     /**
+     * Name of the environment variable that prevents Corepack to fail during update with NPM, if the project uses
+     * another package manager.
+     */
+    public static final String COREPACK_ENABLE_STRICT_VARIABLE = "COREPACK_ENABLE_STRICT";
+
+    /**
      * Version of Corepack that should be installed: may be a specific version number such as {@code X.Y.Z} or the
      * {@link #LATEST_VERSION_ARGUMENT} keyword to install the latest version available.
      */
@@ -76,6 +82,7 @@ public class InstallCorepackTask extends AbstractRunCommandTask {
             scriptBuilder.append(version);
         }
         this.script.set(scriptBuilder.toString());
+        this.environmentVariables.put(COREPACK_ENABLE_STRICT_VARIABLE, "0");
 
         super.execute();
     }

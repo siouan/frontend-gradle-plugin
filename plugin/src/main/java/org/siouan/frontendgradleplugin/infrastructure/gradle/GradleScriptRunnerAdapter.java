@@ -35,7 +35,7 @@ public class GradleScriptRunnerAdapter {
             .script(scriptProperties.getScript())
             .environmentVariables(scriptProperties.getEnvironmentVariables())
             .build());
-        logger.info("Execution settings: {}", executionSettings);
+        logger.debug("Execution settings: {}", executionSettings);
 
         scriptProperties
             .getExecOperations()

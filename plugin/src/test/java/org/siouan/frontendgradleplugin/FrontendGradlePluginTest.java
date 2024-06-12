@@ -307,70 +307,79 @@ class FrontendGradlePluginTest {
         assertThat(installFrontendTask.getSystemOsName().get()).isEqualTo(expectedSystemProperties.get(OS_NAME));
         assertThat(installFrontendTask.getDependsOn()).containsExactlyInAnyOrder(installPackageManagerTask.getName());
 
-        final CleanTask frontendCleanTask = project.getTasks().named(CLEAN_TASK_NAME, CleanTask.class).get();
-        assertThat(frontendCleanTask.getBeanRegistryBuildService().get().getBeanRegistry()).isNotNull();
-        assertThat(frontendCleanTask.getPackageJsonDirectory().get()).isEqualTo(
+        final CleanTask cleanFrontendTask = project
+            .getTasks()
+            .named(CLEAN_TASK_NAME, CleanTask.class)
+            .get();
+        assertThat(cleanFrontendTask.getBeanRegistryBuildService().get().getBeanRegistry()).isNotNull();
+        assertThat(cleanFrontendTask.getPackageJsonDirectory().get()).isEqualTo(
             extension.getPackageJsonDirectory().getAsFile().get());
-        assertThat(frontendCleanTask.getNodeInstallDirectory().get()).isEqualTo(
+        assertThat(cleanFrontendTask.getNodeInstallDirectory().get()).isEqualTo(
             extension.getNodeInstallDirectory().getAsFile().get());
         //frontendCleanTask.getPackageManagerExecutableFile()
-        assertThat(frontendCleanTask.getCleanScript().getOrNull()).isEqualTo(extension.getCleanScript().getOrNull());
-        assertThat(frontendCleanTask.getVerboseModeEnabled().get()).isEqualTo(extension.getVerboseModeEnabled().get());
-        assertThat(frontendCleanTask.getSystemJvmArch().get()).isEqualTo(expectedSystemProperties.get(JVM_ARCH));
-        assertThat(frontendCleanTask.getSystemOsName().get()).isEqualTo(expectedSystemProperties.get(OS_NAME));
-        assertThat(frontendCleanTask.getDependsOn()).containsExactlyInAnyOrder(installFrontendTask.getName());
+        assertThat(cleanFrontendTask.getCleanScript().getOrNull()).isEqualTo(extension.getCleanScript().getOrNull());
+        assertThat(cleanFrontendTask.getVerboseModeEnabled().get()).isEqualTo(extension.getVerboseModeEnabled().get());
+        assertThat(cleanFrontendTask.getSystemJvmArch().get()).isEqualTo(expectedSystemProperties.get(JVM_ARCH));
+        assertThat(cleanFrontendTask.getSystemOsName().get()).isEqualTo(expectedSystemProperties.get(OS_NAME));
+        assertThat(cleanFrontendTask.getDependsOn()).containsExactlyInAnyOrder(installFrontendTask.getName());
         assertThat(project.getTasks().named(BasePlugin.CLEAN_TASK_NAME).get().getDependsOn()).contains(
-            frontendCleanTask.getName());
+            cleanFrontendTask.getName());
 
-        final AssembleTask frontendAssembleTask = project
+        final AssembleTask assembleFrontendTask = project
             .getTasks()
             .named(ASSEMBLE_TASK_NAME, AssembleTask.class)
             .get();
-        assertThat(frontendAssembleTask.getBeanRegistryBuildService().get().getBeanRegistry()).isNotNull();
-        assertThat(frontendAssembleTask.getPackageJsonDirectory().get()).isEqualTo(
+        assertThat(assembleFrontendTask.getBeanRegistryBuildService().get().getBeanRegistry()).isNotNull();
+        assertThat(assembleFrontendTask.getPackageJsonDirectory().get()).isEqualTo(
             extension.getPackageJsonDirectory().getAsFile().get());
         //frontendAssembleTask.getPackageManagerExecutableFile()
-        assertThat(frontendAssembleTask.getAssembleScript().getOrNull()).isEqualTo(
+        assertThat(assembleFrontendTask.getAssembleScript().getOrNull()).isEqualTo(
             extension.getAssembleScript().getOrNull());
-        assertThat(frontendAssembleTask.getVerboseModeEnabled().get()).isEqualTo(
+        assertThat(assembleFrontendTask.getVerboseModeEnabled().get()).isEqualTo(
             extension.getVerboseModeEnabled().get());
-        assertThat(frontendAssembleTask.getSystemJvmArch().get()).isEqualTo(expectedSystemProperties.get(JVM_ARCH));
-        assertThat(frontendAssembleTask.getSystemOsName().get()).isEqualTo(expectedSystemProperties.get(OS_NAME));
-        assertThat(frontendAssembleTask.getDependsOn()).containsExactlyInAnyOrder(installFrontendTask.getName());
+        assertThat(assembleFrontendTask.getSystemJvmArch().get()).isEqualTo(expectedSystemProperties.get(JVM_ARCH));
+        assertThat(assembleFrontendTask.getSystemOsName().get()).isEqualTo(expectedSystemProperties.get(OS_NAME));
+        assertThat(assembleFrontendTask.getDependsOn()).containsExactlyInAnyOrder(installFrontendTask.getName());
         assertThat(project.getTasks().named(BasePlugin.ASSEMBLE_TASK_NAME).get().getDependsOn()).contains(
-            frontendAssembleTask.getName());
+            assembleFrontendTask.getName());
 
-        final CheckTask frontendCheckTask = project.getTasks().named(CHECK_TASK_NAME, CheckTask.class).get();
-        assertThat(frontendCheckTask.getBeanRegistryBuildService().get().getBeanRegistry()).isNotNull();
-        assertThat(frontendCheckTask.getPackageJsonDirectory().get()).isEqualTo(
+        final CheckTask checkFrontendTask = project
+            .getTasks()
+            .named(CHECK_TASK_NAME, CheckTask.class)
+            .get();
+        assertThat(checkFrontendTask.getBeanRegistryBuildService().get().getBeanRegistry()).isNotNull();
+        assertThat(checkFrontendTask.getPackageJsonDirectory().get()).isEqualTo(
             extension.getPackageJsonDirectory().getAsFile().get());
-        assertThat(frontendCheckTask.getNodeInstallDirectory().get()).isEqualTo(
+        assertThat(checkFrontendTask.getNodeInstallDirectory().get()).isEqualTo(
             extension.getNodeInstallDirectory().getAsFile().get());
         //frontendCheckTask.getPackageManagerExecutableFile()
-        assertThat(frontendCheckTask.getCheckScript().getOrNull()).isEqualTo(extension.getCheckScript().getOrNull());
-        assertThat(frontendCheckTask.getVerboseModeEnabled().get()).isEqualTo(extension.getVerboseModeEnabled().get());
-        assertThat(frontendCheckTask.getSystemJvmArch().get()).isEqualTo(expectedSystemProperties.get(JVM_ARCH));
-        assertThat(frontendCheckTask.getSystemOsName().get()).isEqualTo(expectedSystemProperties.get(OS_NAME));
-        assertThat(frontendCheckTask.getDependsOn()).containsExactlyInAnyOrder(installFrontendTask.getName());
+        assertThat(checkFrontendTask.getCheckScript().getOrNull()).isEqualTo(extension.getCheckScript().getOrNull());
+        assertThat(checkFrontendTask.getVerboseModeEnabled().get()).isEqualTo(extension.getVerboseModeEnabled().get());
+        assertThat(checkFrontendTask.getSystemJvmArch().get()).isEqualTo(expectedSystemProperties.get(JVM_ARCH));
+        assertThat(checkFrontendTask.getSystemOsName().get()).isEqualTo(expectedSystemProperties.get(OS_NAME));
+        assertThat(checkFrontendTask.getDependsOn()).containsExactlyInAnyOrder(installFrontendTask.getName());
         assertThat(project.getTasks().named(LifecycleBasePlugin.CHECK_TASK_NAME).get().getDependsOn()).contains(
-            frontendCheckTask.getName());
+            checkFrontendTask.getName());
 
-        final PublishTask frontendPublishTask = project.getTasks().named(PUBLISH_TASK_NAME, PublishTask.class).get();
-        assertThat(frontendPublishTask.getBeanRegistryBuildService().get().getBeanRegistry()).isNotNull();
-        assertThat(frontendPublishTask.getPackageJsonDirectory().get()).isEqualTo(
+        final PublishTask publishFrontendTask = project
+            .getTasks()
+            .named(PUBLISH_TASK_NAME, PublishTask.class)
+            .get();
+        assertThat(publishFrontendTask.getBeanRegistryBuildService().get().getBeanRegistry()).isNotNull();
+        assertThat(publishFrontendTask.getPackageJsonDirectory().get()).isEqualTo(
             extension.getPackageJsonDirectory().getAsFile().get());
-        assertThat(frontendPublishTask.getNodeInstallDirectory().get()).isEqualTo(
+        assertThat(publishFrontendTask.getNodeInstallDirectory().get()).isEqualTo(
             extension.getNodeInstallDirectory().getAsFile().get());
         //frontendPublishTask.getPackageManagerExecutableFile()
-        assertThat(frontendPublishTask.getPublishScript().getOrNull()).isEqualTo(
+        assertThat(publishFrontendTask.getPublishScript().getOrNull()).isEqualTo(
             extension.getPublishScript().getOrNull());
-        assertThat(frontendPublishTask.getVerboseModeEnabled().get()).isEqualTo(
+        assertThat(publishFrontendTask.getVerboseModeEnabled().get()).isEqualTo(
             extension.getVerboseModeEnabled().get());
-        assertThat(frontendPublishTask.getSystemJvmArch().get()).isEqualTo(expectedSystemProperties.get(JVM_ARCH));
-        assertThat(frontendPublishTask.getSystemOsName().get()).isEqualTo(expectedSystemProperties.get(OS_NAME));
-        assertThat(frontendPublishTask.getDependsOn()).containsExactlyInAnyOrder(frontendAssembleTask.getName());
+        assertThat(publishFrontendTask.getSystemJvmArch().get()).isEqualTo(expectedSystemProperties.get(JVM_ARCH));
+        assertThat(publishFrontendTask.getSystemOsName().get()).isEqualTo(expectedSystemProperties.get(OS_NAME));
+        assertThat(publishFrontendTask.getDependsOn()).containsExactlyInAnyOrder(assembleFrontendTask.getName());
         assertThat(
             project.getTasks().named(PublishingPlugin.PUBLISH_LIFECYCLE_TASK_NAME).get().getDependsOn()).contains(
-            frontendPublishTask.getName());
+            publishFrontendTask.getName());
     }
 }

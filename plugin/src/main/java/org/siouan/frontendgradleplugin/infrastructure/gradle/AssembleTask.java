@@ -10,8 +10,6 @@ import org.gradle.process.ExecOperations;
 
 /**
  * This task assembles project artifacts.
- * <p>
- * NOTE: this task will be renamed {@code AssembleFrontendTask} to conform with naming convention of other tasks.
  */
 public class AssembleTask extends AbstractRunCommandTask {
 
