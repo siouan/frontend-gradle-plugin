@@ -84,6 +84,14 @@ jobs:
           Remove-Item Env:npm_config_prefix
           ./gradlew :plugin:build --console=plain
 
+      - name: Set up JDK 17 for SonarQube
+        uses: actions/setup-java@v3
+        if: matrix.os == 'ubuntu-22.04'
+        with:
+          distribution: temurin
+          java-version: '17'
+          architecture: x64
+
       - name: Scan source code and test results
         if: matrix.os == 'ubuntu-22.04'
         env:
