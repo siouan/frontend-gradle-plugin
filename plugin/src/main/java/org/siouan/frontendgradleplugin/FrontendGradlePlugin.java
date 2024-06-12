@@ -201,8 +201,6 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      */
     private static final String TASK_GROUP = "Frontend";
 
-    public static final String BEAN_REGISTRY_BUILD_SERVICE_NAME_PREFIX = "beanRegistryBuildService";
-
     @Override
     public void apply(final Project project) {
         project.getPluginManager().apply(BasePlugin.class);
@@ -263,8 +261,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         return project
             .getGradle()
             .getSharedServices()
-            .registerIfAbsent(BEAN_REGISTRY_BUILD_SERVICE_NAME_PREFIX + project.getLayout().getProjectDirectory(),
-                BeanRegistryBuildService.class,
+            .registerIfAbsent(BeanRegistryBuildService.buildName(project), BeanRegistryBuildService.class,
                 buildServiceSpec -> buildServiceSpec.getParameters().getBeanRegistry().set(beanRegistry));
     }
 
