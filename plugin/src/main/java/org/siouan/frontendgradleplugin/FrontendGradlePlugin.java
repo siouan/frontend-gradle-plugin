@@ -296,17 +296,17 @@ public class FrontendGradlePlugin implements Plugin<Project> {
             task -> configureInstallFrontendTask(task, taskContainer, beanRegistryBuildServiceProvider,
                 frontendExtension, systemProviders));
         taskContainer.register(CLEAN_TASK_NAME, CleanTask.class,
-            task -> configureCleanTask(task, taskContainer, beanRegistryBuildServiceProvider, frontendExtension,
+            task -> configureCleanFrontendTask(task, taskContainer, beanRegistryBuildServiceProvider, frontendExtension,
                 systemProviders));
         taskContainer.register(CHECK_TASK_NAME, CheckTask.class,
-            task -> configureCheckTask(task, taskContainer, beanRegistryBuildServiceProvider, frontendExtension,
+            task -> configureCheckFrontendTask(task, taskContainer, beanRegistryBuildServiceProvider, frontendExtension,
                 systemProviders));
         taskContainer.register(ASSEMBLE_TASK_NAME, AssembleTask.class,
-            task -> configureAssembleTask(task, taskContainer, beanRegistryBuildServiceProvider, frontendExtension,
-                systemProviders));
+            task -> configureAssembleFrontendTask(task, taskContainer, beanRegistryBuildServiceProvider,
+                frontendExtension, systemProviders));
         taskContainer.register(PUBLISH_TASK_NAME, PublishTask.class,
-            task -> configurePublishTask(task, taskContainer, beanRegistryBuildServiceProvider, frontendExtension,
-                systemProviders));
+            task -> configurePublishFrontendTask(task, taskContainer, beanRegistryBuildServiceProvider,
+                frontendExtension, systemProviders));
 
         // Configure dependencies with Gradle built-in tasks.
         configureDependency(taskContainer, GRADLE_CLEAN_TASK_NAME, CLEAN_TASK_NAME, CleanTask.class);
@@ -559,7 +559,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      * @param beanRegistryBuildServiceProvider Bean registry build service provider.
      * @param frontendExtension Plugin extension.
      */
-    protected void configureCleanTask(final CleanTask task, final TaskContainer taskContainer,
+    protected void configureCleanFrontendTask(final CleanTask task, final TaskContainer taskContainer,
         final Provider<BeanRegistryBuildService> beanRegistryBuildServiceProvider,
         final FrontendExtension frontendExtension, final SystemProviders systemProviders) {
         task.setGroup(TASK_GROUP);
@@ -587,7 +587,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      * @param beanRegistryBuildServiceProvider Bean registry build service provider.
      * @param frontendExtension Plugin extension.
      */
-    protected void configureCheckTask(final CheckTask task, final TaskContainer taskContainer,
+    protected void configureCheckFrontendTask(final CheckTask task, final TaskContainer taskContainer,
         final Provider<BeanRegistryBuildService> beanRegistryBuildServiceProvider,
         final FrontendExtension frontendExtension, final SystemProviders systemProviders) {
         task.setGroup(TASK_GROUP);
@@ -615,7 +615,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      * @param beanRegistryBuildServiceProvider Bean registry build service provider.
      * @param frontendExtension Plugin extension.
      */
-    protected void configureAssembleTask(final AssembleTask task, final TaskContainer taskContainer,
+    protected void configureAssembleFrontendTask(final AssembleTask task, final TaskContainer taskContainer,
         final Provider<BeanRegistryBuildService> beanRegistryBuildServiceProvider,
         final FrontendExtension frontendExtension, final SystemProviders systemProviders) {
         task.setGroup(TASK_GROUP);
@@ -644,7 +644,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      * @param beanRegistryBuildServiceProvider Bean registry build service provider.
      * @param frontendExtension Plugin extension.
      */
-    protected void configurePublishTask(final PublishTask task, final TaskContainer taskContainer,
+    protected void configurePublishFrontendTask(final PublishTask task, final TaskContainer taskContainer,
         final Provider<BeanRegistryBuildService> beanRegistryBuildServiceProvider,
         final FrontendExtension frontendExtension, final SystemProviders systemProviders) {
         task.setGroup(TASK_GROUP);
@@ -680,7 +680,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
                         .type()
                         .getExecutableType();
                 } catch (final IOException | MalformedPackageManagerSpecification |
-                    UnsupportedPackageManagerException e) {
+                               UnsupportedPackageManagerException e) {
                     throw new GradleException(
                         "Cannot read package manager specification from file: " + packageManagerSpecificationFilePath,
                         e);
@@ -730,7 +730,7 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         try {
             return beanRegistry.getBean(beanClass);
         } catch (final BeanInstanciationException | TooManyCandidateBeansException |
-            ZeroOrMultiplePublicConstructorsException e) {
+                       ZeroOrMultiplePublicConstructorsException e) {
             throw new GradleException(e.getClass().getName() + ": " + e.getMessage(), e);
         }
     }

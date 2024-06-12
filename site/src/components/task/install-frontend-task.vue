@@ -79,7 +79,7 @@
                         </ul>
                         <p>
                             If you are about to tweak this task to declare additional inputs and outputs, take a look at
-                            these <FgpSiteLink :path="`${$config.public.paths.tasks}#tweaking-tasks`"
+                            these <FgpSiteLink :path="`${$config.public.paths.tasks}#builtin-tasks-customization`"
                             >recommendations</FgpSiteLink>.
                         </p>
                     </div>
