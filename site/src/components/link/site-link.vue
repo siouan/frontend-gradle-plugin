@@ -1,16 +1,22 @@
 <template>
-    <nuxt-link :to="path"><slot /></nuxt-link>
+    <NuxtLink :to="`${mainStore.selectedReleasePath}${path}`" @click="propagateEvent($event)"><slot /></NuxtLink>
 </template>
 
-<script>
-import Vue from 'vue';
+<script setup lang="ts">
+const mainStore = useMainStore();
 
-export default Vue.component('fgp-site-link', {
-    props: {
-        path: {
-            type: String,
-            required: true
-        }
-    }
-});
+interface Emits {
+    (e: 'click', value: MouseEvent): void
+}
+
+interface Props {
+    readonly path: string;
+}
+
+const emit = defineEmits<Emits>();
+defineProps<Props>();
+
+function propagateEvent(event: MouseEvent): void {
+    emit('click', event);
+}
 </script>

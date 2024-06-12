@@ -1,41 +1,31 @@
 <template>
-    <fgp-faq>
+    <FgpFaq>
         <template #question>
-            How to use <fgp-code>node</fgp-code>/<fgp-code>corepack</fgp-code>/<fgp-code>npm</fgp-code>/<fgp-code
-            >pnpm</fgp-code>/<fgp-code>yarn</fgp-code> executables apart from Gradle when the <fgp-nodejs-link />
+            How to use
+            <FgpCode>node</FgpCode>/<FgpCode>corepack</FgpCode>/<FgpCode>npm</FgpCode>/<FgpCode>pnpm</FgpCode>/<FgpCode
+                >yarn</FgpCode
+            >
+            executables apart from Gradle when the <FgpNodejsLink />
             distribution is downloaded by the plugin?
         </template>
         <template #answer>
             <ul>
                 <li>
-                    Create a <fgp-code>NODEJS_HOME</fgp-code> environment variable (or a name of your choice) containing
-                    the real path set in the <fgp-property-link name="nodeInstallDirectory" /> property.
+                    Create a <FgpCode>NODEJS_HOME</FgpCode> environment variable (or a name of your choice) containing
+                    the real path set in the <FgpPropertyLink name="nodeInstallDirectory" /> property.
                 </li>
                 <li>
-                    Add the directory containing executables to the <fgp-code>PATH</fgp-code> environment variable:
+                    Add the directory containing executables to the
+                    <FgpCode>PATH</FgpCode> environment variable:
                     <ul>
-                        <li>On Unix-like O/S, add the <fgp-code>$NODEJS_HOME/bin</fgp-code> path.</li>
-                        <li>On Windows O/S, add <fgp-code>%NODEJS_HOME%</fgp-code> path.</li>
+                        <li>
+                            On Unix-like O/S, add the
+                            <FgpCode>$NODEJS_HOME/bin</FgpCode> path.
+                        </li>
+                        <li>On Windows O/S, add <FgpCode>%NODEJS_HOME%</FgpCode> path.</li>
                     </ul>
                 </li>
             </ul>
         </template>
-    </fgp-faq>
+    </FgpFaq>
 </template>
-
-<script>
-import Vue from 'vue';
-import fgpCode from '@/components/code';
-import fgpFaq from '@/components/faq/faq';
-import fgpNodejsLink from '@/components/link/nodejs-link';
-import fgpPropertyLink from '@/components/link/property-link';
-
-export default Vue.component('fgp-node-corepack-npm-pnpm-yarn-direct-use-faq', {
-    components: {
-        fgpCode,
-        fgpFaq,
-        fgpNodejsLink,
-        fgpPropertyLink
-    }
-});
-</script>

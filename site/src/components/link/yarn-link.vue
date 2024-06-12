@@ -1,41 +1,23 @@
 <template>
-    <fgp-link :href="href" :title="internalTitle">{{ internalLabel }}</fgp-link>
+    <FgpLink :href="href">{{ $t(internalLabelKey) }}</FgpLink>
 </template>
 
-<script>
-import Vue from 'vue';
-import fgpLink from '@/components/link/link';
+<script setup lang="ts">
+interface Props {
+    readonly labelKey?: string | null;
+    readonly version?: 1 | 2 | null;
+}
 
-export default Vue.component('fgp-yarn-link', {
-    components: { fgpLink },
-    props: {
-        label: {
-            type: String,
-            default: null,
-        },
-        labelKey: {
-            type: String,
-            default: 'navigation.yarnBerry.label'
-        },
-        path: {
-            type: String,
-            default: ''
-        },
-        title: {
-            type: String,
-            default: null
-        }
-    },
-    computed: {
-        href() {
-            return `https://yarnpkg.com/${this.path}`;
-        },
-        internalLabel() {
-            return this.label || this.$t(this.labelKey);
-        },
-        internalTitle() {
-            return this.title || this.$t('navigation.yarnBerry.title');
-        }
+const props = withDefaults(defineProps<Props>(), {
+    labelKey: null,
+    version: 2
+});
+
+const href = computed(() => (props.version === 1) ? 'https://classic.yarnpkg.com/' : 'https://yarnpkg.com/' );
+const internalLabelKey = computed<string>(() => {
+    if (props.labelKey) {
+        return props.labelKey;
     }
+    return (props.version === 1) ? 'navigation.yarnClassic.label' : 'navigation.yarnBerry.label';
 });
 </script>

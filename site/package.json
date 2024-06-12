@@ -3,38 +3,43 @@
   "description": "Frontend Gradle plugin's official site",
   "license": "Apache-2.0",
   "version": "8.0.0",
-  "packageManager": "yarn@3.6.0",
+  "engines": {
+    "node": "~20.9.0"
+  },
+  "packageManager": "yarn@3.8.1",
+  "type": "module",
   "scripts": {
-    "dev": "nuxt",
     "build": "nuxt build",
     "clean": "rimraf -fr dist",
-    "deploy": "rimraf -fr ../docs && ncp dist ../docs",
-    "start": "nuxt start",
-    "generate": "nuxt generate --fail-on-error",
-    "lint:js": "eslint --ext .js,.vue --ignore-path .gitignore .",
-    "lint": "yarn lint:js"
+    "deploy": "rimraf -fr ../docs && cpx \"dist/**\" ../docs",
+    "dev": "nuxt dev",
+    "format": "prettier . --write",
+    "generate": "nuxt generate",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "typecheck": "nuxt typecheck"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-free": "~5",
-    "bootstrap": "~4",
-    "nuxt": "~2",
-    "vue-i18n": "~8"
+    "@fortawesome/fontawesome-free": "~6",
+    "@pinia/nuxt": "~0",
+    "bootstrap": "~5",
+    "nuxt": "~3",
+    "vue": "~3",
+    "vue-router": "~4"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "~7",
-    "@nuxtjs/eslint-config": "~7",
-    "@nuxtjs/eslint-module": "~3",
-    "babel-eslint": "~10",
-    "eslint": "~7",
-    "eslint-config-prettier": "~8",
-    "eslint-plugin-nuxt": "~3",
-    "eslint-plugin-prettier": "~4",
-    "fibers": "~5",
-    "ncp": "~2",
-    "node-gyp": "~9",
-    "prettier": "~2",
+    "@nuxt/eslint": "~0",
+    "@nuxtjs/i18n": "~8",
+    "@types/eslint-config-prettier": "~6",
+    "cpx": "~1",
+    "eslint": "~9",
+    "eslint-config-prettier": "~9",
+    "prettier": "~3",
     "rimraf": "~5",
     "sass": "~1",
-    "sass-loader": "~10"
+    "typescript": "~5",
+    "vue-tsc": "~1"
   }
 }

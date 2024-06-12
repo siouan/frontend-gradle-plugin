@@ -1,8 +1,9 @@
 <template>
-    <article class="mt-4 pb-2 border-bottom">
+    <article class="mb-3 pb-3 border-bottom">
         <header>
             <h4>
-                <slot name="question" /> <fgp-site-link path="#app" class="small text-info">&uparrow;</fgp-site-link>
+                <slot name="question" />
+                <FgpSiteLink :path="`${$config.public.paths.faqs}#app`" class="small text-info">&uparrow;</FgpSiteLink>
             </h4>
         </header>
         <section class="px-3">
@@ -10,12 +11,3 @@
         </section>
     </article>
 </template>
-
-<script>
-import Vue from 'vue';
-import fgpSiteLink from '@/components/link/site-link';
-
-export default Vue.component('fgp-faq', {
-    components: { fgpSiteLink }
-});
-</script>

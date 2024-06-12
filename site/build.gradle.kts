@@ -13,7 +13,7 @@ plugins {
 }
 
 frontend {
-    nodeVersion.set("18.17.1")
+    nodeVersion.set("20.12.2")
     assembleScript.set("run generate")
     cleanScript.set("run clean")
     publishScript.set("run deploy")

@@ -1,18 +1,8 @@
 <template>
-    <fgp-property name="httpProxyPort" type="int" default-value="443" :tasks="['installNode', 'installYarn']">
+    <FgpProperty name="httpProxyPort" type="int" default-value="443" :task-names="['installNode', 'installYarn']">
         <p>
             Port of the proxy server used for secure HTTP requests. This property is ignored unless the
-            <fgp-property-link name="httpProxyHost" /> property is defined.
+            <FgpPropertyLink name="httpProxyHost" /> property is defined.
         </p>
-    </fgp-property>
+    </FgpProperty>
 </template>
-
-<script>
-import Vue from 'vue';
-import fgpProperty from '@/components/property/property';
-import fgpPropertyLink from '@/components/link/property-link';
-
-export default Vue.component('fgp-http-proxy-port-property', {
-    components: { fgpProperty, fgpPropertyLink }
-});
-</script>

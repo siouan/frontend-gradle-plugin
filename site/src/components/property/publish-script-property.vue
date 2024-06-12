@@ -1,24 +1,15 @@
 <template>
-    <fgp-property
+    <FgpProperty
         name="publishScript"
         type="java.lang.String"
         :required="false"
         example="run publish"
-        :tasks="['publishFrontend']"
+        :task-names="['publishFrontend']"
     >
         <p>Script called to publish the frontend artifacts.</p>
-        <fgp-info>
-            Take a look at this <fgp-site-link path="#script-settings">guide</fgp-site-link> about script settings.
-        </fgp-info>
-    </fgp-property>
+        <FgpInfo>
+            Take a look at this
+            <FgpSiteLink :path="`${$config.public.paths.configuration}#script-settings`">guide</FgpSiteLink> about script settings.
+        </FgpInfo>
+    </FgpProperty>
 </template>
-
-<script>
-import Vue from 'vue';
-import fgpInfo from '@/components/info';
-import fgpProperty from '@/components/property/property';
-
-export default Vue.component('fgp-publish-script-property', {
-    components: { fgpInfo, fgpProperty }
-});
-</script>

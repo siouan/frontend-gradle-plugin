@@ -1,23 +1,13 @@
 <template>
-    <fgp-site-link :path="`${fgp.paths.tasks}#${name}`">
-        <fgp-code>{{ name }}</fgp-code>
-    </fgp-site-link>
+    <FgpSiteLink :path="`${$config.public.paths.tasks}#${name}`">
+        <FgpCode>{{ name }}</FgpCode>
+    </FgpSiteLink>
 </template>
 
-<script>
-import Vue from 'vue';
-import fgpCode from '@/components/code';
-import fgpSiteLink from '@/components/link/site-link';
-import fgpAppConfig from '@/mixin/app-config';
+<script setup lang="ts">
+interface Props {
+    readonly name: string;
+}
 
-export default Vue.component('fgp-task-link', {
-    components: { fgpCode, fgpSiteLink },
-    mixins: [fgpAppConfig],
-    props: {
-        name: {
-            type: String,
-            required: true
-        }
-    }
-});
+defineProps<Props>();
 </script>

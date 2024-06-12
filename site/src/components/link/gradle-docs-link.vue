@@ -1,22 +1,15 @@
 <template>
-    <fgp-link :href="`https://docs.gradle.org${path}`" :hover-style-disabled="hoverStyleDisabled"><slot /></fgp-link>
+    <FgpLink :href="`https://docs.gradle.org${path}`" :hover-style-disabled="hoverStyleDisabled"><slot /></FgpLink>
 </template>
 
-<script>
-import Vue from 'vue';
-import fgpLink from '@/components/link/link';
+<script setup lang="ts">
+interface Props {
+    readonly path?: string | null;
+    readonly hoverStyleDisabled?: boolean;
+}
 
-export default Vue.component('fgp-gradle-docs-link', {
-    components: { fgpLink },
-    props: {
-        path: {
-            type: String,
-            default: null
-        },
-        hoverStyleDisabled: {
-            type: Boolean,
-            default: false
-        }
-    }
+withDefaults(defineProps<Props>(), {
+    path: null,
+    hoverStyleDisabled: false,
 });
 </script>

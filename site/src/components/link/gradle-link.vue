@@ -1,28 +1,23 @@
 <template>
-    <fgp-link :href="gradleUrl">{{ $t("navigation.gradle.label") }}</fgp-link>
+    <FgpLink :href="gradleUrl">{{ $t('navigation.gradle.label') }}</FgpLink>
 </template>
 
-<script>
-import Vue from 'vue';
-import fgpLink from '@/components/link/link.vue';
+<script setup lang="ts">
+interface Props {
+    readonly path?: string | null;
+    readonly hoverStyleDisabled?: boolean;
+}
 
 const GRADLE_BASE_URL = 'https://gradle.org';
 
-export default Vue.component('fgp-gradle-link', {
-    components: { fgpLink },
-    props: {
-        path: {
-            type: String,
-            default: '/'
-        }
-    },
-    computed: {
-        gradleUrl() {
-            if (this.path) {
-                return `${GRADLE_BASE_URL}${this.path}`;
-            }
-            return GRADLE_BASE_URL;
-        }
+const props = withDefaults(defineProps<Props>(), {
+    path: '/',
+    hoverStyleDisabled: false,
+});
+const gradleUrl = computed(() => {
+    if (props.path) {
+        return `${GRADLE_BASE_URL}${props.path}`;
     }
+    return GRADLE_BASE_URL;
 });
 </script>

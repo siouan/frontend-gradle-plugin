@@ -1,12 +1,3 @@
 <template>
-    <fgp-link href="https://pnpm.io/">{{ $t("navigation.pnpm.label") }}</fgp-link>
+    <FgpLink href="https://pnpm.io/">{{ $t('navigation.pnpm.label') }}</FgpLink>
 </template>
-
-<script>
-import Vue from 'vue';
-import fgpLink from '@/components/link/link';
-
-export default Vue.component('fgp-pnpm-link', {
-    components: { fgpLink }
-});
-</script>

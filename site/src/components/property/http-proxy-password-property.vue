@@ -1,30 +1,18 @@
 <template>
-    <fgp-property
+    <FgpProperty
         name="httpProxyPassword"
         type="java.lang.String"
         :required="false"
-        :tasks="['installNode', 'installYarn']"
+        :task-names="['installNode', 'installYarn']"
     >
         <p>
             Set this property to download distributions through the proxy server with an authenticated identity (BASIC
-            scheme server-side). The property is ignored unless the <fgp-property-link name="httpProxyUsername" />
-            property is not <fgp-code>null</fgp-code>.
+            scheme server-side). The property is ignored unless the
+            <FgpPropertyLink name="httpProxyUsername" /> property is not <FgpCode>null</FgpCode>.
         </p>
-        <fgp-warning>
+        <FgpWarning>
             SECURITY: do not to store a plain text password in the build script. Store it in an environment variable or
             an external user property, and use one or the other as the value of this property.
-        </fgp-warning>
-    </fgp-property>
+        </FgpWarning>
+    </FgpProperty>
 </template>
-
-<script>
-import Vue from 'vue';
-import fgpCode from '@/components/code';
-import fgpProperty from '@/components/property/property';
-import fgpPropertyLink from '@/components/link/property-link';
-import fgpWarning from '@/components/warning';
-
-export default Vue.component('fgp-http-proxy-password-property', {
-    components: { fgpCode, fgpProperty, fgpPropertyLink, fgpWarning }
-});
-</script>

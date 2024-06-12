@@ -2,36 +2,34 @@
     <article class="mb-3 border-bottom">
         <header>
             <h4>
-                <fgp-task-link-anchor :name="name" /> <template v-if="type">Type</template>
-                <template v-else>Task</template>
-                <fgp-code>
-                    {{ name }}
-                </fgp-code>
-                -
-                <slot name="title" />
-                <fgp-gradle-docs-link
+                <FgpTaskLink-anchor :name="name" /> <template v-if="type">Type</template> <template v-else
+                >Task</template> <FgpCode>{{ name }}</FgpCode
+                > - <slot name="title" /> <FgpGradleDocsLink
                     v-if="cacheable"
                     path="/current/userguide/build_cache.html#sec:task_output_caching_details"
                     title="Cacheable task"
-                    class="badge badge-dark"
+                    class="badge fgp-cacheable-task"
                     hover-style-disabled
-                >C</fgp-gradle-docs-link>
-                <fgp-site-link path="#app" class="small text-info">&uparrow;</fgp-site-link>
+                    >C</FgpGradleDocsLink
+                > <FgpSiteLink :path="`${$config.public.paths.tasks}#app`" class="small text-info">&uparrow;</FgpSiteLink>
             </h4>
             <ul>
-                <li v-if="dependingTasks.length > 0">
+                <li v-if="dependingTaskNames.length > 0">
                     Depends on:
-                    <span v-for="(taskName, index) in dependingTasks" :key="taskName">
-                        <fgp-task-link :name="taskName" /><template v-if="index < dependingTasks.length - 1">, </template>
+                    <span v-for="(taskName, index) in dependingTaskNames" :key="taskName">
+                        <FgpTaskLink :name="taskName" /><template v-if="index < dependingTaskNames.length - 1"
+                            >,
+                        </template>
                     </span>
                 </li>
                 <li v-if="inputs.length > 0">
                     Inputs:
                     <ul>
                         <li v-for="(input, index) in inputs" :key="index">
-                            <fgp-task-property-type :type="input.type" /><fgp-code>{{ input.name }}</fgp-code>:
+                            <FgpTaskPropertyType :type="input.type" /> <FgpCode>{{ input.name }}</FgpCode
+                            >:
                             <template v-if="input.binding === 'P'">
-                                <fgp-property-link :name="input.property" /> property
+                                <FgpPropertyLink :name="input.property" /> property
                             </template>
                             <slot v-if="input.binding === 'C'" :name="input.name" />
                         </li>
@@ -41,55 +39,56 @@
                     Outputs:
                     <ul>
                         <li v-for="(output, index) in outputs" :key="index">
-                            <fgp-task-property-type :type="output.type" /><fgp-code>{{ output.name }}</fgp-code>:
+                            <FgpTaskPropertyType :type="output.type" /> <FgpCode>{{ output.name }}</FgpCode
+                            >:
                             <slot v-if="output.binding === 'C'" :name="output.name" />
                         </li>
                     </ul>
                 </li>
-                <li v-if="skippable">
-                    Skipped when <slot name="skipConditions" />
-                </li>
+                <li v-if="skippable">Skipped when <slot name="skipConditions" /></li>
             </ul>
         </header>
         <section class="px-3"><slot name="description" /></section>
     </article>
 </template>
 
-<script>
-import Vue from 'vue';
-import fgpTaskPropertyType from '@/components/task/task-property-type';
-import fgpTaskLinkAnchor from '@/components/link/task-link-anchor';
+<script setup lang="ts">
+interface Input {
+    readonly name: string;
+    readonly type: TaskPropertyTypeType;
+    readonly binding: TaskPropertyBindingType;
+    readonly property?: string;
+}
 
-export default Vue.component('fgp-task', {
-    components: {
-        fgpTaskPropertyType, fgpTaskLinkAnchor
-    },
-    props: {
-        name: {
-            type: String,
-            required: true
-        },
-        type: {
-            type: Boolean,
-            default: false
-        },
-        inputs: {
-            type: Array,
-            default: () => []
-        },
-        outputs: {
-            type: Array,
-            default: () => []
-        },
-        cacheable: {
-            type: Boolean,
-            default: false
-        }
-    },
-    computed: {
-        skippable() {
-            return !!this.$slots.skipConditions;
-        }
-    }
+interface Output {
+    readonly name: string;
+    readonly type: TaskPropertyTypeType;
+    readonly binding: TaskPropertyBindingType;
+}
+
+interface Props {
+    readonly name: string;
+    readonly type?: boolean;
+    readonly dependingTaskNames?: string[];
+    readonly inputs?: any[];
+    readonly outputs?: any[];
+    readonly cacheable?: boolean;
+}
+
+const slots = useSlots();
+withDefaults(defineProps<Props>(), {
+    type: false,
+    dependingTaskNames: () => [],
+    inputs: () => [],
+    outputs: () => [],
+    cacheable: false,
 });
+const skippable = computed(() => !!slots.skipConditions);
 </script>
+
+<style scoped>
+.fgp-cacheable-task {
+    color: var(--bs-body-bg);
+    background-color: var(--bs-emphasis-color);
+}
+</style>
