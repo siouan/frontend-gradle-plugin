@@ -3,9 +3,9 @@
         <FgpMainTitle class="text-center">
             Frontend Gradle plugin
             <FgpImageLink
-                href="https://github.com/siouan/frontend-gradle-plugin/releases/tag/v8.0.0"
-                src="https://img.shields.io/badge/Latest%20release-8.0.0-blue.svg"
-                alt="Latest release 8.0.0"
+                href="https://github.com/siouan/frontend-gradle-plugin/releases/tag/v8.1.0"
+                src="https://img.shields.io/badge/Latest%20release-8.1.0-blue.svg"
+                alt="Latest release 8.1.0"
                 class="ml-1"
             />
         </FgpMainTitle>
