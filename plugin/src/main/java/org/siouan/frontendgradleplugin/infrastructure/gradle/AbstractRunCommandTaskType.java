@@ -1,7 +1,5 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
-import static org.siouan.frontendgradleplugin.FrontendGradlePlugin.BEAN_REGISTRY_BUILD_SERVICE_NAME_PREFIX;
-
 import org.gradle.api.Project;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Provider;
@@ -22,7 +20,7 @@ public abstract class AbstractRunCommandTaskType extends AbstractRunCommandTask 
             .getGradle()
             .getSharedServices()
             .getRegistrations()
-            .named(BEAN_REGISTRY_BUILD_SERVICE_NAME_PREFIX + project.getLayout().getProjectDirectory())
+            .named(BeanRegistryBuildService.buildName(project))
             .flatMap(BuildServiceRegistration::getService);
         beanRegistryBuildService.set(beanRegistryBuildServiceProvider);
         packageJsonDirectory.set(frontendExtension.getPackageJsonDirectory().getAsFile());
