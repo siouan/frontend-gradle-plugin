@@ -3,7 +3,6 @@ package org.siouan.frontendgradleplugin.domain.installer;
 import java.net.URL;
 
 import lombok.RequiredArgsConstructor;
-import org.siouan.frontendgradleplugin.domain.SystemSettingsProvider;
 
 /**
  * Resolves proxy settings for a given URL.
@@ -19,8 +18,6 @@ public class ResolveProxySettingsByUrl {
 
     private static final String HTTPS_PROTOCOL = "https";
 
-    private final SystemSettingsProvider systemSettingsProvider;
-
     private final IsNonProxyHost isNonProxyHost;
 
     private final SelectProxySettings selectProxySettings;
@@ -31,7 +28,7 @@ public class ResolveProxySettingsByUrl {
         if (resourceProtocol.equals(HTTP_PROTOCOL) || resourceProtocol.equals(HTTPS_PROTOCOL)) {
             if (isNonProxyHost.execute(IsNonProxyHostCommand
                 .builder()
-                .nonProxyHosts(systemSettingsProvider.getNonProxyHosts())
+                .nonProxyHosts(command.getSystemNonProxyHosts())
                 .hostNameOrIpAddress(resourceUrl.getHost())
                 .build())) {
                 return ProxySettings.NONE;
@@ -39,15 +36,15 @@ public class ResolveProxySettingsByUrl {
                 final SelectProxySettingsCommand.SelectProxySettingsCommandBuilder selectProxySettingsCommandBuilder = SelectProxySettingsCommand.builder();
                 if (resourceProtocol.equals(HTTPS_PROTOCOL)) {
                     selectProxySettingsCommandBuilder
-                        .systemProxyHost(systemSettingsProvider.getHttpsProxyHost())
-                        .systemProxyPort(systemSettingsProvider.getHttpsProxyPort())
+                        .systemProxyHost(command.getSystemHttpsProxyHost())
+                        .systemProxyPort(command.getSystemHttpsProxyPort())
                         .proxyHost(command.getHttpsProxyHost())
                         .proxyPort(command.getHttpsProxyPort())
                         .proxyCredentials(command.getHttpsProxyCredentials());
                 } else {
                     selectProxySettingsCommandBuilder
-                        .systemProxyHost(systemSettingsProvider.getHttpProxyHost())
-                        .systemProxyPort(systemSettingsProvider.getHttpProxyPort())
+                        .systemProxyHost(command.getSystemHttpProxyHost())
+                        .systemProxyPort(command.getSystemHttpProxyPort())
                         .proxyHost(command.getHttpProxyHost())
                         .proxyPort(command.getHttpProxyPort())
                         .proxyCredentials(command.getHttpProxyCredentials());

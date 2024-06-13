@@ -2,7 +2,6 @@
     <FgpProperty
         name="nodeInstallDirectory"
         type="java.io.File"
-        :required="false"
         default-value="project.layout.projectDirectory.dir(&quot;node&quot;)"
         :task-names="[
             'installNode',

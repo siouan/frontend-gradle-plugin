@@ -27,102 +27,63 @@ version = fgpVersion
 description = fgpDescription
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(11)
+    }
     withJavadocJar()
     withSourcesJar()
 }
 
 sourceSets {
-    create("intTest") {
+    create("integrationTest") {
         compileClasspath += sourceSets.main.get().output + sourceSets.test.get().output
         runtimeClasspath += sourceSets.main.get().output + sourceSets.test.get().output
     }
 }
 
-val intTestImplementation: Configuration by configurations.getting {
+val integrationTestImplementation: Configuration by configurations.getting {
     extendsFrom(configurations.implementation.get())
     extendsFrom(configurations.testImplementation.get())
 }
 
-configurations["intTestRuntimeOnly"]
+configurations["integrationTestRuntimeOnly"]
     .extendsFrom(configurations.runtimeOnly.get())
     .extendsFrom(configurations.testRuntimeOnly.get())
 
 dependencies {
     implementation(gradleApi())
     implementation("io.github.resilience4j:resilience4j-retry:1.7.1")
-    implementation("org.apache.httpcomponents.client5:httpclient5:5.2.1")
-    implementation("org.apache.commons:commons-compress:1.23.0")
-    implementation("org.json:json:20230618")
-    compileOnly("org.projectlombok:lombok:1.18.28")
-    annotationProcessor("org.projectlombok:lombok:1.18.28")
+    implementation("org.apache.httpcomponents.client5:httpclient5:5.3.1")
+    implementation("org.apache.commons:commons-compress:1.26.2")
+    implementation("org.json:json:20240303")
+    compileOnly("org.projectlombok:lombok:1.18.32")
+    annotationProcessor("org.projectlombok:lombok:1.18.32")
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.0")
-    testImplementation("org.mockito:mockito-core:5.4.0")
-    testImplementation("org.mockito:mockito-junit-jupiter:5.4.0")
-    testImplementation("org.junit-pioneer:junit-pioneer:2.0.1")
-    testImplementation("org.assertj:assertj-core:3.24.2")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
-    testCompileOnly("org.projectlombok:lombok:1.18.28")
-    testAnnotationProcessor("org.projectlombok:lombok:1.18.28")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.2")
+    testImplementation("org.mockito:mockito-core:5.12.0")
+    testImplementation("org.mockito:mockito-junit-jupiter:5.12.0")
+    testImplementation("org.junit-pioneer:junit-pioneer:2.2.0")
+    testImplementation("org.assertj:assertj-core:3.26.0")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.2")
+    testCompileOnly("org.projectlombok:lombok:1.18.32")
+    testAnnotationProcessor("org.projectlombok:lombok:1.18.32")
 
-    intTestImplementation("com.github.tomakehurst:wiremock:2.27.2")
+    integrationTestImplementation("org.wiremock:wiremock:3.6.0")
 }
-
-tasks.named<Wrapper>("wrapper") {
-    distributionType = Wrapper.DistributionType.ALL
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
-    jvmArgs(
-        "--add-opens", "java.base/java.lang=ALL-UNNAMED",
-        "--add-opens", "java.base/java.util=ALL-UNNAMED"
-    )
-    outputs.upToDateWhen { false }
-}
-
-tasks.register<Test>("integrationTest") {
-    description = "Runs integration tests."
-    group = "verification"
-    testClassesDirs = sourceSets["intTest"].output.classesDirs
-    classpath = sourceSets["intTest"].runtimeClasspath
-    // Yarn immutable installs prevents failures in integration tests due to missing yarn.lock file.
-    environment["YARN_ENABLE_IMMUTABLE_INSTALLS"] = "false"
-    shouldRunAfter("test")
-    outputs.upToDateWhen { false }
-}
-
-tasks.named<Task>("check") {
-    dependsOn(tasks.named("integrationTest"))
-}
-
-tasks.named<JacocoReport>("jacocoTestReport") {
-    dependsOn(tasks.named("test"), tasks.named("integrationTest"))
-    executionData.setFrom(
-        file("${project.buildDir}/jacoco/test.exec"),
-        file("${project.buildDir}/jacoco/integrationTest.exec")
-    )
-    reports {
-        xml.required.set(true)
-        xml.outputLocation.set(file("${buildDir}/reports/jacoco/report.xml"))
-    }
-}
-
-gradle.addListener(GradleTestListener(logger))
 
 idea {
     module {
         // Force integration test source set as test folder
-        testSources.from(project.sourceSets.getByName("intTest").java.srcDirs)
-        testResources.from(project.sourceSets.getByName("intTest").resources.srcDirs)
+        testSources.from(project.sourceSets.getByName("integrationTest").java.srcDirs)
+        testResources.from(project.sourceSets.getByName("integrationTest").resources.srcDirs)
+        isDownloadJavadoc = true
+        isDownloadSources = true
     }
 }
 
 jacoco {
-    toolVersion = "0.8.10"
+    toolVersion = "0.8.11"
 }
 
 gradlePlugin {
@@ -148,23 +109,63 @@ sonarqube {
         property("sonar.projectVersion", "${fgpVersion}-jdk11")
 
         property("sonar.links.homepage", "https://github.com/siouan/frontend-gradle-plugin")
-        property("sonar.links.ci", "https://travis-ci.com/siouan/frontend-gradle-plugin")
+        property("sonar.links.ci", "https://github.com/siouan/frontend-gradle-plugin/actions")
         property("sonar.links.scm", "https://github.com/siouan/frontend-gradle-plugin")
         property("sonar.links.issue", "https://github.com/siouan/frontend-gradle-plugin/issues")
 
         property("sonar.sources", "src/main")
-        property("sonar.tests", "src/test,src/intTest")
+        property("sonar.tests", "src/test,src/integrationTest")
 
         property("sonar.java.binaries", "build/classes/java/main")
-        property("sonar.java.test.binaries", "build/classes/java/test,build/classes/java/intTest")
+        property("sonar.java.test.binaries", "build/classes/java/test,build/classes/java/integrationTest")
         property("sonar.junit.reportPaths", "build/test-results/test/,build/test-results/integrationTest/")
-        property("sonar.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco/report.xml")
+        property("sonar.jacoco.xmlReportPaths", "build/reports/jacoco/report.xml")
         property("sonar.verbose", true)
 
         // Irrelevant duplications detected on task inputs
         property(
             "sonar.cpd.exclusions",
-            "**/org/siouan/frontendgradleplugin/domain/model/*.java,**/org/siouan/frontendgradleplugin/domain/usecase/Get*ExecutablePath.java"
+            "**/org/siouan/frontendgradleplugin/domain/Resolve*ExecutablePath.java,**/org/siouan/frontendgradleplugin/infrastructure/gradle/FrontendExtension.java"
         )
     }
 }
+
+tasks.named<Wrapper>("wrapper") {
+    distributionType = Wrapper.DistributionType.ALL
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+}
+
+tasks.named<Test>("test") {
+    outputs.upToDateWhen { false }
+}
+
+tasks.register<Test>("integrationTest") {
+    description = "Runs integration tests."
+    group = "verification"
+    testClassesDirs = sourceSets["integrationTest"].output.classesDirs
+    classpath = sourceSets["integrationTest"].runtimeClasspath
+    // Yarn immutable installs prevents failures in integration tests due to missing yarn.lock file.
+    environment["YARN_ENABLE_IMMUTABLE_INSTALLS"] = "false"
+    shouldRunAfter("test")
+    outputs.upToDateWhen { false }
+}
+
+tasks.named<Task>("check") {
+    dependsOn(tasks.named("integrationTest"))
+}
+
+tasks.named<JacocoReport>("jacocoTestReport") {
+    dependsOn(tasks.named("test"), tasks.named("integrationTest"))
+    executionData.setFrom(
+        project.layout.buildDirectory.files("jacoco/test.exec", "jacoco/integrationTest.exec"),
+    )
+    reports {
+        xml.required.set(true)
+        xml.outputLocation.set(project.layout.buildDirectory.file("reports/jacoco/report.xml"))
+    }
+}
+
+gradle.addListener(GradleTestListener(logger))

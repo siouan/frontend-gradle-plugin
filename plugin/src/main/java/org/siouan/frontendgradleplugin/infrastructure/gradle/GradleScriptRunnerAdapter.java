@@ -33,6 +33,7 @@ public class GradleScriptRunnerAdapter {
             .nodeInstallDirectoryPath(scriptProperties.getNodeInstallDirectoryPath())
             .platform(scriptProperties.getPlatform())
             .script(scriptProperties.getScript())
+            .environmentVariables(scriptProperties.getEnvironmentVariables())
             .build());
         logger.debug("Execution settings: {}", executionSettings);
 

@@ -78,7 +78,8 @@ public class ResolveExecutionSettings {
             args.add(WINDOWS_EXECUTABLE_AUTOEXIT_FLAG);
             // The command that must be executed in the terminal must be a single argument on itself (like if it was
             // quoted).
-            args.add(escapeWhitespacesFromCommandLineToken(executablePath) + " " + command.getScript().trim());
+            args.add(
+                escapeWhitespacesFromCommandLineToken(executablePath) + " " + command.getScript().trim());
         } else {
             executable = UNIX_EXECUTABLE_PATH;
             args.add(UNIX_EXECUTABLE_AUTOEXIT_FLAG);
@@ -97,7 +98,8 @@ public class ResolveExecutionSettings {
             }
         }
 
-        return new ExecutionSettings(command.getPackageJsonDirectoryPath(), executablePaths, executable, args);
+        return new ExecutionSettings(command.getPackageJsonDirectoryPath(), executablePaths, executable, args,
+            command.getEnvironmentVariables());
     }
 
     private String escapeWhitespacesFromCommandLineToken(Path path) {

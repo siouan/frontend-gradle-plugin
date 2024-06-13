@@ -1,9 +1,10 @@
 <template>
     <FgpTask
         name="installPackageManager"
-        :depending-task-names="['resolvePackageManager']"
+        :depending-task-names="['installCorepack', 'resolvePackageManager']"
         :inputs="inputs"
         :outputs="outputs"
+        custom-environment-variables-supported
     >
         <template #title>Install package manager</template>
         <template #packageManagerSpecificationFile>
@@ -20,7 +21,10 @@
             <FgpPropertyLink name="nodeInstallDirectory" /><FgpCode>/bin/[npm|pnpm|yarn]</FgpCode>
             depending on the O/S).
         </template>
-        <template #skipConditions> task <FgpTaskLink name="resolvePackageManager" /> was skipped. </template>
+        <template #skipConditions>
+            <FgpPropertyLink name="packageJsonDirectory" /><FgpCode>/package.json</FgpCode>
+            file does not exist.
+        </template>
         <template #description>
             <p>
                 The task installs the package manager resolved with task

@@ -26,8 +26,9 @@
                     Inputs:
                     <ul>
                         <li v-for="(input, index) in inputs" :key="index">
-                            <FgpTaskPropertyType :type="input.type" /> <FgpCode>{{ input.name }}</FgpCode
-                            >:
+                            <FgpTaskPropertyType :type="input.type" />
+                            <FgpOptionalTaskPropertyBadge v-if="input.optionalHint" :title="input.optionalHint"
+                            /> <FgpCode>{{ input.name }}</FgpCode>:
                             <template v-if="input.binding === 'P'">
                                 <FgpPropertyLink :name="input.property" /> property
                             </template>
@@ -46,6 +47,9 @@
                     </ul>
                 </li>
                 <li v-if="skippable">Skipped when <slot name="skipConditions" /></li>
+                <li v-if="customEnvironmentVariablesSupported">Supports <FgpSiteLink
+                    :path="`${$config.public.paths.tasks}#custom-environment-variables`"
+                >custom environment variables</FgpSiteLink></li>
             </ul>
         </header>
         <section class="px-3"><slot name="description" /></section>
@@ -58,12 +62,18 @@ interface Input {
     readonly type: TaskPropertyTypeType;
     readonly binding: TaskPropertyBindingType;
     readonly property?: string;
+    readonly optionalHint?: string;
 }
 
 interface Output {
     readonly name: string;
     readonly type: TaskPropertyTypeType;
     readonly binding: TaskPropertyBindingType;
+}
+
+interface OutcomeHint {
+    readonly outcome: TaskOutcomeType;
+    readonly description: string;
 }
 
 interface Props {
@@ -73,6 +83,7 @@ interface Props {
     readonly inputs?: any[];
     readonly outputs?: any[];
     readonly cacheable?: boolean;
+    readonly customEnvironmentVariablesSupported?: boolean;
 }
 
 const slots = useSlots();
@@ -82,6 +93,7 @@ withDefaults(defineProps<Props>(), {
     inputs: () => [],
     outputs: () => [],
     cacheable: false,
+    customEnvironmentVariableSupported: false
 });
 const skippable = computed(() => !!slots.skipConditions);
 </script>

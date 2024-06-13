@@ -30,6 +30,8 @@ import org.siouan.frontendgradleplugin.domain.Platform;
  */
 public class FileManagerImpl implements FileManager {
 
+    private static final long serialVersionUID = -4492951623732511344L;
+
     @Override
     public long copy(final InputStream inputStream, final Path filePath) throws IOException {
         return Files.copy(inputStream, filePath);

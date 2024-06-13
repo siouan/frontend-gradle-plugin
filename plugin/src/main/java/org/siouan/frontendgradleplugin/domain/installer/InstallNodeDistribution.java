@@ -55,8 +55,8 @@ public class InstallNodeDistribution {
 
         final GetDistributionCommand getDistributionCommand = new GetDistributionCommand(command.getPlatform(),
             command.getVersion(), command.getDistributionUrlRoot(), command.getDistributionUrlPathPattern(),
-            command.getDistributionServerCredentials(), command.getProxySettings(),
-            command.getRetrySettings(), command.getTemporaryDirectoryPath());
+            command.getDistributionServerCredentials(), command.getProxySettings(), command.getRetrySettings(),
+            command.getTemporaryDirectoryPath());
         final Path distributionFilePath = getDistribution.execute(getDistributionCommand);
 
         // Deploys the distribution

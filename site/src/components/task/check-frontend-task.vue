@@ -1,8 +1,13 @@
 <template>
-    <FgpTask name="checkFrontend" :depending-task-names="['installFrontend']" :inputs="inputs">
+    <FgpTask
+        name="checkFrontend"
+        :depending-task-names="['installFrontend']"
+        :inputs="inputs"
+        custom-environment-variables-supported
+    >
         <template #title>Check frontend application</template>
         <template #skipConditions>
-            task <FgpTaskLink name="installFrontend" /> was skipped or property
+            <FgpPropertyLink name="packageJsonDirectory" /><FgpCode>/package.json</FgpCode> file does not exist, or
             <FgpPropertyLink name="checkScript" /> is <FgpCode>null</FgpCode>.
         </template>
         <template #description>
@@ -12,10 +17,7 @@
                 <FgpCode>package.json</FgpCode> file, and the <FgpPropertyLink name="checkScript" /> property shall be
                 set with the corresponding <FgpCode>npm</FgpCode>/<FgpCode>pnpm</FgpCode>/<FgpCode>yarn</FgpCode>
                 command. A typical check script may lint source files, execute tests, and/or perform additional analysis
-                actions. This task depends on the
-                <FgpTaskLink name="installFrontend" /> task, and is skipped if the
-                <FgpPropertyLink name="checkScript" /> property is <FgpCode>null</FgpCode>. Apart from direct execution,
-                the task is also executed when the Gradle lifecycle
+                actions. Apart from direct execution, the task is also executed when the Gradle lifecycle
                 <FgpGradleDocsLink path="/current/userguide/base_plugin.html#sec:base_tasks">check</FgpGradleDocsLink>
                 task is executed.
             </p>

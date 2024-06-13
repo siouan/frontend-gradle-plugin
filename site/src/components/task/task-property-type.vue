@@ -18,6 +18,8 @@ const props = defineProps<Props>();
 
 const gradleDocsLinkPath = computed(() => {
     switch (props.type) {
+        case TaskPropertyType.DIRECTORY:
+            return '/current/javadoc/org/gradle/api/file/DirectoryProperty.html';
         case TaskPropertyType.REGULAR_FILE:
             return '/current/javadoc/org/gradle/api/file/RegularFileProperty.html';
         case TaskPropertyType.EXECUTABLE_TYPE:
@@ -30,6 +32,8 @@ const gradleDocsLinkPath = computed(() => {
 });
 const gradleDocsLinkTitle = computed(() => {
     switch (props.type) {
+        case TaskPropertyType.DIRECTORY:
+            return 'Provider of org.gradle.api.file.DirectoryProperty instance (task is out-of-date if the content changes)';
         case TaskPropertyType.EXECUTABLE_TYPE:
             return 'Provider of org.siouan.frontendgradleplugin.domain.ExecutableType instance (task is out-of-date if the value changes)';
         case TaskPropertyType.FILE:
@@ -49,6 +53,7 @@ const chipClass = computed(() => {
         case TaskPropertyType.FILE:
         case TaskPropertyType.STRING:
             return 'text-bg-primary';
+        case TaskPropertyType.DIRECTORY:
         case TaskPropertyType.REGULAR_FILE:
             return 'text-bg-danger';
         default:

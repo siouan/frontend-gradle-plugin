@@ -17,6 +17,7 @@ frontend {
 }
 
 tasks.register<RunNode>("nodeVersion") {
+    dependsOn("installNode")
     script.set("-v")
 }
 

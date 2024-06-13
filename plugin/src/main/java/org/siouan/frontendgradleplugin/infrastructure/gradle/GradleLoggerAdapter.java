@@ -1,5 +1,7 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
+import java.io.Serializable;
+
 import org.gradle.api.logging.LogLevel;
 import org.siouan.frontendgradleplugin.domain.Logger;
 
@@ -8,15 +10,17 @@ import org.siouan.frontendgradleplugin.domain.Logger;
  *
  * @since 2.0.0
  */
-public class GradleLoggerAdapter implements Logger {
+public class GradleLoggerAdapter implements Logger, Serializable {
 
-    private org.gradle.api.logging.Logger gradleLogger;
+    private static final long serialVersionUID = 7961046158160963130L;
+
+    private transient org.gradle.api.logging.Logger gradleLogger;
 
     private LogLevel loggingLevel;
 
     private boolean verboseModeEnabled;
 
-    private String prefix;
+    private transient String prefix;
 
     public GradleLoggerAdapter() {
         this.loggingLevel = LogLevel.LIFECYCLE;

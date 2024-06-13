@@ -1,17 +1,13 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
-import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.toCollection;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.siouan.frontendgradleplugin.infrastructure.gradle.ExecSpecAction.PATH_VARIABLE_NAME;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,7 +16,6 @@ import java.util.function.Consumer;
 import org.gradle.process.ExecSpec;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.siouan.frontendgradleplugin.domain.ExecutionSettings;
@@ -28,15 +23,13 @@ import org.siouan.frontendgradleplugin.domain.ExecutionSettings;
 @ExtendWith(MockitoExtension.class)
 class ExecSpecActionTest {
 
-    private static final Path WORKING_DIRECTORY_PATH = Paths.get("/tmp");
+    private static final Path WORKING_DIRECTORY_PATH = Paths.get("/home");
 
-    private static final Path EXECUTABLE_DIRECTORY_PATH = WORKING_DIRECTORY_PATH.resolve("bin");
+    private static final Path EXECUTABLE_FILE_PATH = Paths.get("/opt/executable");
 
-    private static final Path EXECUTABLE_FILE_PATH = EXECUTABLE_DIRECTORY_PATH.resolve("executable");
+    private static final Path ADDITIONAL_EXECUTABLE_PATH = Paths.get("/bin");
 
-    private static final List<String> EXECUTABLE_PATHS = asList("/usr/bin", "/usr/lib");
-
-    private static final List<String> ARGUMENTS = asList("arg1", "argument 2");
+    private static final List<String> ARGUMENTS = List.of("arg1", "argument 2");
 
     @Mock
     private ExecSpec execSpec;
@@ -45,59 +38,190 @@ class ExecSpecActionTest {
     private Consumer<ExecSpec> afterConfigured;
 
     @Test
-    void should_configure_exec_spec_with_uppercase_path_variable_and_without_executable_paths() {
+    void should_configure_exec_spec_with_no_user_environment_and_no_path_override_and_no_additional_executable_paths_and_no_system_path() {
         final ExecutionSettings executionSettings = ExecutionSettings
             .builder()
             .workingDirectoryPath(WORKING_DIRECTORY_PATH)
             .additionalExecutablePaths(Set.of())
             .executablePath(EXECUTABLE_FILE_PATH)
             .arguments(ARGUMENTS)
+            .environmentVariables(Map.of())
             .build();
         final ExecSpecAction action = new ExecSpecAction(executionSettings, afterConfigured);
-        when(execSpec.getEnvironment()).thenReturn(Map.of("PATH", String.join(File.pathSeparator, EXECUTABLE_PATHS)));
+        when(execSpec.getEnvironment()).thenReturn(Map.of());
 
         action.execute(execSpec);
 
-        assertExecSpecWith(executionSettings);
+        verify(execSpec).setWorkingDir(WORKING_DIRECTORY_PATH.toString());
+        verify(execSpec).setExecutable(EXECUTABLE_FILE_PATH.toString());
+        verify(execSpec).setArgs(ARGUMENTS);
+        verify(afterConfigured).accept(execSpec);
+        verifyNoMoreInteractions(execSpec, afterConfigured);
     }
 
     @Test
-    void should_configure_exec_spec_with_lowercase_path_variable_and_executable_paths() {
-        final Set<Path> executablePaths = new HashSet<>();
-        executablePaths.add(Paths.get("\\Program Files\\node\\bin"));
-        executablePaths.add(Paths.get("/opt/yarn"));
+    void should_configure_exec_spec_with_user_environment_and_no_path_override_and_no_additional_executable_paths_and_no_system_path() {
         final ExecutionSettings executionSettings = ExecutionSettings
             .builder()
             .workingDirectoryPath(WORKING_DIRECTORY_PATH)
-            .additionalExecutablePaths(executablePaths)
+            .additionalExecutablePaths(Set.of())
             .executablePath(EXECUTABLE_FILE_PATH)
             .arguments(ARGUMENTS)
+            .environmentVariables(Map.of("VARIABLE", "value"))
             .build();
         final ExecSpecAction action = new ExecSpecAction(executionSettings, afterConfigured);
-        when(execSpec.getEnvironment()).thenReturn(Map.of("Path", String.join(File.pathSeparator, EXECUTABLE_PATHS)));
+        when(execSpec.getEnvironment()).thenReturn(Map.of());
 
         action.execute(execSpec);
 
-        assertExecSpecWith(executionSettings);
+        verify(execSpec).setWorkingDir(WORKING_DIRECTORY_PATH.toString());
+        verify(execSpec).setExecutable(EXECUTABLE_FILE_PATH.toString());
+        verify(execSpec).setArgs(ARGUMENTS);
+        verify(execSpec).environment(Map.of("VARIABLE", "value"));
+        verify(afterConfigured).accept(execSpec);
+        verifyNoMoreInteractions(execSpec, afterConfigured);
     }
 
-    private void assertExecSpecWith(final ExecutionSettings executionSettings) {
-        verify(execSpec).setWorkingDir(executionSettings.getWorkingDirectoryPath().toString());
-        verify(execSpec).setExecutable(executionSettings.getExecutablePath());
-        verify(execSpec).setArgs(executionSettings.getArguments());
-        final ArgumentCaptor<String> pathVariableCaptor = ArgumentCaptor.forClass(String.class);
-        final ArgumentCaptor<Object> pathValueCaptor = ArgumentCaptor.forClass(Object.class);
-        verify(execSpec).environment(pathVariableCaptor.capture(), pathValueCaptor.capture());
-        assertThat(pathVariableCaptor.getValue().toLowerCase()).isEqualTo("path");
-        final String pathValue = pathValueCaptor.getValue().toString();
-        final List<String> expectedPaths = executionSettings
-            .getAdditionalExecutablePaths()
-            .stream()
-            .map(Path::toString)
-            .collect(toCollection(ArrayList::new));
-        expectedPaths.add("/usr/bin");
-        expectedPaths.add("/usr/lib");
-        assertThat(pathValue.split(File.pathSeparator)).containsExactlyElementsOf(expectedPaths);
+    @Test
+    void should_configure_exec_spec_with_user_environment_and_path_override_and_no_additional_executable_paths_and_no_system_path() {
+        final ExecutionSettings executionSettings = ExecutionSettings
+            .builder()
+            .workingDirectoryPath(WORKING_DIRECTORY_PATH)
+            .additionalExecutablePaths(Set.of())
+            .executablePath(EXECUTABLE_FILE_PATH)
+            .arguments(ARGUMENTS)
+            .environmentVariables(Map.of("VARIABLE", "value", "PATH", "/usr/bin"))
+            .build();
+        final ExecSpecAction action = new ExecSpecAction(executionSettings, afterConfigured);
+        when(execSpec.getEnvironment()).thenReturn(Map.of());
+
+        action.execute(execSpec);
+
+        verify(execSpec).setWorkingDir(WORKING_DIRECTORY_PATH.toString());
+        verify(execSpec).setExecutable(EXECUTABLE_FILE_PATH.toString());
+        verify(execSpec).setArgs(ARGUMENTS);
+        verify(execSpec).environment(Map.of("VARIABLE", "value"));
+        verify(execSpec).environment(PATH_VARIABLE_NAME, "/usr/bin");
+        verify(afterConfigured).accept(execSpec);
+        verifyNoMoreInteractions(execSpec, afterConfigured);
+    }
+
+    @Test
+    void should_configure_exec_spec_with_user_environment_and_no_path_override_and_additional_executable_paths_and_no_system_path() {
+        final ExecutionSettings executionSettings = ExecutionSettings
+            .builder()
+            .workingDirectoryPath(WORKING_DIRECTORY_PATH)
+            .additionalExecutablePaths(Set.of(ADDITIONAL_EXECUTABLE_PATH))
+            .executablePath(EXECUTABLE_FILE_PATH)
+            .arguments(ARGUMENTS)
+            .environmentVariables(Map.of("VARIABLE", "value"))
+            .build();
+        final ExecSpecAction action = new ExecSpecAction(executionSettings, afterConfigured);
+        when(execSpec.getEnvironment()).thenReturn(Map.of());
+
+        action.execute(execSpec);
+
+        verify(execSpec).setWorkingDir(WORKING_DIRECTORY_PATH.toString());
+        verify(execSpec).setExecutable(EXECUTABLE_FILE_PATH.toString());
+        verify(execSpec).setArgs(ARGUMENTS);
+        verify(execSpec).environment(Map.of("VARIABLE", "value"));
+        verify(execSpec).environment(PATH_VARIABLE_NAME, ADDITIONAL_EXECUTABLE_PATH.toString());
+        verify(afterConfigured).accept(execSpec);
+        verifyNoMoreInteractions(execSpec, afterConfigured);
+    }
+
+    @Test
+    void should_configure_exec_spec_with_user_environment_and_path_override_and_additional_executable_paths_and_no_system_path() {
+        final ExecutionSettings executionSettings = ExecutionSettings
+            .builder()
+            .workingDirectoryPath(WORKING_DIRECTORY_PATH)
+            .additionalExecutablePaths(Set.of(ADDITIONAL_EXECUTABLE_PATH))
+            .executablePath(EXECUTABLE_FILE_PATH)
+            .arguments(ARGUMENTS)
+            .environmentVariables(Map.of("VARIABLE", "value", "PATH", "/usr/bin"))
+            .build();
+        final ExecSpecAction action = new ExecSpecAction(executionSettings, afterConfigured);
+        when(execSpec.getEnvironment()).thenReturn(Map.of());
+
+        action.execute(execSpec);
+
+        verify(execSpec).setWorkingDir(WORKING_DIRECTORY_PATH.toString());
+        verify(execSpec).setExecutable(EXECUTABLE_FILE_PATH.toString());
+        verify(execSpec).setArgs(ARGUMENTS);
+        verify(execSpec).environment(Map.of("VARIABLE", "value"));
+        verify(execSpec).environment(PATH_VARIABLE_NAME, ADDITIONAL_EXECUTABLE_PATH + File.pathSeparator + "/usr/bin");
+        verify(afterConfigured).accept(execSpec);
+        verifyNoMoreInteractions(execSpec, afterConfigured);
+    }
+
+    @Test
+    void should_configure_exec_spec_with_user_environment_and_no_path_override_and_no_additional_executable_paths_and_system_path() {
+        final ExecutionSettings executionSettings = ExecutionSettings
+            .builder()
+            .workingDirectoryPath(WORKING_DIRECTORY_PATH)
+            .additionalExecutablePaths(Set.of())
+            .executablePath(EXECUTABLE_FILE_PATH)
+            .arguments(ARGUMENTS)
+            .environmentVariables(Map.of("VARIABLE", "value"))
+            .build();
+        final ExecSpecAction action = new ExecSpecAction(executionSettings, afterConfigured);
+        when(execSpec.getEnvironment()).thenReturn(Map.of("Path", "/system/bin"));
+
+        action.execute(execSpec);
+
+        verify(execSpec).setWorkingDir(WORKING_DIRECTORY_PATH.toString());
+        verify(execSpec).setExecutable(EXECUTABLE_FILE_PATH.toString());
+        verify(execSpec).setArgs(ARGUMENTS);
+        verify(execSpec).environment(Map.of("VARIABLE", "value"));
+        verify(execSpec).environment(PATH_VARIABLE_NAME, "/system/bin");
+        verify(afterConfigured).accept(execSpec);
+        verifyNoMoreInteractions(execSpec, afterConfigured);
+    }
+
+    @Test
+    void should_configure_exec_spec_with_user_environment_and_no_path_override_and_additional_executable_paths_and_system_path() {
+        final ExecutionSettings executionSettings = ExecutionSettings
+            .builder()
+            .workingDirectoryPath(WORKING_DIRECTORY_PATH)
+            .additionalExecutablePaths(Set.of(EXECUTABLE_FILE_PATH))
+            .executablePath(EXECUTABLE_FILE_PATH)
+            .arguments(ARGUMENTS)
+            .environmentVariables(Map.of("VARIABLE", "value"))
+            .build();
+        final ExecSpecAction action = new ExecSpecAction(executionSettings, afterConfigured);
+        when(execSpec.getEnvironment()).thenReturn(Map.of("Path", "/system/bin"));
+
+        action.execute(execSpec);
+
+        verify(execSpec).setWorkingDir(WORKING_DIRECTORY_PATH.toString());
+        verify(execSpec).setExecutable(EXECUTABLE_FILE_PATH.toString());
+        verify(execSpec).setArgs(ARGUMENTS);
+        verify(execSpec).environment(Map.of("VARIABLE", "value"));
+        verify(execSpec).environment(PATH_VARIABLE_NAME, EXECUTABLE_FILE_PATH + File.pathSeparator + "/system/bin");
+        verify(afterConfigured).accept(execSpec);
+        verifyNoMoreInteractions(execSpec, afterConfigured);
+    }
+
+    @Test
+    void should_configure_exec_spec_with_user_environment_and_path_override_and_additional_executable_paths_and_system_path() {
+        final ExecutionSettings executionSettings = ExecutionSettings
+            .builder()
+            .workingDirectoryPath(WORKING_DIRECTORY_PATH)
+            .additionalExecutablePaths(Set.of(EXECUTABLE_FILE_PATH))
+            .executablePath(EXECUTABLE_FILE_PATH)
+            .arguments(ARGUMENTS)
+            .environmentVariables(Map.of("VARIABLE", "value", "PATH", "/usr/bin"))
+            .build();
+        final ExecSpecAction action = new ExecSpecAction(executionSettings, afterConfigured);
+        when(execSpec.getEnvironment()).thenReturn(Map.of("Path", "/system/bin"));
+
+        action.execute(execSpec);
+
+        verify(execSpec).setWorkingDir(WORKING_DIRECTORY_PATH.toString());
+        verify(execSpec).setExecutable(EXECUTABLE_FILE_PATH.toString());
+        verify(execSpec).setArgs(ARGUMENTS);
+        verify(execSpec).environment(Map.of("VARIABLE", "value"));
+        verify(execSpec).environment(PATH_VARIABLE_NAME, EXECUTABLE_FILE_PATH + File.pathSeparator + "/usr/bin");
         verify(afterConfigured).accept(execSpec);
         verifyNoMoreInteractions(execSpec, afterConfigured);
     }

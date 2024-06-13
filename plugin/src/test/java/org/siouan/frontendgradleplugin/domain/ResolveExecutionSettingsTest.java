@@ -3,11 +3,12 @@ package org.siouan.frontendgradleplugin.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.siouan.frontendgradleplugin.test.PathFixture.ANY_PATH;
 import static org.siouan.frontendgradleplugin.domain.PlatformFixture.aPlatform;
 import static org.siouan.frontendgradleplugin.domain.SystemPropertiesFixture.getSystemJvmArch;
+import static org.siouan.frontendgradleplugin.test.PathFixture.ANY_PATH;
 
 import java.nio.file.Path;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,11 +43,13 @@ class ResolveExecutionSettingsTest {
             .nodeInstallDirectoryPath(NODE_INSTALL_DIRECTORY_PATH)
             .platform(platform)
             .build())).thenReturn(nodeExecutablePath);
-        when(getExecutablePath.execute(GetExecutablePathCommand.builder()
-                .executableType(ExecutableType.NODE)
-                .nodeInstallDirectoryPath(NODE_INSTALL_DIRECTORY_PATH)
-                .platform(platform)
+        when(getExecutablePath.execute(GetExecutablePathCommand
+            .builder()
+            .executableType(ExecutableType.NODE)
+            .nodeInstallDirectoryPath(NODE_INSTALL_DIRECTORY_PATH)
+            .platform(platform)
             .build())).thenReturn(nodeExecutablePath);
+        final Map<String, String> environmentVariables = Map.of("VARIABLE", "value");
 
         final ExecutionSettings executionSettings = usecase.execute(ResolveExecutionSettingsCommand
             .builder()
@@ -55,6 +58,7 @@ class ResolveExecutionSettingsTest {
             .nodeInstallDirectoryPath(NODE_INSTALL_DIRECTORY_PATH)
             .platform(platform)
             .script(SCRIPT)
+            .environmentVariables(environmentVariables)
             .build());
 
         assertThat(executionSettings.getWorkingDirectoryPath()).isEqualTo(PACKAGE_JSON_DIRECTORY_PATH);
@@ -62,6 +66,7 @@ class ResolveExecutionSettingsTest {
         assertThat(executionSettings.getExecutablePath()).isEqualTo(ResolveExecutionSettings.WINDOWS_EXECUTABLE_PATH);
         assertThat(executionSettings.getArguments()).containsExactly(
             ResolveExecutionSettings.WINDOWS_EXECUTABLE_AUTOEXIT_FLAG, "\"" + nodeExecutablePath + "\" run script");
+        assertThat(executionSettings.getEnvironmentVariables()).isEqualTo(environmentVariables);
         verifyNoMoreInteractions(getNodeExecutablePath, getExecutablePath);
     }
 
@@ -75,11 +80,13 @@ class ResolveExecutionSettingsTest {
             .nodeInstallDirectoryPath(NODE_INSTALL_DIRECTORY_PATH)
             .platform(platform)
             .build())).thenReturn(nodeExecutablePath);
-        when(getExecutablePath.execute(GetExecutablePathCommand.builder()
+        when(getExecutablePath.execute(GetExecutablePathCommand
+            .builder()
             .executableType(ExecutableType.NPM)
             .nodeInstallDirectoryPath(NODE_INSTALL_DIRECTORY_PATH)
             .platform(platform)
             .build())).thenReturn(npmExecutablePath);
+        final Map<String, String> environmentVariables = Map.of("VARIABLE", "value");
 
         final ExecutionSettings executionSettings = usecase.execute(ResolveExecutionSettingsCommand
             .builder()
@@ -88,6 +95,7 @@ class ResolveExecutionSettingsTest {
             .nodeInstallDirectoryPath(NODE_INSTALL_DIRECTORY_PATH)
             .platform(platform)
             .script(SCRIPT)
+            .environmentVariables(environmentVariables)
             .build());
 
         assertThat(executionSettings.getWorkingDirectoryPath()).isEqualTo(PACKAGE_JSON_DIRECTORY_PATH);
@@ -95,6 +103,7 @@ class ResolveExecutionSettingsTest {
         assertThat(executionSettings.getExecutablePath()).isEqualTo(ResolveExecutionSettings.WINDOWS_EXECUTABLE_PATH);
         assertThat(executionSettings.getArguments()).containsExactly(
             ResolveExecutionSettings.WINDOWS_EXECUTABLE_AUTOEXIT_FLAG, "\"" + npmExecutablePath + "\" run script");
+        assertThat(executionSettings.getEnvironmentVariables()).isEqualTo(environmentVariables);
         verifyNoMoreInteractions(getNodeExecutablePath, getExecutablePath);
     }
 
@@ -107,11 +116,13 @@ class ResolveExecutionSettingsTest {
             .nodeInstallDirectoryPath(NODE_INSTALL_DIRECTORY_PATH)
             .platform(platform)
             .build())).thenReturn(nodeExecutablePath);
-        when(getExecutablePath.execute(GetExecutablePathCommand.builder()
+        when(getExecutablePath.execute(GetExecutablePathCommand
+            .builder()
             .executableType(ExecutableType.NODE)
             .nodeInstallDirectoryPath(NODE_INSTALL_DIRECTORY_PATH)
             .platform(platform)
             .build())).thenReturn(nodeExecutablePath);
+        final Map<String, String> environmentVariables = Map.of("VARIABLE", "value");
 
         final ExecutionSettings executionSettings = usecase.execute(ResolveExecutionSettingsCommand
             .builder()
@@ -120,6 +131,7 @@ class ResolveExecutionSettingsTest {
             .nodeInstallDirectoryPath(NODE_INSTALL_DIRECTORY_PATH)
             .platform(platform)
             .script(SCRIPT)
+            .environmentVariables(environmentVariables)
             .build());
 
         assertThat(executionSettings.getWorkingDirectoryPath()).isEqualTo(PACKAGE_JSON_DIRECTORY_PATH);
@@ -127,6 +139,7 @@ class ResolveExecutionSettingsTest {
         assertThat(executionSettings.getExecutablePath()).isEqualTo(ResolveExecutionSettings.UNIX_EXECUTABLE_PATH);
         assertThat(executionSettings.getArguments()).containsExactly(
             ResolveExecutionSettings.UNIX_EXECUTABLE_AUTOEXIT_FLAG, "\"" + nodeExecutablePath + "\" run script");
+        assertThat(executionSettings.getEnvironmentVariables()).isEqualTo(environmentVariables);
         verifyNoMoreInteractions(getNodeExecutablePath, getExecutablePath);
     }
 
@@ -140,11 +153,13 @@ class ResolveExecutionSettingsTest {
             .nodeInstallDirectoryPath(NODE_INSTALL_DIRECTORY_PATH)
             .platform(platform)
             .build())).thenReturn(nodeExecutablePath);
-        when(getExecutablePath.execute(GetExecutablePathCommand.builder()
+        when(getExecutablePath.execute(GetExecutablePathCommand
+            .builder()
             .executableType(ExecutableType.NPM)
             .nodeInstallDirectoryPath(NODE_INSTALL_DIRECTORY_PATH)
             .platform(platform)
             .build())).thenReturn(npmExecutablePath);
+        final Map<String, String> environmentVariables = Map.of("VARIABLE", "value");
 
         final ExecutionSettings executionSettings = usecase.execute(ResolveExecutionSettingsCommand
             .builder()
@@ -153,6 +168,7 @@ class ResolveExecutionSettingsTest {
             .nodeInstallDirectoryPath(NODE_INSTALL_DIRECTORY_PATH)
             .platform(platform)
             .script(SCRIPT)
+            .environmentVariables(environmentVariables)
             .build());
 
         assertThat(executionSettings.getWorkingDirectoryPath()).isEqualTo(PACKAGE_JSON_DIRECTORY_PATH);
@@ -160,6 +176,7 @@ class ResolveExecutionSettingsTest {
         assertThat(executionSettings.getExecutablePath()).isEqualTo(ResolveExecutionSettings.UNIX_EXECUTABLE_PATH);
         assertThat(executionSettings.getArguments()).containsExactly(
             ResolveExecutionSettings.UNIX_EXECUTABLE_AUTOEXIT_FLAG, "\"" + npmExecutablePath + "\" run script");
+        assertThat(executionSettings.getEnvironmentVariables()).isEqualTo(environmentVariables);
         verifyNoMoreInteractions(getNodeExecutablePath, getExecutablePath);
     }
 }

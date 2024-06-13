@@ -12,12 +12,13 @@
             <template #groovy>
                 <pre><FgpCode>frontend {
     <FgpPropertyLink name="nodeDistributionProvided" /> = false
-    <FgpPropertyLink name="nodeVersion" /> = '18.17.1'
+    <FgpPropertyLink name="nodeVersion" /> = '20.14.0'
     <FgpPropertyLink name="nodeDistributionUrlRoot" /> = 'https://nodejs.org/dist/'
     <FgpPropertyLink name="nodeDistributionUrlPathPattern" /> = 'vVERSION/node-vVERSION-ARCH.TYPE'
     <FgpPropertyLink name="nodeDistributionServerUsername" /> = 'username'
     <FgpPropertyLink name="nodeDistributionServerPassword" /> = 'password'
     <FgpPropertyLink name="nodeInstallDirectory" /> = project.layout.projectDirectory.dir("node")
+    <FgpPropertyLink name="corepackVersion" /> = 'latest'
 
     <FgpPropertyLink name="installScript" /> = 'install'
     <FgpPropertyLink name="cleanScript" /> = 'run clean'
@@ -46,12 +47,13 @@
             <template #kotlin>
                 <pre><FgpCode>frontend {
     <FgpPropertyLink name="nodeDistributionProvided" />.set(false)
-    <FgpPropertyLink name="nodeVersion" />.set("18.17.1")
+    <FgpPropertyLink name="nodeVersion" />.set("20.14.0")
     <FgpPropertyLink name="nodeDistributionUrlRoot" />.set("https://nodejs.org/dist/")
     <FgpPropertyLink name="nodeDistributionUrlPathPattern" />.set("vVERSION/node-vVERSION-ARCH.TYPE")
     <FgpPropertyLink name="nodeDistributionServerUsername" />.set("username")
     <FgpPropertyLink name="nodeDistributionServerPassword" />.set("password")
     <FgpPropertyLink name="nodeInstallDirectory" />.set(project.layout.projectDirectory.dir("node"))
+    <FgpPropertyLink name="corepackVersion" />.set("latest")
 
     <FgpPropertyLink name="installScript" />.set("install")
     <FgpPropertyLink name="cleanScript" />.set("run clean")
@@ -91,6 +93,7 @@
             <FgpNodeDistributionServerUsernameProperty />
             <FgpNodeDistributionServerPasswordProperty />
             <FgpNodeInstallDirectoryProperty />
+            <FgpCorepackVersionProperty />
         </section>
 
         <section>

@@ -2,7 +2,6 @@
     <FgpProperty
         name="retryInitialIntervalMs"
         type="java.lang.Integer"
-        :required="true"
         default-value="1000"
         :task-names="['installNode']"
     >

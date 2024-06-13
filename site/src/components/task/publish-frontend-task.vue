@@ -1,9 +1,14 @@
 <template>
-    <FgpTask name="publishFrontend" :depending-task-names="['assembleFrontend']" :inputs="inputs">
+    <FgpTask
+        name="publishFrontend"
+        :depending-task-names="['assembleFrontend']"
+        :inputs="inputs"
+        custom-environment-variables-supported
+    >
         <template #title>Publish frontend artifacts</template>
         <template #skipConditions>
-            task <FgpTaskLink name="installFrontend" /> was skipped or property
-            <FgpPropertyLink name="assembleScript" /> is <FgpCode>null</FgpCode> or property
+            <FgpPropertyLink name="packageJsonDirectory" /><FgpCode>/package.json</FgpCode> file does not exist, or
+            <FgpPropertyLink name="assembleScript" /> is <FgpCode>null</FgpCode>, or
             <FgpPropertyLink name="publishScript" /> is <FgpCode>null</FgpCode>.
         </template>
         <template #description>
@@ -12,11 +17,8 @@
                 defined in the
                 <FgpCode>package.json</FgpCode> file, and the <FgpPropertyLink name="publishScript" /> property shall be
                 set with the corresponding <FgpCode>npm</FgpCode>/<FgpCode>pnpm</FgpCode>/<FgpCode>yarn</FgpCode>
-                command. This task depends on the
-                <FgpTaskLink name="assembleFrontend" /> task, and is skipped either if the
-                <FgpPropertyLink name="assembleScript" /> property is <FgpCode>null</FgpCode>, or if the
-                <FgpPropertyLink name="publishScript" /> property is <FgpCode>null</FgpCode>. Apart from direct
-                execution, the task is also executed when the Gradle <FgpCode>publish</FgpCode> task is executed.
+                command. Apart from direct execution, the task is also executed when the Gradle <FgpCode
+                >publish</FgpCode> task is executed.
             </p>
         </template>
     </FgpTask>

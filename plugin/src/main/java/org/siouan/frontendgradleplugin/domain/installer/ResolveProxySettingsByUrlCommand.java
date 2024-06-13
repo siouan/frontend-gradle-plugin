@@ -1,6 +1,7 @@
 package org.siouan.frontendgradleplugin.domain.installer;
 
 import java.net.URL;
+import java.util.Set;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -27,4 +28,14 @@ public class ResolveProxySettingsByUrlCommand {
     private final Credentials httpsProxyCredentials;
 
     private final URL resourceUrl;
+
+    private final String systemHttpProxyHost;
+
+    private final int systemHttpProxyPort;
+
+    private final String systemHttpsProxyHost;
+
+    private final int systemHttpsProxyPort;
+
+    private final Set<String> systemNonProxyHosts;
 }
