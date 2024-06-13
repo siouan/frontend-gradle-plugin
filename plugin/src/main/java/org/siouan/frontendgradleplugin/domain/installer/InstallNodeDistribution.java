@@ -1,6 +1,7 @@
 package org.siouan.frontendgradleplugin.domain.installer;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 
 import lombok.RequiredArgsConstructor;
@@ -45,11 +46,12 @@ public class InstallNodeDistribution {
      * @throws InvalidNodeDistributionException If the downloaded distribution is corrupted.
      * @throws ArchiverException If an error occurs in the archiver exploding the distribution.
      * @throws IOException If an I/O error occurs.
+     * @throws URISyntaxException If the distribution URL is not a valid URL.
      */
     public void execute(final InstallNodeDistributionCommand command)
         throws IOException, InvalidNodeDistributionException, NodeDistributionShasumNotFoundException,
         UnsupportedPlatformException, InvalidDistributionUrlException, ResourceDownloadException, ArchiverException,
-        UnsupportedDistributionArchiveException {
+        UnsupportedDistributionArchiveException, URISyntaxException {
         logger.info("Removing install directory '{}'", command.installDirectoryPath());
         fileManager.deleteFileTree(command.installDirectoryPath(), true);
 

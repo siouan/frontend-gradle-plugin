@@ -10,7 +10,7 @@ import static org.siouan.frontendgradleplugin.test.PluginTaskOutcome.FAILED;
 import static org.siouan.frontendgradleplugin.test.PluginTaskOutcome.SUCCESS;
 
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
 import java.nio.file.Path;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
@@ -168,7 +168,7 @@ class AuthenticationAndProxyFuncTest {
     private FrontendMapBuilder configureNodeServerAndPluginWithDirectConnection(final String distributionServerPassword)
         throws IOException {
         return configureServerAndPlugin(
-            new URL("http", DISTRIBUTION_SERVER_HOST, DISTRIBUTION_SERVER_PORT, "/").toString(),
+            URI.create("http://" + DISTRIBUTION_SERVER_HOST + ':' + DISTRIBUTION_SERVER_PORT + "/").toString(),
             NODE_DISTRIBUTION_URL_PATH_PATTERN, DISTRIBUTION_SERVER_USERNAME, distributionServerPassword, null, null,
             null, null);
     }

@@ -28,7 +28,7 @@ description = fgpDescription
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion = JavaLanguageVersion.of(21)
     }
     withJavadocJar()
     withSourcesJar()
@@ -106,7 +106,7 @@ sonarqube {
         property("sonar.organization", "siouan")
         property("sonar.projectKey", "siouan_frontend-gradle-plugin")
         property("sonar.projectName", "frontend-gradle-plugin")
-        property("sonar.projectVersion", "${fgpVersion}-jdk17")
+        property("sonar.projectVersion", "${fgpVersion}-jdk21")
 
         property("sonar.links.homepage", "https://github.com/siouan/frontend-gradle-plugin")
         property("sonar.links.ci", "https://github.com/siouan/frontend-gradle-plugin/actions")
@@ -120,7 +120,6 @@ sonarqube {
         property("sonar.java.test.binaries", "build/classes/java/test,build/classes/java/integrationTest")
         property("sonar.junit.reportPaths", "build/test-results/test/,build/test-results/integrationTest/")
         property("sonar.jacoco.xmlReportPaths", "build/reports/jacoco/report.xml")
-        property("sonar.verbose", true)
 
         // Irrelevant duplications detected on task inputs
         property(

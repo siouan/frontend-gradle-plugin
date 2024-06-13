@@ -1,6 +1,5 @@
 package org.siouan.frontendgradleplugin.test;
 
-import java.net.URL;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
@@ -68,11 +67,10 @@ public final class FrontendMapBuilder {
         return this;
     }
 
-    public FrontendMapBuilder nodeDistributionUrl(final URL nodeDistributionUrl) {
-        final String fileName = nodeDistributionUrl.getFile();
-        final String nodeDistributionUrlAsString = nodeDistributionUrl.toString();
-        return nodeDistributionUrlRoot(nodeDistributionUrlAsString.substring(0,
-            nodeDistributionUrlAsString.indexOf(fileName))).nodeDistributionUrlPathPattern(fileName);
+    public FrontendMapBuilder nodeDistributionUrl(final Path nodeDistributionFilePath) {
+        final String fileName = nodeDistributionFilePath.getFileName().toString();
+        final String nodeDistributionUrlAsString = nodeDistributionFilePath.getParent().toUri().toString();
+        return nodeDistributionUrlRoot(nodeDistributionUrlAsString).nodeDistributionUrlPathPattern(fileName);
     }
 
     public FrontendMapBuilder nodeDistributionServerUsername(final String nodeDistributionServerUsername) {

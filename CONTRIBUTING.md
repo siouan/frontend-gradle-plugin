@@ -110,7 +110,7 @@ gradlew pluginUnderTestMetadata
 ## Continuous integration
 
 The project relies on [GitHub Actions][github-actions] to integrate continuously every changes (pull requests) in the
-repository. The configuration actually allows to build and test the plugin with Adoptium Temurin JDK 17 64 bits, on the
+repository. The configuration actually allows to build and test the plugin with Adoptium Temurin JDK 21 64 bits, on the
 environments below:
 
 - Linux Ubuntu 22.04.4
@@ -118,7 +118,7 @@ environments below:
 - Windows Server 2022
 
 Ubuntu is the reference O/S, used to analyze the source code with SonarCloud. Developments are frequently done on a
-Windows 10 Professionnal workstation with Adoptium Temurin JDK 17 64 bits and [IntelliJ IDEA][intellij-idea].
+Windows 10 Professionnal workstation with Adoptium Temurin JDK 21 64 bits and [IntelliJ IDEA][intellij-idea].
 
 [apache-commons-compress]: <https://commons.apache.org/proper/commons-compress/> (Apache Commons Compress)
 [apache-http-components]: <https://hc.apache.org/> (Apache HttpComponents)

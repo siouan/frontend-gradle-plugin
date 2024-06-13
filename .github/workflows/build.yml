@@ -42,11 +42,11 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: '21'
           architecture: x64
 
       - name: Cache Gradle's cache and wrapper
@@ -89,4 +89,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew :plugin:sonar --console=plain -Dorg.gradle.jvmargs=-Xmx512m
+        run: ./gradlew :plugin:sonar --console=plain -Dorg.gradle.jvmargs=-Xmx512m -Dsonar.verbose=true

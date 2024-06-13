@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 import static org.siouan.frontendgradleplugin.domain.PlatformFixture.LOCAL_PLATFORM;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -73,7 +74,7 @@ class InstallNodeDistributionTest {
     }
 
     @Test
-    void should_fail_when_distribution_cannot_be_retrieved() throws IOException, FrontendException {
+    void should_fail_when_distribution_cannot_be_retrieved() throws IOException, FrontendException, URISyntaxException {
         final Platform platform = LOCAL_PLATFORM;
         final String version = VERSION;
         final String distributionUrlRoot = DISTRIBUTION_URL_ROOT;
@@ -104,7 +105,8 @@ class InstallNodeDistributionTest {
     }
 
     @Test
-    void should_fail_when_temporary_extract_directory_cannot_be_deleted() throws IOException, FrontendException {
+    void should_fail_when_temporary_extract_directory_cannot_be_deleted()
+        throws IOException, FrontendException, URISyntaxException {
         final Platform platform = LOCAL_PLATFORM;
         final String version = VERSION;
         final String distributionUrlRoot = DISTRIBUTION_URL_ROOT;
@@ -137,7 +139,7 @@ class InstallNodeDistributionTest {
     }
 
     @Test
-    void should_fail_when_distribution_cannot_be_deployed() throws IOException, FrontendException {
+    void should_fail_when_distribution_cannot_be_deployed() throws IOException, FrontendException, URISyntaxException {
         final Platform platform = LOCAL_PLATFORM;
         final String version = VERSION;
         final String distributionUrlRoot = DISTRIBUTION_URL_ROOT;
@@ -179,7 +181,8 @@ class InstallNodeDistributionTest {
     }
 
     @Test
-    void should_fail_when_downloaded_distribution_file_cannot_be_deleted() throws IOException, FrontendException {
+    void should_fail_when_downloaded_distribution_file_cannot_be_deleted()
+        throws IOException, FrontendException, URISyntaxException {
         final Platform platform = LOCAL_PLATFORM;
         final String version = VERSION;
         final String distributionUrlRoot = DISTRIBUTION_URL_ROOT;
@@ -220,7 +223,7 @@ class InstallNodeDistributionTest {
     }
 
     @Test
-    void should_install_distribution() throws IOException, FrontendException {
+    void should_install_distribution() throws IOException, FrontendException, URISyntaxException {
         final Platform platform = LOCAL_PLATFORM;
         final String version = VERSION;
         final String distributionUrlRoot = DISTRIBUTION_URL_ROOT;

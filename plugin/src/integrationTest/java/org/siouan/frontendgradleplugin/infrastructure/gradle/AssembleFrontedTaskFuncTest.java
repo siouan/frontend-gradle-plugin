@@ -9,7 +9,6 @@ import static org.siouan.frontendgradleplugin.test.PluginTaskOutcome.SKIPPED;
 import static org.siouan.frontendgradleplugin.test.PluginTaskOutcome.SUCCESS;
 import static org.siouan.frontendgradleplugin.test.PluginTaskOutcome.UP_TO_DATE;
 import static org.siouan.frontendgradleplugin.test.Resources.getResourcePath;
-import static org.siouan.frontendgradleplugin.test.Resources.getResourceUrl;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -42,7 +41,7 @@ class AssembleFrontedTaskFuncTest {
     void should_skip_task_when_package_json_file_does_not_exist() throws IOException {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
             .nodeVersion("20.14.0")
-            .nodeDistributionUrl(getResourceUrl("node-v20.14.0.zip"))
+            .nodeDistributionUrl(getResourcePath("node-v20.14.0.zip"))
             .assembleScript("run assemble")
             .packageJsonDirectory(packageJsonDirectoryPath);
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
@@ -61,7 +60,7 @@ class AssembleFrontedTaskFuncTest {
         Files.copy(getResourcePath("package-any-manager.json"), packageJsonDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
             .nodeVersion("20.14.0")
-            .nodeDistributionUrl(getResourceUrl("node-v20.14.0.zip"))
+            .nodeDistributionUrl(getResourcePath("node-v20.14.0.zip"))
             .packageJsonDirectory(packageJsonDirectoryPath);
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
@@ -79,7 +78,7 @@ class AssembleFrontedTaskFuncTest {
         Files.copy(getResourcePath("package-any-manager.json"), packageJsonDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
             .nodeVersion("20.14.0")
-            .nodeDistributionUrl(getResourceUrl("node-v20.14.0.zip"))
+            .nodeDistributionUrl(getResourcePath("node-v20.14.0.zip"))
             .packageJsonDirectory(packageJsonDirectoryPath);
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
@@ -97,7 +96,7 @@ class AssembleFrontedTaskFuncTest {
         Files.copy(getResourcePath("package-any-manager.json"), packageJsonDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
             .nodeVersion("20.14.0")
-            .nodeDistributionUrl(getResourceUrl("node-v20.14.0.zip"))
+            .nodeDistributionUrl(getResourcePath("node-v20.14.0.zip"))
             .packageJsonDirectory(packageJsonDirectoryPath)
             .assembleScript("run assemble");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());

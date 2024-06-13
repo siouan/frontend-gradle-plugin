@@ -2,7 +2,7 @@ import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNode
 import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpm
 
 plugins {
-    id("org.siouan.frontend-jdk17")
+    id("org.siouan.frontend-jdk21")
 }
 
 //val preinstalledNodeDistributionDirectory = file(<path-to-nodejs-install-directory>);

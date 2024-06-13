@@ -41,11 +41,10 @@ class ResolvePackageManagerTest {
         throws IOException, InvalidJsonFileException, MalformedPackageManagerSpecification,
         UnsupportedPackageManagerException {
         final Path nodeInstallDirectoryPath = Paths.get("node");
-        final Platform platform = LOCAL_PLATFORM;
         final Path packageManagerSpecificationFilePath = Paths.get("name.txt");
         final Path packageManagerExecutablePathFilePath = Paths.get("executable-path.txt");
 
-        usecase.execute(new ResolvePackageManagerCommand(null, nodeInstallDirectoryPath, platform,
+        usecase.execute(new ResolvePackageManagerCommand(null, nodeInstallDirectoryPath, LOCAL_PLATFORM,
             packageManagerSpecificationFilePath, packageManagerExecutablePathFilePath));
 
         final ArgumentCaptor<Path> pathArgumentCaptor = ArgumentCaptor.forClass(Path.class);
@@ -70,7 +69,8 @@ class ResolvePackageManagerTest {
             PackageManager.builder().type(packageManagerType).version(packageManagerVersion).build());
         final Path executablePath = Paths.get("executable");
         when(fileManager.writeString(packageManagerSpecificationFilePath, "pnpm@5.9.2", StandardCharsets.UTF_8,
-            StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)).thenReturn(packageManagerSpecificationFilePath);
+            StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)).thenReturn(
+            packageManagerSpecificationFilePath);
         when(getExecutablePath.execute(any(GetExecutablePathCommand.class))).thenReturn(executablePath);
         when(fileManager.writeString(packageManagerExecutablePathFilePath, executablePath.toString(),
             StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)).thenReturn(

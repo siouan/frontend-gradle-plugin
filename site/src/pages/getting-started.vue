@@ -6,6 +6,10 @@
         <p>The following tools must be installed to use the plugin:</p>
         <ul>
             <li>
+                <FgpGradlePluginsLink path="/plugin/org.siouan.frontend-jdk21">JDK 21 build</FgpGradlePluginsLink>:
+                <FgpGradleLink /> 8.5+
+            </li>
+            <li>
                 <FgpGradlePluginsLink path="/plugin/org.siouan.frontend-jdk17">JDK 17 build</FgpGradlePluginsLink>:
                 <FgpGradleLink /> 8.5+
             </li>
@@ -42,6 +46,8 @@
                         <FgpGradleScripts id="install-gradle-dsl">
                             <template #groovy>
                                 <pre><FgpCode>plugins {
+    <FgpCodeComment>// For JDK 21+</FgpCodeComment>
+    id 'org.siouan.frontend-jdk21' version '8.1.0'
     <FgpCodeComment>// For JDK 17+</FgpCodeComment>
     id 'org.siouan.frontend-jdk17' version '8.1.0'
     <FgpCodeComment>// For JDK 11+</FgpCodeComment>
@@ -50,6 +56,8 @@
                             </template>
                             <template #kotlin>
                                 <pre><FgpCode>plugins {
+    <FgpCodeComment>// For JDK 21+</FgpCodeComment>
+    id("org.siouan.frontend-jdk21") version "8.1.0"
     <FgpCodeComment>// For JDK 17+</FgpCodeComment>
     id("org.siouan.frontend-jdk17") version "8.1.0"
     <FgpCodeComment>// For JDK 11+</FgpCodeComment>
@@ -73,6 +81,8 @@
         url 'https://plugins.gradle.org/m2/'
     }
     dependencies {
+        <FgpCodeComment>// For JDK 21+</FgpCodeComment>
+        classpath 'org.siouan:frontend-gradle-plugin-jdk21:8.1.0'
         <FgpCodeComment>// For JDK 17+</FgpCodeComment>
         classpath 'org.siouan:frontend-gradle-plugin-jdk17:8.1.0'
         <FgpCodeComment>// For JDK 11+</FgpCodeComment>
@@ -80,6 +90,8 @@
     }
 }
 
+<FgpCodeComment>// For JDK 21+</FgpCodeComment>
+apply plugin: 'org.siouan.frontend-jdk21'
 <FgpCodeComment>// For JDK 17+</FgpCodeComment>
 apply plugin: 'org.siouan.frontend-jdk17'
 <FgpCodeComment>// For JDK 11+</FgpCodeComment>
@@ -91,6 +103,8 @@ apply plugin: 'org.siouan.frontend-jdk11'</FgpCode></pre>
         url = uri("https://plugins.gradle.org/m2/")
     }
     dependencies {
+        <FgpCodeComment>// For JDK 21+</FgpCodeComment>
+        classpath("org.siouan:frontend-gradle-plugin-jdk21:8.1.0")
         <FgpCodeComment>// For JDK 17+</FgpCodeComment>
         classpath("org.siouan:frontend-gradle-plugin-jdk17:8.1.0")
         <FgpCodeComment>// For JDK 11+</FgpCodeComment>
@@ -98,6 +112,8 @@ apply plugin: 'org.siouan.frontend-jdk11'</FgpCode></pre>
     }
 }
 
+<FgpCodeComment>// For JDK 21+</FgpCodeComment>
+apply(plugin = "org.siouan.frontend-jdk21")
 <FgpCodeComment>// For JDK 17+</FgpCodeComment>
 apply(plugin = "org.siouan.frontend-jdk17")
 <FgpCodeComment>// For JDK 11+</FgpCodeComment>
