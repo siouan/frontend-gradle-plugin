@@ -1,5 +1,5 @@
 <template>
-    <FgpTask name="RunYarn" type :inputs="inputs">
+    <FgpTask name="RunYarn" type :inputs="inputs" custom-environment-variables-supported>
         <template #title>Run a custom command with <FgpCode>yarn</FgpCode></template>
         <template #description>
             <p>
@@ -19,7 +19,7 @@
 tasks.register('yarnVersion', RunYarn) {
     <FgpCodeComment>// dependsOn tasks.named('installPackageManager')
     // dependsOn tasks.named('installFrontend')</FgpCodeComment>
-    script = '--version'
+    script = '-v'
 }</FgpCode></pre>
                 </template>
                 <template #kotlin>
@@ -27,7 +27,7 @@ tasks.register('yarnVersion', RunYarn) {
 tasks.register&lt;RunYarn&gt;("yarnVersion") {
     <FgpCodeComment>// dependsOn(tasks.named("installPackageManager"))
     // dependsOn(tasks.named("installFrontend"))</FgpCodeComment>
-    script.set("--version")
+    script.set("-v")
 }</FgpCode></pre>
                 </template>
             </FgpGradleScripts>

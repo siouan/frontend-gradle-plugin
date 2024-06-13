@@ -1,18 +1,20 @@
 <template>
-    <FgpTask name="assembleFrontend" :depending-task-names="['installFrontend']" :inputs="inputs">
+    <FgpTask
+        name="assembleFrontend"
+        :depending-task-names="['installFrontend']"
+        :inputs="inputs"
+        custom-environment-variables-supported
+    >
         <template #title>Assemble frontend artifacts</template>
         <template #skipConditions>
-            task <FgpTaskLink name="installFrontend" /> was skipped or property
+            <FgpPropertyLink name="packageJsonDirectory" /><FgpCode>/package.json</FgpCode> file does not exist, or
             <FgpPropertyLink name="assembleScript" /> is <FgpCode>null</FgpCode>.
         </template>
         <template #description>
             This task allows to execute a build script as part of a Gradle build. The build script shall be defined in
             the <FgpCode>package.json</FgpCode> file, and the <FgpPropertyLink name="assembleScript" /> property shall
             be set with the corresponding <FgpCode>npm</FgpCode>/<FgpCode>pnpm</FgpCode>/<FgpCode>yarn</FgpCode>
-            command. This task depends on the
-            <FgpTaskLink name="installFrontend" /> task, and is skipped if the
-            <FgpPropertyLink name="assembleScript" /> property is <FgpCode>null</FgpCode>. Apart from direct execution,
-            the task is also executed when the Gradle lifecycle
+            command. Apart from direct execution, the task is also executed when the Gradle lifecycle
             <FgpGradleDocsLink path="/current/userguide/base_plugin.html#sec:base_tasks">assemble</FgpGradleDocsLink>
             task is executed.
 
@@ -38,7 +40,7 @@
                         SCSS...), the directory layout, the build utilities (Webpack...), etc., chosen by the team.
                         Moreover, some build utilities are already able to build artifacts incrementally. The plugin
                         does not duplicate this logic. If you are about to tweak this task, take a look at these
-                        <FgpSiteLink :path="`${$config.public.paths.tasks}#tweaking-tasks`">recommendations</FgpSiteLink>.
+                        <FgpSiteLink :path="`${$config.public.paths.tasks}#builtin-tasks-customization`">recommendations</FgpSiteLink>.
                     </p>
                 </div>
             </div>

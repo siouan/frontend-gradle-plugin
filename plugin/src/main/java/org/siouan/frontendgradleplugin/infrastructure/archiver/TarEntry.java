@@ -14,7 +14,7 @@ import org.siouan.frontendgradleplugin.domain.installer.archiver.ArchiveEntry;
  */
 @Builder
 @Getter
-class TarEntry implements ArchiveEntry {
+public class TarEntry implements ArchiveEntry {
 
     /**
      * Low-level entry mapped to this entry.

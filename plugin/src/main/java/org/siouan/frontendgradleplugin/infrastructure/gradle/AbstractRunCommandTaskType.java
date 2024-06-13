@@ -1,11 +1,10 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
-import org.gradle.api.GradleException;
-import org.gradle.api.file.ProjectLayout;
+import org.gradle.api.Project;
 import org.gradle.api.model.ObjectFactory;
+import org.gradle.api.provider.Provider;
+import org.gradle.api.services.BuildServiceRegistration;
 import org.gradle.process.ExecOperations;
-import org.siouan.frontendgradleplugin.infrastructure.bean.BeanRegistryException;
-import org.siouan.frontendgradleplugin.infrastructure.bean.Beans;
 
 /**
  * This abstract class provides the required bindings for task types, to run a command with an executable. Sub-classes
@@ -13,16 +12,22 @@ import org.siouan.frontendgradleplugin.infrastructure.bean.Beans;
  */
 public abstract class AbstractRunCommandTaskType extends AbstractRunCommandTask {
 
-    AbstractRunCommandTaskType(final ProjectLayout projectLayout, final ObjectFactory objectFactory,
-        final ExecOperations execOperations) {
-        super(projectLayout, objectFactory, execOperations);
-        final FrontendExtension frontendExtension;
-        try {
-            frontendExtension = Beans.getBean(beanRegistryId, FrontendExtension.class);
-        } catch (final BeanRegistryException e) {
-            throw new GradleException(e.getClass().getName() + ": " + e.getMessage(), e);
-        }
-        this.packageJsonDirectory.set(frontendExtension.getPackageJsonDirectory().getAsFile());
-        this.nodeInstallDirectory.set(frontendExtension.getNodeInstallDirectory().getAsFile());
+    AbstractRunCommandTaskType(final ObjectFactory objectFactory, final ExecOperations execOperations) {
+        super(objectFactory, execOperations);
+        final Project project = getProject();
+        final FrontendExtension frontendExtension = project.getExtensions().getByType(FrontendExtension.class);
+        final Provider<BeanRegistryBuildService> beanRegistryBuildServiceProvider = (Provider<BeanRegistryBuildService>) project
+            .getGradle()
+            .getSharedServices()
+            .getRegistrations()
+            .named(BeanRegistryBuildService.buildName(project))
+            .flatMap(BuildServiceRegistration::getService);
+        beanRegistryBuildService.set(beanRegistryBuildServiceProvider);
+        packageJsonDirectory.set(frontendExtension.getPackageJsonDirectory().getAsFile());
+        nodeInstallDirectory.set(frontendExtension.getNodeInstallDirectory().getAsFile());
+        verboseModeEnabled.set(frontendExtension.getVerboseModeEnabled());
+        final SystemProviders systemProviders = new SystemProviders(project.getProviders());
+        systemJvmArch.set(systemProviders.getJvmArch());
+        systemOsName.set(systemProviders.getOsName());
     }
 }

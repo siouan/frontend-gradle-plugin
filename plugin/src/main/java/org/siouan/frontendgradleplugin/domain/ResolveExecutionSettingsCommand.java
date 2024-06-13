@@ -1,6 +1,7 @@
 package org.siouan.frontendgradleplugin.domain;
 
 import java.nio.file.Path;
+import java.util.Map;
 
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -45,4 +46,12 @@ public class ResolveExecutionSettingsCommand {
      */
     @EqualsAndHashCode.Include
     private final String script;
+
+    /**
+     * Additional environment variables to pass to the process.
+     *
+     * @since 8.1.0
+     */
+    @EqualsAndHashCode.Include
+    private final Map<String, String> environmentVariables;
 }

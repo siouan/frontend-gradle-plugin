@@ -1,5 +1,5 @@
 <template>
-    <FgpTask name="RunPnpm" type :inputs="inputs">
+    <FgpTask name="RunPnpm" type :inputs="inputs" custom-environment-variables-supported>
         <template #title>Run a custom command with <FgpCode>pnpm</FgpCode></template>
         <template #description>
             <p>
@@ -19,7 +19,7 @@
 tasks.register('pnpmVersion', RunPnpm) {
     <FgpCodeComment>// dependsOn tasks.named('installPackageManager')
     // dependsOn tasks.named('installFrontend')</FgpCodeComment>
-    script = '--version'
+    script = '-v'
 }</FgpCode></pre>
                 </template>
                 <template #kotlin>
@@ -27,7 +27,7 @@ tasks.register('pnpmVersion', RunPnpm) {
 tasks.register&lt;RunPnpm&gt;("pnpmVersion") {
     <FgpCodeComment>// dependsOn(tasks.named("installPackageManager"))
     // dependsOn(tasks.named("installFrontend"))</FgpCodeComment>
-    script.set("--version")
+    script.set("-v")
 }</FgpCode></pre>
                 </template>
             </FgpGradleScripts>

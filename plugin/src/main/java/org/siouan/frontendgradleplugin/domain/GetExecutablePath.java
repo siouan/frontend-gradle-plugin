@@ -30,7 +30,7 @@ public class GetExecutablePath {
      * @see ExecutableType
      */
     public Path execute(final GetExecutablePathCommand command) {
-        final ResolveExecutablePathCommand resolveGlobalExecutablePathCommand = ResolveExecutablePathCommand
+        final ResolveExecutablePathCommand resolveExecutablePathCommand = ResolveExecutablePathCommand
             .builder()
             .platform(command.getPlatform())
             .nodeInstallDirectoryPath(command.getNodeInstallDirectoryPath())
@@ -38,15 +38,15 @@ public class GetExecutablePath {
         final ExecutableType executableType = command.getExecutableType();
         switch (executableType) {
         case COREPACK:
-            return getCorepackExecutablePath.execute(resolveGlobalExecutablePathCommand);
+            return getCorepackExecutablePath.execute(resolveExecutablePathCommand);
         case NODE:
-            return getNodeExecutablePath.execute(resolveGlobalExecutablePathCommand);
+            return getNodeExecutablePath.execute(resolveExecutablePathCommand);
         case NPM:
-            return getNpmExecutablePath.execute(resolveGlobalExecutablePathCommand);
+            return getNpmExecutablePath.execute(resolveExecutablePathCommand);
         case PNPM:
-            return getPnpmExecutablePath.execute(resolveGlobalExecutablePathCommand);
+            return getPnpmExecutablePath.execute(resolveExecutablePathCommand);
         case YARN:
-            return getYarnExecutablePath.execute(resolveGlobalExecutablePathCommand);
+            return getYarnExecutablePath.execute(resolveExecutablePathCommand);
         default:
             throw new IllegalArgumentException("Unsupported type of executable: " + executableType);
         }

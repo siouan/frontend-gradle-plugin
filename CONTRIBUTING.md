@@ -113,8 +113,8 @@ The project relies on [GitHub Actions][github-actions] to integrate continuously
 repository. The configuration actually allows to build and test the plugin with Adoptium Temurin JDK 17 64 bits, on the
 environments below:
 
-- Linux Ubuntu 22.04.2
-- Mac OS 12.6.5
+- Linux Ubuntu 22.04.4
+- Mac OS 14.5
 - Windows Server 2022
 
 Ubuntu is the reference O/S, used to analyze the source code with SonarCloud. Developments are frequently done on a

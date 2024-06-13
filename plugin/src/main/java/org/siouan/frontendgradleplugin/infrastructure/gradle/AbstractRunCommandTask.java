@@ -1,10 +1,11 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
 import java.io.File;
+import java.util.Map;
 
 import org.gradle.api.DefaultTask;
-import org.gradle.api.file.ProjectLayout;
 import org.gradle.api.model.ObjectFactory;
+import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Internal;
@@ -12,9 +13,8 @@ import org.gradle.api.tasks.TaskAction;
 import org.gradle.process.ExecOperations;
 import org.siouan.frontendgradleplugin.domain.ExecutableType;
 import org.siouan.frontendgradleplugin.domain.Platform;
-import org.siouan.frontendgradleplugin.domain.PlatformProvider;
+import org.siouan.frontendgradleplugin.infrastructure.bean.BeanRegistry;
 import org.siouan.frontendgradleplugin.infrastructure.bean.BeanRegistryException;
-import org.siouan.frontendgradleplugin.infrastructure.bean.Beans;
 
 /**
  * This abstract class provides the reusable logic to run a command with an executable. Sub-classes must expose inputs
@@ -25,19 +25,20 @@ public abstract class AbstractRunCommandTask extends DefaultTask {
     protected final ExecOperations execOperations;
 
     /**
-     * Bean registry ID.
+     * Bean registry service provider.
      *
-     * @since 5.2.0
+     * @since 8.1.0
      */
-    protected final String beanRegistryId;
+    protected final Property<BeanRegistryBuildService> beanRegistryBuildService;
 
     /**
-     * Directory where the 'package.json' file is located.
+     * Directory where the 'package.json' file is located, and used as the working directory when the command is
+     * executed.
      */
     protected final Property<File> packageJsonDirectory;
 
     /**
-     * Directory where the Node.js distribution is installed.
+     * Directory where the Node.js distribution is installed, and used to find the executables.
      */
     protected final Property<File> nodeInstallDirectory;
 
@@ -51,19 +52,76 @@ public abstract class AbstractRunCommandTask extends DefaultTask {
      */
     protected final Property<String> script;
 
-    AbstractRunCommandTask(final ProjectLayout projectLayout, final ObjectFactory objectFactory,
-        final ExecOperations execOperations) {
+    /**
+     * Whether the task should produce log messages for the end-user.
+     *
+     * @since 8.1.0
+     */
+    protected final Property<Boolean> verboseModeEnabled;
+
+    /**
+     * Architecture of the underlying JVM.
+     *
+     * @since 8.1.0
+     */
+    protected final Property<String> systemJvmArch;
+
+    /**
+     * System name of the O/S.
+     *
+     * @since 8.1.0
+     */
+    protected final Property<String> systemOsName;
+
+    /**
+     * Additional environment variables to pass when executing the script.
+     *
+     * @since 8.1.0
+     */
+    protected final MapProperty<String, String> environmentVariables;
+
+    AbstractRunCommandTask(final ObjectFactory objectFactory, final ExecOperations execOperations) {
         this.execOperations = execOperations;
-        this.beanRegistryId = Beans.getBeanRegistryId(projectLayout.getProjectDirectory().toString());
+        this.beanRegistryBuildService = objectFactory.property(BeanRegistryBuildService.class);
         this.packageJsonDirectory = objectFactory.property(File.class);
         this.nodeInstallDirectory = objectFactory.property(File.class);
         this.executableType = objectFactory.property(ExecutableType.class);
         this.script = objectFactory.property(String.class);
+        this.verboseModeEnabled = objectFactory.property(Boolean.class);
+        this.systemJvmArch = objectFactory.property(String.class);
+        this.systemOsName = objectFactory.property(String.class);
+        this.environmentVariables = objectFactory.mapProperty(String.class, String.class);
+    }
+
+    @Internal
+    public Property<BeanRegistryBuildService> getBeanRegistryBuildService() {
+        return beanRegistryBuildService;
     }
 
     @Internal
     public Property<ExecutableType> getExecutableType() {
         return executableType;
+    }
+
+    @Internal
+    public Property<Boolean> getVerboseModeEnabled() {
+        return verboseModeEnabled;
+    }
+
+    @Internal
+    public Property<String> getSystemJvmArch() {
+        return systemJvmArch;
+    }
+
+    @Internal
+    public Property<String> getSystemOsName() {
+        return systemOsName;
+    }
+
+    @Internal
+    @SuppressWarnings("unused")
+    public MapProperty<String, String> getEnvironmentVariables() {
+        return environmentVariables;
     }
 
     @Input
@@ -98,12 +156,14 @@ public abstract class AbstractRunCommandTask extends DefaultTask {
     public void execute() throws NonRunnableTaskException, BeanRegistryException {
         assertThatTaskIsRunnable();
 
-        Beans.getBean(beanRegistryId, TaskLoggerConfigurer.class).initLoggerAdapter(this);
+        final BeanRegistry beanRegistry = beanRegistryBuildService.get().getBeanRegistry();
+        TaskLoggerInitializer.initAdapter(this, verboseModeEnabled.get(),
+            beanRegistry.getBean(GradleLoggerAdapter.class), beanRegistry.getBean(GradleSettings.class));
 
-        final Platform platform = Beans.getBean(beanRegistryId, PlatformProvider.class).getPlatform();
+        final Platform platform = Platform.builder().jvmArch(systemJvmArch.get()).osName(systemOsName.get()).build();
         getLogger().debug("Platform: {}", platform);
-        Beans
-            .getBean(beanRegistryId, GradleScriptRunnerAdapter.class)
+        beanRegistry
+            .getBean(GradleScriptRunnerAdapter.class)
             .execute(ScriptProperties
                 .builder()
                 .execOperations(execOperations)
@@ -112,6 +172,7 @@ public abstract class AbstractRunCommandTask extends DefaultTask {
                 .nodeInstallDirectoryPath(nodeInstallDirectory.map(File::toPath).get())
                 .script(script.get())
                 .platform(platform)
+                .environmentVariables(environmentVariables.getOrElse(Map.of()))
                 .build());
     }
 }

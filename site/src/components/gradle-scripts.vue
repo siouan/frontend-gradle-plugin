@@ -3,7 +3,7 @@
         <ul class="nav nav-tabs">
             <li class="nav-item">
                 <NuxtLink
-                    :external="true"
+                    external
                     to="#"
                     class="nav-link"
                     :class="groovyTabClass"
@@ -13,7 +13,7 @@
             </li>
             <li class="nav-item">
                 <NuxtLink
-                    :external="true"
+                    external
                     to="#"
                     class="nav-link"
                     :class="kotlinTabClass"

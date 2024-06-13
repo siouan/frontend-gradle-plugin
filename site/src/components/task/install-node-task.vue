@@ -12,16 +12,14 @@
         <template #description>
             <p>
                 The task downloads a <FgpNodejsLink /> distribution, verifies its integrity, and installs it in the
-                directory pointed by the <FgpPropertyLink name="nodeInstallDirectory" /> property (if this property is
-                <FgpCode>null</FgpCode>, the distribution is installed in directory
-                <FgpCode>${projectDir}/node</FgpCode>). The URL used to download the distribution is resolved using the
-                <FgpPropertyLink name="nodeDistributionUrlRoot" /> property and the
-                <FgpPropertyLink name="nodeDistributionUrlPathPattern" /> property. Checking the distribution integrity
-                consists of downloading a file providing the distribution shasum. This file is expected to be in the
-                same remote web directory than the distribution archive. For example, if the distribution is located at
-                <FgpCode>https://nodejs.org/dist/vX.Y.Z/node-vX.Y.Z-win-x64.zip</FgpCode>, the plugin attempts to
-                download the shasum file located at <FgpCode>https://nodejs.org/dist/vX.Y.Z/SHASUMS256.txt</FgpCode>. By
-                default, the plugin relies on the VM
+                directory pointed by the <FgpPropertyLink name="nodeInstallDirectory" /> property. The URL used to
+                download the distribution is resolved using the <FgpPropertyLink name="nodeDistributionUrlRoot" />
+                property and the <FgpPropertyLink name="nodeDistributionUrlPathPattern" /> property. Checking the
+                distribution integrity consists of downloading a file providing the distribution shasum. This file is
+                expected to be in the same remote web directory than the distribution archive. For example, if the
+                distribution is located at <FgpCode>https://nodejs.org/dist/vX.Y.Z/node-vX.Y.Z-win-x64.zip</FgpCode>,
+                the plugin attempts to download the shasum file located at <FgpCode
+                >https://nodejs.org/dist/vX.Y.Z/SHASUMS256.txt</FgpCode>. By default, the plugin relies on the VM
                 <fgp-java-network-properties-link>network properties</fgp-java-network-properties-link>
                 to know if a proxy server shall be used when downloading the distribution and the shasum. A custom proxy
                 server may also be used by defining <FgpPropertyLink name="httpsProxyHost" /> property (respectively
@@ -32,18 +30,17 @@
                 <FgpPropertyLink name="maxDownloadAttempts" />.
             </p>
             <p>
-                If a <FgpNodejsLink /> distribution is already installed in the system - either as a global installation
-                or as an installation performed by another Gradle (sub-)project - and shall be used instead of a
+                If a <FgpNodejsLink /> distribution is already installed in the system, either as a global installation
+                or as an installation performed by another Gradle (sub-)project, and shall be used instead of a
                 downloaded distribution, take a look at the <FgpPropertyLink name="nodeDistributionProvided" /> property
                 instead: when <FgpCode>true</FgpCode>, this task is ignored if invoked during a Gradle build, and its
                 outcome will always be <FgpGradleTaskOutcomeLink outcome="SKIPPED" />.
             </p>
             <p>
-                The task takes advantage of
-                <fgp-gradle-guides-link path="/performance/#incremental_build"
-                    >Gradle incremental build</fgp-gradle-guides-link
-                >, and is not executed again unless one of its inputs/outputs changed. Consequently, if the task takes
-                part of a Gradle build, its outcome will be <FgpGradleTaskOutcomeLink outcome="UP-TO-DATE" />.
+                The task takes advantage of <fgp-gradle-guides-link path="/performance/#incremental_build"
+                >Gradle incremental build</fgp-gradle-guides-link>, and is not executed again unless one of its
+                inputs/outputs changed. In this case, the task outcome will be
+                <FgpGradleTaskOutcomeLink outcome="UP-TO-DATE" />.
             </p>
 
             <FgpInfo> This task should not be executed directly. Gradle executes it if the build requires it. </FgpInfo>

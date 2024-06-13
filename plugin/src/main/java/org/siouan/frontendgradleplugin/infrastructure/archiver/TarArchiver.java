@@ -27,6 +27,8 @@ import org.siouan.frontendgradleplugin.domain.installer.archiver.ExplodeCommand;
  */
 public class TarArchiver extends AbstractArchiver<TarArchiverContext, TarEntry> {
 
+    private static final long serialVersionUID = -1649165974155881017L;
+
     private final byte[] buffer;
 
     public TarArchiver(final FileManager fileManager) {
@@ -81,7 +83,7 @@ public class TarArchiver extends AbstractArchiver<TarArchiverContext, TarEntry> 
 
     @Override
     protected Optional<TarEntry> getNextEntry(final TarArchiverContext context) throws IOException {
-        return Optional.ofNullable(context.getInputStream().getNextTarEntry()).map(TarEntry::new);
+        return Optional.ofNullable(context.getInputStream().getNextEntry()).map(TarEntry::new);
     }
 
     @Override

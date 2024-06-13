@@ -1,6 +1,7 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
 import java.nio.file.Path;
+import java.util.Map;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -46,4 +47,23 @@ public class ScriptProperties {
      * Underlying platform.
      */
     private final Platform platform;
+
+    /**
+     * Additional environment variables to pass to the process.
+     *
+     * @since 8.1.0
+     */
+    private final Map<String, String> environmentVariables;
+
+    ScriptProperties(final ExecOperations execOperations, final Path packageJsonDirectoryPath,
+        final ExecutableType executableType, final Path nodeInstallDirectoryPath, final String script,
+        final Platform platform, final Map<String, String> environmentVariables) {
+        this.execOperations = execOperations;
+        this.packageJsonDirectoryPath = packageJsonDirectoryPath;
+        this.executableType = executableType;
+        this.nodeInstallDirectoryPath = nodeInstallDirectoryPath;
+        this.script = script;
+        this.platform = platform;
+        this.environmentVariables = Map.copyOf(environmentVariables);
+    }
 }

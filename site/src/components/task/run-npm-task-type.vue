@@ -1,5 +1,5 @@
 <template>
-    <FgpTask name="RunNpm" type :inputs="inputs">
+    <FgpTask name="RunNpm" type :inputs="inputs" custom-environment-variables-supported>
         <template #title>Run a custom command with <FgpCode>npm</FgpCode></template>
         <template #description>
             <p>
@@ -19,7 +19,7 @@
 tasks.register('npmVersion', RunNpm) {
     <FgpCodeComment>// dependsOn tasks.named('installPackageManager')
     // dependsOn tasks.named('installFrontend')</FgpCodeComment>
-    script = '--version'
+    script = '-v'
 }</FgpCode></pre>
                 </template>
                 <template #kotlin>
@@ -27,7 +27,7 @@ tasks.register('npmVersion', RunNpm) {
 tasks.register&lt;RunNpm&gt;("npmVersion") {
     <FgpCodeComment>// dependsOn(tasks.named("installPackageManager"))
     // dependsOn(tasks.named("installFrontend"))</FgpCodeComment>
-    script.set("--version")
+    script.set("-v")
 }</FgpCode></pre>
                 </template>
             </FgpGradleScripts>

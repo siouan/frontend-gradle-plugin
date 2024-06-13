@@ -2,21 +2,21 @@ val fgpArtifactId: String by extra
 
 pluginManagement {
     plugins {
-        id("com.gradle.enterprise") version "3.13.1"
-        id("com.gradle.plugin-publish") version "1.2.0"
-        id("org.sonarqube") version "4.0.0.2929"
+        id("com.gradle.develocity") version "3.17.4"
+        id("com.gradle.plugin-publish") version "1.2.1"
+        id("org.sonarqube") version "5.0.0.4638"
    }
 }
 
 plugins {
-    id("com.gradle.enterprise")
+    id("com.gradle.develocity")
 }
 
 rootProject.name = fgpArtifactId
 
-gradleEnterprise {
+develocity {
     buildScan {
-        termsOfServiceUrl = "https://gradle.com/terms-of-service"
-        termsOfServiceAgree = "yes"
+        termsOfUseUrl.set("https://gradle.com/help/legal-terms-of-use")
+        termsOfUseAgree.set("yes")
     }
 }

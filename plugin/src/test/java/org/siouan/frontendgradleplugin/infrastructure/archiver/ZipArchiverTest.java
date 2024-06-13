@@ -7,8 +7,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.siouan.frontendgradleplugin.test.Resources.getResourcePath;
 import static org.siouan.frontendgradleplugin.domain.PlatformFixture.LOCAL_PLATFORM;
+import static org.siouan.frontendgradleplugin.test.Resources.getResourcePath;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -55,7 +55,13 @@ class ZipArchiverTest {
             .targetDirectoryPath(temporaryDirectoryPath)
             .build();
 
-        assertThatThrownBy(() -> archiver.initializeContext(settings)).isInstanceOf(IOException.class);
+        assertThatThrownBy(() -> {
+            try (@SuppressWarnings("unused") final ZipArchiverContext zipArchiverContext = archiver.initializeContext(
+                settings)) {
+                // The test is expected to fail during context initilization above. This code is necessary in case
+                // initialization succeeds unexpectedly: the context must be close with the try-with-resources block.
+            }
+        }).isInstanceOf(IOException.class);
 
         verifyNoMoreInteractions(fileManager);
     }
@@ -70,7 +76,13 @@ class ZipArchiverTest {
             .targetDirectoryPath(temporaryDirectoryPath)
             .build();
 
-        assertThatThrownBy(() -> archiver.initializeContext(settings)).isInstanceOf(IOException.class);
+        assertThatThrownBy(() -> {
+            try (@SuppressWarnings("unused") final ZipArchiverContext zipArchiverContext = archiver.initializeContext(
+                settings)) {
+                // The test is expected to fail during context initilization above. This code is necessary in case
+                // initialization succeeds unexpectedly: the context must be close with the try-with-resources block.
+            }
+        }).isInstanceOf(IOException.class);
 
         verifyNoMoreInteractions(fileManager);
     }
@@ -86,18 +98,18 @@ class ZipArchiverTest {
             .build();
 
         final IOException expectedException = new IOException();
-        final ZipArchiver archiver = new ZipArchiverWithSymbolicLinkFailure(fileManager, expectedException);
+        final ZipArchiver zipArchiver = new ZipArchiverWithSymbolicLinkFailure(fileManager, expectedException);
         boolean failure = false;
-        try (final ZipArchiverContext context = archiver.initializeContext(settings)) {
-            Optional<ZipEntry> option = archiver.getNextEntry(context);
+        try (final ZipArchiverContext context = zipArchiver.initializeContext(settings)) {
+            Optional<ZipEntry> option = zipArchiver.getNextEntry(context);
             while (option.isPresent()) {
                 final ZipEntry entry = option.get();
                 if (entry.isSymbolicLink()) {
-                    assertThatThrownBy(() -> archiver.getSymbolicLinkTarget(context, entry)).isEqualTo(
+                    assertThatThrownBy(() -> zipArchiver.getSymbolicLinkTarget(context, entry)).isEqualTo(
                         expectedException);
                     failure = true;
                 }
-                option = archiver.getNextEntry(context);
+                option = zipArchiver.getNextEntry(context);
             }
         }
 

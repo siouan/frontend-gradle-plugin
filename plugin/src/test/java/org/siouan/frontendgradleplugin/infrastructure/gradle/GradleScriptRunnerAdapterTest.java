@@ -11,6 +11,7 @@ import static org.siouan.frontendgradleplugin.test.PathFixture.ANY_PATH;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.gradle.process.ExecOperations;
@@ -50,8 +51,9 @@ class GradleScriptRunnerAdapterTest {
     @Test
     void should_run_script_when_settings_are_resolved() {
         final Path nodeInstallationDirectory = ANY_PATH.resolve("node");
+        final Map<String, String> environmentVariables = Map.of("VARIABLE", "value");
         final ScriptProperties scriptProperties = new ScriptProperties(execOperations, ANY_PATH.resolve("frontend"),
-            ExecutableType.NPM, nodeInstallationDirectory, SCRIPT, LOCAL_PLATFORM);
+            ExecutableType.NPM, nodeInstallationDirectory, SCRIPT, LOCAL_PLATFORM, environmentVariables);
         final Set<Path> executablePaths = Set.of();
         final List<String> arguments = List.of();
         final ExecutionSettings executionSettings = ExecutionSettings
@@ -60,6 +62,7 @@ class GradleScriptRunnerAdapterTest {
             .additionalExecutablePaths(executablePaths)
             .executablePath(nodeInstallationDirectory.resolve("npm"))
             .arguments(arguments)
+            .environmentVariables(environmentVariables)
             .build();
         when(resolveExecutionSettings.execute(ResolveExecutionSettingsCommand
             .builder()
@@ -68,6 +71,7 @@ class GradleScriptRunnerAdapterTest {
             .nodeInstallDirectoryPath(scriptProperties.getNodeInstallDirectoryPath())
             .platform(scriptProperties.getPlatform())
             .script(scriptProperties.getScript())
+            .environmentVariables(environmentVariables)
             .build())).thenReturn(executionSettings);
         final ExecResult execResult = mock(ExecResult.class);
         when(execOperations.exec(any(ExecSpecAction.class))).thenReturn(execResult);
@@ -84,6 +88,7 @@ class GradleScriptRunnerAdapterTest {
                 assertThat(eS.getAdditionalExecutablePaths()).isEqualTo(
                     executionSettings.getAdditionalExecutablePaths());
                 assertThat(eS.getExecutablePath()).isEqualTo(executionSettings.getExecutablePath());
+                assertThat(eS.getEnvironmentVariables()).isEqualTo(environmentVariables);
             });
             assertThat(execSpecAction.getAfterConfiguredConsumer()).isNotNull();
         });
