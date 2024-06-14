@@ -70,7 +70,7 @@ const jdkHref = computed(() => {
     if (props.type) {
         const matches = QUALIFIED_JDK_CLASS_NAME_REGEXP.exec(props.type);
         if (matches && matches.groups?.fqcn) {
-            return `https://docs.oracle.com/en/java/javase/17/docs/api/java.base/${matches.groups.fqcn.replace(/\./g, '/')}.html`;
+            return `https://docs.oracle.com/en/java/javase/21/docs/api/java.base/${matches.groups.fqcn.replace(/\./g, '/')}.html`;
         }
     }
     return null;

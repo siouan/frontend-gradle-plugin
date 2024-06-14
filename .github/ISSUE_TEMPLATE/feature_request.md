@@ -20,10 +20,11 @@ Hi,
 Explain what you would like the plugin do: ...
 
 **Target environment**
- 
-- OS: [e.g. Ubuntu 18.04.1, Windows 10 Pro, Mac OS X]
-- JDK: [e.g. Oracle JDK 11 64 bits]
-- Gradle: [e.g. Gradle 6.3]
+
+- OS: [e.g. Ubuntu 22.04.4, Windows 11 Pro, Mac OS X]
+- JDK: [e.g. Adoptium Temurin JDK 21 64 bits]
+- Gradle: [e.g. Gradle 8.8]
+- Frontend Gradle plugin: [e.g. 8.1.0 JDK 21]
 
 Settings in `build.gradle[.kts]` file:
 ```groovy
