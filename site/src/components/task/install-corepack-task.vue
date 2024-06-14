@@ -31,8 +31,8 @@
             <p>
                As the task touches the <FgpNodejsLink /> install directory, please pay attention when using a shared
                <FgpNodejsLink /> distribution (<FgpPropertyLink name="nodeDistributionProvided" /> is <FgpCode
-               >true</FgpCode>), because this task will impact other projects using <FgpCorepackLink />. This may be an
-               expected behavior, or lead to an undesirable side-effect.
+               >true</FgpCode>), because this task will impact other projects using <FgpCorepackLink />. This may be
+               desirable or not depending on your situation.
            </p>
            <p>
                The task takes advantage of <fgp-gradle-guides-link path="/performance/#incremental_build"
