@@ -33,6 +33,12 @@
                     installNode
                 </text>
             </g>
+            <g id="installCorepackTask">
+                <use xlink:href="#frontendTask" />
+                <text x="60" y="16" dominant-baseline="middle" text-anchor="middle" font-size="0.6rem">
+                    installCorepack
+                </text>
+            </g>
             <g id="resolvePackageManagerTask">
                 <use xlink:href="#frontendTask" />
                 <text x="60" y="16" dominant-baseline="middle" text-anchor="middle" font-size="0.6rem">
@@ -82,7 +88,9 @@
             </g>
             <g id="RunCorepackTaskType">
                 <use xlink:href="#frontendTaskType" />
-                <text x="50" y="16" dominant-baseline="middle" text-anchor="middle" font-size="0.6rem">RunCorepack</text>
+                <text x="50" y="16" dominant-baseline="middle" text-anchor="middle" font-size="0.6rem">
+                    RunCorepack
+                </text>
             </g>
             <g id="RunNpmTaskType">
                 <use xlink:href="#frontendTaskType" />
@@ -105,6 +113,7 @@
                 markerWidth="6"
                 markerHeight="6"
                 orient="auto-start-reverse"
+                fill="violet"
             >
                 <path d="M 0 0 L 10 5 L 0 10 z" />
             </marker>
@@ -112,15 +121,15 @@
             <g id="gradleBasePlugin">
                 <rect x="0" y="0" width="460" height="70" fill="none" stroke="grey" />
                 <text x="20" y="18" font-size="0.5rem" fill="grey">Gradle Base plugin</text>
-                <fgp-gradle-docs-link path="/current/userguide/base_plugin.html#sec:base_tasks">
+                <FgpGradleDocsLink path="/current/userguide/base_plugin.html#sec:base_tasks">
                     <use x="20" y="30" xlink:href="#cleanTask" />
-                </fgp-gradle-docs-link>
-                <fgp-gradle-docs-link path="/current/userguide/base_plugin.html#sec:base_tasks">
+                </FgpGradleDocsLink>
+                <FgpGradleDocsLink path="/current/userguide/base_plugin.html#sec:base_tasks">
                     <use x="170" y="30" xlink:href="#checkTask" />
-                </fgp-gradle-docs-link>
-                <fgp-gradle-docs-link path="/current/userguide/base_plugin.html#sec:base_tasks">
+                </FgpGradleDocsLink>
+                <FgpGradleDocsLink path="/current/userguide/base_plugin.html#sec:base_tasks">
                     <use x="320" y="30" xlink:href="#assembleTask" />
-                </fgp-gradle-docs-link>
+                </FgpGradleDocsLink>
             </g>
 
             <g id="gradlePublishingPlugin">
@@ -132,50 +141,53 @@
             <g id="frontendGradlePlugin">
                 <rect x="0" y="80" width="640" height="360" fill="none" stroke="grey" />
                 <text text-anchor="end" x="620" y="238" font-size="0.5rem" fill="grey">Frontend Gradle plugin</text>
-                <fgp-site-link path="#cleanFrontend">
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#cleanFrontend`">
                     <use x="20" y="90" xlink:href="#cleanFrontendTask" />
-                </fgp-site-link>
-                <fgp-site-link path="#checkFrontend">
+                </FgpSiteLink>
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#checkFrontend`">
                     <use x="170" y="90" xlink:href="#checkFrontendTask" />
-                </fgp-site-link>
-                <fgp-site-link path="#assembleFrontend">
+                </FgpSiteLink>
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#assembleFrontend`">
                     <use x="320" y="90" xlink:href="#assembleFrontendTask" />
-                </fgp-site-link>
-                <fgp-site-link path="#publishFrontend">
+                </FgpSiteLink>
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#publishFrontend`">
                     <use x="500" y="90" xlink:href="#publishFrontendTask" />
-                </fgp-site-link>
-                <fgp-site-link path="#installFrontend">
+                </FgpSiteLink>
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#installFrontend`">
                     <use x="170" y="150" xlink:href="#installFrontendTask" />
-                </fgp-site-link>
-                <fgp-site-link path="#installPackageManager">
+                </FgpSiteLink>
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#installPackageManager`">
                     <use x="170" y="210" xlink:href="#installPackageManagerTask" />
-                </fgp-site-link>
-                <fgp-site-link path="#resolvePackageManager">
-                    <use x="170" y="270" xlink:href="#resolvePackageManagerTask" />
-                </fgp-site-link>
-                <fgp-site-link path="#installNode">
+                </FgpSiteLink>
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#installCorepack`">
+                    <use x="20" y="270" xlink:href="#installCorepackTask" />
+                </FgpSiteLink>
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#resolvePackageManager`">
+                    <use x="320" y="270" xlink:href="#resolvePackageManagerTask" />
+                </FgpSiteLink>
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#installNode`">
                     <use x="170" y="330" xlink:href="#installNodeTask" />
-                </fgp-site-link>
+                </FgpSiteLink>
 
                 <line x1="0" y1="370" x2="640" y2="370" stroke="gainsboro" stroke-dasharray="4 2" />
                 <text text-anchor="middle" x="320" y="388" font-size="0.5rem" fill="darkgrey">
                     Additional task types
                 </text>
-                <fgp-site-link path="#RunNode">
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#RunNode`">
                     <use x="10" y="400" xlink:href="#RunNodeTaskType" />
-                </fgp-site-link>
-                <fgp-site-link path="#RunCorepack">
+                </FgpSiteLink>
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#RunCorepack`">
                     <use x="140" y="400" xlink:href="#RunCorepackTaskType" />
-                </fgp-site-link>
-                <fgp-site-link path="#RunNpm">
+                </FgpSiteLink>
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#RunNpm`">
                     <use x="270" y="400" xlink:href="#RunNpmTaskType" />
-                </fgp-site-link>
-                <fgp-site-link path="#RunPnpm">
+                </FgpSiteLink>
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#RunPnpm`">
                     <use x="400" y="400" xlink:href="#RunPnpmTaskType" />
-                </fgp-site-link>
-                <fgp-site-link path="#RunYarn">
+                </FgpSiteLink>
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#RunYarn`">
                     <use x="530" y="400" xlink:href="#RunYarnTaskType" />
-                </fgp-site-link>
+                </FgpSiteLink>
             </g>
         </defs>
 
@@ -183,29 +195,23 @@
         <use xlink:href="#gradlePublishingPlugin" />
         <use xlink:href="#frontendGradlePlugin" />
 
-        <line x1="80" y1="60" x2="80" y2="87" stroke="black" marker-end="url(#arrow)" />
-        <line x1="230" y1="60" x2="230" y2="87" stroke="black" marker-end="url(#arrow)" />
-        <line x1="380" y1="60" x2="380" y2="87" stroke="black" marker-end="url(#arrow)" />
-        <line x1="560" y1="60" x2="560" y2="87" stroke="black" marker-end="url(#arrow)" />
+        <line x1="80" y1="60" x2="80" y2="87" stroke="violet" marker-end="url(#arrow)" />
+        <line x1="230" y1="60" x2="230" y2="87" stroke="violet" marker-end="url(#arrow)" />
+        <line x1="380" y1="60" x2="380" y2="87" stroke="violet" marker-end="url(#arrow)" />
+        <line x1="560" y1="60" x2="560" y2="87" stroke="violet" marker-end="url(#arrow)" />
 
-        <path d="M 80 120 Q 80 133, 140 133 T 200 147" stroke="black" fill="transparent" marker-end="url(#arrow)" />
-        <line x1="230" y1="120" x2="230" y2="147" stroke="black" marker-end="url(#arrow)" />
-        <path d="M 380 120 Q 380 133, 320 133 T 260 147" stroke="black" fill="transparent" marker-end="url(#arrow)" />
-        <line x1="500" y1="105" x2="443" y2="105" stroke="black" marker-end="url(#arrow)" />
+        <line x1="500" y1="105" x2="443" y2="105" stroke="violet" marker-end="url(#arrow)" />
 
-        <line x1="230" y1="180" x2="230" y2="207" stroke="black" marker-end="url(#arrow)" />
-        <line x1="230" y1="240" x2="230" y2="267" stroke="black" marker-end="url(#arrow)" />
-        <line x1="230" y1="300" x2="230" y2="327" stroke="black" marker-end="url(#arrow)" />
+        <path d="M 80 120 Q 80 133, 140 133 T 200 147" stroke="violet" fill="transparent" marker-end="url(#arrow)" />
+        <line x1="230" y1="120" x2="230" y2="147" stroke="violet" marker-end="url(#arrow)" />
+        <path d="M 380 120 Q 380 133, 320 133 T 260 147" stroke="violet" fill="transparent" marker-end="url(#arrow)" />
+
+        <line x1="230" y1="180" x2="230" y2="207" stroke="violet" marker-end="url(#arrow)" />
+
+        <path d="M 200 240 Q 200 253, 140 253 T 80 267" stroke="violet" fill="transparent" marker-end="url(#arrow)" />
+        <path d="M 260 240 Q 260 253, 320 253 T 380 267" stroke="violet" fill="transparent" marker-end="url(#arrow)" />
+
+        <path d="M 80 300 Q 80 313, 140 313 T 200 327" stroke="violet" fill="transparent" marker-end="url(#arrow)" />
+        <path d="M 380 300 Q 380 313, 320 313 T 260 327" stroke="violet" fill="transparent" marker-end="url(#arrow)" />
     </svg>
 </template>
-
-<script>
-import Vue from 'vue';
-import fgpSiteLink from '@/components/link/site-link';
-import fgpAppConfig from '@/mixin/app-config';
-
-export default Vue.component('fgp-dependency-tree', {
-    components: { fgpSiteLink },
-    mixins: [fgpAppConfig]
-});
-</script>

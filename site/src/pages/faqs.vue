@@ -1,80 +1,76 @@
 <template>
     <section>
-        <fgp-main-title>Frequently asked questions</fgp-main-title>
+        <FgpMainTitle>Frequently asked questions</FgpMainTitle>
 
         <nav>
             <ul>
                 <li>
-                    <fgp-site-link path="#node-corepack-npm-pnpm-yarn-direct-use">
-                        How to use <fgp-code>node</fgp-code>/<fgp-code>corepack</fgp-code>/<fgp-code
-                        >npm</fgp-code>/<fgp-code>pnpm</fgp-code>/<fgp-code>yarn</fgp-code> executables apart from Gradle
-                        when the <fgp-code>Node.js</fgp-code> distribution is downloaded by the plugin?
-                    </fgp-site-link>
+                    <FgpSiteLink :path="`${$config.public.paths.faqs}#node-corepack-npm-pnpm-yarn-direct-use`">
+                        How to use
+                        <FgpCode>node</FgpCode
+                        >/<FgpCode>corepack</FgpCode>/<FgpCode>npm</FgpCode>/<FgpCode>pnpm</FgpCode>/<FgpCode
+                            >yarn</FgpCode
+                        >
+                        executables apart from Gradle when the
+                        <FgpCode>Node.js</FgpCode> distribution is downloaded by the plugin?
+                    </FgpSiteLink>
                 </li>
                 <li>
-                    <fgp-site-link path="#unsupported-platform-exception">
-                        What should I do when error <fgp-code>UnsupportedPlatformException</fgp-code> occurs?
-                    </fgp-site-link>
+                    <FgpSiteLink :path="`${$config.public.paths.faqs}#unsupported-platform-exception`">
+                        What should I do when error
+                        <FgpCode>UnsupportedPlatformException</FgpCode> occurs?
+                    </FgpSiteLink>
                 </li>
                 <li>
-                    <fgp-site-link path="#custom-nodejs-distribution-server">
-                        How to configure plugin so as I can download <fgp-code>Node.js</fgp-code> distribution from a
-                        custom server?
-                    </fgp-site-link>
+                    <FgpSiteLink :path="`${$config.public.paths.faqs}#custom-nodejs-distribution-server`">
+                        How to configure plugin so as I can download
+                        <FgpCode>Node.js</FgpCode> distribution from a custom server?
+                    </FgpSiteLink>
                 </li>
                 <li>
-                    <fgp-site-link path="#cache-directory">
-                        What's the purpose of the <fgp-code>.frontend-gradle-plugin</fgp-code> directory generated in
-                        each project?
-                    </fgp-site-link>
+                    <FgpSiteLink :path="`${$config.public.paths.faqs}#cache-directory`">
+                        What's the purpose of the
+                        <FgpCode>.frontend-gradle-plugin</FgpCode> directory generated in each project?
+                    </FgpSiteLink>
                 </li>
                 <li>
-                    <fgp-site-link path="#node-install-directory-from-environment">
-                        How can I set the install directory of the <fgp-code>Node.js</fgp-code> distribution using an
-                        environment variable?
-                    </fgp-site-link>
+                    <FgpSiteLink :path="`${$config.public.paths.faqs}#node-install-directory-from-environment`">
+                        How can I set the install directory of the
+                        <FgpCode>Node.js</FgpCode> distribution using an environment variable?
+                    </FgpSiteLink>
+                </li>
+                <li>
+                    <FgpSiteLink :path="`${$config.public.paths.faqs}#custom-environment-variables`">
+                        How can I provide additional environment variables to <FgpCode>node</FgpCode>/<FgpCode
+                        >corepack</FgpCode>/<FgpCode>npm</FgpCode>/<FgpCode>pnpm</FgpCode>/<FgpCode>yarn</FgpCode>
+                        processes?
+                    </FgpSiteLink>
                 </li>
             </ul>
         </nav>
 
-        <fgp-node-corepack-npm-pnpm-yarn-direct-use-faq id="node-corepack-npm-pnpm-yarn-direct-use" />
-        <fgp-unsupported-platform-exception-faq id="unsupported-platform-exception" />
-        <fgp-custom-nodejs-distribution-server-faq id="custom-nodejs-distribution-server" />
-        <fgp-cache-directory-faq id="cache-directory" />
-        <fgp-node-install-directory-from-environment-faq id="node-install-directory-from-environment" />
+        <FgpNodeCorepackNpmPnpmYarnDirectUseFaq id="node-corepack-npm-pnpm-yarn-direct-use" />
+        <FgpUnsupportedPlatformExceptionFaq id="unsupported-platform-exception" />
+        <FgpCustomNodejsDistributionServerFaq id="custom-nodejs-distribution-server" />
+        <FgpCacheDirectoryFaq id="cache-directory" />
+        <FgpNodeInstallDirectoryFromEnvironmentFaq id="node-install-directory-from-environment" />
+        <FgpCustomEnvironmentVariablesFaq id="custom-environment-variables" />
     </section>
 </template>
 
-<script>
-import Vue from 'vue';
-import fgpCacheDirectoryFaq from '@/components/faq/cache-directory-faq';
-import fgpCode from '@/components/code';
-import fgpCustomNodejsDistributionServerFaq from '@/components/faq/custom-nodejs-distribution-server-faq';
-import fgpMainTitle from '@/components/main-title';
-import fgpNodeCorepackNpmPnpmYarnDirectUseFaq from '@/components/faq/node-corepack-npm-pnpm-yarn-direct-use-faq';
-import fgpNodeInstallDirectoryFromEnvironmentFaq from '@/components/faq/node-install-directory-from-environment-faq';
-import fgpPageMeta from '@/mixin/page-meta';
-import fgpSiteLink from '@/components/link/site-link';
-import fgpUnsupportedPlatformExceptionFaq from '@/components/faq/unsupported-platform-exception-faq';
+<script setup lang="ts">
+const canonicalUrl = 'https://siouan.github.io/frontend-gradle-plugin/faqs';
+const title = 'Frequently asked questions';
+const description = 'Using corepack, node, npm, pnpm, yarn executables apart from Gradle and resolving common issues.';
 
-export default Vue.component('fgp-faqs', {
-    components: {
-        fgpCacheDirectoryFaq,
-        fgpCode,
-        fgpCustomNodejsDistributionServerFaq,
-        fgpMainTitle,
-        fgpNodeCorepackNpmPnpmYarnDirectUseFaq,
-        fgpNodeInstallDirectoryFromEnvironmentFaq,
-        fgpSiteLink,
-        fgpUnsupportedPlatformExceptionFaq
-    },
-    mixins: [fgpPageMeta],
-    data() {
-        return {
-            htmlTitle: 'Frequently asked questions',
-            metaDescription: 'Using corepack, node, npm, pnpm, yarn executables apart from Gradle and resolving common issues.',
-            linkCanonicalHref: process.env.FGP_WEBSITE_URL + 'faqs/'
-        }
-    }
+useHead({
+    link: [{ rel: 'canonical', href: canonicalUrl }]
+});
+useSeoMeta({
+    description,
+    ogDescription: description,
+    ogTitle: title,
+    ogUrl: canonicalUrl,
+    title
 });
 </script>

@@ -3,6 +3,7 @@ package org.siouan.frontendgradleplugin.domain.installer;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
 
@@ -38,7 +39,8 @@ class AbstractHttpClientTest {
 
     @Test
     void should_return_real_http_response_when_protocol_is_not_file() throws IOException {
-        assertThat(httpClient.sendGetRequest(new URL("http://localhost"), null, null)).isEqualTo(httpResponse);
+        assertThat(httpClient.sendGetRequest(URI.create("http://localhost").toURL(), null, null)).isEqualTo(
+            httpResponse);
     }
 
     private static class HttpClientImpl extends AbstractHttpClient {

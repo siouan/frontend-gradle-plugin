@@ -1,6 +1,7 @@
 package org.siouan.frontendgradleplugin.domain.installer;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.regex.Matcher;
@@ -51,10 +52,12 @@ public class GetDistribution {
      * @throws ResourceDownloadException If the distribution download or the shasums file download fails.
      * @throws InvalidNodeDistributionException If the downloaded distribution is corrupted.
      * @throws IOException If an I/O error occurs.
+     * @throws URISyntaxException If the distribution URL is not a valid URL.
      */
     public Path execute(final GetDistributionCommand command)
         throws IOException, InvalidDistributionUrlException, ResourceDownloadException,
-        InvalidNodeDistributionException, NodeDistributionShasumNotFoundException, UnsupportedPlatformException {
+        InvalidNodeDistributionException, NodeDistributionShasumNotFoundException, UnsupportedPlatformException,
+        URISyntaxException {
         // Resolve the URL to download the distribution
         final ResolveNodeDistributionUrlCommand resolveNodeDistributionUrlCommand = new ResolveNodeDistributionUrlCommand(
             command.getPlatform(), command.getVersion(), command.getDistributionUrlRoot(),

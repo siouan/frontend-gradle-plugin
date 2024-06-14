@@ -1,53 +1,50 @@
 <template>
-    <fgp-task name="RunCorepack" type :inputs="inputs">
-        <template #title>Run a custom command with <fgp-code>corepack</fgp-code></template>
+    <FgpTask name="RunCorepack" type :inputs="inputs" custom-environment-variables-supported>
+        <template #title>Run a custom command with <FgpCode>corepack</FgpCode></template>
         <template #description>
             <p>
                 The plugin provides task type
-                <fgp-code>org.siouan.frontendgradleplugin.infrastructure.gradle.RunCorepack</fgp-code> that allows creating
-                a custom task to run a <fgp-code>corepack</fgp-code> command. The <fgp-code>script</fgp-code> property must
-                be set with the corresponding command. The code hereafter shows the configuration required to output the
-                version of <fgp-code>corepack</fgp-code>:
+                <FgpCode>org.siouan.frontendgradleplugin.infrastructure.gradle.RunCorepack</FgpCode>
+                that allows creating a custom task to run a
+                <FgpCode>corepack</FgpCode> command. The <FgpCode>script</FgpCode> property must be set with the
+                corresponding command. The code hereafter shows the configuration required to output the version of
+                <FgpCode>corepack</FgpCode>:
             </p>
 
-            <fgp-gradle-scripts id="run-corepack-example" class="my-3">
+            <FgpGradleScripts id="run-corepack-example">
                 <template #groovy>
-                    <pre><fgp-code>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunCorepack
+                    <pre><FgpCode>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunCorepack
 tasks.register('corepackVersion', RunCorepack) {
-    script = '--version'
-}</fgp-code></pre>
+    dependsOn tasks.named('installCorepack')
+    script = '-v'
+}</FgpCode></pre>
                 </template>
                 <template #kotlin>
-                    <pre><fgp-code>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunCorepack
+                    <pre><FgpCode>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunCorepack
 tasks.register&lt;RunCorepack&gt;("corepackVersion") {
-    script.set("--version")
-}</fgp-code></pre>
+    dependsOn(tasks.named("installCorepack"))
+    script.set("-v")
+}</FgpCode></pre>
                 </template>
-            </fgp-gradle-scripts>
+            </FgpGradleScripts>
         </template>
-    </fgp-task>
+    </FgpTask>
 </template>
 
-<script>
-import Vue from 'vue';
-import fgpCode from '@/components/code';
-import fgpGradleScripts from '@/components/gradle-scripts';
-import fgpTask from '@/components/task/task';
-
-export default Vue.component('fgp-run-corepack-task-type', {
-    components: {
-        fgpCode,
-        fgpGradleScripts,
-        fgpTask
+<script setup lang="ts">
+const inputs = [
+    {
+        name: 'packageJsonDirectory',
+        type: 'F',
+        binding: 'P',
+        property: 'packageJsonDirectory',
     },
-    data() {
-        return {
-            inputs: [
-                { name: 'packageJsonDirectory', type: 'F', binding: 'P', property: 'packageJsonDirectory' },
-                { name: 'nodeInstallDirectory', type: 'F', binding: 'P', property: 'nodeInstallDirectory' },
-                { name: 'script', type: 'S', binding: 'P', property: 'script' }
-            ]
-        };
-    }
-});
+    {
+        name: 'nodeInstallDirectory',
+        type: 'F',
+        binding: 'P',
+        property: 'nodeInstallDirectory',
+    },
+    { name: 'script', type: 'S', binding: 'P', property: 'script' },
+];
 </script>

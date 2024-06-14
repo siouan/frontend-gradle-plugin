@@ -1,32 +1,24 @@
 <template>
-    <article class="container-fluid border rounded my-4">
-        <div class="row align-items-center bg-light">
-            <div class="d-none d-md-inline-block col-sm-2 text-center">
-                <i class="fa-4x mx-auto" :class="iconClass"></i>
+    <article class="card mb-3">
+        <div class="row g-0">
+            <div class="col-sm-2 bg-body-secondary rounded-start text-center align-content-center d-none d-md-inline-block">
+                <i class="fa-4x" :class="iconClass" />
             </div>
-            <div class="col px-4 bg-white">
-                <h5 class="mt-3">{{ title }}</h5>
+            <div class="col px-4 pt-3">
+                <h5>{{ title }}</h5>
                 <p>
-                    <slot></slot>
+                    <slot />
                 </p>
             </div>
         </div>
     </article>
 </template>
 
-<script>
-import Vue from 'vue';
+<script setup lang="ts">
+interface Props {
+    readonly title: string;
+    readonly iconClass: string;
+}
 
-export default Vue.component('fgp-feature-card', {
-    props: {
-        title: {
-            type: String,
-            required: true
-        },
-        iconClass: {
-            type: String,
-            required: true
-        }
-    }
-});
+defineProps<Props>();
 </script>

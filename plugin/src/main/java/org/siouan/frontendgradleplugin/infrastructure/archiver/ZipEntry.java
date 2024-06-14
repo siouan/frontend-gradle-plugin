@@ -15,15 +15,6 @@ import org.siouan.frontendgradleplugin.domain.installer.archiver.ArchiveEntry;
 @Builder
 public record ZipEntry(ZipArchiveEntry lowLevelEntry) implements ArchiveEntry {
 
-    /**
-     * Gets the low-level entry this entry is mapped to.
-     *
-     * @return Entry.
-     */
-    public ZipArchiveEntry getLowLevelEntry() {
-        return lowLevelEntry;
-    }
-
     @Override
     public String getName() {
         return lowLevelEntry.getName();

@@ -1,16 +1,11 @@
 <template>
-    <span :id="name" class="text-info">#</span>
+    <FgpSiteLinkAnchor :name="name" :path="$config.public.paths.tasks" />
 </template>
 
-<script>
-import Vue from 'vue';
+<script setup lang="ts">
+interface Props {
+    readonly name: string;
+}
 
-export default Vue.component('fgp-task-link-anchor', {
-    props: {
-        name: {
-            type: String,
-            required: true
-        }
-    }
-});
+defineProps<Props>();
 </script>

@@ -2,7 +2,7 @@ import org.siouan.frontendgradleplugin.infrastructure.gradle.ResolvePackageManag
 import org.siouan.frontendgradleplugin.infrastructure.gradle.RunYarn
 
 plugins {
-    id("org.siouan.frontend-jdk17")
+    id("org.siouan.frontend-jdk21")
 }
 
 frontend {

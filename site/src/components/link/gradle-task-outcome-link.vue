@@ -1,20 +1,13 @@
 <template>
-    <fgp-gradle-docs-link path="/current/userguide/more_about_tasks.html#sec:task_outcomes">{{
+    <FgpGradleDocsLink path="/current/userguide/more_about_tasks.html#sec:task_outcomes">{{
         outcome
-    }}</fgp-gradle-docs-link>
+    }}</FgpGradleDocsLink>
 </template>
 
-<script>
-import Vue from 'vue';
-import fgpGradleDocsLink from '@/components/link/gradle-docs-link';
+<script setup lang="ts">
+interface Props {
+    readonly outcome: string;
+}
 
-export default Vue.component('fgp-gradle-task-outcome-link', {
-    components: { fgpGradleDocsLink },
-    props: {
-        outcome: {
-            type: String,
-            required: true
-        }
-    }
-});
+defineProps<Props>();
 </script>

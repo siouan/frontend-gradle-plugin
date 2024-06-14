@@ -28,16 +28,17 @@ public class GradleScriptRunnerAdapter {
     public void execute(final ScriptProperties scriptProperties) {
         final ExecutionSettings executionSettings = resolveExecutionSettings.execute(ResolveExecutionSettingsCommand
             .builder()
-            .packageJsonDirectoryPath(scriptProperties.packageJsonDirectoryPath())
-            .executableType(scriptProperties.executableType())
-            .nodeInstallDirectoryPath(scriptProperties.nodeInstallDirectoryPath())
-            .platform(scriptProperties.platform())
-            .script(scriptProperties.script())
+            .packageJsonDirectoryPath(scriptProperties.getPackageJsonDirectoryPath())
+            .executableType(scriptProperties.getExecutableType())
+            .nodeInstallDirectoryPath(scriptProperties.getNodeInstallDirectoryPath())
+            .platform(scriptProperties.getPlatform())
+            .script(scriptProperties.getScript())
+            .environmentVariables(scriptProperties.getEnvironmentVariables())
             .build());
         logger.debug("Execution settings: {}", executionSettings);
 
         scriptProperties
-            .execOperations()
+            .getExecOperations()
             .exec(ExecSpecAction
                 .builder()
                 .executionSettings(executionSettings)

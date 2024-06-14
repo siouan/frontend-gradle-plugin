@@ -1,12 +1,17 @@
 <template>
-    <fgp-link href="https://github.com/nodejs/corepack">{{ $t("navigation.corepack.label") }}</fgp-link>
+    <FgpLink :href="internalUrl">{{ internalLabel }}</FgpLink>
 </template>
 
-<script>
-import Vue from 'vue';
-import fgpLink from '@/components/link/link';
+<script setup lang="ts">
+const { t } = useI18n();
+const COREPACK_BASE_URL = 'https://github.com/nodejs/corepack';
 
-export default Vue.component('fgp-corepack-link', {
-    components: { fgpLink }
-});
+interface Props {
+    readonly path?: string | null;
+    readonly label?: string | null;
+}
+
+const props = defineProps<Props>();
+const internalLabel = computed<string>(() => props.label || t('navigation.corepack.label'));
+const internalUrl = computed<string>(() => (props.path ? `${COREPACK_BASE_URL}${props.path}` : COREPACK_BASE_URL));
 </script>

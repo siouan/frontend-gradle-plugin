@@ -4,16 +4,16 @@ buildscript {
     }
 
     dependencies {
-        classpath("org.siouan", "frontend-jdk17", "8.0.0")
+        classpath("org.siouan", "frontend-jdk21", "8.1.0")
     }
 }
 
 plugins {
-    id("org.siouan.frontend-jdk17")
+    id("org.siouan.frontend-jdk21")
 }
 
 frontend {
-    nodeVersion.set("18.17.1")
+    nodeVersion.set("20.14.0")
     assembleScript.set("run generate")
     cleanScript.set("run clean")
     publishScript.set("run deploy")

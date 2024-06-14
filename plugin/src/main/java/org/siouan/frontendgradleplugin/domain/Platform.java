@@ -30,14 +30,14 @@ public class Platform {
     private static final String[] SUPPORTED_WINDOWS_OS_IDS = new String[] {"windows"};
 
     /**
-     * Architecture on which JVM runs.
+     * Architecture of the underlying JVM.
      */
     @EqualsAndHashCode.Include
     @ToString.Include
     private final String jvmArch;
 
     /**
-     * Name of the underlying O/S.
+     * System name of the O/S.
      */
     @EqualsAndHashCode.Include
     @ToString.Include

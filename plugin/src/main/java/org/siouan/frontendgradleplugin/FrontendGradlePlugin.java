@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.Set;
 
 import org.gradle.api.GradleException;
@@ -14,43 +15,42 @@ import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.file.RegularFile;
 import org.gradle.api.plugins.BasePlugin;
+import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.publish.plugins.PublishingPlugin;
 import org.gradle.api.tasks.TaskContainer;
-import org.gradle.api.tasks.TaskState;
 import org.gradle.language.base.plugins.LifecycleBasePlugin;
 import org.siouan.frontendgradleplugin.domain.ExecutableType;
 import org.siouan.frontendgradleplugin.domain.FileManager;
 import org.siouan.frontendgradleplugin.domain.MalformedPackageManagerSpecification;
 import org.siouan.frontendgradleplugin.domain.ParsePackageManagerSpecification;
-import org.siouan.frontendgradleplugin.domain.PlatformProvider;
+import org.siouan.frontendgradleplugin.domain.Platform;
 import org.siouan.frontendgradleplugin.domain.ResolveExecutablePathCommand;
 import org.siouan.frontendgradleplugin.domain.ResolveNodeExecutablePath;
-import org.siouan.frontendgradleplugin.domain.SystemSettingsProvider;
+import org.siouan.frontendgradleplugin.domain.SystemProperties;
 import org.siouan.frontendgradleplugin.domain.UnsupportedPackageManagerException;
 import org.siouan.frontendgradleplugin.infrastructure.archiver.ArchiverProviderImpl;
 import org.siouan.frontendgradleplugin.infrastructure.bean.BeanInstanciationException;
-import org.siouan.frontendgradleplugin.infrastructure.bean.Beans;
+import org.siouan.frontendgradleplugin.infrastructure.bean.BeanRegistry;
 import org.siouan.frontendgradleplugin.infrastructure.bean.TooManyCandidateBeansException;
 import org.siouan.frontendgradleplugin.infrastructure.bean.ZeroOrMultiplePublicConstructorsException;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.AssembleTask;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.BeanRegistryBuildService;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.CheckTask;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.CleanTask;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.FrontendExtension;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.GradleLoggerAdapter;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.GradleSettings;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.InstallCorepackTask;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.InstallFrontendTask;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.InstallNodeTask;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.InstallPackageManagerTask;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.PublishTask;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.ResolvePackageManagerTask;
-import org.siouan.frontendgradleplugin.infrastructure.gradle.SystemExtension;
-import org.siouan.frontendgradleplugin.infrastructure.gradle.SystemSettingsProviderImpl;
-import org.siouan.frontendgradleplugin.infrastructure.gradle.TaskLoggerConfigurer;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.SystemProviders;
 import org.siouan.frontendgradleplugin.infrastructure.httpclient.HttpClientProviderImpl;
 import org.siouan.frontendgradleplugin.infrastructure.system.ChannelProviderImpl;
 import org.siouan.frontendgradleplugin.infrastructure.system.FileManagerImpl;
-import org.siouan.frontendgradleplugin.infrastructure.system.PlatformProviderImpl;
 
 /**
  * Main plugin class that bootstraps the plugin by declaring its DSL and its tasks.
@@ -165,6 +165,13 @@ public class FrontendGradlePlugin implements Plugin<Project> {
     public static final String PACKAGE_JSON_FILE_NAME = "package.json";
 
     /**
+     * Name of the task that installs a specific version of Corepack.
+     *
+     * @since 8.1.0
+     */
+    public static final String INSTALL_COREPACK_TASK_NAME = "installCorepack";
+
+    /**
      * Name of the task that installs a Node distribution.
      */
     public static final String INSTALL_NODE_TASK_NAME = "installNode";
@@ -199,7 +206,6 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         project.getPluginManager().apply(BasePlugin.class);
         project.getPluginManager().apply(PublishingPlugin.class);
 
-        final SystemExtension systemExtension = new SystemExtension(project.getProviders());
         final FrontendExtension frontendExtension = project
             .getExtensions()
             .create(EXTENSION_NAME, FrontendExtension.class, project.getObjects());
@@ -223,82 +229,81 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         frontendExtension
             .getCacheDirectory()
             .convention(project.getLayout().getProjectDirectory().dir(DEFAULT_CACHE_DIRECTORY_NAME));
-        frontendExtension
-            .getInternalPackageManagerSpecificationFile()
-            .convention(frontendExtension
-                .getCacheDirectory()
-                .dir(RESOLVE_PACKAGE_MANAGER_TASK_NAME)
-                .map(directory -> directory.file(PACKAGE_MANAGER_SPECIFICATION_FILE_NAME)));
-        frontendExtension
-            .getInternalPackageManagerExecutablePathFile()
-            .convention(frontendExtension
-                .getCacheDirectory()
-                .dir(RESOLVE_PACKAGE_MANAGER_TASK_NAME)
-                .map(directory -> directory.file(PACKAGE_MANAGER_EXECUTABLE_PATH_FILE_NAME)));
         frontendExtension.getVerboseModeEnabled().convention(false);
 
         // Create bean registry and register concrete base implementations.
-        final String beanRegistryId = configureBeanRegistry(project, systemExtension, frontendExtension);
+        final Provider<BeanRegistryBuildService> beanRegistryBuildServiceProvider = configureBeanRegistry(project,
+            Set.of(GradleSettings.ofProject(project), GradleLoggerAdapter.class, FileManagerImpl.class,
+                ChannelProviderImpl.class, ArchiverProviderImpl.class, HttpClientProviderImpl.class));
 
         // Create and configure all tasks.
-        configureTasks(project, beanRegistryId);
+        configureTasks(project, beanRegistryBuildServiceProvider, frontendExtension,
+            new SystemProviders(project.getProviders()));
     }
 
     /**
      * Creates a bean registry and registers concrete implementations for injection.
      *
      * @param project Project.
-     * @param systemExtension Extension providing system properties.
-     * @param frontendExtension Extension providing frontend properties.
-     * @return ID of the bean registry.
+     * @param beanClassesOrInstances Classes or instances of bean to register.
+     * @return Provider of the bean registry.
      */
-    protected String configureBeanRegistry(final Project project, final SystemExtension systemExtension,
-        final FrontendExtension frontendExtension) {
-        final String beanRegistryId = Beans.getBeanRegistryId(project.getLayout().getProjectDirectory().toString());
-        final SystemSettingsProvider systemSettingsProvider = new SystemSettingsProviderImpl(systemExtension,
-            DEFAULT_HTTP_PROXY_PORT, DEFAULT_HTTPS_PROXY_PORT);
-        final PlatformProvider platformProvider = new PlatformProviderImpl(systemSettingsProvider);
-        final GradleSettings gradleSettings = new GradleSettings(project.getLogging().getLevel(),
-            project.getGradle().getStartParameter().getLogLevel());
-        Beans.initBeanRegistry(beanRegistryId);
-        Beans.registerBean(beanRegistryId, frontendExtension);
-        Beans.registerBean(beanRegistryId, systemSettingsProvider);
-        Beans.registerBean(beanRegistryId, platformProvider);
-        Beans.registerBean(beanRegistryId, gradleSettings);
-        Beans.registerBean(beanRegistryId, GradleLoggerAdapter.class);
-        Beans.registerBean(beanRegistryId, TaskLoggerConfigurer.class);
-        Beans.registerBean(beanRegistryId, FileManagerImpl.class);
-        Beans.registerBean(beanRegistryId, ChannelProviderImpl.class);
-        Beans.registerBean(beanRegistryId, ArchiverProviderImpl.class);
-        Beans.registerBean(beanRegistryId, HttpClientProviderImpl.class);
-        return beanRegistryId;
+    protected Provider<BeanRegistryBuildService> configureBeanRegistry(final Project project,
+        final Set<?> beanClassesOrInstances) {
+        final BeanRegistry beanRegistry = new BeanRegistry();
+        beanClassesOrInstances.forEach(beanClassOrInstance -> {
+            if (beanClassOrInstance instanceof Class<?> beanClass) {
+                beanRegistry.registerBeanClass(beanClass);
+            } else {
+                beanRegistry.registerBean(beanClassOrInstance);
+            }
+        });
+        return project
+            .getGradle()
+            .getSharedServices()
+            .registerIfAbsent(BeanRegistryBuildService.buildName(project), BeanRegistryBuildService.class,
+                buildServiceSpec -> buildServiceSpec.getParameters().getBeanRegistry().set(beanRegistry));
     }
 
     /**
      * Registers plugin tasks.
      *
      * @param project Project.
-     * @param beanRegistryId Bean registry ID.
+     * @param beanRegistryBuildServiceProvider Bean registry build service provider.
+     * @param frontendExtension Frontend extension.
+     * @param systemProviders Providers of system properties.
      */
-    protected void configureTasks(final Project project, final String beanRegistryId) {
+    protected void configureTasks(final Project project,
+        final Provider<BeanRegistryBuildService> beanRegistryBuildServiceProvider,
+        final FrontendExtension frontendExtension, final SystemProviders systemProviders) {
         final TaskContainer taskContainer = project.getTasks();
-        final FrontendExtension frontendExtension = getBeanOrFail(beanRegistryId, FrontendExtension.class);
         taskContainer.register(INSTALL_NODE_TASK_NAME, InstallNodeTask.class,
-            task -> configureInstallNodeTask(task, beanRegistryId, frontendExtension));
+            task -> configureInstallNodeTask(task, beanRegistryBuildServiceProvider, frontendExtension,
+                systemProviders));
+        taskContainer.register(INSTALL_COREPACK_TASK_NAME, InstallCorepackTask.class,
+            task -> configureInstallCorepackTask(task, taskContainer, beanRegistryBuildServiceProvider,
+                frontendExtension, systemProviders));
         taskContainer.register(RESOLVE_PACKAGE_MANAGER_TASK_NAME, ResolvePackageManagerTask.class,
-            task -> configureResolvePackageManagerTask(task, taskContainer, frontendExtension));
+            task -> configureResolvePackageManagerTask(task, taskContainer, beanRegistryBuildServiceProvider,
+                frontendExtension, systemProviders));
         taskContainer.register(INSTALL_PACKAGE_MANAGER_TASK_NAME, InstallPackageManagerTask.class,
-            task -> configureInstallPackageManagerTask(task, beanRegistryId, taskContainer, frontendExtension));
+            task -> configureInstallPackageManagerTask(task, taskContainer, beanRegistryBuildServiceProvider,
+                frontendExtension, systemProviders));
         taskContainer.register(INSTALL_FRONTEND_TASK_NAME, InstallFrontendTask.class,
-            task -> configureInstallFrontendTask(task, beanRegistryId, taskContainer, frontendExtension));
+            task -> configureInstallFrontendTask(task, taskContainer, beanRegistryBuildServiceProvider,
+                frontendExtension, systemProviders));
         taskContainer.register(CLEAN_TASK_NAME, CleanTask.class,
-            task -> configureCleanTask(task, beanRegistryId, taskContainer, frontendExtension));
+            task -> configureCleanFrontendTask(task, taskContainer, beanRegistryBuildServiceProvider, frontendExtension,
+                systemProviders));
         taskContainer.register(CHECK_TASK_NAME, CheckTask.class,
-            task -> configureCheckTask(task, beanRegistryId, taskContainer, frontendExtension));
+            task -> configureCheckFrontendTask(task, taskContainer, beanRegistryBuildServiceProvider, frontendExtension,
+                systemProviders));
         taskContainer.register(ASSEMBLE_TASK_NAME, AssembleTask.class,
-            task -> configureAssembleTask(task, beanRegistryId, taskContainer, frontendExtension));
+            task -> configureAssembleFrontendTask(task, taskContainer, beanRegistryBuildServiceProvider,
+                frontendExtension, systemProviders));
         taskContainer.register(PUBLISH_TASK_NAME, PublishTask.class,
-            task -> configurePublishTask(task, beanRegistryId, taskContainer, frontendExtension));
+            task -> configurePublishFrontendTask(task, taskContainer, beanRegistryBuildServiceProvider,
+                frontendExtension, systemProviders));
 
         // Configure dependencies with Gradle built-in tasks.
         configureDependency(taskContainer, GRADLE_CLEAN_TASK_NAME, CLEAN_TASK_NAME, CleanTask.class);
@@ -311,13 +316,17 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      * Configures the given task with the plugin extension.
      *
      * @param task Task.
-     * @param beanRegistryId Bean registry ID.
+     * @param beanRegistryBuildServiceProvider Bean registry build service provider.
      * @param frontendExtension Plugin extension.
      */
-    protected void configureInstallNodeTask(final InstallNodeTask task, final String beanRegistryId,
-        final FrontendExtension frontendExtension) {
+    protected void configureInstallNodeTask(final InstallNodeTask task,
+        final Provider<BeanRegistryBuildService> beanRegistryBuildServiceProvider,
+        final FrontendExtension frontendExtension, final SystemProviders systemProviders) {
         task.setGroup(TASK_GROUP);
         task.setDescription("Downloads and installs a Node.js distribution.");
+        task.getBeanRegistryBuildService().set(beanRegistryBuildServiceProvider);
+        task.usesService(beanRegistryBuildServiceProvider);
+
         task.getNodeVersion().set(frontendExtension.getNodeVersion());
         task.getNodeDistributionUrlRoot().set(frontendExtension.getNodeDistributionUrlRoot());
         task.getNodeDistributionUrlPathPattern().set(frontendExtension.getNodeDistributionUrlPathPattern());
@@ -336,18 +345,53 @@ public class FrontendGradlePlugin implements Plugin<Project> {
             .getNodeExecutableFile()
             .fileProvider(frontendExtension
                 .getNodeInstallDirectory()
-                .map(directory -> getBeanOrFail(beanRegistryId, ResolveNodeExecutablePath.class)
-                    .execute(ResolveExecutablePathCommand
-                        .builder()
-                        .nodeInstallDirectoryPath(directory.getAsFile().toPath())
-                        .platform(getBeanOrFail(beanRegistryId, PlatformProvider.class).getPlatform())
-                        .build())
-                    .toFile()));
+                .flatMap(directory -> beanRegistryBuildServiceProvider.map(beanRegistryBuildService -> {
+                    final BeanRegistry beanRegistry = beanRegistryBuildService.getBeanRegistry();
+                    return getBeanOrFail(beanRegistry, ResolveNodeExecutablePath.class)
+                        .execute(ResolveExecutablePathCommand
+                            .builder()
+                            .nodeInstallDirectoryPath(directory.getAsFile().toPath())
+                            .platform(Platform
+                                .builder()
+                                .jvmArch(systemProviders.getJvmArch().get())
+                                .osName(systemProviders.getOsName().get())
+                                .build())
+                            .build())
+                        .toFile();
+                })));
         task.getMaxDownloadAttempts().set(frontendExtension.getMaxDownloadAttempts());
         task.getRetryHttpStatuses().set(frontendExtension.getRetryHttpStatuses());
         task.getRetryInitialIntervalMs().set(frontendExtension.getRetryInitialIntervalMs());
         task.getRetryIntervalMultiplier().set(frontendExtension.getRetryIntervalMultiplier());
         task.getRetryMaxIntervalMs().set(frontendExtension.getRetryMaxIntervalMs());
+        task.getVerboseModeEnabled().set(frontendExtension.getVerboseModeEnabled());
+        task.getSystemHttpProxyHost().set(systemProviders.getHttpProxyHost());
+        task
+            .getSystemHttpProxyPort()
+            .set(systemProviders
+                .getHttpProxyPort()
+                .filter(port -> !port.isBlank())
+                .map(Integer::parseInt)
+                .orElse(DEFAULT_HTTP_PROXY_PORT));
+        task.getSystemHttpsProxyHost().set(systemProviders.getHttpsProxyHost());
+        task
+            .getSystemHttpsProxyPort()
+            .set(systemProviders
+                .getHttpsProxyPort()
+                .filter(port -> !port.isBlank())
+                .map(Integer::parseInt)
+                .orElse(DEFAULT_HTTPS_PROXY_PORT));
+        task
+            .getSystemNonProxyHosts()
+            .set(systemProviders
+                .getNonProxyHosts()
+                .filter(nonProxyHosts -> !nonProxyHosts.isBlank())
+                .map(nonProxyHosts -> nonProxyHosts.split(SystemProperties.NON_PROXY_HOSTS_SPLIT_PATTERN))
+                .map(Set::of)
+                // https://github.com/gradle/gradle/issues/26942
+                // Do not use JDK 11 method "Set.of" that is not serialized correctly by Gradle
+                .orElse(Collections.emptySet()));
+        bindSystemArchPropertiesToTaskInputs(systemProviders, task.getSystemJvmArch(), task.getSystemOsName());
         task.setOnlyIf(t -> !frontendExtension.getNodeDistributionProvided().get());
     }
 
@@ -356,23 +400,24 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      *
      * @param task Task.
      * @param taskContainer Gradle task container.
+     * @param beanRegistryBuildServiceProvider Bean registry build service provider.
      * @param frontendExtension Plugin extension.
      */
-    protected void configureResolvePackageManagerTask(final ResolvePackageManagerTask task,
-        final TaskContainer taskContainer, final FrontendExtension frontendExtension) {
+    protected void configureInstallCorepackTask(final InstallCorepackTask task, final TaskContainer taskContainer,
+        final Provider<BeanRegistryBuildService> beanRegistryBuildServiceProvider,
+        final FrontendExtension frontendExtension, final SystemProviders systemProviders) {
         task.setGroup(TASK_GROUP);
-        task.setDescription("Resolves the package manager.");
-        final Provider<File> packageJsonFileProvider = frontendExtension
-            .getPackageJsonDirectory()
-            .file(PACKAGE_JSON_FILE_NAME)
-            .map(RegularFile::getAsFile);
-        task.getPackageJsonFile().fileProvider(packageJsonFileProvider);
+        task.setDescription(
+            "Installs a specific version of Corepack, overriding the one provided by default in Node.js distribution.");
+        task.getBeanRegistryBuildService().set(beanRegistryBuildServiceProvider);
+        task.usesService(beanRegistryBuildServiceProvider);
+
+        task.getPackageJsonDirectory().set(frontendExtension.getPackageJsonDirectory().getAsFile());
         task.getNodeInstallDirectory().set(frontendExtension.getNodeInstallDirectory().getAsFile());
-        task.getPackageManagerSpecificationFile().set(frontendExtension.getInternalPackageManagerSpecificationFile());
-        task.getPackageManagerExecutablePathFile().set(frontendExtension.getInternalPackageManagerExecutablePathFile());
-        // The task is skipped when there's no package.json file. It allows to define a project that installs only a
-        // Node.js distribution.
-        task.setOnlyIf(t -> packageJsonFileProvider.map(File::toPath).map(Files::isRegularFile).getOrElse(false));
+        task.getCorepackVersion().set(frontendExtension.getCorepackVersion());
+        task.getVerboseModeEnabled().set(frontendExtension.getVerboseModeEnabled());
+        bindSystemArchPropertiesToTaskInputs(systemProviders, task.getSystemJvmArch(), task.getSystemOsName());
+        task.setOnlyIf(t -> frontendExtension.getCorepackVersion().isPresent());
 
         configureDependency(taskContainer, task, INSTALL_NODE_TASK_NAME, InstallNodeTask.class);
     }
@@ -381,25 +426,62 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      * Configures the given task with the plugin extension.
      *
      * @param task Task.
-     * @param beanRegistryId Bean registry ID.
-     * @param taskContainer Task container.
+     * @param taskContainer Gradle task container.
+     * @param beanRegistryBuildServiceProvider Bean registry build service provider.
      * @param frontendExtension Plugin extension.
      */
-    protected void configureInstallPackageManagerTask(final InstallPackageManagerTask task, final String beanRegistryId,
-        final TaskContainer taskContainer, final FrontendExtension frontendExtension) {
+    protected void configureResolvePackageManagerTask(final ResolvePackageManagerTask task,
+        final TaskContainer taskContainer, final Provider<BeanRegistryBuildService> beanRegistryBuildServiceProvider,
+        final FrontendExtension frontendExtension, final SystemProviders systemProviders) {
+        task.setGroup(TASK_GROUP);
+        task.setDescription("Resolves the package manager.");
+        task.getBeanRegistryBuildService().set(beanRegistryBuildServiceProvider);
+        task.usesService(beanRegistryBuildServiceProvider);
+
+        task
+            .getPackageJsonFile()
+            .fileProvider(frontendExtension
+                .getPackageJsonDirectory()
+                .file(PACKAGE_JSON_FILE_NAME)
+                .map(RegularFile::getAsFile)
+                .filter(packageJsonFile -> Files.isRegularFile(packageJsonFile.toPath())));
+        task.getNodeInstallDirectory().set(frontendExtension.getNodeInstallDirectory().getAsFile());
+        task
+            .getPackageManagerSpecificationFile()
+            .set(frontendExtension
+                .getCacheDirectory()
+                .dir(RESOLVE_PACKAGE_MANAGER_TASK_NAME)
+                .map(directory -> directory.file(PACKAGE_MANAGER_SPECIFICATION_FILE_NAME)));
+        task
+            .getPackageManagerExecutablePathFile()
+            .set(frontendExtension
+                .getCacheDirectory()
+                .dir(RESOLVE_PACKAGE_MANAGER_TASK_NAME)
+                .map(directory -> directory.file(PACKAGE_MANAGER_EXECUTABLE_PATH_FILE_NAME)));
+        task.getVerboseModeEnabled().set(frontendExtension.getVerboseModeEnabled());
+        bindSystemArchPropertiesToTaskInputs(systemProviders, task.getSystemJvmArch(), task.getSystemOsName());
+
+        configureDependency(taskContainer, task, INSTALL_NODE_TASK_NAME, InstallNodeTask.class);
+    }
+
+    /**
+     * Configures the given task with the plugin extension.
+     *
+     * @param task Task.
+     * @param taskContainer Task container.
+     * @param beanRegistryBuildServiceProvider Bean registry build service provider.
+     * @param frontendExtension Plugin extension.
+     */
+    protected void configureInstallPackageManagerTask(final InstallPackageManagerTask task,
+        final TaskContainer taskContainer, final Provider<BeanRegistryBuildService> beanRegistryBuildServiceProvider,
+        final FrontendExtension frontendExtension, final SystemProviders systemProviders) {
         task.setGroup(TASK_GROUP);
         task.setDescription("Installs the package manager.");
+        task.getBeanRegistryBuildService().set(beanRegistryBuildServiceProvider);
+        task.usesService(beanRegistryBuildServiceProvider);
+
         task.getPackageJsonDirectory().set(frontendExtension.getPackageJsonDirectory().getAsFile());
-        task.getNodeInstallDirectory().set(frontendExtension.getNodeInstallDirectory().map(nodeInstallDirectory -> {
-            final Path nodeInstallDirectoryPath = nodeInstallDirectory.getAsFile().toPath();
-            if (!Files.isDirectory(nodeInstallDirectoryPath)) {
-                // Performing this verification ahead of time avoids automatic creation of any parent directory by
-                // Gradle if the task is not skipped. This may be the case if the Node.js distribution is provided, but
-                // the install directory is not correctly configured and points to nowhere.
-                throw new GradleException("Node.js install directory not found: " + nodeInstallDirectoryPath);
-            }
-            return nodeInstallDirectory.getAsFile();
-        }));
+        task.getNodeInstallDirectory().set(frontendExtension.getNodeInstallDirectory().getAsFile());
         final Provider<ResolvePackageManagerTask> resolvePackageManagerTaskProvider = taskContainer.named(
             RESOLVE_PACKAGE_MANAGER_TASK_NAME, ResolvePackageManagerTask.class);
         task
@@ -418,9 +500,10 @@ public class FrontendGradlePlugin implements Plugin<Project> {
                         // touched by Gradle.
                         return null;
                     }
+                    final BeanRegistry beanRegistry = beanRegistryBuildServiceProvider.get().getBeanRegistry();
                     try {
                         return Paths
-                            .get(getBeanOrFail(beanRegistryId, FileManager.class).readString(filePath,
+                            .get(getBeanOrFail(beanRegistry, FileManager.class).readString(filePath,
                                 StandardCharsets.UTF_8))
                             .toFile();
                     } catch (final IOException e) {
@@ -428,26 +511,40 @@ public class FrontendGradlePlugin implements Plugin<Project> {
                             "Cannot read path to package manager executable from file: " + filePath, e);
                     }
                 }));
-        task.setOnlyIf(t -> isTaskExecuted(taskContainer, RESOLVE_PACKAGE_MANAGER_TASK_NAME));
+        task.getVerboseModeEnabled().set(frontendExtension.getVerboseModeEnabled());
+        bindSystemArchPropertiesToTaskInputs(systemProviders, task.getSystemJvmArch(), task.getSystemOsName());
+        // The task is skipped when there's no package.json file. It allows to define a project that installs only a
+        // Node.js distribution.
+        task.setOnlyIf(t -> packageJsonFileExists(frontendExtension));
+
+        configureDependency(taskContainer, task, INSTALL_COREPACK_TASK_NAME, InstallCorepackTask.class);
     }
 
     /**
      * Configures the given task with the plugin extension.
      *
      * @param task Task.
-     * @param beanRegistryId Bean registry ID.
      * @param taskContainer Task container.
+     * @param beanRegistryBuildServiceProvider Bean registry build service provider.
      * @param frontendExtension Plugin extension.
      */
-    protected void configureInstallFrontendTask(final InstallFrontendTask task, final String beanRegistryId,
-        final TaskContainer taskContainer, final FrontendExtension frontendExtension) {
+    protected void configureInstallFrontendTask(final InstallFrontendTask task, final TaskContainer taskContainer,
+        final Provider<BeanRegistryBuildService> beanRegistryBuildServiceProvider,
+        final FrontendExtension frontendExtension, final SystemProviders systemProviders) {
         task.setGroup(TASK_GROUP);
         task.setDescription("Installs frontend dependencies.");
+        task.getBeanRegistryBuildService().set(beanRegistryBuildServiceProvider);
+        task.usesService(beanRegistryBuildServiceProvider);
+
+        final BeanRegistry beanRegistry = beanRegistryBuildServiceProvider.get().getBeanRegistry();
         task.getPackageJsonDirectory().set(frontendExtension.getPackageJsonDirectory().getAsFile());
         task.getNodeInstallDirectory().set(frontendExtension.getNodeInstallDirectory().getAsFile());
-        task.getExecutableType().set(getExecutableType(taskContainer, beanRegistryId));
+        task.getExecutableType().set(getExecutableType(taskContainer, beanRegistry));
         task.getInstallScript().set(frontendExtension.getInstallScript());
-        task.setOnlyIf(t -> isTaskExecuted(taskContainer, INSTALL_PACKAGE_MANAGER_TASK_NAME));
+        task.getVerboseModeEnabled().set(frontendExtension.getVerboseModeEnabled());
+        bindSystemArchPropertiesToTaskInputs(systemProviders, task.getSystemJvmArch(), task.getSystemOsName());
+        task.setOnlyIf(t -> packageJsonFileExists(frontendExtension));
+
         configureDependency(taskContainer, task, INSTALL_PACKAGE_MANAGER_TASK_NAME, InstallPackageManagerTask.class);
     }
 
@@ -455,21 +552,27 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      * Configures the given task with the plugin extension.
      *
      * @param task Task.
-     * @param beanRegistryId Bean registry ID.
      * @param taskContainer Task container.
+     * @param beanRegistryBuildServiceProvider Bean registry build service provider.
      * @param frontendExtension Plugin extension.
      */
-    protected void configureCleanTask(final CleanTask task, final String beanRegistryId,
-        final TaskContainer taskContainer, final FrontendExtension frontendExtension) {
+    protected void configureCleanFrontendTask(final CleanTask task, final TaskContainer taskContainer,
+        final Provider<BeanRegistryBuildService> beanRegistryBuildServiceProvider,
+        final FrontendExtension frontendExtension, final SystemProviders systemProviders) {
         task.setGroup(TASK_GROUP);
         task.setDescription("Cleans frontend resources outside the build directory by running a specific script.");
+        task.getBeanRegistryBuildService().set(beanRegistryBuildServiceProvider);
+        task.usesService(beanRegistryBuildServiceProvider);
+
+        final BeanRegistry beanRegistry = beanRegistryBuildServiceProvider.get().getBeanRegistry();
         task.getPackageJsonDirectory().set(frontendExtension.getPackageJsonDirectory().getAsFile());
         task.getNodeInstallDirectory().set(frontendExtension.getNodeInstallDirectory().getAsFile());
-        task.getExecutableType().set(getExecutableType(taskContainer, beanRegistryId));
+        task.getExecutableType().set(getExecutableType(taskContainer, beanRegistry));
         task.getCleanScript().set(frontendExtension.getCleanScript());
-        task.setOnlyIf(t -> isTaskExecuted(taskContainer, INSTALL_FRONTEND_TASK_NAME) && frontendExtension
-            .getCleanScript()
-            .isPresent());
+        task.getVerboseModeEnabled().set(frontendExtension.getVerboseModeEnabled());
+        bindSystemArchPropertiesToTaskInputs(systemProviders, task.getSystemJvmArch(), task.getSystemOsName());
+        task.setOnlyIf(t -> packageJsonFileExists(frontendExtension) && frontendExtension.getCleanScript().isPresent());
+
         configureDependency(taskContainer, task, INSTALL_FRONTEND_TASK_NAME, InstallFrontendTask.class);
     }
 
@@ -477,21 +580,27 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      * Configures the given task with the plugin extension.
      *
      * @param task Task.
-     * @param beanRegistryId Bean registry ID.
      * @param taskContainer Task container.
+     * @param beanRegistryBuildServiceProvider Bean registry build service provider.
      * @param frontendExtension Plugin extension.
      */
-    protected void configureCheckTask(final CheckTask task, final String beanRegistryId,
-        final TaskContainer taskContainer, final FrontendExtension frontendExtension) {
+    protected void configureCheckFrontendTask(final CheckTask task, final TaskContainer taskContainer,
+        final Provider<BeanRegistryBuildService> beanRegistryBuildServiceProvider,
+        final FrontendExtension frontendExtension, final SystemProviders systemProviders) {
         task.setGroup(TASK_GROUP);
         task.setDescription("Checks frontend by running a specific script.");
+        task.getBeanRegistryBuildService().set(beanRegistryBuildServiceProvider);
+        task.usesService(beanRegistryBuildServiceProvider);
+
+        final BeanRegistry beanRegistry = beanRegistryBuildServiceProvider.get().getBeanRegistry();
         task.getPackageJsonDirectory().set(frontendExtension.getPackageJsonDirectory().getAsFile());
         task.getNodeInstallDirectory().set(frontendExtension.getNodeInstallDirectory().getAsFile());
-        task.getExecutableType().set(getExecutableType(taskContainer, beanRegistryId));
+        task.getExecutableType().set(getExecutableType(taskContainer, beanRegistry));
         task.getCheckScript().set(frontendExtension.getCheckScript());
-        task.setOnlyIf(t -> isTaskExecuted(taskContainer, INSTALL_FRONTEND_TASK_NAME) && frontendExtension
-            .getCheckScript()
-            .isPresent());
+        task.getVerboseModeEnabled().set(frontendExtension.getVerboseModeEnabled());
+        bindSystemArchPropertiesToTaskInputs(systemProviders, task.getSystemJvmArch(), task.getSystemOsName());
+        task.setOnlyIf(t -> packageJsonFileExists(frontendExtension) && frontendExtension.getCheckScript().isPresent());
+
         configureDependency(taskContainer, task, INSTALL_FRONTEND_TASK_NAME, InstallFrontendTask.class);
     }
 
@@ -499,21 +608,28 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      * Configures the given task with the plugin extension.
      *
      * @param task Task.
-     * @param beanRegistryId Bean registry ID.
      * @param taskContainer Task container.
+     * @param beanRegistryBuildServiceProvider Bean registry build service provider.
      * @param frontendExtension Plugin extension.
      */
-    protected void configureAssembleTask(final AssembleTask task, final String beanRegistryId,
-        final TaskContainer taskContainer, final FrontendExtension frontendExtension) {
+    protected void configureAssembleFrontendTask(final AssembleTask task, final TaskContainer taskContainer,
+        final Provider<BeanRegistryBuildService> beanRegistryBuildServiceProvider,
+        final FrontendExtension frontendExtension, final SystemProviders systemProviders) {
         task.setGroup(TASK_GROUP);
         task.setDescription("Assembles frontend artifacts by running a specific script.");
+        task.getBeanRegistryBuildService().set(beanRegistryBuildServiceProvider);
+        task.usesService(beanRegistryBuildServiceProvider);
+
+        final BeanRegistry beanRegistry = beanRegistryBuildServiceProvider.get().getBeanRegistry();
         task.getPackageJsonDirectory().set(frontendExtension.getPackageJsonDirectory().getAsFile());
         task.getNodeInstallDirectory().set(frontendExtension.getNodeInstallDirectory().getAsFile());
-        task.getExecutableType().set(getExecutableType(taskContainer, beanRegistryId));
+        task.getExecutableType().set(getExecutableType(taskContainer, beanRegistry));
         task.getAssembleScript().set(frontendExtension.getAssembleScript());
-        task.setOnlyIf(t -> isTaskExecuted(taskContainer, INSTALL_FRONTEND_TASK_NAME) && frontendExtension
-            .getAssembleScript()
-            .isPresent());
+        task.getVerboseModeEnabled().set(frontendExtension.getVerboseModeEnabled());
+        bindSystemArchPropertiesToTaskInputs(systemProviders, task.getSystemJvmArch(), task.getSystemOsName());
+        task.setOnlyIf(
+            t -> packageJsonFileExists(frontendExtension) && frontendExtension.getAssembleScript().isPresent());
+
         configureDependency(taskContainer, task, INSTALL_FRONTEND_TASK_NAME, InstallFrontendTask.class);
     }
 
@@ -521,38 +637,47 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      * Configures the given task with the plugin extension.
      *
      * @param task Task.
-     * @param beanRegistryId Bean registry ID.
      * @param taskContainer Task container.
+     * @param beanRegistryBuildServiceProvider Bean registry build service provider.
      * @param frontendExtension Plugin extension.
      */
-    protected void configurePublishTask(final PublishTask task, final String beanRegistryId,
-        final TaskContainer taskContainer, final FrontendExtension frontendExtension) {
+    protected void configurePublishFrontendTask(final PublishTask task, final TaskContainer taskContainer,
+        final Provider<BeanRegistryBuildService> beanRegistryBuildServiceProvider,
+        final FrontendExtension frontendExtension, final SystemProviders systemProviders) {
         task.setGroup(TASK_GROUP);
         task.setDescription("Publishes frontend artifacts by running a specific script.");
+        task.getBeanRegistryBuildService().set(beanRegistryBuildServiceProvider);
+        task.usesService(beanRegistryBuildServiceProvider);
+
+        final BeanRegistry beanRegistry = beanRegistryBuildServiceProvider.get().getBeanRegistry();
         task.getPackageJsonDirectory().set(frontendExtension.getPackageJsonDirectory().getAsFile());
         task.getNodeInstallDirectory().set(frontendExtension.getNodeInstallDirectory().getAsFile());
-        task.getExecutableType().set(getExecutableType(taskContainer, beanRegistryId));
+        task.getExecutableType().set(getExecutableType(taskContainer, beanRegistry));
         task.getPublishScript().set(frontendExtension.getPublishScript());
-        task.setOnlyIf(t -> isTaskExecuted(taskContainer, INSTALL_FRONTEND_TASK_NAME) && frontendExtension
-            .getAssembleScript()
-            .isPresent() && frontendExtension.getPublishScript().isPresent());
+        task.getVerboseModeEnabled().set(frontendExtension.getVerboseModeEnabled());
+        bindSystemArchPropertiesToTaskInputs(systemProviders, task.getSystemJvmArch(), task.getSystemOsName());
+
+        task.setOnlyIf(
+            t -> packageJsonFileExists(frontendExtension) && frontendExtension.getAssembleScript().isPresent()
+                && frontendExtension.getPublishScript().isPresent());
         configureDependency(taskContainer, task, ASSEMBLE_TASK_NAME, AssembleTask.class);
     }
 
-    private Provider<ExecutableType> getExecutableType(final TaskContainer taskContainer, final String beanRegistryId) {
+    private Provider<ExecutableType> getExecutableType(final TaskContainer taskContainer,
+        final BeanRegistry beanRegistry) {
         return taskContainer
             .named(RESOLVE_PACKAGE_MANAGER_TASK_NAME, ResolvePackageManagerTask.class)
             .flatMap(ResolvePackageManagerTask::getPackageManagerSpecificationFile)
             .map(f -> {
                 final Path packageManagerSpecificationFilePath = f.getAsFile().toPath();
                 try {
-                    return getBeanOrFail(beanRegistryId, ParsePackageManagerSpecification.class)
-                        .execute(getBeanOrFail(beanRegistryId, FileManager.class).readString(
+                    return getBeanOrFail(beanRegistry, ParsePackageManagerSpecification.class)
+                        .execute(getBeanOrFail(beanRegistry, FileManager.class).readString(
                             packageManagerSpecificationFilePath, StandardCharsets.UTF_8))
                         .type()
                         .getExecutableType();
                 } catch (final IOException | MalformedPackageManagerSpecification |
-                    UnsupportedPackageManagerException e) {
+                               UnsupportedPackageManagerException e) {
                     throw new GradleException(
                         "Cannot read package manager specification from file: " + packageManagerSpecificationFilePath,
                         e);
@@ -593,31 +718,33 @@ public class FrontendGradlePlugin implements Plugin<Project> {
     /**
      * Returns a bean from a registry of throws an error if no bean is registered or is instanciable.
      *
-     * @param beanRegistryId ID of the bean registry.
+     * @param beanRegistry Bean registry.
      * @param beanClass Class of the bean to be found/instanciated.
      * @param <T> Type of bean.
      * @return The bean.
      */
-    private <T> T getBeanOrFail(final String beanRegistryId, final Class<T> beanClass) {
+    private <T> T getBeanOrFail(final BeanRegistry beanRegistry, final Class<T> beanClass) {
         try {
-            return Beans.getBean(beanRegistryId, beanClass);
+            return beanRegistry.getBean(beanClass);
         } catch (final BeanInstanciationException | TooManyCandidateBeansException |
-            ZeroOrMultiplePublicConstructorsException e) {
+                       ZeroOrMultiplePublicConstructorsException e) {
             throw new GradleException(e.getClass().getName() + ": " + e.getMessage(), e);
         }
     }
 
-    /**
-     * Tells whether a task has been executed in the current build.
-     *
-     * @param taskContainer Task container.
-     * @param taskName Task name.
-     * @return {@code true} if the task was executed (i.e. not skipped or up-to-date).
-     */
-    private boolean isTaskExecuted(final TaskContainer taskContainer, final String taskName) {
-        return taskContainer.named(taskName).map(task -> {
-            final TaskState taskState = task.getState();
-            return taskState.getUpToDate() || !taskState.getSkipped();
-        }).getOrElse(false);
+    private void bindSystemArchPropertiesToTaskInputs(final SystemProviders systemProviders,
+        final Property<String> systemJvmArch, final Property<String> systemOsName) {
+        systemJvmArch.set(systemProviders.getJvmArch());
+        systemOsName.set(systemProviders.getOsName());
+    }
+
+    private boolean packageJsonFileExists(final FrontendExtension frontendExtension) {
+        return frontendExtension
+            .getPackageJsonDirectory()
+            .file(PACKAGE_JSON_FILE_NAME)
+            .map(RegularFile::getAsFile)
+            .map(File::toPath)
+            .map(Files::isRegularFile)
+            .get();
     }
 }

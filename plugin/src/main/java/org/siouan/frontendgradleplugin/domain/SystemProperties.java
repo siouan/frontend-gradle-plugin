@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class SystemProperties {
 
-    public static final String JVM_ARCH_PROPERTY = "os.arch";
+    public static final String JVM_ARCH = "os.arch";
 
     public static final String HTTP_PROXY_HOST = "http.proxyHost";
 
@@ -22,5 +22,5 @@ public final class SystemProperties {
 
     public static final String NON_PROXY_HOSTS_SPLIT_PATTERN = Pattern.quote("|");
 
-    public static final String OS_NAME_PROPERTY = "os.name";
+    public static final String OS_NAME = "os.name";
 }

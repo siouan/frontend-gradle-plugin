@@ -12,6 +12,8 @@ import static org.siouan.frontendgradleplugin.test.PathFixture.TMP_PATH;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.Optional;
@@ -42,8 +44,8 @@ class ValidateNodeDistributionTest {
 
     static {
         try {
-            DISTRIBUTION_URL = new URL(DISTRIBUTION_BASE_URL + "node-v9.2.4-win-x64.zip");
-            CHECKSUM_URL = new URL(DISTRIBUTION_BASE_URL + SHASUMS_FILE_NAME);
+            DISTRIBUTION_URL = URI.create(DISTRIBUTION_BASE_URL + "node-v9.2.4-win-x64.zip").toURL();
+            CHECKSUM_URL = URI.create(DISTRIBUTION_BASE_URL + SHASUMS_FILE_NAME).toURL();
         } catch (final MalformedURLException e) {
             throw new RuntimeException(e);
         }
@@ -239,7 +241,7 @@ class ValidateNodeDistributionTest {
     @Test
     void should_return_when_distribution_file_is_valid()
         throws IOException, NodeDistributionShasumNotFoundException, InvalidNodeDistributionException,
-        ResourceDownloadException {
+        ResourceDownloadException, URISyntaxException {
         when(buildTemporaryFileName.execute(SHASUMS_FILE_NAME)).thenReturn(TMP_SHASUMS_FILE_NAME);
         final Path downloadedShasumFilepath = temporaryDirectoryPath.resolve(SHASUMS_FILE_NAME);
         final String expectedHash = "0123456789abcdef";

@@ -2,11 +2,11 @@ package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import javax.inject.Inject;
 
 import org.gradle.api.DefaultTask;
-import org.gradle.api.file.ProjectLayout;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
@@ -17,7 +17,6 @@ import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.TaskAction;
 import org.siouan.frontendgradleplugin.domain.FrontendException;
 import org.siouan.frontendgradleplugin.domain.Platform;
-import org.siouan.frontendgradleplugin.domain.PlatformProvider;
 import org.siouan.frontendgradleplugin.domain.UnsupportedPlatformException;
 import org.siouan.frontendgradleplugin.domain.installer.Credentials;
 import org.siouan.frontendgradleplugin.domain.installer.InstallNodeDistribution;
@@ -30,8 +29,8 @@ import org.siouan.frontendgradleplugin.domain.installer.ResourceDownloadExceptio
 import org.siouan.frontendgradleplugin.domain.installer.RetrySettings;
 import org.siouan.frontendgradleplugin.domain.installer.UnsupportedDistributionArchiveException;
 import org.siouan.frontendgradleplugin.domain.installer.archiver.ArchiverException;
+import org.siouan.frontendgradleplugin.infrastructure.bean.BeanRegistry;
 import org.siouan.frontendgradleplugin.infrastructure.bean.BeanRegistryException;
-import org.siouan.frontendgradleplugin.infrastructure.bean.Beans;
 
 /**
  * Task that downloads and installs a Node distribution.
@@ -39,11 +38,11 @@ import org.siouan.frontendgradleplugin.infrastructure.bean.Beans;
 public class InstallNodeTask extends DefaultTask {
 
     /**
-     * Bean registry ID.
+     * Bean registry service provider.
      *
-     * @since 5.2.0
+     * @since 8.1.0
      */
-    protected final String beanRegistryId;
+    protected final Property<BeanRegistryBuildService> beanRegistryBuildService;
 
     /**
      * Version of the Node distribution to download.
@@ -175,15 +174,71 @@ public class InstallNodeTask extends DefaultTask {
     private final Property<Double> retryIntervalMultiplier;
 
     /**
+     * Whether the task should produce log messages for the end-user.
+     *
+     * @since 8.1.0
+     */
+    private final Property<Boolean> verboseModeEnabled;
+
+    /**
      * Maximum interval between retry attempts.
      *
      * @since 7.1.0
      */
     private final Property<Integer> retryMaxIntervalMs;
 
+    /**
+     * System-level configuration of the HTTP proxy host.
+     *
+     * @since 8.1.0
+     */
+    private final Property<String> systemHttpProxyHost;
+
+    /**
+     * System-level configuration of the HTTP proxy port.
+     *
+     * @since 8.1.0
+     */
+    private final Property<Integer> systemHttpProxyPort;
+
+    /**
+     * System-level configuration of the HTTPS proxy host.
+     *
+     * @since 8.1.0
+     */
+    private final Property<String> systemHttpsProxyHost;
+
+    /**
+     * System-level configuration of the HTTPS proxy port
+     *
+     * @since 8.1.0
+     */
+    private final Property<Integer> systemHttpsProxyPort;
+
+    /**
+     * System-level configuration of hosts for which direct connection is requested.
+     *
+     * @since 8.1.0
+     */
+    private final SetProperty<String> systemNonProxyHosts;
+
+    /**
+     * Architecture of the underlying JVM.
+     *
+     * @since 8.1.0
+     */
+    private final Property<String> systemJvmArch;
+
+    /**
+     * System name of the O/S.
+     *
+     * @since 8.1.0
+     */
+    private final Property<String> systemOsName;
+
     @Inject
-    public InstallNodeTask(final ProjectLayout projectLayout, final ObjectFactory objectFactory) {
-        this.beanRegistryId = Beans.getBeanRegistryId(projectLayout.getProjectDirectory().toString());
+    public InstallNodeTask(final ObjectFactory objectFactory) {
+        this.beanRegistryBuildService = objectFactory.property(BeanRegistryBuildService.class);
         this.nodeVersion = objectFactory.property(String.class);
         this.nodeInstallDirectory = objectFactory.property(File.class);
         this.nodeDistributionUrlRoot = objectFactory.property(String.class);
@@ -204,6 +259,19 @@ public class InstallNodeTask extends DefaultTask {
         this.retryInitialIntervalMs = objectFactory.property(Integer.class);
         this.retryIntervalMultiplier = objectFactory.property(Double.class);
         this.retryMaxIntervalMs = objectFactory.property(Integer.class);
+        this.verboseModeEnabled = objectFactory.property(Boolean.class);
+        this.systemHttpProxyHost = objectFactory.property(String.class);
+        this.systemHttpProxyPort = objectFactory.property(Integer.class);
+        this.systemHttpsProxyHost = objectFactory.property(String.class);
+        this.systemHttpsProxyPort = objectFactory.property(Integer.class);
+        this.systemNonProxyHosts = objectFactory.setProperty(String.class);
+        this.systemJvmArch = objectFactory.property(String.class);
+        this.systemOsName = objectFactory.property(String.class);
+    }
+
+    @Internal
+    public Property<BeanRegistryBuildService> getBeanRegistryBuildService() {
+        return beanRegistryBuildService;
     }
 
     @Input
@@ -301,6 +369,46 @@ public class InstallNodeTask extends DefaultTask {
         return retryMaxIntervalMs;
     }
 
+    @Internal
+    public Property<Boolean> getVerboseModeEnabled() {
+        return verboseModeEnabled;
+    }
+
+    @Internal
+    public Property<String> getSystemHttpProxyHost() {
+        return systemHttpProxyHost;
+    }
+
+    @Internal
+    public Property<Integer> getSystemHttpProxyPort() {
+        return systemHttpProxyPort;
+    }
+
+    @Internal
+    public Property<String> getSystemHttpsProxyHost() {
+        return systemHttpsProxyHost;
+    }
+
+    @Internal
+    public Property<Integer> getSystemHttpsProxyPort() {
+        return systemHttpsProxyPort;
+    }
+
+    @Internal
+    public SetProperty<String> getSystemNonProxyHosts() {
+        return systemNonProxyHosts;
+    }
+
+    @Internal
+    public Property<String> getSystemJvmArch() {
+        return systemJvmArch;
+    }
+
+    @Internal
+    public Property<String> getSystemOsName() {
+        return systemOsName;
+    }
+
     @OutputFile
     public RegularFileProperty getNodeExecutableFile() {
         return nodeExecutableFile;
@@ -318,8 +426,10 @@ public class InstallNodeTask extends DefaultTask {
      * @throws ResourceDownloadException If the distribution download failed.
      */
     @TaskAction
-    public void execute() throws BeanRegistryException, FrontendException, IOException {
-        Beans.getBean(beanRegistryId, TaskLoggerConfigurer.class).initLoggerAdapter(this);
+    public void execute() throws BeanRegistryException, FrontendException, IOException, URISyntaxException {
+        final BeanRegistry beanRegistry = beanRegistryBuildService.get().getBeanRegistry();
+        TaskLoggerInitializer.initAdapter(this, verboseModeEnabled.get(),
+            beanRegistry.getBean(GradleLoggerAdapter.class), beanRegistry.getBean(GradleSettings.class));
 
         final Credentials distributionServerCredentials = nodeDistributionServerUsername
             .map(username -> Credentials
@@ -335,10 +445,10 @@ public class InstallNodeTask extends DefaultTask {
             .map(username -> Credentials.builder().username(username).password(httpsProxyPassword.get()).build())
             .getOrNull();
 
-        final Platform platform = Beans.getBean(beanRegistryId, PlatformProvider.class).getPlatform();
+        final Platform platform = Platform.builder().jvmArch(systemJvmArch.get()).osName(systemOsName.get()).build();
         getLogger().debug("Platform: {}", platform);
-        final ProxySettings proxySettings = Beans
-            .getBean(beanRegistryId, ResolveProxySettingsByUrl.class)
+        final ProxySettings proxySettings = beanRegistry
+            .getBean(ResolveProxySettingsByUrl.class)
             .execute(ResolveProxySettingsByUrlCommand
                 .builder()
                 .httpsProxyHost(httpsProxyHost.getOrNull())
@@ -347,10 +457,15 @@ public class InstallNodeTask extends DefaultTask {
                 .httpProxyHost(httpProxyHost.getOrNull())
                 .httpProxyPort(httpProxyPort.get())
                 .httpProxyCredentials(httpProxyCredentials)
-                .resourceUrl(new URL(nodeDistributionUrlRoot.get()))
+                .resourceUrl(URI.create(nodeDistributionUrlRoot.get()).toURL())
+                .systemHttpProxyHost(systemHttpProxyHost.getOrNull())
+                .systemHttpProxyPort(systemHttpProxyPort.get())
+                .systemHttpsProxyHost(systemHttpsProxyHost.getOrNull())
+                .systemHttpsProxyPort(systemHttpsProxyPort.get())
+                .systemNonProxyHosts(systemNonProxyHosts.get())
                 .build());
-        Beans
-            .getBean(beanRegistryId, InstallNodeDistribution.class)
+        beanRegistry
+            .getBean(InstallNodeDistribution.class)
             .execute(InstallNodeDistributionCommand
                 .builder()
                 .platform(platform)

@@ -1,5 +1,7 @@
 package org.siouan.frontendgradleplugin.infrastructure.archiver;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.Optional;
@@ -13,7 +15,10 @@ import org.siouan.frontendgradleplugin.domain.installer.archiver.ArchiverProvide
  *
  * @since 1.1.3
  */
-public class ArchiverProviderImpl implements ArchiverProvider {
+public class ArchiverProviderImpl implements ArchiverProvider, Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 5967837524064117384L;
 
     /**
      * Map of archivers supporting a given extension.

@@ -2,6 +2,8 @@ package org.siouan.frontendgradleplugin.infrastructure.system;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serial;
+import java.io.Serializable;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
@@ -17,7 +19,10 @@ import org.siouan.frontendgradleplugin.domain.ChannelProvider;
  *
  * @since 2.0.0
  */
-public class ChannelProviderImpl implements ChannelProvider {
+public class ChannelProviderImpl implements ChannelProvider, Serializable {
+
+    @Serial
+    private static final long serialVersionUID = -5977105709250111639L;
 
     @Override
     public ReadableByteChannel getReadableByteChannel(final InputStream inputStream) {

@@ -1,23 +1,13 @@
 <template>
-    <fgp-property
+    <FgpProperty
         name="retryMaxIntervalMs"
         type="java.lang.Integer"
-        :required="true"
         default-value="30000"
-        :tasks="['installNode']"
+        :task-names="['installNode']"
     >
         <p>
             Maximum interval (ms) between each download attempts (see property
-            <fgp-property-link name="maxDownloadAttempts" />).
+            <FgpPropertyLink name="maxDownloadAttempts" />).
         </p>
-    </fgp-property>
+    </FgpProperty>
 </template>
-
-<script>
-import Vue from 'vue';
-import fgpProperty from '@/components/property/property';
-
-export default Vue.component('fgp-retry-max-interval-ms-property', {
-    components: { fgpProperty }
-});
-</script>

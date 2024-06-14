@@ -2,7 +2,6 @@ package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
 import javax.inject.Inject;
 
-import org.gradle.api.file.ProjectLayout;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
@@ -25,12 +24,11 @@ import org.siouan.frontendgradleplugin.domain.ExecutableType;
  *
  * @since 7.0.0
  */
-public class RunCorepack extends AbstractRunCommandTaskType {
+public abstract class RunCorepack extends AbstractRunCommandTaskType {
 
     @Inject
-    public RunCorepack(final ProjectLayout projectLayout, final ObjectFactory objectFactory,
-        final ExecOperations execOperations) {
-        super(projectLayout, objectFactory, execOperations);
+    public RunCorepack(final ObjectFactory objectFactory, final ExecOperations execOperations) {
+        super(objectFactory, execOperations);
         this.executableType.set(ExecutableType.COREPACK);
     }
 

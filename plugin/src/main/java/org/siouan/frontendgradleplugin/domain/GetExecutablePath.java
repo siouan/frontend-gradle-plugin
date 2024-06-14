@@ -12,15 +12,15 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class GetExecutablePath {
 
-    private final ResolveCorepackExecutablePath getCorepackExecutablePath;
+    private final ResolveCorepackExecutablePath resolveCorepackExecutablePath;
 
-    private final ResolveNodeExecutablePath getNodeExecutablePath;
+    private final ResolveNodeExecutablePath resolveNodeExecutablePath;
 
-    private final ResolveNpmExecutablePath getNpmExecutablePath;
+    private final ResolveNpmExecutablePath resolveNpmExecutablePath;
 
-    private final ResolvePnpmExecutablePath getPnpmExecutablePath;
+    private final ResolvePnpmExecutablePath resolvePnpmExecutablePath;
 
-    private final ResolveYarnExecutablePath getYarnExecutablePath;
+    private final ResolveYarnExecutablePath resolveYarnExecutablePath;
 
     /**
      * Resolves the path of the executable.
@@ -36,11 +36,11 @@ public class GetExecutablePath {
             .nodeInstallDirectoryPath(command.getNodeInstallDirectoryPath())
             .build();
         return switch (command.getExecutableType()) {
-            case COREPACK -> getCorepackExecutablePath.execute(resolveExecutablePathCommand);
-            case NODE -> getNodeExecutablePath.execute(resolveExecutablePathCommand);
-            case NPM -> getNpmExecutablePath.execute(resolveExecutablePathCommand);
-            case PNPM -> getPnpmExecutablePath.execute(resolveExecutablePathCommand);
-            case YARN -> getYarnExecutablePath.execute(resolveExecutablePathCommand);
+            case COREPACK -> resolveCorepackExecutablePath.execute(resolveExecutablePathCommand);
+            case NODE -> resolveNodeExecutablePath.execute(resolveExecutablePathCommand);
+            case NPM -> resolveNpmExecutablePath.execute(resolveExecutablePathCommand);
+            case PNPM -> resolvePnpmExecutablePath.execute(resolveExecutablePathCommand);
+            case YARN -> resolveYarnExecutablePath.execute(resolveExecutablePathCommand);
         };
     }
 }
