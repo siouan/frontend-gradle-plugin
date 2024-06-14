@@ -11,7 +11,7 @@
   "scripts": {
     "build": "nuxt build",
     "clean": "rimraf -fr dist",
-    "deploy": "rimraf -fr ../docs && cpx \"dist/**\" ../docs",
+    "deploy": "rimraf -fr ../docs && cpx \"dist/**/{.*,*}\" ../docs",
     "dev": "nuxt dev",
     "format": "prettier . --write",
     "generate": "nuxt generate",
