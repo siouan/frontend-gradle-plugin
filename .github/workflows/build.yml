@@ -89,4 +89,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew :plugin:sonar --console=plain -Dorg.gradle.jvmargs=-Xmx512m -Dsonar.verbose=true
+        run: ./gradlew :plugin:sonar --console=plain -Dorg.gradle.jvmargs=-Xmx512m -i

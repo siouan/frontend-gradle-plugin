@@ -120,6 +120,7 @@ sonarqube {
         property("sonar.java.test.binaries", "build/classes/java/test,build/classes/java/integrationTest")
         property("sonar.junit.reportPaths", "build/test-results/test/,build/test-results/integrationTest/")
         property("sonar.jacoco.xmlReportPaths", "build/reports/jacoco/report.xml")
+        property("sonar.verbose", true)
 
         // Irrelevant duplications detected on task inputs
         property(
