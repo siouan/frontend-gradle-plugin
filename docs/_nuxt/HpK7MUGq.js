@@ -1,0 +1,1 @@
+import{b as n}from"./Fh2q3ca0.js";import{_ as e}from"./DlAUqK2U.js";import{o as _,f as r,w as a,d as c,t as s}from"./BviPqJDo.js";const p={};function m(t,i){const o=n;return _(),r(o,{href:"https://www.npmjs.com"},{default:a(()=>[c(s(t.$t("navigation.npm.label")),1)]),_:1})}const d=e(p,[["render",m]]);export{d as _};

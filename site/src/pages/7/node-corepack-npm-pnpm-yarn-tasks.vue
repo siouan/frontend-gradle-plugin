@@ -18,7 +18,7 @@
         <FgpSubTitle>Dependency tree</FgpSubTitle>
 
         <p class="text-center">
-            <FgpDependencyTree class="w-100" />
+            <FgpDependencyTreeV7 class="w-100" />
         </p>
 
         <FgpSubTitle>Reference</FgpSubTitle>

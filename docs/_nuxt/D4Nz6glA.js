@@ -1,0 +1,1 @@
+import{_ as o,a as s}from"./Fh2q3ca0.js";import{g as p,o as _,f as c,w as e,b as r,d as m,t as i}from"./BviPqJDo.js";const k=p({__name:"task-link",props:{name:{}},setup(f){return(a,l)=>{const t=o,n=s;return _(),c(n,{path:`${a.$config.public.paths.tasks}#${a.name}`},{default:e(()=>[r(t,null,{default:e(()=>[m(i(a.name),1)]),_:1})]),_:1},8,["path"])}}});export{k as _};
