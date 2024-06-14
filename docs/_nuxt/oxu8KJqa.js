@@ -1,1 +1,0 @@
-import{b as n}from"./CB0qIKt7.js";import{_ as e}from"./DlAUqK2U.js";import{o as _,f as r,w as a,d as c,t as s}from"./F1WuTW_A.js";const p={};function i(t,m){const o=n;return _(),r(o,{href:"https://github.com/npm/npx"},{default:a(()=>[c(s(t.$t("navigation.npx.label")),1)]),_:1})}const u=e(p,[["render",i]]);export{u as _};
