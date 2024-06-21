@@ -39,7 +39,8 @@
 </template>
 
 <script setup lang="ts">
-const canonicalUrl = 'https://siouan.github.io/frontend-gradle-plugin/faqs';
+const runtimeConfig = useRuntimeConfig();
+const canonicalUrl = `${runtimeConfig.public.canonicalBaseUrl}${runtimeConfig.public.paths.faqs}`;
 const title = 'Frequently asked questions';
 const description = 'Using node, npm, npx, yarn executables apart from Gradle and resolving common issues.';
 
