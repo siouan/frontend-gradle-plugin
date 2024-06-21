@@ -134,7 +134,8 @@ tasks.register("lazyTask") {
 </template>
 
 <script setup lang="ts">
-const canonicalUrl = 'https://siouan.github.io/frontend-gradle-plugin/node-corepack-npm-pnpm-yarn-tasks';
+const runtimeConfig = useRuntimeConfig();
+const canonicalUrl = `${runtimeConfig.public.canonicalBaseUrl}${runtimeConfig.public.paths.tasks}`;
 const title = 'Gradle tasks to run node, corepack, npm, pnpm, yarn commands';
 const description = 'Gradle tasks and types provided by the plugin to run node/corepack/npm/pnpm/yarn: integration, dependencies, customization, recommendations';
 
