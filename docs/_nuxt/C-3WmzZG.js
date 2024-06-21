@@ -1,0 +1,1 @@
+import{_ as t}from"./DlAUqK2U.js";import{o,c as s,l as n}from"./0eoLPSdn.js";const c={},r={class:"text-muted"};function _(e,a){return o(),s("span",r,[n(e.$slots,"default")])}const f=t(c,[["render",_]]);export{f as _};

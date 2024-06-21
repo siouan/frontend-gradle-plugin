@@ -79,7 +79,8 @@
 </template>
 
 <script setup lang="ts">
-const canonicalUrl = 'https://siouan.github.io/frontend-gradle-plugin/';
+const runtimeConfig = useRuntimeConfig();
+const canonicalUrl = `${runtimeConfig.public.canonicalBaseUrl}${runtimeConfig.public.paths.overview}`;
 const title = 'Gradle Node/NPM/Yarn plugin to build Javascript applications';
 const description =
     'Gradle plugin to build frontend applications with node/npm/yarn: distribution management, configurable tasks (build, test, publish), NPX support';
