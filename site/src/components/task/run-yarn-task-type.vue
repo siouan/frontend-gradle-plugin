@@ -1,6 +1,6 @@
 <template>
     <FgpTask name="RunYarnTaskType" type :inputs="inputs" custom-environment-variables-supported>
-        <template #title>Run a custom command with <FgpCode>yarn</FgpCode></template>
+        <template #title>Register a task running a custom command with <FgpCode>yarn</FgpCode></template>
         <template #description>
             <p>
                 Task type
@@ -36,7 +36,7 @@ tasks.register&lt;RunYarnTaskType&gt;("customYarnTask") {
 
             <p>
                 The <FgpCode>args</FgpCode> property may be defined or overwritten on the command line: <FgpCode
-                >gradle customYarnTask --args="-v"</FgpCode>
+                >gradle customYarnTask "--args=-v"</FgpCode>
             </p>
         </template>
     </FgpTask>

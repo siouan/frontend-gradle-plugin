@@ -1,0 +1,35 @@
+<template>
+    <FgpTask
+        name="runPnpm"
+        :depending-task-names="['installPackageManager']"
+        :inputs="inputs"
+        example="gradle runPnpm &quot;--args=add jest -D&quot;"
+    >
+        <template #title>Run an instant command with <FgpCode>pnpm</FgpCode> from Gradle command line</template>
+        <template #description>
+            <p>
+                This task allows to execute a <FgpCode>pnpm</FgpCode> command from a Gradle command line. To define
+                custom inputs, outputs, or environment, it is recommended to register a custom task using
+                <FgpTaskLink name="RunPnpmTaskType" /> rather than overriding the default configuration of this task.
+            </p>
+        </template>
+    </FgpTask>
+</template>
+
+<script setup lang="ts">
+const inputs = [
+    {
+        name: 'packageJsonDirectory',
+        type: 'F',
+        binding: TaskPropertyBinding.PROPERTY,
+        property: 'packageJsonDirectory',
+    },
+    {
+        name: 'nodeInstallDirectory',
+        type: 'F',
+        binding: TaskPropertyBinding.PROPERTY,
+        property: 'nodeInstallDirectory',
+    },
+    { name: 'args', type: 'S', binding: TaskPropertyBinding.USER, commandLineOptionSupported: true },
+];
+</script>

@@ -15,16 +15,16 @@
             </li>
         </ul>
 
-        <FgpSubTitle>Dependency tree</FgpSubTitle>
+        <FgpSubTitle id="dependency-tree">Dependency tree</FgpSubTitle>
 
-        <p class="text-center">
-            <FgpDependencyTree class="w-100" />
-        </p>
+        <section>
+            <FgpDependencyTree class="mx-5 mb-3" />
+        </section>
 
         <FgpSubTitle>Reference</FgpSubTitle>
 
         <section>
-            <FgpSubSubTitle>Built-in tasks</FgpSubSubTitle>
+            <FgpSubSubTitle>Lifecycle tasks</FgpSubSubTitle>
 
             <FgpInstallNodeTask />
             <FgpInstallCorepackTask />
@@ -38,7 +38,17 @@
         </section>
 
         <section>
-            <FgpSubSubTitle>Additional types</FgpSubSubTitle>
+            <FgpSubSubTitle>Instant tasks</FgpSubSubTitle>
+
+            <FgpRunNodeTask />
+            <FgpRunCorepackTask />
+            <FgpRunNpmTask />
+            <FgpRunPnpmTask />
+            <FgpRunYarnTask />
+        </section>
+
+        <section>
+            <FgpSubSubTitle>Task types</FgpSubSubTitle>
 
             <FgpRunNodeTaskType />
             <FgpRunCorepackTaskType />
