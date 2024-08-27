@@ -62,7 +62,7 @@ IDE, and their support to this project.
 <a href="https://www.jetbrains.com/" title="JetBrains"><img src="resources/jetbrains-logo.svg" alt="JetBrains logo" height="96" /></a>
 <a href="https://www.jetbrains.com/idea/" title="IntelliJ IDEA"><img src="resources/intellij-idea-icon.svg" alt="IntelliJ IDEA icon" height="96" /></a>
 
-## Community
+### Community
 
 With their feedback, plugin improvement is possible. Special thanks to:
 
