@@ -5,13 +5,14 @@ import javax.inject.Inject;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.options.Option;
 import org.gradle.process.ExecOperations;
 import org.siouan.frontendgradleplugin.domain.ExecutableType;
 
 /**
  * Task type allowing developers to implement custom task and run a {@code yarn} command. To do so, the {@code script}
- * property must be defined, and custom task shall depend on the {@code installYarn} task or the {@code installFrontend}
- * task.
+ * property must be defined or provided as a command line option, and custom task shall depend on the
+ * {@code installYarn} task or the {@code installFrontend} task.
  * <p>
  * A typical usage of this task in a 'build.gradle' file would be:
  * <pre>
@@ -33,6 +34,7 @@ public abstract class RunYarn extends AbstractRunCommandTaskType {
     }
 
     @Input
+    @Option(option = "script", description = "Arguments to be appended to the yarn executable on the command line.")
     public Property<String> getScript() {
         return script;
     }

@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.options.Option;
 import org.gradle.process.ExecOperations;
 import org.siouan.frontendgradleplugin.domain.ExecutableType;
 
@@ -33,6 +34,7 @@ public abstract class RunNpm extends AbstractRunCommandTaskType {
     }
 
     @Input
+    @Option(option = "script", description = "Arguments to be appended to the npm executable on the command line.")
     public Property<String> getScript() {
         return script;
     }

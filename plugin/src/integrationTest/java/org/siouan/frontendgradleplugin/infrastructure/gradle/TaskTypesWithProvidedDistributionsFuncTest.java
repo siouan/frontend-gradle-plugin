@@ -198,7 +198,7 @@ class TaskTypesWithProvidedDistributionsFuncTest {
     }
 
     @Test
-    void should_run_custom_tasks() throws IOException {
+    void should_run_custom_tasks_with_script_property() throws IOException {
         Files.copy(getResourcePath("package-any-manager.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
             .nodeDistributionProvided(true)
@@ -234,6 +234,50 @@ class TaskTypesWithProvidedDistributionsFuncTest {
             SUCCESS);
 
         final BuildResult yarnTaskResult = runGradle(projectDirectoryPath, RUN_YARN_TASK_NAME);
+
+        assertTaskOutcomes(yarnTaskResult, SKIPPED, SKIPPED, UP_TO_DATE, UP_TO_DATE, SUCCESS, RUN_YARN_TASK_NAME,
+            SUCCESS);
+    }
+
+    @Test
+    void should_run_custom_tasks_with_script_command_line_option() throws IOException {
+        Files.copy(getResourcePath("package-any-manager.json"), projectDirectoryPath.resolve("package.json"));
+        final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
+            .nodeDistributionProvided(true)
+            .nodeInstallDirectory(getResourcePath("node-dist-provided"))
+            .verboseModeEnabled(true);
+        final String runNodeTaskDefinition = buildNodeTaskDefinition(RUN_NODE_TASK_NAME, null);
+        final String runCorepackTaskDefinition = buildCorepackTaskDefinition(RUN_COREPACK_TASK_NAME, null);
+        final String runNpmTaskDefinition = buildNpmTaskDefinition(RUN_NPM_TASK_NAME, INSTALL_FRONTEND_TASK_NAME, null);
+        final String runPnpmTaskDefinition = buildPnpmTaskDefinition(RUN_PNPM_TASK_NAME, INSTALL_FRONTEND_TASK_NAME, null);
+        final String runYarnTaskDefinition = buildYarnTaskDefinition(RUN_YARN_TASK_NAME, INSTALL_FRONTEND_TASK_NAME, null);
+        final String additionalContent = String.join("\n", runNodeTaskDefinition, runCorepackTaskDefinition,
+            runNpmTaskDefinition, runPnpmTaskDefinition, runYarnTaskDefinition);
+        createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap(), additionalContent);
+
+        final BuildResult nodeTaskResult = runGradle(projectDirectoryPath, RUN_NODE_TASK_NAME,
+            "--script=" + temporaryScriptPath);
+
+        assertTaskOutcomes(nodeTaskResult, SKIPPED, RUN_NODE_TASK_NAME, SUCCESS);
+
+        final BuildResult corepackTaskResult = runGradle(projectDirectoryPath, RUN_COREPACK_TASK_NAME,
+            "--script=disable");
+
+        assertTaskOutcomes(corepackTaskResult, SKIPPED, SKIPPED, RUN_COREPACK_TASK_NAME, SUCCESS);
+
+        final BuildResult npmTaskResult = runGradle(projectDirectoryPath, RUN_NPM_TASK_NAME,
+            "--script='run npm-script'");
+
+        assertTaskOutcomes(npmTaskResult, SKIPPED, SKIPPED, SUCCESS, SUCCESS, SUCCESS, RUN_NPM_TASK_NAME, SUCCESS);
+
+        final BuildResult pnpmTaskResult = runGradle(projectDirectoryPath, RUN_PNPM_TASK_NAME,
+            "--script='run pnpm-script'");
+
+        assertTaskOutcomes(pnpmTaskResult, SKIPPED, SKIPPED, UP_TO_DATE, UP_TO_DATE, SUCCESS, RUN_PNPM_TASK_NAME,
+            SUCCESS);
+
+        final BuildResult yarnTaskResult = runGradle(projectDirectoryPath, RUN_YARN_TASK_NAME,
+            "--script='run yarn-script'");
 
         assertTaskOutcomes(yarnTaskResult, SKIPPED, SKIPPED, UP_TO_DATE, UP_TO_DATE, SUCCESS, RUN_YARN_TASK_NAME,
             SUCCESS);
