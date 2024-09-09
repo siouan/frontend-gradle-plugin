@@ -488,12 +488,10 @@ public class FrontendGradlePlugin implements Plugin<Project> {
             .getPackageManagerSpecificationFile()
             .set(resolvePackageManagerTaskProvider.flatMap(
                 ResolvePackageManagerTask::getPackageManagerSpecificationFile));
-        task
-            .getPackageManagerExecutableFile()
-            .fileProvider(resolvePackageManagerTaskProvider
-                .flatMap(ResolvePackageManagerTask::getPackageManagerExecutablePathFile)
-                .map(f -> {
-                    final Path filePath = f.getAsFile().toPath();
+        task.getPackageManagerExecutableFile().fileProvider(resolvePackageManagerTaskProvider.flatMap(t ->
+                t.getProject().provider(() -> {
+                    File packageManagerExecutablePathFile = t.getPackageManagerExecutablePathFile().getAsFile().get();
+                    final Path filePath = packageManagerExecutablePathFile.toPath();
                     if (!Files.exists(filePath)) {
                         // Setting the output property to null avoids automatic creation of any parent directory by
                         // Gradle if the task is not skipped. If it is skipped, the file system would not have been
@@ -502,15 +500,13 @@ public class FrontendGradlePlugin implements Plugin<Project> {
                     }
                     final BeanRegistry beanRegistry = beanRegistryBuildServiceProvider.get().getBeanRegistry();
                     try {
-                        return Paths
-                            .get(getBeanOrFail(beanRegistry, FileManager.class).readString(filePath,
-                                StandardCharsets.UTF_8))
-                            .toFile();
+                        return Paths.get(getBeanOrFail(beanRegistry, FileManager.class).readString(filePath,
+                                        StandardCharsets.UTF_8)).toFile();
                     } catch (final IOException e) {
                         throw new GradleException(
-                            "Cannot read path to package manager executable from file: " + filePath, e);
+                                "Cannot read path to package manager executable from file: " + filePath, e);
                     }
-                }));
+                })));
         task.getVerboseModeEnabled().set(frontendExtension.getVerboseModeEnabled());
         bindSystemArchPropertiesToTaskInputs(systemProviders, task.getSystemJvmArch(), task.getSystemOsName());
         // The task is skipped when there's no package.json file. It allows to define a project that installs only a
