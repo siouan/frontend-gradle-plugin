@@ -4,7 +4,7 @@ buildscript {
     }
 
     dependencies {
-        classpath("org.siouan", "frontend-jdk21", "8.1.0")
+        classpath("org.siouan", "frontend-jdk21", "8.2.0")
     }
 }
 
