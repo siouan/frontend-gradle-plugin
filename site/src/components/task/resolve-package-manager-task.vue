@@ -28,8 +28,8 @@
                 package manager applicable to the project by parsing the
                 <FgpNodejsLink path="/api/packages.html#packagemanager" label="packageManager" /> property. For example,
                 if the <FgpCode>package.json</FgpCode> file contains <FgpCode
-                >"packageManager":&nbsp;"npm@9.6.7"</FgpCode>, the task resolves <FgpCode>npm</FgpCode> as the name of
-                the package manager, and <FgpCode>9.6.7</FgpCode> as its version.
+                >"packageManager":&nbsp;"npm@10.9.0"</FgpCode>, the task resolves <FgpCode>npm</FgpCode> as the name of
+                the package manager, and <FgpCode>10.9.0</FgpCode> as its version.
             </li>
             <li>
                 If the <FgpCode>package.json</FgpCode> file does not exist, the task removes output files to prevent

@@ -107,8 +107,6 @@ class AuthenticationAndProxyFuncTest {
 
     @Test
     void should_fail_installing_node_when_proxy_server_is_not_reachable() throws IOException {
-        // Connection through a proxy server, i.e. the 'server' variable acts as the proxy server.
-
         // Try to download the distribution through a proxy server, but the port used is not the same port than the
         // port of the WireMock proxy server.
         // Manual verification: when proxy server host below is null, the distribution shall be downloaded without
@@ -123,11 +121,8 @@ class AuthenticationAndProxyFuncTest {
         assertTaskOutcome(result, INSTALL_NODE_TASK_NAME, FAILED);
     }
 
-    // Same test as above, just use the exact proxy server port.
     @Test
     void should_install_node_through_proxy_server() throws IOException {
-        // Connection through a proxy server, i.e. the 'server' variable acts as the proxy server.
-
         // We use a HTTP address because proxying through HTTPS is not supported with WireMock.
         final FrontendMapBuilder frontendMapBuilder = configureNodeServerAndPluginWithProxyConnection();
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
@@ -169,8 +164,7 @@ class AuthenticationAndProxyFuncTest {
         throws IOException {
         return configureServerAndPlugin(
             URI.create("http://" + DISTRIBUTION_SERVER_HOST + ':' + DISTRIBUTION_SERVER_PORT + "/").toString(),
-            NODE_DISTRIBUTION_URL_PATH_PATTERN, DISTRIBUTION_SERVER_USERNAME, distributionServerPassword, null, null,
-            null, null);
+            DISTRIBUTION_SERVER_USERNAME, distributionServerPassword, null, null, null, null);
     }
 
     private FrontendMapBuilder configureNodeServerAndPluginWithProxyConnection() throws IOException {
@@ -179,20 +173,20 @@ class AuthenticationAndProxyFuncTest {
 
     private FrontendMapBuilder configureNodeServerAndPluginWithProxyConnection(final int proxyServerPort)
         throws IOException {
-        return configureServerAndPlugin(NODE_DISTRIBUTION_URL_ROOT, NODE_DISTRIBUTION_URL_PATH_PATTERN, null, null,
-            PROXY_SERVER_HOST, proxyServerPort, null, null);
+        return configureServerAndPlugin(NODE_DISTRIBUTION_URL_ROOT, null, null, PROXY_SERVER_HOST, proxyServerPort,
+            null, null);
     }
 
     private FrontendMapBuilder configureNodeServerAndPluginWithProxyConnection(final String proxyServerPassword)
         throws IOException {
-        return configureServerAndPlugin(NODE_DISTRIBUTION_URL_ROOT, NODE_DISTRIBUTION_URL_PATH_PATTERN, null, null,
-            PROXY_SERVER_HOST, PROXY_SERVER_PORT, PROXY_SERVER_USERNAME, proxyServerPassword);
+        return configureServerAndPlugin(NODE_DISTRIBUTION_URL_ROOT, null, null, PROXY_SERVER_HOST, PROXY_SERVER_PORT,
+            PROXY_SERVER_USERNAME, proxyServerPassword);
     }
 
     private FrontendMapBuilder configureServerAndPlugin(final String nodeDistributionUrlRoot,
-        final String nodeDistributionUrlPathPattern, final String distributionServerUsername,
-        final String distributionServerPassword, final String httpProxyHost, final Integer httpProxyPort,
-        final String httpProxyUsername, final String httpProxyPassword) throws IOException {
+        final String distributionServerUsername, final String distributionServerPassword, final String httpProxyHost,
+        final Integer httpProxyPort, final String httpProxyUsername, final String httpProxyPassword)
+        throws IOException {
 
         final ServerConfigurator proxyServerConfigurator = new ServerConfigurator(proxyServer,
             "http://" + DISTRIBUTION_SERVER_HOST + ':' + DISTRIBUTION_SERVER_PORT);
@@ -203,9 +197,9 @@ class AuthenticationAndProxyFuncTest {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder().verboseModeEnabled(false);
         if (nodeDistributionUrlRoot != null) {
             frontendMapBuilder
-                .nodeVersion("20.14.0")
+                .nodeVersion("20.18.0")
                 .nodeDistributionUrlRoot(nodeDistributionUrlRoot)
-                .nodeDistributionUrlPathPattern(nodeDistributionUrlPathPattern);
+                .nodeDistributionUrlPathPattern(NODE_DISTRIBUTION_URL_PATH_PATTERN);
             distributionServerConfigurator.withNodeDistribution();
             if (distributionServerUsername != null) {
                 frontendMapBuilder
@@ -224,8 +218,6 @@ class AuthenticationAndProxyFuncTest {
 
         distributionServerConfigurator.configure();
         proxyServerConfigurator.configure();
-        // Manual verification: when proxy host below is not defined, the distribution shall be downloaded without
-        // the proxy server, and the build shall succeed.
         return frontendMapBuilder;
     }
 }

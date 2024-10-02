@@ -1,6 +1,6 @@
 {
   "private": true,
-  "packageManager": "npm@9.6.7",
+  "packageManager": "npm@10.9.0",
   "devDependencies": {
     "mkdirp": "~3"
   },

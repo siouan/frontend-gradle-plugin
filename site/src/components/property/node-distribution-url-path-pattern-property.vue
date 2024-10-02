@@ -9,7 +9,7 @@
             This property is used to build the exact URL to download the distribution, by appending its value to the
             value of the
             <FgpPropertyLink name="nodeDistributionUrlRoot" /> property. This property may be set with a fixed trailing
-            path part (e.g. <FgpCode>dist/node-v20.14.0-win-x64.zip</FgpCode>), or take advantage of the automatic
+            path part (e.g. <FgpCode>dist/node-v20.18.0-win-x64.zip</FgpCode>), or take advantage of the automatic
             distribution resolution in the plugin, using specific tokens in the pattern such as
             <FgpCode>VERSION</FgpCode>, <FgpCode>ARCH</FgpCode>, <FgpCode>TYPE</FgpCode>. Then, the exact URL used by
             default to download the distribution is
