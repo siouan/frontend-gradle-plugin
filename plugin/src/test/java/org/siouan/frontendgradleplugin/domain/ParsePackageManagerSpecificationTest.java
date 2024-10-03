@@ -29,9 +29,9 @@ class ParsePackageManagerSpecificationTest {
     void should_return_package_manager_specification_with_no_other_specification_present()
         throws MalformedPackageManagerSpecification, UnsupportedPackageManagerException {
 
-        assertThat(usecase.execute("npm@9.6.7")).satisfies(packageManager -> {
+        assertThat(usecase.execute("npm@10.9.0")).satisfies(packageManager -> {
             assertThat(packageManager.type()).isEqualTo(PackageManagerType.NPM);
-            assertThat(packageManager.version()).isEqualTo("9.6.7");
+            assertThat(packageManager.version()).isEqualTo("10.9.0");
         });
     }
 }
