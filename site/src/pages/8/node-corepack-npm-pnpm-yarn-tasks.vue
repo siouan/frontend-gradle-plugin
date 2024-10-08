@@ -18,7 +18,7 @@
         <FgpSubTitle>Dependency tree</FgpSubTitle>
 
         <p class="text-center">
-            <FgpDependencyTree class="w-100" />
+            <FgpDependencyTreeV8 class="w-100" />
         </p>
 
         <FgpSubTitle>Reference</FgpSubTitle>
@@ -40,11 +40,11 @@
         <section>
             <FgpSubSubTitle>Additional types</FgpSubSubTitle>
 
-            <FgpRunNodeTaskType />
-            <FgpRunCorepackTaskType />
-            <FgpRunNpmTaskType />
-            <FgpRunPnpmTaskType />
-            <FgpRunYarnTaskType />
+            <FgpRunNodeTaskTypeV8 />
+            <FgpRunCorepackTaskTypeV8 />
+            <FgpRunNpmTaskTypeV8 />
+            <FgpRunPnpmTaskTypeV8 />
+            <FgpRunYarnTaskTypeV8 />
         </section>
 
         <section>

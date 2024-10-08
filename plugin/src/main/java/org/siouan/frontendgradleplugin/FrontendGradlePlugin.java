@@ -141,6 +141,11 @@ public class FrontendGradlePlugin implements Plugin<Project> {
 
     public static final int DEFAULT_RETRY_MAX_INTERVAL_MS = 30000;
 
+    /**
+     * Root name of the plugin extension.
+     */
+    private static final String EXTENSION_NAME = "frontend";
+
     public static final String GRADLE_ASSEMBLE_TASK_NAME = LifecycleBasePlugin.ASSEMBLE_TASK_NAME;
 
     public static final String GRADLE_CHECK_TASK_NAME = LifecycleBasePlugin.CHECK_TASK_NAME;
@@ -150,9 +155,21 @@ public class FrontendGradlePlugin implements Plugin<Project> {
     public static final String GRADLE_PUBLISH_TASK_NAME = PublishingPlugin.PUBLISH_LIFECYCLE_TASK_NAME;
 
     /**
+     * Name of the task that installs a specific version of Corepack.
+     *
+     * @since 8.1.0
+     */
+    public static final String INSTALL_COREPACK_TASK_NAME = "installCorepack";
+
+    /**
      * Name of the task that installs frontend dependencies.
      */
     public static final String INSTALL_FRONTEND_TASK_NAME = "installFrontend";
+
+    /**
+     * Name of the task that installs a Node distribution.
+     */
+    public static final String INSTALL_NODE_TASK_NAME = "installNode";
 
     /**
      * Name of the task that installs the relevant package manager.
@@ -163,18 +180,6 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      * Name of the file containing Javascript project metadata.
      */
     public static final String PACKAGE_JSON_FILE_NAME = "package.json";
-
-    /**
-     * Name of the task that installs a specific version of Corepack.
-     *
-     * @since 8.1.0
-     */
-    public static final String INSTALL_COREPACK_TASK_NAME = "installCorepack";
-
-    /**
-     * Name of the task that installs a Node distribution.
-     */
-    public static final String INSTALL_NODE_TASK_NAME = "installNode";
 
     /**
      * Name of the file containing the name and version of the package manager resolved.
@@ -190,11 +195,6 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      * Name of the task that resolves the applicable package manager.
      */
     public static final String RESOLVE_PACKAGE_MANAGER_TASK_NAME = "resolvePackageManager";
-
-    /**
-     * Root name of the plugin extension.
-     */
-    private static final String EXTENSION_NAME = "frontend";
 
     /**
      * The Gradle group in which all this plugin's tasks will be categorized.

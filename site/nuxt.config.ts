@@ -24,6 +24,7 @@ export default defineNuxtConfig({
             link: [{ rel: 'icon', type: 'image/x-icon', href: 'siouan-icon.png' }],
         },
     },
+    compatibilityDate: '2024-10-07',
     components: [
         {
             path: '~/components',

@@ -58,7 +58,7 @@ public class InstallPackageManagerTask extends AbstractRunCommandTask {
     public void execute() throws NonRunnableTaskException, BeanRegistryException {
         final BeanRegistry beanRegistry = beanRegistryBuildService.get().getBeanRegistry();
 
-        this.script.set(packageManagerSpecificationFile.getAsFile().map(f -> {
+        this.executableArgs.set(packageManagerSpecificationFile.getAsFile().map(f -> {
             try {
                 return String.join(" ", COREPACK_ENABLE_COMMAND, beanRegistry
                     .getBean(FileManager.class)

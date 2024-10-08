@@ -23,7 +23,7 @@ class ResolveExecutionSettingsTest {
 
     private static final Path NODE_INSTALL_DIRECTORY_PATH = ANY_PATH.resolve("node");
 
-    private static final String SCRIPT = " run script ";
+    private static final String EXECUTABLE_ARGS = " run script ";
 
     @Mock
     private ResolveNodeExecutablePath getNodeExecutablePath;
@@ -57,7 +57,7 @@ class ResolveExecutionSettingsTest {
             .executableType(ExecutableType.NODE)
             .nodeInstallDirectoryPath(NODE_INSTALL_DIRECTORY_PATH)
             .platform(platform)
-            .script(SCRIPT)
+            .executableArgs(EXECUTABLE_ARGS)
             .environmentVariables(environmentVariables)
             .build());
 
@@ -94,7 +94,7 @@ class ResolveExecutionSettingsTest {
             .executableType(ExecutableType.NPM)
             .nodeInstallDirectoryPath(NODE_INSTALL_DIRECTORY_PATH)
             .platform(platform)
-            .script(SCRIPT)
+            .executableArgs(EXECUTABLE_ARGS)
             .environmentVariables(environmentVariables)
             .build());
 
@@ -130,7 +130,7 @@ class ResolveExecutionSettingsTest {
             .executableType(ExecutableType.NODE)
             .nodeInstallDirectoryPath(NODE_INSTALL_DIRECTORY_PATH)
             .platform(platform)
-            .script(SCRIPT)
+            .executableArgs(EXECUTABLE_ARGS)
             .environmentVariables(environmentVariables)
             .build());
 
@@ -167,7 +167,7 @@ class ResolveExecutionSettingsTest {
             .executableType(ExecutableType.NPM)
             .nodeInstallDirectoryPath(NODE_INSTALL_DIRECTORY_PATH)
             .platform(platform)
-            .script(SCRIPT)
+            .executableArgs(EXECUTABLE_ARGS)
             .environmentVariables(environmentVariables)
             .build());
 

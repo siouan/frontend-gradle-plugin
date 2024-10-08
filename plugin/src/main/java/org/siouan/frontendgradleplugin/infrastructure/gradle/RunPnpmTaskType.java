@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.options.Option;
 import org.gradle.process.ExecOperations;
 import org.siouan.frontendgradleplugin.domain.ExecutableType;
 
@@ -15,25 +16,26 @@ import org.siouan.frontendgradleplugin.domain.ExecutableType;
  * <p>
  * A typical usage of this task in a 'build.gradle' file would be:
  * <pre>
- * import org.siouan.frontendgradleplugin.infrastructure.gradle.RunPnpm
- * tasks.register&lt;RunPnpm&gt;('mytask') {
- *     dependsOn(tasks.named('installFrontend'))
- *     script.set('...')
+ * import org.siouan.frontendgradleplugin.infrastructure.gradle.RunPnpmTaskType
+ * tasks.register&lt;RunPnpmTaskType&gt;('mytask') {
+ *     dependsOn(tasks.named('installPackageManager'))
+ *     args.set('...')
  * }
  * </pre>
  *
  * @since 7.0.0
  */
-public abstract class RunPnpm extends AbstractRunCommandTaskType {
+public abstract class RunPnpmTaskType extends AbstractRunCommandTaskType {
 
     @Inject
-    public RunPnpm(final ObjectFactory objectFactory, final ExecOperations execOperations) {
+    public RunPnpmTaskType(final ObjectFactory objectFactory, final ExecOperations execOperations) {
         super(objectFactory, execOperations);
         executableType.set(ExecutableType.PNPM);
     }
 
     @Input
-    public Property<String> getScript() {
-        return script;
+    @Option(option = "args", description = "Arguments to be appended to the pnpm executable name on the command line.")
+    public Property<String> getArgs() {
+        return executableArgs;
     }
 }
