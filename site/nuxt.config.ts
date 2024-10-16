@@ -43,7 +43,7 @@ export default defineNuxtConfig({
         public: {
             canonicalBaseUrl: 'https://siouan.github.io/frontend-gradle-plugin',
             i18nEnabled: false,
-            latestMajorRelease: 8,
+            latestMajorRelease: 9,
             paths: {
                 configuration: '/configuration/',
                 faqs: '/faqs/',

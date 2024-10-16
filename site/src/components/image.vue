@@ -1,10 +1,9 @@
 <template>
-    <FgpLink :href="href"><FgpImage :src="src" :alt="alt!" :width="width!" :height="height!" /></FgpLink>
+    <img :src="src" :alt="alt!" :width="width!" :height="height!" />
 </template>
 
 <script setup lang="ts">
 interface Props {
-    readonly href: string;
     readonly src: string;
     readonly alt?: string | null;
     readonly width?: number | null;
