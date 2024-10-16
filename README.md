@@ -40,16 +40,35 @@
 
 ## Special thanks
 
+### They use this plugin, thanks to these organizations!
+
+<p align="center">
+<a href="https://x-road.global/" title="X-Road - Data Exchange Layer"><img src="resources/x-road.png" alt="X-Road logo" height="64" /></a>
+&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="https://akhq.io/" title="AKHQ - Kafka GUI for Apache Kafka"><img src="resources/akhq.svg" alt="AKHQ logo" height="64" /></a>
+&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="https://kestra.io/" title="Kestra - Event-driven declarative orchestration platform"><img src="resources/kestra.svg" alt="Kestra logo" height="64"></a>
+&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="https://egeria-project.org/" title="Egeria - Open Metadata and Governance"><img src="resources/egeria.png" alt="Egeria logo" height="64" /></a>
+&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="https://serverpackcreator.de/" title="ServerPackCreator - Quick and easy generation of server packs of your favourite Minecraft modpacks"><img src="resources/serverpackcreator.png" alt="ServerPackCreator logo" height="64" /></a>
+</p>
+
+### IDE
+
 The plugin is built using [IntelliJ IDEA][intellij-idea], special thanks to [JetBrains][jetbrains] for this amazing
 IDE, and their support to this project.
 
 <a href="https://www.jetbrains.com/" title="JetBrains"><img src="resources/jetbrains-logo.svg" alt="JetBrains logo" height="96" /></a>
 <a href="https://www.jetbrains.com/idea/" title="IntelliJ IDEA"><img src="resources/intellij-idea-icon.svg" alt="IntelliJ IDEA icon" height="96" /></a>
 
+## Community
+
 With their feedback, plugin improvement is possible. Special thanks to:
 
 @[andreaschiona](https://github.com/andreaschiona),
 @[apo1967](https://github.com/apo1967),
+@[bric3](https://github.com/bric3),
 @[byxor](https://github.com/byxor),
 @[ChFlick](https://github.com/ChFlick),
 @[ckosloski](https://github.com/ckosloski),
