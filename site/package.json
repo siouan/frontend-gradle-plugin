@@ -22,24 +22,24 @@
     "typecheck": "nuxt typecheck"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-free": "~6",
-    "@pinia/nuxt": "~0",
-    "bootstrap": "~5",
-    "nuxt": "~3",
-    "vue": "~3",
-    "vue-router": "~4"
+    "@fortawesome/fontawesome-free": "^6.5.2",
+    "@pinia/nuxt": "^0.5.1",
+    "bootstrap": "^5.3.3",
+    "nuxt": "^3.11.2",
+    "vue": "^3.4.26",
+    "vue-router": "^4.3.2"
   },
   "devDependencies": {
-    "@nuxt/eslint": "~0",
-    "@nuxtjs/i18n": "~8",
-    "@types/eslint-config-prettier": "~6",
-    "cpx": "~1",
-    "eslint": "~9",
-    "eslint-config-prettier": "~9",
-    "prettier": "~3",
-    "rimraf": "~5",
-    "sass": "~1",
-    "typescript": "~5",
-    "vue-tsc": "~1"
+    "@nuxt/eslint": "^0.3.10",
+    "@nuxtjs/i18n": "^8.3.1",
+    "@types/eslint-config-prettier": "^6.11.3",
+    "cpx": "^1.5.0",
+    "eslint": "^9.1.1",
+    "eslint-config-prettier": "^9.1.0",
+    "prettier": "^3.2.5",
+    "rimraf": "^5.0.5",
+    "sass": "<=1.77.6",
+    "typescript": "^5.6.2",
+    "vue-tsc": "^2.1.6"
   }
 }

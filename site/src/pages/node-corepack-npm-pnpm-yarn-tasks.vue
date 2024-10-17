@@ -58,14 +58,15 @@
                 command: <FgpTaskLink name="installCorepack" />, <FgpTaskLink name="installPackageManager" />,
                 <FgpTaskLink name="installFrontend" />, <FgpTaskLink name="cleanFrontend" />,
                 <FgpTaskLink name="assembleFrontend" />, <FgpTaskLink name="checkFrontend" />,
-                <FgpTaskLink name="publishFrontend" />, <FgpTaskLink name="RunNode" />,
-                <FgpTaskLink name="RunCorepack" />, <FgpTaskLink name="RunNpm" />, <FgpTaskLink name="RunPnpm" />,
-                <FgpTaskLink name="RunYarn" />. These tasks forward environment variables visible by the Gradle process
-                to <FgpCode>node</FgpCode>, <FgpCode>corepack</FgpCode>, <FgpCode>npm</FgpCode>,
-                <FgpCode>pnpm</FgpCode>, <FgpCode>yarn</FgpCode> commands. These variables may be overwritten and/or new
-                variables may be added to the environment forwarded to the command. If you need to alter the
-                <FgpCode>PATH</FgpCode> environment variable, and though this is generally a rare situation, keep in
-                mind the plugin adds its own paths so as the relevant <FgpCode>node</FgpCode> executable can be found.
+                <FgpTaskLink name="publishFrontend" />, <FgpTaskLink name="RunNodeTaskType" />,
+                <FgpTaskLink name="RunCorepackTaskType" />, <FgpTaskLink name="RunNpmTaskType" />,
+                <FgpTaskLink name="RunPnpmTaskType" />, <FgpTaskLink name="RunYarnTaskType" />. These tasks forward
+                environment variables visible by the Gradle process to <FgpCode>node</FgpCode>,
+                <FgpCode>corepack</FgpCode>, <FgpCode>npm</FgpCode>, <FgpCode>pnpm</FgpCode>, <FgpCode>yarn</FgpCode>
+                commands. These variables may be overwritten and/or new variables may be added to the environment
+                forwarded to the command. If you need to alter the <FgpCode>PATH</FgpCode> environment variable, and
+                though this is generally a rare situation, keep in mind the plugin adds its own paths so as the relevant
+                <FgpCode>node</FgpCode> executable can be found.
             </p>
             <p>Example hereafter shows how to customize the environment for a given task:</p>
             <FgpGradleScripts>

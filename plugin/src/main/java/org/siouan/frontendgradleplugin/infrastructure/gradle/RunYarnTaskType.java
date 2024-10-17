@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.options.Option;
 import org.gradle.process.ExecOperations;
 import org.siouan.frontendgradleplugin.domain.ExecutableType;
 
@@ -15,25 +16,26 @@ import org.siouan.frontendgradleplugin.domain.ExecutableType;
  * <p>
  * A typical usage of this task in a 'build.gradle' file would be:
  * <pre>
- * import org.siouan.frontendgradleplugin.infrastructure.gradle.RunYarn
- * tasks.register&lt;RunYarn&gt;('mytask') {
- *     dependsOn(tasks.named('installFrontend'))
- *     script.set('...')
+ * import org.siouan.frontendgradleplugin.infrastructure.gradle.RunYarnTaskType
+ * tasks.register&lt;RunYarnTaskType&gt;('mytask') {
+ *     dependsOn(tasks.named('installPackageManager'))
+ *     args.set('...')
  * }
  * </pre>
  *
  * @since 6.0.0
  */
-public abstract class RunYarn extends AbstractRunCommandTaskType {
+public abstract class RunYarnTaskType extends AbstractRunCommandTaskType {
 
     @Inject
-    public RunYarn(final ObjectFactory objectFactory, final ExecOperations execOperations) {
+    public RunYarnTaskType(final ObjectFactory objectFactory, final ExecOperations execOperations) {
         super(objectFactory, execOperations);
         executableType.set(ExecutableType.YARN);
     }
 
     @Input
-    public Property<String> getScript() {
-        return script;
+    @Option(option = "args", description = "Arguments to be appended to the yarn executable name on the command line.")
+    public Property<String> getArgs() {
+        return executableArgs;
     }
 }

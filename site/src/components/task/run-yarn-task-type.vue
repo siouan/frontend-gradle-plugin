@@ -1,36 +1,43 @@
 <template>
-    <FgpTask name="RunYarn" type :inputs="inputs" custom-environment-variables-supported>
+    <FgpTask name="RunYarnTaskType" type :inputs="inputs" custom-environment-variables-supported>
         <template #title>Run a custom command with <FgpCode>yarn</FgpCode></template>
         <template #description>
             <p>
-                The plugin provides task type
-                <FgpCode>org.siouan.frontendgradleplugin.infrastructure.gradle.RunYarn</FgpCode>
-                that allows creating a custom task to run a
-                <FgpCode>yarn</FgpCode> command. The <FgpCode>script</FgpCode> property must be set with the
-                corresponding command. Then, choose whether additional dependencies located in the
-                <FgpCode>package.json</FgpCode> file should be installed: make the task either depends on
-                <FgpTaskLink name="installPackageManager" /> task or on <FgpTaskLink name="installFrontend" /> task. The
-                code hereafter shows the configuration required to output the version of <FgpCode>yarn</FgpCode>:
+                Task type
+                <FgpCode>org.siouan.frontendgradleplugin.infrastructure.gradle.RunYarnTaskType</FgpCode>
+                allows to register a custom task executing a <FgpCode>yarn</FgpCode> command. The
+                <FgpCode>args</FgpCode> property must be defined with the corresponding arguments, either in the build
+                script or on the command line. The example hereafter shows how to register a task in a build script to
+                output the version of <FgpCode>yarn</FgpCode>:
             </p>
 
             <FgpGradleScripts id="run-yarn-example">
                 <template #groovy>
-                    <pre><FgpCode>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunYarn
-tasks.register('yarnVersion', RunYarn) {
-    <FgpCodeComment>// dependsOn tasks.named('installPackageManager')
-    // dependsOn tasks.named('installFrontend')</FgpCodeComment>
-    script = '-v'
+                    <pre><FgpCode>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunYarnTaskType
+tasks.register('customYarnTask', RunYarnTaskType) {
+    dependsOn tasks.named('installPackageManager')
+    <FgpCodeComment>// If the command requires additional dependencies located in the 'package.json' file,
+    // replace the previous task dependency with the one hereafter:
+    //dependsOn tasks.named('installFrontend')</FgpCodeComment>
+    args = '-v'
 }</FgpCode></pre>
                 </template>
                 <template #kotlin>
-                    <pre><FgpCode>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunYarn
-tasks.register&lt;RunYarn&gt;("yarnVersion") {
-    <FgpCodeComment>// dependsOn(tasks.named("installPackageManager"))
-    // dependsOn(tasks.named("installFrontend"))</FgpCodeComment>
-    script.set("-v")
+                    <pre><FgpCode>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunYarnTaskType
+tasks.register&lt;RunYarnTaskType&gt;("customYarnTask") {
+    dependsOn(tasks.named("installPackageManager")
+    <FgpCodeComment>// If the command requires additional dependencies located in the 'package.json' file,
+    // replace the previous task dependency with the one hereafter:
+    //dependsOn(tasks.named("installFrontend")</FgpCodeComment>
+    args.set("-v")
 }</FgpCode></pre>
                 </template>
             </FgpGradleScripts>
+
+            <p>
+                The <FgpCode>args</FgpCode> property may be defined or overwritten on the command line: <FgpCode
+                >gradle customYarnTask --args="-v"</FgpCode>
+            </p>
         </template>
     </FgpTask>
 </template>
@@ -40,15 +47,15 @@ const inputs = [
     {
         name: 'packageJsonDirectory',
         type: 'F',
-        binding: 'P',
+        binding: TaskPropertyBinding.PROPERTY,
         property: 'packageJsonDirectory',
     },
     {
         name: 'nodeInstallDirectory',
         type: 'F',
-        binding: 'P',
+        binding: TaskPropertyBinding.PROPERTY,
         property: 'nodeInstallDirectory',
     },
-    { name: 'script', type: 'S', binding: 'P', property: 'script' },
+    { name: 'args', type: 'S', binding: TaskPropertyBinding.USER, commandLineOptionSupported: true },
 ];
 </script>

@@ -31,7 +31,7 @@ import org.junit.jupiter.api.io.TempDir;
 import org.siouan.frontendgradleplugin.test.FrontendMapBuilder;
 
 /**
- * Functional tests to verify task types {@link RunNode}, {@link RunNpm}, {@link RunPnpm},  {@link RunYarn} in a Gradle
+ * Functional tests to verify task types {@link RunNodeTaskType}, {@link RunNpmTaskType}, {@link RunPnpmTaskType},  {@link RunYarnTaskType} in a Gradle
  * build, with a downloaded Node.js distribution.
  */
 class TaskTypesWithDownloadedDistributionsFuncTest {

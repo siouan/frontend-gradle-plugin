@@ -20,6 +20,6 @@ public class InstallFrontendTask extends AbstractRunCommandTask {
 
     @Input
     public Property<String> getInstallScript() {
-        return script;
+        return executableArgs;
     }
 }

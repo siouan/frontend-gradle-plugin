@@ -39,9 +39,9 @@ public class ScriptProperties {
     private final Path nodeInstallDirectoryPath;
 
     /**
-     * The script run by the job with npm or Yarn.
+     * Arguments to be appended to the executable name on the command line.
      */
-    private final String script;
+    private final String executableArgs;
 
     /**
      * Underlying platform.
@@ -56,13 +56,13 @@ public class ScriptProperties {
     private final Map<String, String> environmentVariables;
 
     ScriptProperties(final ExecOperations execOperations, final Path packageJsonDirectoryPath,
-        final ExecutableType executableType, final Path nodeInstallDirectoryPath, final String script,
+        final ExecutableType executableType, final Path nodeInstallDirectoryPath, final String executableArgs,
         final Platform platform, final Map<String, String> environmentVariables) {
         this.execOperations = execOperations;
         this.packageJsonDirectoryPath = packageJsonDirectoryPath;
         this.executableType = executableType;
         this.nodeInstallDirectoryPath = nodeInstallDirectoryPath;
-        this.script = script;
+        this.executableArgs = executableArgs;
         this.platform = platform;
         this.environmentVariables = Map.copyOf(environmentVariables);
     }
