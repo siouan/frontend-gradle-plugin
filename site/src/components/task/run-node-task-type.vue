@@ -1,6 +1,6 @@
 <template>
     <FgpTask name="RunNodeTaskType" type :inputs="inputs" custom-environment-variables-supported>
-        <template #title>Run a custom command with <FgpCode>node</FgpCode></template>
+        <template #title>Register a task running a custom command with <FgpCode>node</FgpCode></template>
         <template #description>
             <p>
                 Task type
@@ -36,7 +36,7 @@ tasks.register&lt;RunNodeTaskType&gt;("customNodeTask") {
 
             <p>
                 The <FgpCode>args</FgpCode> property may be defined or overwritten on the command line: <FgpCode
-                >gradle customNodeTask --args="-v"</FgpCode>
+                >gradle customNodeTask "--args=-v"</FgpCode>
             </p>
         </template>
     </FgpTask>

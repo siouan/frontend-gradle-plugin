@@ -52,6 +52,9 @@
                 <li v-if="customEnvironmentVariablesSupported">Supports <FgpSiteLink
                     :path="`${$config.public.paths.tasks}#custom-environment-variables`"
                 >custom environment variables</FgpSiteLink></li>
+                <li v-if="example">
+                    Example: <FgpCode>{{ example }}</FgpCode>
+                </li>
             </ul>
         </header>
         <section class="px-3"><slot name="description" /></section>
@@ -87,6 +90,7 @@ interface Props {
     readonly outputs?: any[];
     readonly cacheable?: boolean;
     readonly customEnvironmentVariablesSupported?: boolean;
+    readonly example?: string | null;
 }
 
 const slots = useSlots();

@@ -59,7 +59,7 @@ const inputs = [{
     property: 'nodeInstallDirectory'
 }, {
     name: 'corepackVersion',
-    type: 'RF',
+    type: 'S',
     binding: 'P',
     property: 'corepackVersion'
 }];

@@ -1,19 +1,7 @@
 package org.siouan.frontendgradleplugin.test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.siouan.frontendgradleplugin.FrontendGradlePlugin.ASSEMBLE_TASK_NAME;
-import static org.siouan.frontendgradleplugin.FrontendGradlePlugin.CHECK_TASK_NAME;
-import static org.siouan.frontendgradleplugin.FrontendGradlePlugin.CLEAN_TASK_NAME;
-import static org.siouan.frontendgradleplugin.FrontendGradlePlugin.GRADLE_ASSEMBLE_TASK_NAME;
-import static org.siouan.frontendgradleplugin.FrontendGradlePlugin.GRADLE_CHECK_TASK_NAME;
-import static org.siouan.frontendgradleplugin.FrontendGradlePlugin.GRADLE_CLEAN_TASK_NAME;
-import static org.siouan.frontendgradleplugin.FrontendGradlePlugin.GRADLE_PUBLISH_TASK_NAME;
-import static org.siouan.frontendgradleplugin.FrontendGradlePlugin.INSTALL_COREPACK_TASK_NAME;
-import static org.siouan.frontendgradleplugin.FrontendGradlePlugin.INSTALL_FRONTEND_TASK_NAME;
-import static org.siouan.frontendgradleplugin.FrontendGradlePlugin.INSTALL_NODE_TASK_NAME;
-import static org.siouan.frontendgradleplugin.FrontendGradlePlugin.INSTALL_PACKAGE_MANAGER_TASK_NAME;
-import static org.siouan.frontendgradleplugin.FrontendGradlePlugin.PUBLISH_TASK_NAME;
-import static org.siouan.frontendgradleplugin.FrontendGradlePlugin.RESOLVE_PACKAGE_MANAGER_TASK_NAME;
+import static org.siouan.frontendgradleplugin.FrontendGradlePlugin.*;
 import static org.siouan.frontendgradleplugin.test.PluginTaskOutcome.FAILED;
 import static org.siouan.frontendgradleplugin.test.PluginTaskOutcome.IGNORED;
 
@@ -35,7 +23,8 @@ public final class GradleBuildAssertions {
     private static final List<String> TASK_NAMES = List.of(INSTALL_NODE_TASK_NAME, INSTALL_COREPACK_TASK_NAME,
         RESOLVE_PACKAGE_MANAGER_TASK_NAME, INSTALL_PACKAGE_MANAGER_TASK_NAME, INSTALL_FRONTEND_TASK_NAME,
         CLEAN_TASK_NAME, ASSEMBLE_TASK_NAME, CHECK_TASK_NAME, PUBLISH_TASK_NAME, GRADLE_CLEAN_TASK_NAME,
-        GRADLE_ASSEMBLE_TASK_NAME, GRADLE_CHECK_TASK_NAME, GRADLE_PUBLISH_TASK_NAME);
+        GRADLE_ASSEMBLE_TASK_NAME, GRADLE_CHECK_TASK_NAME, GRADLE_PUBLISH_TASK_NAME, RUN_NODE_TASK_NAME,
+        RUN_COREPACK_TASK_NAME, RUN_NPM_TASK_NAME, RUN_PNPM_TASK_NAME, RUN_YARN_TASK_NAME);
 
     private GradleBuildAssertions() {
     }
@@ -76,6 +65,18 @@ public final class GradleBuildAssertions {
         assertTaskOutcomes(result, null, installNodeTaskOutcome, installCorepackTaskOutcome,
             resolvePackageManagerTaskOutcome, installPackageManagerTaskOutcome, installFrontendTaskOutcome, null, null,
             null, publishTaskOutcome, null, null, null, gradlePublishTaskOutcome, null, null);
+    }
+
+    public static void assertRunNodeTaskOutcome(final BuildResult result,
+        final PluginTaskOutcome installNodeTaskOutcome, final PluginTaskOutcome runNodeTaskOutcome) {
+        assertTaskOutcomes(result, installNodeTaskOutcome, RUN_NODE_TASK_NAME, runNodeTaskOutcome);
+    }
+
+    public static void assertRunCorepackTaskOutcome(final BuildResult result,
+        final PluginTaskOutcome installNodeTaskOutcome, final PluginTaskOutcome installCorepackTaskOutcome,
+        final PluginTaskOutcome runCorepackTaskOutcome) {
+        assertTaskOutcomes(result, installNodeTaskOutcome, installCorepackTaskOutcome, RUN_COREPACK_TASK_NAME,
+            runCorepackTaskOutcome);
     }
 
     public static void assertTaskFailed(final BuildResult result, final String taskName) {
