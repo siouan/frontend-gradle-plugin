@@ -47,6 +47,11 @@ public class ResolveNodeDistributionArchitectureId {
     private static final String WINDOWS_X64_ARCH = "win-x64";
 
     /**
+     * Architecture ID for an ARM 64 bits Windows O/S.
+     */
+    private static final String WINDOWS_ARM64_ARCH = "win-arm64";
+
+    /**
      * Resolves the architecture ID for a given platform.
      *
      * @param platform Platform.
@@ -56,7 +61,7 @@ public class ResolveNodeDistributionArchitectureId {
         final String extension;
         if (platform.is64BitsArch()) {
             if (platform.isWindowsOs()) {
-                extension = WINDOWS_X64_ARCH;
+                extension = platform.isArm64BitsArch() ? WINDOWS_ARM64_ARCH : WINDOWS_X64_ARCH;
             } else if (platform.isLinuxOs()) {
                 extension = platform.isArm64BitsArch() ? LINUX_ARM64_ARCH : LINUX_X64_ARCH;
             } else if (platform.isMacOs()) {

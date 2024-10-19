@@ -40,6 +40,11 @@ class ResolveNodeDistributionArchitectureIdTest {
     }
 
     @Test
+    void should_resolve_architecture_id_when_os_is_windows_nt_and_jre_arch_is_arm64() {
+        assertThat(usecase.execute(aPlatform("aarch64", "Windows NT"))).contains("win-arm64");
+    }
+
+    @Test
     void should_resolve_architecture_id_when_os_is_linux_and_jre_arch_is_amd64() {
         assertThat(usecase.execute(aPlatform("amd64", "Linux"))).contains("linux-x64");
     }
