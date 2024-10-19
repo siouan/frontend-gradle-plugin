@@ -63,7 +63,7 @@
             <FgpCode>gradlew build</FgpCode>.
         </FgpFeatureCard>
         <FgpFeatureCard title="Customization" icon-class="fa fa-code-branch text-warning">
-            For more complex use cases, the plugin provides types to create tasks and run custom commands with
+            For more complex use cases, the plugin provides types to register custom tasks and run commands with
             <FgpNodejsLink />, <FgpCorepackLink />, <FgpNpmLink />, <FgpPnpmLink />, <FgpYarnLink />.
         </FgpFeatureCard>
 

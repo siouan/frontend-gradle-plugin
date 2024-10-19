@@ -1,6 +1,6 @@
 <template>
     <FgpTask name="RunNpmTaskType" type :inputs="inputs" custom-environment-variables-supported>
-        <template #title>Run a custom command with <FgpCode>npm</FgpCode></template>
+        <template #title>Register a task running a custom command with <FgpCode>npm</FgpCode></template>
         <template #description>
             <p>
                 Task type
@@ -36,7 +36,7 @@ tasks.register&lt;RunNpmTaskType&gt;("customNpmTask") {
 
             <p>
                 The <FgpCode>args</FgpCode> property may be defined or overwritten on the command line: <FgpCode
-                >gradle customNpmTask --args="-v"</FgpCode>
+                >gradle customNpmTask "--args=-v"</FgpCode>
             </p>
         </template>
     </FgpTask>

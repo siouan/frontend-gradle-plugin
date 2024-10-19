@@ -1,6 +1,6 @@
 <template>
     <FgpTask name="RunPnpmTaskType" type :inputs="inputs" custom-environment-variables-supported>
-        <template #title>Run a custom command with <FgpCode>pnpm</FgpCode></template>
+        <template #title>Register a task running a custom command with <FgpCode>pnpm</FgpCode></template>
         <template #description>
             <p>
                 Task type
@@ -36,7 +36,7 @@ tasks.register&lt;RunPnpmTaskType&gt;("customPnpmTask") {
 
             <p>
                 The <FgpCode>args</FgpCode> property may be defined or overwritten on the command line: <FgpCode
-                >gradle customPnpmTask --args="-v"</FgpCode>
+                >gradle customPnpmTask "--args=-v"</FgpCode>
             </p>
         </template>
     </FgpTask>
