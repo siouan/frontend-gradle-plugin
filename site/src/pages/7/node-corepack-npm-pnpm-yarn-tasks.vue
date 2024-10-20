@@ -39,11 +39,11 @@
         <section>
             <FgpSubSubTitle>Additional types</FgpSubSubTitle>
 
-            <FgpRunNodeTaskType />
-            <FgpRunCorepackTaskType />
-            <FgpRunNpmTaskType />
-            <FgpRunPnpmTaskType />
-            <FgpRunYarnTaskType />
+            <FgpRunNodeTaskTypeV8 />
+            <FgpRunCorepackTaskTypeV8 />
+            <FgpRunNpmTaskTypeV8 />
+            <FgpRunPnpmTaskTypeV8 />
+            <FgpRunYarnTaskTypeV8 />
         </section>
 
         <section>

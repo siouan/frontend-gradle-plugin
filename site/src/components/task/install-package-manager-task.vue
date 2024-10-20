@@ -47,17 +47,17 @@
 const inputs = [
     {
         name: 'packageJsonDirectory',
-        type: 'F',
-        binding: 'P',
+        type: TaskPropertyType.FILE,
+        binding: TaskPropertyBinding.PROPERTY,
         property: 'packageJsonDirectory',
     },
     {
         name: 'nodeInstallDirectory',
-        type: 'F',
-        binding: 'P',
+        type: TaskPropertyType.FILE,
+        binding: TaskPropertyBinding.PROPERTY,
         property: 'nodeInstallDirectory',
     },
-    { name: 'packageManagerSpecificationFile', type: 'RF', binding: 'C' }
+    { name: 'packageManagerSpecificationFile', type: TaskPropertyType.REGULAR_FILE, binding: TaskPropertyBinding.CUSTOM }
 ];
-const outputs = [{ name: 'packageManagerExecutableFile', type: 'RF', binding: 'C' }];
+const outputs = [{ name: 'packageManagerExecutableFile', type: TaskPropertyType.REGULAR_FILE, binding: TaskPropertyBinding.CUSTOM }];
 </script>

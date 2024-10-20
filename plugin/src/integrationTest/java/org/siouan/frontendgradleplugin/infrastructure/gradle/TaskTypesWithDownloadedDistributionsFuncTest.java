@@ -31,7 +31,7 @@ import org.junit.jupiter.api.io.TempDir;
 import org.siouan.frontendgradleplugin.test.FrontendMapBuilder;
 
 /**
- * Functional tests to verify task types {@link RunNode}, {@link RunNpm}, {@link RunPnpm},  {@link RunYarn} in a Gradle
+ * Functional tests to verify task types {@link RunNodeTaskType}, {@link RunNpmTaskType}, {@link RunPnpmTaskType},  {@link RunYarnTaskType} in a Gradle
  * build, with a downloaded Node.js distribution.
  */
 class TaskTypesWithDownloadedDistributionsFuncTest {
@@ -63,7 +63,7 @@ class TaskTypesWithDownloadedDistributionsFuncTest {
         final Path temporaryScriptPath = createJavascriptFileLoggingProcessTitle(
             temporaryDirectoryPath.resolve("script.js"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("20.14.0")
+            .nodeVersion("20.18.0")
             .nodeInstallDirectory(projectDirectoryPath.resolve("node-dist"))
             .corepackVersion(LATEST_VERSION_ARGUMENT)
             .packageJsonDirectory(packageJsonDirectoryPath);

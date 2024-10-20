@@ -3,10 +3,7 @@ package org.siouan.frontendgradleplugin.infrastructure.gradle;
 import javax.inject.Inject;
 
 import org.gradle.api.model.ObjectFactory;
-import org.gradle.api.provider.Property;
-import org.gradle.api.tasks.Input;
 import org.gradle.process.ExecOperations;
-import org.siouan.frontendgradleplugin.domain.ExecutableType;
 
 /**
  * Task type allowing developers to implement custom task and run a {@code node} command. To do so, the {@code script}
@@ -15,25 +12,20 @@ import org.siouan.frontendgradleplugin.domain.ExecutableType;
  * <p>
  * A typical usage of this task type in a 'build.gradle' file would be:
  * <pre>
- * import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNode
- * tasks.register&lt;RunNode&gt;('mytask') {
- *     dependsOn(tasks.named('installNode'))
- *     script.set('...')
+ * import org.siouan.frontendgradleplugin.infrastructure.gradle.RunCorepackTaskType
+ * tasks.register&lt;RunCorepackTaskType&gt;('mytask') {
+ *     dependsOn(tasks.named('installCorepack'))
+ *     args.set('...')
  * }
  * </pre>
  *
- * @since 1.2.0
+ * @since 7.0.0
  */
-public abstract class RunNode extends AbstractRunCommandTaskType {
+public abstract class RunCorepackTaskType extends RunCorepackTask {
 
     @Inject
-    public RunNode(final ObjectFactory objectFactory, final ExecOperations execOperations) {
+    public RunCorepackTaskType(final ObjectFactory objectFactory, final ExecOperations execOperations) {
         super(objectFactory, execOperations);
-        executableType.set(ExecutableType.NODE);
-    }
-
-    @Input
-    public Property<String> getScript() {
-        return script;
+        RunCommandTaskTypes.configure(this, getProject());
     }
 }

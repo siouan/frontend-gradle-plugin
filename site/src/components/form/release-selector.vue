@@ -13,6 +13,9 @@ const runtimeConfig = useRuntimeConfig();
 const mainStore = useMainStore();
 
 const options = [{
+    label: '9.x',
+    value: 9
+}, {
     label: '8.x',
     value: 8
 }, {

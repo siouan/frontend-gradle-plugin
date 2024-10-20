@@ -1,6 +1,6 @@
 {
   "private": true,
-  "packageManager": "npm@9.6.7",
+  "packageManager": "npm@10.9.0",
   "scripts": {
     "build": "echo Building frontend",
     "check": "echo Checking frontend && npm run lint && npm run test",

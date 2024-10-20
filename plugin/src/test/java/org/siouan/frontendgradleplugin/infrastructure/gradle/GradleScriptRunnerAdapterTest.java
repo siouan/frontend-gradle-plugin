@@ -70,7 +70,7 @@ class GradleScriptRunnerAdapterTest {
             .executableType(scriptProperties.getExecutableType())
             .nodeInstallDirectoryPath(scriptProperties.getNodeInstallDirectoryPath())
             .platform(scriptProperties.getPlatform())
-            .script(scriptProperties.getScript())
+            .executableArgs(scriptProperties.getExecutableArgs())
             .environmentVariables(environmentVariables)
             .build())).thenReturn(executionSettings);
         final ExecResult execResult = mock(ExecResult.class);

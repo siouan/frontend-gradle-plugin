@@ -37,6 +37,6 @@
 </template>
 
 <script setup lang="ts">
-const inputs = [{ name: 'packageManagerSpecificationFile', type: 'RF', binding: 'C' }];
-const outputs = [{ name: 'packageManagerExecutableFile', type: 'RF', binding: 'C' }];
+const inputs = [{ name: 'packageManagerSpecificationFile', type: TaskPropertyType.REGULAR_FILE, binding: TaskPropertyBinding.CUSTOM }];
+const outputs = [{ name: 'packageManagerExecutableFile', type: TaskPropertyType.REGULAR_FILE, binding: TaskPropertyBinding.CUSTOM }];
 </script>
