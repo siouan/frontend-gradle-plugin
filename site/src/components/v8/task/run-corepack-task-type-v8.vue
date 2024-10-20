@@ -40,16 +40,16 @@ tasks.register&lt;RunCorepack&gt;("corepackVersion") {
 const inputs = [
     {
         name: 'packageJsonDirectory',
-        type: 'F',
+        type: TaskPropertyType.FILE,
         binding: TaskPropertyBinding.PROPERTY,
         property: 'packageJsonDirectory',
     },
     {
         name: 'nodeInstallDirectory',
-        type: 'F',
+        type: TaskPropertyType.FILE,
         binding: TaskPropertyBinding.PROPERTY,
         property: 'nodeInstallDirectory',
     },
-    { name: 'script', type: 'S', binding: TaskPropertyBinding.PROPERTY, property: 'script', commandLineOptionSupported: true },
+    { name: 'script', type: TaskPropertyType.STRING, binding: TaskPropertyBinding.PROPERTY, property: 'script', commandLineOptionSupported: true },
 ];
 </script>
