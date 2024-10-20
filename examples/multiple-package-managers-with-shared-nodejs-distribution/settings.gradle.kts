@@ -4,4 +4,4 @@ pluginManagement {
     }
 }
 
-include("node-subproject", "npm-6-subproject", "npm-9-subproject", "pnpm-6-subproject", "pnpm-8-subproject", "yarn-1-subproject", "yarn-3-subproject")
+include("node-subproject", "npm-6-subproject", "npm-10-subproject", "pnpm-6-subproject", "pnpm-9-subproject", "yarn-1-subproject", "yarn-4-subproject")

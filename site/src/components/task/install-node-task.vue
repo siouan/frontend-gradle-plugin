@@ -50,25 +50,25 @@
 
 <script setup lang="ts">
 const inputs = [
-    { name: 'nodeVersion', type: 'S', binding: 'P', property: 'nodeVersion' },
+    { name: 'nodeVersion', type: TaskPropertyType.STRING, binding: TaskPropertyBinding.PROPERTY, property: 'nodeVersion' },
     {
         name: 'nodeDistributionUrlRoot',
-        type: 'S',
-        binding: 'P',
+        type: TaskPropertyType.STRING,
+        binding: TaskPropertyBinding.PROPERTY,
         property: 'nodeDistributionUrlRoot',
     },
     {
         name: 'nodeDistributionUrlPathPattern',
-        type: 'S',
-        binding: 'P',
+        type: TaskPropertyType.STRING,
+        binding: TaskPropertyBinding.PROPERTY,
         property: 'nodeDistributionUrlPathPattern',
     },
     {
         name: 'nodeInstallDirectory',
-        type: 'F',
-        binding: 'P',
+        type: TaskPropertyType.FILE,
+        binding: TaskPropertyBinding.PROPERTY,
         property: 'nodeInstallDirectory',
     },
 ];
-const outputs = [{ name: 'nodeExecutableFile', type: 'RF', binding: 'C' }];
+const outputs = [{ name: 'nodeExecutableFile', type: TaskPropertyType.REGULAR_FILE, binding: TaskPropertyBinding.CUSTOM }];
 </script>
