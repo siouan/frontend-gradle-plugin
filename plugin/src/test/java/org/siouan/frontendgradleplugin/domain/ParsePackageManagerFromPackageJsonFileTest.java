@@ -94,9 +94,9 @@ class ParsePackageManagerFromPackageJsonFileTest {
         UnsupportedPackageManagerException {
         final Path packageJsonFilePath = Path.of("");
         when(fileManager.readString(packageJsonFilePath, StandardCharsets.UTF_8)).thenReturn(
-            "{\"packageManager\":\"npm@9.6.7\"}");
+            "{\"packageManager\":\"npm@10.9.0\"}");
         final PackageManager packageManager = PackageManagerFixture.aPackageManager();
-        when(parsePackageManagerSpecification.execute("npm@9.6.7")).thenReturn(packageManager);
+        when(parsePackageManagerSpecification.execute("npm@10.9.0")).thenReturn(packageManager);
 
         assertThat(usecase.execute(packageJsonFilePath)).isEqualTo(packageManager);
 
@@ -109,9 +109,9 @@ class ParsePackageManagerFromPackageJsonFileTest {
         UnsupportedPackageManagerException {
         final Path packageJsonFilePath = Path.of("");
         when(fileManager.readString(packageJsonFilePath, StandardCharsets.UTF_8)).thenReturn(
-            "{\n  \"name\":\"test\",\n  \"packageManager\": \"npm@9.6.7\",\n  \"version\": \"5.2.6\"\n}");
+            "{\n  \"name\":\"test\",\n  \"packageManager\": \"npm@10.9.0\",\n  \"version\": \"5.2.6\"\n}");
         final PackageManager packageManager = PackageManagerFixture.aPackageManager();
-        when(parsePackageManagerSpecification.execute("npm@9.6.7")).thenReturn(packageManager);
+        when(parsePackageManagerSpecification.execute("npm@10.9.0")).thenReturn(packageManager);
 
         assertThat(usecase.execute(packageJsonFilePath)).isEqualTo(packageManager);
 

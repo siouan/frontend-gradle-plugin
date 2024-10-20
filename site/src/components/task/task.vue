@@ -1,5 +1,5 @@
 <template>
-    <article class="mb-3 border-bottom">
+    <article class="py-4 mb-3 border-bottom">
         <header>
             <h4>
                 <FgpTaskLink-anchor :name="name" /> <template v-if="type">Type</template> <template v-else
@@ -27,12 +27,14 @@
                     <ul>
                         <li v-for="(input, index) in inputs" :key="index">
                             <FgpTaskPropertyType :type="input.type" />
+                            <FgpTaskPropertyCommandLineOptionBadge v-if="input.commandLineOptionSupported" />
                             <FgpOptionalTaskPropertyBadge v-if="input.optionalHint" :title="input.optionalHint"
                             /> <FgpCode>{{ input.name }}</FgpCode>:
                             <template v-if="input.binding === 'P'">
                                 <FgpPropertyLink :name="input.property" /> property
                             </template>
-                            <slot v-if="input.binding === 'C'" :name="input.name" />
+                            <slot v-else-if="input.binding === 'C'" :name="input.name" />
+                            <template v-else-if="input.binding === 'U'">user-defined</template>
                         </li>
                     </ul>
                 </li>
@@ -50,6 +52,9 @@
                 <li v-if="customEnvironmentVariablesSupported">Supports <FgpSiteLink
                     :path="`${$config.public.paths.tasks}#custom-environment-variables`"
                 >custom environment variables</FgpSiteLink></li>
+                <li v-if="example">
+                    Example: <FgpCode>{{ example }}</FgpCode>
+                </li>
             </ul>
         </header>
         <section class="px-3"><slot name="description" /></section>
@@ -63,6 +68,7 @@ interface Input {
     readonly binding: TaskPropertyBindingType;
     readonly property?: string;
     readonly optionalHint?: string;
+    readonly commandLineOptionSupported?: boolean;
 }
 
 interface Output {
@@ -84,6 +90,7 @@ interface Props {
     readonly outputs?: any[];
     readonly cacheable?: boolean;
     readonly customEnvironmentVariablesSupported?: boolean;
+    readonly example?: string | null;
 }
 
 const slots = useSlots();

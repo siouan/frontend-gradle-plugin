@@ -28,8 +28,8 @@
                 package manager applicable to the project by parsing the
                 <FgpNodejsLink path="/api/packages.html#packagemanager" label="packageManager" /> property. For example,
                 if the <FgpCode>package.json</FgpCode> file contains <FgpCode
-                >"packageManager":&nbsp;"npm@9.6.7"</FgpCode>, the task resolves <FgpCode>npm</FgpCode> as the name of
-                the package manager, and <FgpCode>9.6.7</FgpCode> as its version.
+                >"packageManager":&nbsp;"npm@10.9.0"</FgpCode>, the task resolves <FgpCode>npm</FgpCode> as the name of
+                the package manager, and <FgpCode>10.9.0</FgpCode> as its version.
             </li>
             <li>
                 If the <FgpCode>package.json</FgpCode> file does not exist, the task removes output files to prevent
@@ -50,17 +50,17 @@
 <script setup lang="ts">
 const inputs = [{
     name: 'packageJsonFile',
-    type: 'RF',
-    binding: 'C',
+    type: TaskPropertyType.REGULAR_FILE,
+    binding: TaskPropertyBinding.CUSTOM,
     optionalHint: 'Whether this file exists or not changes the behavior of the task, see description hereafter.'
 }, {
     name: 'nodeInstallDirectory',
-    type: 'F',
-    binding: 'P',
+    type: TaskPropertyType.FILE,
+    binding: TaskPropertyBinding.PROPERTY,
     property: 'nodeInstallDirectory'
 }];
 const outputs = [
-    { name: 'packageManagerSpecificationFile', type: 'RF', binding: 'C' },
-    { name: 'packageManagerExecutablePathFile', type: 'RF', binding: 'C' }
+    { name: 'packageManagerSpecificationFile', type: TaskPropertyType.REGULAR_FILE, binding: TaskPropertyBinding.CUSTOM },
+    { name: 'packageManagerExecutablePathFile', type: TaskPropertyType.REGULAR_FILE, binding: TaskPropertyBinding.CUSTOM }
 ];
 </script>

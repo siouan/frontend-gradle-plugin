@@ -21,6 +21,6 @@ public class AssembleTask extends AbstractRunCommandTask {
     @Input
     @Optional
     public Property<String> getAssembleScript() {
-        return script;
+        return executableArgs;
     }
 }

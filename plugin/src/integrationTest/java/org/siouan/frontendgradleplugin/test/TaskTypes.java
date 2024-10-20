@@ -10,11 +10,11 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.Set;
 
-import org.siouan.frontendgradleplugin.infrastructure.gradle.RunCorepack;
-import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNode;
-import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpm;
-import org.siouan.frontendgradleplugin.infrastructure.gradle.RunPnpm;
-import org.siouan.frontendgradleplugin.infrastructure.gradle.RunYarn;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.RunCorepackTaskType;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNodeTaskType;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpmTaskType;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.RunPnpmTaskType;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.RunYarnTaskType;
 
 /**
  * Class providing static utilities only to build custom tasks.
@@ -24,60 +24,61 @@ public final class TaskTypes {
     private TaskTypes() {
     }
 
-    public static String buildCorepackTaskDefinition(final String taskName, final String script) {
-        return buildTaskDefinition(taskName, RunCorepack.class, Set.of(INSTALL_COREPACK_TASK_NAME), script);
+    public static String buildCorepackTaskDefinition(final String taskName, final String executableArgs) {
+        return buildTaskDefinition(taskName, RunCorepackTaskType.class, Set.of(INSTALL_COREPACK_TASK_NAME),
+            executableArgs);
     }
 
-    public static String buildNodeTaskDefinition(final String taskName, final String script) {
-        return buildTaskDefinition(taskName, RunNode.class, Set.of(INSTALL_NODE_TASK_NAME), script);
+    public static String buildNodeTaskDefinition(final String taskName, final String executableArgs) {
+        return buildTaskDefinition(taskName, RunNodeTaskType.class, Set.of(INSTALL_NODE_TASK_NAME), executableArgs);
     }
 
-    public static String buildNodeTaskDefinition(final String taskName, final String script,
+    public static String buildNodeTaskDefinition(final String taskName, final String executableArgs,
         final Map<String, String> environmentVariables) {
-        return buildTaskDefinition(taskName, RunNode.class, Set.of(INSTALL_NODE_TASK_NAME), script,
+        return buildTaskDefinition(taskName, RunNodeTaskType.class, Set.of(INSTALL_NODE_TASK_NAME), executableArgs,
             environmentVariables);
     }
 
-    public static String buildNpmTaskDefinition(final String taskName, final String script) {
-        return buildTaskDefinition(taskName, RunNpm.class, Set.of(), script);
+    public static String buildNpmTaskDefinition(final String taskName, final String executableArgs) {
+        return buildTaskDefinition(taskName, RunNpmTaskType.class, Set.of(), executableArgs);
     }
 
     public static String buildNpmTaskDefinition(final String taskName, final String dependsOnTaskName,
-        final String script) {
-        return buildTaskDefinition(taskName, RunNpm.class, Set.of(dependsOnTaskName), script);
+        final String executableArgs) {
+        return buildTaskDefinition(taskName, RunNpmTaskType.class, Set.of(dependsOnTaskName), executableArgs);
     }
 
     public static String buildNpmTaskDefinition(final String taskName, final Set<String> dependsOnTaskNames,
-        final String script) {
-        return buildTaskDefinition(taskName, RunNpm.class, dependsOnTaskNames, script);
+        final String executableArgs) {
+        return buildTaskDefinition(taskName, RunNpmTaskType.class, dependsOnTaskNames, executableArgs);
     }
 
-    public static String buildPnpmTaskDefinition(final String taskName, final String script) {
-        return buildTaskDefinition(taskName, RunPnpm.class, Set.of(), script);
+    public static String buildPnpmTaskDefinition(final String taskName, final String executableArgs) {
+        return buildTaskDefinition(taskName, RunPnpmTaskType.class, Set.of(), executableArgs);
     }
 
     public static String buildPnpmTaskDefinition(final String taskName, final String dependsOnTaskName,
-        final String script) {
-        return buildTaskDefinition(taskName, RunPnpm.class, Set.of(dependsOnTaskName), script);
+        final String executableArgs) {
+        return buildTaskDefinition(taskName, RunPnpmTaskType.class, Set.of(dependsOnTaskName), executableArgs);
     }
 
     public static String buildPnpmTaskDefinition(final String taskName, final Set<String> dependsOnTaskNames,
-        final String script) {
-        return buildTaskDefinition(taskName, RunPnpm.class, dependsOnTaskNames, script);
+        final String executableArgs) {
+        return buildTaskDefinition(taskName, RunPnpmTaskType.class, dependsOnTaskNames, executableArgs);
     }
 
-    public static String buildYarnTaskDefinition(final String taskName, final String script) {
-        return buildTaskDefinition(taskName, RunYarn.class, Set.of(), script);
+    public static String buildYarnTaskDefinition(final String taskName, final String executableArgs) {
+        return buildTaskDefinition(taskName, RunYarnTaskType.class, Set.of(), executableArgs);
     }
 
     public static String buildYarnTaskDefinition(final String taskName, final String dependsOnTaskName,
-        final String script) {
-        return buildTaskDefinition(taskName, RunYarn.class, Set.of(dependsOnTaskName), script);
+        final String executableArgs) {
+        return buildTaskDefinition(taskName, RunYarnTaskType.class, Set.of(dependsOnTaskName), executableArgs);
     }
 
     public static String buildYarnTaskDefinition(final String taskName, final Set<String> dependsOnTaskNames,
-        final String script) {
-        return buildTaskDefinition(taskName, RunYarn.class, dependsOnTaskNames, script);
+        final String executableArgs) {
+        return buildTaskDefinition(taskName, RunYarnTaskType.class, dependsOnTaskNames, executableArgs);
     }
 
     public static Path createJavascriptFileLoggingProcessTitle(final Path scriptPath) throws IOException {
@@ -88,12 +89,13 @@ public final class TaskTypes {
     }
 
     private static String buildTaskDefinition(final String taskName, final Class<?> taskTypeClass,
-        final Set<String> dependsOnTaskNames, final String script) {
-        return buildTaskDefinition(taskName, taskTypeClass, dependsOnTaskNames, script, Map.of());
+        final Set<String> dependsOnTaskNames, final String executableArgs) {
+        return buildTaskDefinition(taskName, taskTypeClass, dependsOnTaskNames, executableArgs, Map.of());
     }
 
     private static String buildTaskDefinition(final String taskName, final Class<?> taskTypeClass,
-        final Set<String> dependsOnTaskNames, final String script, final Map<String, String> environmentVariables) {
+        final Set<String> dependsOnTaskNames, final String executableArgs,
+        final Map<String, String> environmentVariables) {
         final StringBuilder definition = new StringBuilder();
         definition.append("tasks.register('");
         definition.append(taskName);
@@ -105,9 +107,9 @@ public final class TaskTypes {
             definition.append(dependsOnTaskName);
             definition.append("')\n");
         });
-        if (script != null) {
-            definition.append("script = '");
-            definition.append(script);
+        if (executableArgs != null) {
+            definition.append("args = '");
+            definition.append(executableArgs);
             definition.append("'\n");
         }
         if (!environmentVariables.isEmpty()) {

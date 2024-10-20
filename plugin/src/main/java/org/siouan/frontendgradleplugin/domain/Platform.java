@@ -1,6 +1,9 @@
 package org.siouan.frontendgradleplugin.domain;
 
-import java.util.Arrays;
+import static java.util.stream.Collectors.toUnmodifiableSet;
+
+import java.util.Set;
+import java.util.stream.Stream;
 
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -16,18 +19,20 @@ import lombok.ToString;
 @ToString(onlyExplicitlyIncluded = true)
 public class Platform {
 
-    private static final String[] SUPPORTED_JVM_ARM_32_BITS_ARCH_IDS = new String[] {"arm"};
+    private static final Set<String> SUPPORTED_JVM_ARM_32_BITS_ARCH_IDS = Set.of("arm");
 
-    private static final String[] SUPPORTED_JVM_ARM_64_BITS_ARCH_IDS = new String[] {"aarch64"};
+    private static final Set<String> SUPPORTED_JVM_ARM_64_BITS_ARCH_IDS = Set.of("aarch64");
 
-    private static final String[] SUPPORTED_JVM_64_BITS_ARCH_IDS = new String[] {"x64", "x86_64", "amd64", "ppc",
-        "sparc", "aarch64"};
+    private static final Set<String> SUPPORTED_JVM_64_BITS_ARCH_IDS = Stream
+        .concat(Stream.of("x64", "x86_64", "amd64", "ppc", "sparc", "aarch64"),
+            SUPPORTED_JVM_ARM_64_BITS_ARCH_IDS.stream())
+        .collect(toUnmodifiableSet());
 
-    private static final String[] SUPPORTED_LINUX_OS_IDS = new String[] {"linux"};
+    private static final Set<String> SUPPORTED_LINUX_OS_IDS = Set.of("linux");
 
-    private static final String[] SUPPORTED_MAC_OS_IDS = new String[] {"mac os"};
+    private static final Set<String> SUPPORTED_MAC_OS_IDS = Set.of("mac os");
 
-    private static final String[] SUPPORTED_WINDOWS_OS_IDS = new String[] {"windows"};
+    private static final Set<String> SUPPORTED_WINDOWS_OS_IDS = Set.of("windows");
 
     /**
      * Architecture of the underlying JVM.
@@ -101,11 +106,11 @@ public class Platform {
      * Whether the given ID matches any of the given parts.
      *
      * @param id ID.
-     * @param parts Array of ID parts.
+     * @param parts ID parts.
      * @return {@code true} if a part is a substring on the given ID.
      */
-    private boolean matchesAnyIdPart(final String id, final String[] parts) {
+    private boolean matchesAnyIdPart(final String id, final Set<String> parts) {
         final String lowerCaseId = id.toLowerCase();
-        return Arrays.stream(parts).anyMatch(lowerCaseId::contains);
+        return parts.stream().anyMatch(lowerCaseId::contains);
     }
 }

@@ -1,6 +1,6 @@
 {
   "private": true,
-  "packageManager": "yarn@3.6.1",
+  "packageManager": "yarn@4.5.0",
   "scripts": {
     "build": "echo Building frontend",
     "check": "echo Checking frontend && yarn run lint && yarn run test",
@@ -9,6 +9,6 @@
     "test": "echo Testing frontend"
   },
   "optionalDependencies": {
-    "corepack": "0.19.0"
+    "corepack": "0.29.4"
   }
 }

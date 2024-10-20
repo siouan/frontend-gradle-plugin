@@ -14,37 +14,42 @@ public class ResolveNodeDistributionArchitectureId {
     /**
      * Architecture ID for a 64 bits Linux O/S.
      */
-    private static final String LINUX_X64_ARCH = "linux-x64";
+    static final String LINUX_X64_ARCH = "linux-x64";
 
     /**
      * Architecture ID for an ARM 64 bits Linux O/S.
      */
-    private static final String LINUX_ARM64_ARCH = "linux-arm64";
+    static final String LINUX_ARM64_ARCH = "linux-arm64";
 
     /**
      * Architecture ID for a 64 bits Linux O/S.
      */
-    private static final String LINUX_ARM32_ARCH = "linux-armv7l";
+    static final String LINUX_ARM32_ARCH = "linux-armv7l";
 
     /**
      * Architecture ID for a PPC 64 bits MacOS O/S.
      */
-    private static final String MACOS_PPC_X64_ARCH = "darwin-x64";
+    static final String MACOS_PPC_X64_ARCH = "darwin-x64";
 
     /**
      * Architecture ID for an ARM 64 bits MacOS O/S.
      */
-    private static final String MACOS_ARM64_ARCH = "darwin-arm64";
+    static final String MACOS_ARM64_ARCH = "darwin-arm64";
 
     /**
      * Architecture ID for a 32 bits Windows O/S.
      */
-    private static final String WINDOWS_X86_ARCH = "win-x86";
+    static final String WINDOWS_X86_ARCH = "win-x86";
 
     /**
      * Architecture ID for a 64 bits Linux O/S.
      */
-    private static final String WINDOWS_X64_ARCH = "win-x64";
+    static final String WINDOWS_X64_ARCH = "win-x64";
+
+    /**
+     * Architecture ID for an ARM 64 bits Windows O/S.
+     */
+    static final String WINDOWS_ARM64_ARCH = "win-arm64";
 
     /**
      * Resolves the architecture ID for a given platform.
@@ -56,7 +61,7 @@ public class ResolveNodeDistributionArchitectureId {
         final String extension;
         if (platform.is64BitsArch()) {
             if (platform.isWindowsOs()) {
-                extension = WINDOWS_X64_ARCH;
+                extension = platform.isArm64BitsArch() ? WINDOWS_ARM64_ARCH : WINDOWS_X64_ARCH;
             } else if (platform.isLinuxOs()) {
                 extension = platform.isArm64BitsArch() ? LINUX_ARM64_ARCH : LINUX_X64_ARCH;
             } else if (platform.isMacOs()) {

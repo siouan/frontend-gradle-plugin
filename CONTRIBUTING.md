@@ -13,7 +13,8 @@ After ensuring the problem was not reported already, any issue may be created us
 - Production branch: the `main` branch contains stable releases compiled with the most recent LTS JDK. The `HEAD`
 revision matches generally the latest stable release, though it may sometimes contain above the latest release some
 fixes unrelated to the packaged software (online documentation, CI workflows, etc.) It MUST receive commits only with
-pull requests merged from version branches.
+pull requests merged from version branches. No short-term branch should be created from this branch for feature
+implementation or bug fixing.
 - Version branches: branches `<X>.<Y>[-jdk<Z>]` contain history of each version `X.Y`, eventually compiled with a
 certain version of the JDK.
 
@@ -113,7 +114,7 @@ The project relies on [GitHub Actions][github-actions] to integrate continuously
 repository. The configuration actually allows to build and test the plugin with Adoptium Temurin JDK 21 64 bits, on the
 environments below:
 
-- Linux Ubuntu 22.04.4
+- Linux Ubuntu 24.04
 - Mac OS 14.5
 - Windows Server 2022
 

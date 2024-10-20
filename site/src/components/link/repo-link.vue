@@ -1,9 +1,9 @@
 <template>
-    <FgpLink :href="href"><slot /></FgpLink>
+    <FgpGithubLink :path="internalPath"><slot /></FgpGithubLink>
 </template>
 
 <script setup lang="ts">
-const REPO_BASE_URL = 'https://github.com/siouan/frontend-gradle-plugin';
+const REPOSITORY_BASE_PATH = 'siouan/frontend-gradle-plugin';
 
 interface Props {
     readonly path?: string | null;
@@ -12,10 +12,10 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
     path: null,
 });
-const href = computed<string>(() => {
+const internalPath = computed<string>(() => {
     if (props.path === null) {
-        return REPO_BASE_URL;
+        return REPOSITORY_BASE_PATH;
     }
-    return `${REPO_BASE_URL}${props.path}`;
+    return `${REPOSITORY_BASE_PATH}${props.path}`;
 });
 </script>

@@ -1,1 +1,0 @@
-import{_ as o}from"./DlAUqK2U.js";import{o as s,c as t,l as c,a as n}from"./0eoLPSdn.js";const a={},r={class:"text-info px-2"},_=n("i",{class:"fas fa-info-circle me-1"},null,-1);function l(e,f){return s(),t("p",r,[_,c(e.$slots,"default")])}const p=o(a,[["render",l]]);export{p as _};

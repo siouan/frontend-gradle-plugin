@@ -1,8 +1,8 @@
 {
   "private": true,
-  "packageManager": "npm@9.6.7",
+  "packageManager": "npm@10.9.0",
   "devDependencies": {
-    "mkdirp": "~3"
+    "mkdirp": "^3.0.1"
   },
   "scripts": {
     "build": "echo Building frontend && mkdirp build/www && node config/config.js",

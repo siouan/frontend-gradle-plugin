@@ -1,5 +1,5 @@
 <template>
-    <FgpLink :href="href"><img :src="src" :alt="alt!" :width="width!" :height="height!" /></FgpLink>
+    <FgpLink :href="href"><FgpImage :src="src" :alt="alt!" :width="width!" :height="height!" /></FgpLink>
 </template>
 
 <script setup lang="ts">

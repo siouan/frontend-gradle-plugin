@@ -21,6 +21,6 @@ public class PublishTask extends AbstractRunCommandTask {
     @Input
     @Optional
     public Property<String> getPublishScript() {
-        return script;
+        return executableArgs;
     }
 }

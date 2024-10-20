@@ -23,10 +23,10 @@ Actual results: ...
 
 **Environment**
  
-- OS: [e.g. Ubuntu 22.04.4, Windows 11 Pro, Mac OS X]
+- OS: [e.g. Ubuntu 24.04, Windows 11 Pro, Mac OS X]
 - JDK: [e.g. Adoptium Temurin JDK 21 64 bits]
-- Gradle: [e.g. Gradle 8.8]
-- Frontend Gradle plugin: [e.g. 8.1.0 JDK 21]
+- Gradle: [e.g. Gradle 8.10.2]
+- Frontend Gradle plugin: [e.g. 9.0.0 JDK 21]
 
 Settings in `build.gradle[.kts]` file:
 ```groovy

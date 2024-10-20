@@ -24,6 +24,7 @@ export default defineNuxtConfig({
             link: [{ rel: 'icon', type: 'image/x-icon', href: 'siouan-icon.png' }],
         },
     },
+    compatibilityDate: '2024-10-07',
     components: [
         {
             path: '~/components',
@@ -43,7 +44,7 @@ export default defineNuxtConfig({
         public: {
             canonicalBaseUrl: 'https://siouan.github.io/frontend-gradle-plugin',
             i18nEnabled: false,
-            latestMajorRelease: 8,
+            latestMajorRelease: 9,
             paths: {
                 configuration: '/configuration/',
                 faqs: '/faqs/',
