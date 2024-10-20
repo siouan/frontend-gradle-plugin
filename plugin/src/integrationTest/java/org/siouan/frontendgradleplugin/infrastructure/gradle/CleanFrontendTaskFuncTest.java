@@ -9,7 +9,6 @@ import static org.siouan.frontendgradleplugin.test.PluginTaskOutcome.SKIPPED;
 import static org.siouan.frontendgradleplugin.test.PluginTaskOutcome.SUCCESS;
 import static org.siouan.frontendgradleplugin.test.PluginTaskOutcome.UP_TO_DATE;
 import static org.siouan.frontendgradleplugin.test.Resources.getResourcePath;
-import static org.siouan.frontendgradleplugin.test.Resources.getResourceUrl;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -33,8 +32,8 @@ class CleanFrontendTaskFuncTest {
     @Test
     void should_skip_task_when_package_json_file_does_not_exist() throws IOException {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("20.14.0")
-            .nodeDistributionUrl(getResourceUrl("node-v20.14.0.zip"))
+            .nodeVersion("20.18.0")
+            .nodeDistributionUrl(getResourcePath("node-v20.18.0.zip"))
             .cleanScript("run clean");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
@@ -51,8 +50,8 @@ class CleanFrontendTaskFuncTest {
     void should_skip_task_when_script_is_not_defined() throws IOException {
         Files.copy(getResourcePath("package-any-manager.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("20.14.0")
-            .nodeDistributionUrl(getResourceUrl("node-v20.14.0.zip"));
+            .nodeVersion("20.18.0")
+            .nodeDistributionUrl(getResourcePath("node-v20.18.0.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, CLEAN_TASK_NAME);
@@ -68,8 +67,8 @@ class CleanFrontendTaskFuncTest {
     void should_skip_task_when_running_gradle_task_and_script_is_not_defined() throws IOException {
         Files.copy(getResourcePath("package-any-manager.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("20.14.0")
-            .nodeDistributionUrl(getResourceUrl("node-v20.14.0.zip"));
+            .nodeVersion("20.18.0")
+            .nodeDistributionUrl(getResourcePath("node-v20.18.0.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, GRADLE_CLEAN_TASK_NAME);
@@ -85,8 +84,8 @@ class CleanFrontendTaskFuncTest {
     void should_clean_frontend() throws IOException {
         Files.copy(getResourcePath("package-npm.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("20.14.0")
-            .nodeDistributionUrl(getResourceUrl("node-v20.14.0.zip"))
+            .nodeVersion("20.18.0")
+            .nodeDistributionUrl(getResourcePath("node-v20.18.0.zip"))
             .cleanScript("run clean");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 

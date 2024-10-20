@@ -124,7 +124,8 @@ apply(plugin = "org.siouan.frontend-jdk8")</FgpCode></pre>
 </template>
 
 <script setup lang="ts">
-const canonicalUrl = 'https://siouan.github.io/frontend-gradle-plugin/getting-started';
+const runtimeConfig = useRuntimeConfig();
+const canonicalUrl = `${runtimeConfig.public.canonicalBaseUrl}${runtimeConfig.public.paths.gettingStarted}`;
 const title = 'Getting started: building a Javascript application with Gradle and Node.js';
 const description = 'Guide to get started with the plugin: requirements, supported Node.js and Yarn distributions, installation steps.';
 

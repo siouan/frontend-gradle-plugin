@@ -1,6 +1,7 @@
 export enum TaskPropertyBinding {
     CUSTOM = 'C',
-    PROPERTY = 'P'
+    PROPERTY = 'P',
+    USER = 'U'
 }
 
 export type TaskPropertyBindingType = `${TaskPropertyBinding}`;

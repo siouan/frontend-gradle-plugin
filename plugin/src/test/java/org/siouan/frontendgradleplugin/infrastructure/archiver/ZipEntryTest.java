@@ -39,7 +39,7 @@ class ZipEntryTest {
 
         final ZipEntry entry = new ZipEntry(lowLevelEntry);
 
-        assertThat(entry.getLowLevelEntry()).isEqualTo(lowLevelEntry);
+        assertThat(entry.lowLevelEntry()).isEqualTo(lowLevelEntry);
         assertThat(entry.getName()).isEqualTo(entryName);
         assertThat(entry.getUnixMode()).isEqualTo(unixMode);
         assertThat(entry.isDirectory()).isEqualTo(directory);

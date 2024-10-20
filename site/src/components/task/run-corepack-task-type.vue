@@ -1,32 +1,37 @@
 <template>
-    <FgpTask name="RunCorepack" type :inputs="inputs" custom-environment-variables-supported>
-        <template #title>Run a custom command with <FgpCode>corepack</FgpCode></template>
+    <FgpTask name="RunCorepackTaskType" type :inputs="inputs" custom-environment-variables-supported>
+        <template #title>Register a task running a custom command with <FgpCode>corepack</FgpCode></template>
         <template #description>
             <p>
-                The plugin provides task type
-                <FgpCode>org.siouan.frontendgradleplugin.infrastructure.gradle.RunCorepack</FgpCode>
-                that allows creating a custom task to run a
-                <FgpCode>corepack</FgpCode> command. The <FgpCode>script</FgpCode> property must be set with the
-                corresponding command. The code hereafter shows the configuration required to output the version of
-                <FgpCode>corepack</FgpCode>:
+                Task type
+                <FgpCode>org.siouan.frontendgradleplugin.infrastructure.gradle.RunCorepackTaskType</FgpCode>
+                allows to register a custom task executing a <FgpCode>corepack</FgpCode> command. The
+                <FgpCode>args</FgpCode> property must be defined with the corresponding arguments, either in the build
+                script or on the command line. The example hereafter shows how to register a task in a build script to
+                output the version of <FgpCode>corepack</FgpCode>:
             </p>
 
             <FgpGradleScripts id="run-corepack-example">
                 <template #groovy>
-                    <pre><FgpCode>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunCorepack
-tasks.register('corepackVersion', RunCorepack) {
+                    <pre><FgpCode>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunCorepackTaskType
+tasks.register('customCorepackTask', RunCorepackTaskType) {
     dependsOn tasks.named('installCorepack')
-    script = '-v'
+    args = '-v'
 }</FgpCode></pre>
                 </template>
                 <template #kotlin>
-                    <pre><FgpCode>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunCorepack
-tasks.register&lt;RunCorepack&gt;("corepackVersion") {
+                    <pre><FgpCode>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunCorepackTaskType
+tasks.register&lt;RunCorepackTaskType&gt;("customCorepackTask") {
     dependsOn(tasks.named("installCorepack"))
-    script.set("-v")
+    args.set("-v")
 }</FgpCode></pre>
                 </template>
             </FgpGradleScripts>
+
+            <p>
+                The <FgpCode>args</FgpCode> property may be defined or overwritten on the command line: <FgpCode
+                >gradle customCorepackTask "--args=-v"</FgpCode>
+            </p>
         </template>
     </FgpTask>
 </template>
@@ -36,15 +41,15 @@ const inputs = [
     {
         name: 'packageJsonDirectory',
         type: 'F',
-        binding: 'P',
+        binding: TaskPropertyBinding.PROPERTY,
         property: 'packageJsonDirectory',
     },
     {
         name: 'nodeInstallDirectory',
         type: 'F',
-        binding: 'P',
+        binding: TaskPropertyBinding.PROPERTY,
         property: 'nodeInstallDirectory',
     },
-    { name: 'script', type: 'S', binding: 'P', property: 'script' },
+    { name: 'args', type: 'S', binding: TaskPropertyBinding.USER, commandLineOptionSupported: true },
 ];
 </script>

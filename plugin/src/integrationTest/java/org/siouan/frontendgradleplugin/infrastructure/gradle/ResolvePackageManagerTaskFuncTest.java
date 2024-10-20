@@ -16,7 +16,6 @@ import static org.siouan.frontendgradleplugin.test.PluginTaskOutcome.SKIPPED;
 import static org.siouan.frontendgradleplugin.test.PluginTaskOutcome.SUCCESS;
 import static org.siouan.frontendgradleplugin.test.PluginTaskOutcome.UP_TO_DATE;
 import static org.siouan.frontendgradleplugin.test.Resources.getResourcePath;
-import static org.siouan.frontendgradleplugin.test.Resources.getResourceUrl;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -108,8 +107,8 @@ class ResolvePackageManagerTaskFuncTest {
     void should_pass_when_package_manager_property_is_valid() throws IOException {
         Files.copy(getResourcePath("package-any-manager.json"), projectDirectoryPath.resolve("package.json"));
         createBuildFile(projectDirectoryPath, new FrontendMapBuilder()
-            .nodeVersion("20.14.0")
-            .nodeDistributionUrl(getResourceUrl("node-v20.14.0.zip"))
+            .nodeVersion("20.18.0")
+            .nodeDistributionUrl(getResourcePath("node-v20.18.0.zip"))
             .toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, RESOLVE_PACKAGE_MANAGER_TASK_NAME);
@@ -118,7 +117,7 @@ class ResolvePackageManagerTaskFuncTest {
         final Path packageManagerNameFilePath = projectDirectoryPath.resolve(
             Paths.get(DEFAULT_CACHE_DIRECTORY_NAME, RESOLVE_PACKAGE_MANAGER_TASK_NAME,
                 PACKAGE_MANAGER_SPECIFICATION_FILE_NAME));
-        assertThat(packageManagerNameFilePath).content(StandardCharsets.UTF_8).isEqualTo("npm@9.6.7");
+        assertThat(packageManagerNameFilePath).content(StandardCharsets.UTF_8).isEqualTo("npm@10.9.0");
         final Path packageManagerExecutablePathFilePath = projectDirectoryPath.resolve(
             Paths.get(DEFAULT_CACHE_DIRECTORY_NAME, RESOLVE_PACKAGE_MANAGER_TASK_NAME,
                 PACKAGE_MANAGER_EXECUTABLE_PATH_FILE_NAME));
@@ -127,7 +126,7 @@ class ResolvePackageManagerTaskFuncTest {
         final BuildResult result2 = runGradle(projectDirectoryPath, RESOLVE_PACKAGE_MANAGER_TASK_NAME);
 
         assertTaskOutcomes(result2, UP_TO_DATE, IGNORED, UP_TO_DATE);
-        assertThat(packageManagerNameFilePath).content(StandardCharsets.UTF_8).isEqualTo("npm@9.6.7");
+        assertThat(packageManagerNameFilePath).content(StandardCharsets.UTF_8).isEqualTo("npm@10.9.0");
         assertThat(packageManagerExecutablePathFilePath).exists();
     }
 }

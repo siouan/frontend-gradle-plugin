@@ -49,13 +49,13 @@ public class ZipArchiver extends AbstractArchiver<ZipArchiverContext, ZipEntry> 
 
     @Override
     protected String getSymbolicLinkTarget(final ZipArchiverContext context, final ZipEntry entry) throws IOException {
-        return readSymbolicLinkTarget(context.getZipFile(), entry.getLowLevelEntry());
+        return readSymbolicLinkTarget(context.getZipFile(), entry.lowLevelEntry());
     }
 
     @Override
     protected void writeRegularFile(final ZipArchiverContext context, final ZipEntry entry, final Path filePath)
         throws IOException {
-        try (final InputStream entryInputStream = context.getZipFile().getInputStream(entry.getLowLevelEntry())) {
+        try (final InputStream entryInputStream = context.getZipFile().getInputStream(entry.lowLevelEntry())) {
             fileManager.copy(entryInputStream, filePath);
         }
     }

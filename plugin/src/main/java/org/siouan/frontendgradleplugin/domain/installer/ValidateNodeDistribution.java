@@ -1,6 +1,7 @@
 package org.siouan.frontendgradleplugin.domain.installer;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 
@@ -34,19 +35,20 @@ public class ValidateNodeDistribution {
      * actual shasum of the distribution file matches this expected shasum.
      *
      * @param command Command providing parameters to validate the distribution.
+     * @throws URISyntaxException If the distribution URL is not a valid URL.
      * @throws ResourceDownloadException If downloading the file providing shasums fails.
      * @throws InvalidNodeDistributionException If the distribution is invalid.
      * @throws NodeDistributionShasumNotFoundException If validation cannot be done for other reason.
      * @throws IOException If an I/O error occurs.
      */
     public void execute(final ValidateNodeDistributionCommand command)
-        throws InvalidNodeDistributionException, IOException, NodeDistributionShasumNotFoundException,
-        ResourceDownloadException {
+        throws URISyntaxException, InvalidNodeDistributionException, IOException,
+        NodeDistributionShasumNotFoundException, ResourceDownloadException {
         final Path shasumsFilePath = command.getTemporaryDirectoryPath().resolve(SHASUMS_FILE_NAME);
         // Resolve the URL to download the shasum file
         final String expectedShasum;
         try {
-            final URL shasumsFileUrl = new URL(command.getDistributionUrl(), SHASUMS_FILE_NAME);
+            final URL shasumsFileUrl = command.getDistributionUrl().toURI().resolve(SHASUMS_FILE_NAME).toURL();
 
             // Download the shasum file
             logger.debug("Downloading shasums at '{}'", shasumsFileUrl);

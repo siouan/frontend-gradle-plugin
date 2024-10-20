@@ -15,16 +15,16 @@
             </li>
         </ul>
 
-        <FgpSubTitle>Dependency tree</FgpSubTitle>
+        <FgpSubTitle id="dependency-tree">Dependency tree</FgpSubTitle>
 
-        <p class="text-center">
-            <FgpDependencyTree class="w-100" />
-        </p>
+        <section>
+            <FgpDependencyTree class="mx-5 mb-3" />
+        </section>
 
         <FgpSubTitle>Reference</FgpSubTitle>
 
         <section>
-            <FgpSubSubTitle>Built-in tasks</FgpSubSubTitle>
+            <FgpSubSubTitle>Lifecycle tasks</FgpSubSubTitle>
 
             <FgpInstallNodeTask />
             <FgpInstallCorepackTask />
@@ -38,7 +38,17 @@
         </section>
 
         <section>
-            <FgpSubSubTitle>Additional types</FgpSubSubTitle>
+            <FgpSubSubTitle>Instant tasks</FgpSubSubTitle>
+
+            <FgpRunNodeTask />
+            <FgpRunCorepackTask />
+            <FgpRunNpmTask />
+            <FgpRunPnpmTask />
+            <FgpRunYarnTask />
+        </section>
+
+        <section>
+            <FgpSubSubTitle>Task types</FgpSubSubTitle>
 
             <FgpRunNodeTaskType />
             <FgpRunCorepackTaskType />
@@ -58,14 +68,15 @@
                 command: <FgpTaskLink name="installCorepack" />, <FgpTaskLink name="installPackageManager" />,
                 <FgpTaskLink name="installFrontend" />, <FgpTaskLink name="cleanFrontend" />,
                 <FgpTaskLink name="assembleFrontend" />, <FgpTaskLink name="checkFrontend" />,
-                <FgpTaskLink name="publishFrontend" />, <FgpTaskLink name="RunNode" />,
-                <FgpTaskLink name="RunCorepack" />, <FgpTaskLink name="RunNpm" />, <FgpTaskLink name="RunPnpm" />,
-                <FgpTaskLink name="RunYarn" />. These tasks forward environment variables visible by the Gradle process
-                to <FgpCode>node</FgpCode>, <FgpCode>corepack</FgpCode>, <FgpCode>npm</FgpCode>,
-                <FgpCode>pnpm</FgpCode>, <FgpCode>yarn</FgpCode> commands. These variables may be overwritten and/or new
-                variables may be added to the environment forwarded to the command. If you need to alter the
-                <FgpCode>PATH</FgpCode> environment variable, and though this is generally a rare situation, keep in
-                mind the plugin adds its own paths so as the relevant <FgpCode>node</FgpCode> executable can be found.
+                <FgpTaskLink name="publishFrontend" />, <FgpTaskLink name="RunNodeTaskType" />,
+                <FgpTaskLink name="RunCorepackTaskType" />, <FgpTaskLink name="RunNpmTaskType" />,
+                <FgpTaskLink name="RunPnpmTaskType" />, <FgpTaskLink name="RunYarnTaskType" />. These tasks forward
+                environment variables visible by the Gradle process to <FgpCode>node</FgpCode>,
+                <FgpCode>corepack</FgpCode>, <FgpCode>npm</FgpCode>, <FgpCode>pnpm</FgpCode>, <FgpCode>yarn</FgpCode>
+                commands. These variables may be overwritten and/or new variables may be added to the environment
+                forwarded to the command. If you need to alter the <FgpCode>PATH</FgpCode> environment variable, and
+                though this is generally a rare situation, keep in mind the plugin adds its own paths so as the relevant
+                <FgpCode>node</FgpCode> executable can be found.
             </p>
             <p>Example hereafter shows how to customize the environment for a given task:</p>
             <FgpGradleScripts>
@@ -192,7 +203,8 @@ tasks.register("lazyTask") {
 </template>
 
 <script setup lang="ts">
-const canonicalUrl = 'https://siouan.github.io/frontend-gradle-plugin/node-corepack-npm-pnpm-yarn-tasks';
+const runtimeConfig = useRuntimeConfig();
+const canonicalUrl = `${runtimeConfig.public.canonicalBaseUrl}${runtimeConfig.public.paths.tasks}`;
 const title = 'Gradle tasks to run node, corepack, npm, pnpm, yarn commands';
 const description = 'Gradle tasks and types provided by the plugin to run node/corepack/npm/pnpm/yarn: integration, dependencies, customization, recommendations';
 

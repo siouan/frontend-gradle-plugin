@@ -1,5 +1,5 @@
-import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNode
-import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpm
+import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNodeTaskType
+import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpmTaskType
 
 plugins {
     id("org.siouan.frontend-jdk17")
@@ -16,12 +16,12 @@ frontend {
     checkScript.set("run check")
 }
 
-tasks.register<RunNode>("nodeVersion") {
+tasks.register<RunNodeTaskType>("nodeVersion") {
     dependsOn("installNode")
     script.set("-v")
 }
 
-tasks.register<RunNpm>("npmVersion") {
+tasks.register<RunNpmTaskType>("npmVersion") {
     dependsOn("installPackageManager")
     script.set("-v")
 }

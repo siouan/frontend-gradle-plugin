@@ -30,8 +30,8 @@
                 <FgpNodejsLink path="/api/packages.html#packagemanager" label="packageManager" />
                 property located in the <FgpCode>package.json</FgpCode> file (pointed by the
                 <FgpPropertyLink name="packageJsonDirectory" /> property). For example, if the
-                <FgpCode>package.json</FgpCode> file contains <FgpCode>"packageManager":&nbsp;"npm@9.6.7"</FgpCode>, the
-                task resolves <FgpCode>npm</FgpCode> as the name of the package manager, and <FgpCode>9.6.7</FgpCode> as
+                <FgpCode>package.json</FgpCode> file contains <FgpCode>"packageManager":&nbsp;"npm@10.9.0"</FgpCode>, the
+                task resolves <FgpCode>npm</FgpCode> as the name of the package manager, and <FgpCode>10.9.0</FgpCode> as
                 its version.
             </p>
             <p>

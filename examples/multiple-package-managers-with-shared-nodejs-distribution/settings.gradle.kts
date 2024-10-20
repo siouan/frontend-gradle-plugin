@@ -1,6 +1,6 @@
 pluginManagement {
     plugins {
-        id("org.siouan.frontend-jdk17") version "8.1.0"
+        id("org.siouan.frontend-jdk21") version "9.0.0"
     }
 }
 

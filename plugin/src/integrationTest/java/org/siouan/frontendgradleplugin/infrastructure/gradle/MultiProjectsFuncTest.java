@@ -11,7 +11,6 @@ import static org.siouan.frontendgradleplugin.test.PluginTaskOutcome.SKIPPED;
 import static org.siouan.frontendgradleplugin.test.PluginTaskOutcome.SUCCESS;
 import static org.siouan.frontendgradleplugin.test.PluginTaskOutcome.UP_TO_DATE;
 import static org.siouan.frontendgradleplugin.test.Resources.getResourcePath;
-import static org.siouan.frontendgradleplugin.test.Resources.getResourceUrl;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -63,9 +62,9 @@ class MultiProjectsFuncTest {
         final Path yarnSubProjectPath = Files.createDirectory(projectDirectoryPath.resolve(YARN_SUB_PROJECT_NAME));
         Files.copy(getResourcePath("package-yarn.json"), yarnSubProjectPath.resolve("package.json"));
         final FrontendMapBuilder yarnSubProjectFrontendProperties = new FrontendMapBuilder()
-            .nodeVersion("20.14.0")
+            .nodeVersion("20.18.0")
             .nodeInstallDirectory(nodeInstallDirectory)
-            .nodeDistributionUrl(getResourceUrl("node-v20.14.0.zip"))
+            .nodeDistributionUrl(getResourcePath("node-v20.18.0.zip"))
             .installScript("run install")
             .cleanScript("run clean")
             .assembleScript("run assemble")

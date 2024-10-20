@@ -13,11 +13,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-22.04, macos-14, windows-2022]
+        os: [ubuntu-24.04, macos-14, windows-2022]
 
     steps:
       - name: Init Ubuntu environment
-        if: matrix.os == 'ubuntu-22.04'
+        if: matrix.os == 'ubuntu-24.04'
         run: sudo rm -f /usr/local/bin/node /usr/local/bin/npm /usr/local/bin/pnpm /usr/local/bin/yarn
 
       - name: Init MacOS environment
@@ -32,13 +32,13 @@ jobs:
 
       - name: Git checkout for source code analysis
         uses: actions/checkout@v4
-        if: matrix.os == 'ubuntu-22.04'
+        if: matrix.os == 'ubuntu-24.04'
         with:
           fetch-depth: 0
 
       - name: Git checkout
         uses: actions/checkout@v4
-        if: matrix.os != 'ubuntu-22.04'
+        if: matrix.os != 'ubuntu-24.04'
         with:
           fetch-depth: 1
 
@@ -61,7 +61,7 @@ jobs:
 
       - name: Cache Sonar's cache
         uses: actions/cache@v4
-        if: matrix.os == 'ubuntu-22.04'
+        if: matrix.os == 'ubuntu-24.04'
         with:
           path: |
             ~/.sonar/cache/
@@ -71,7 +71,7 @@ jobs:
         run: chmod +x gradlew plugin/src/integrationTest/resources/*/bin/*
 
       - name: Build plugin on Linux (with test coverage)
-        if: matrix.os == 'ubuntu-22.04'
+        if: matrix.os == 'ubuntu-24.04'
         run: ./gradlew :plugin:jacocoTestReport --console=plain
 
       - name: Build plugin on MacOS
@@ -85,8 +85,11 @@ jobs:
           ./gradlew :plugin:build --console=plain
 
       - name: Scan source code and test results
-        if: matrix.os == 'ubuntu-22.04'
+        if: matrix.os == 'ubuntu-24.04'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: ./gradlew :plugin:sonar --console=plain -Dorg.gradle.jvmargs=-Xmx512m -i
+
+      - name: Stop Gradle before caching
+        run: ./gradlew --stop

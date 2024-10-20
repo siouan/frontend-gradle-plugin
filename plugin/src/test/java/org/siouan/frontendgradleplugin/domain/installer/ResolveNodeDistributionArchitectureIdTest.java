@@ -2,6 +2,14 @@ package org.siouan.frontendgradleplugin.domain.installer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.siouan.frontendgradleplugin.domain.PlatformFixture.aPlatform;
+import static org.siouan.frontendgradleplugin.domain.installer.ResolveNodeDistributionArchitectureId.LINUX_ARM32_ARCH;
+import static org.siouan.frontendgradleplugin.domain.installer.ResolveNodeDistributionArchitectureId.LINUX_ARM64_ARCH;
+import static org.siouan.frontendgradleplugin.domain.installer.ResolveNodeDistributionArchitectureId.LINUX_X64_ARCH;
+import static org.siouan.frontendgradleplugin.domain.installer.ResolveNodeDistributionArchitectureId.MACOS_ARM64_ARCH;
+import static org.siouan.frontendgradleplugin.domain.installer.ResolveNodeDistributionArchitectureId.MACOS_PPC_X64_ARCH;
+import static org.siouan.frontendgradleplugin.domain.installer.ResolveNodeDistributionArchitectureId.WINDOWS_ARM64_ARCH;
+import static org.siouan.frontendgradleplugin.domain.installer.ResolveNodeDistributionArchitectureId.WINDOWS_X64_ARCH;
+import static org.siouan.frontendgradleplugin.domain.installer.ResolveNodeDistributionArchitectureId.WINDOWS_X86_ARCH;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,36 +39,41 @@ class ResolveNodeDistributionArchitectureIdTest {
 
     @Test
     void should_resolve_architecture_id_when_os_is_windows_nt_and_jre_arch_is_x86() {
-        assertThat(usecase.execute(aPlatform("x86", "Windows NT"))).contains("win-x86");
+        assertThat(usecase.execute(aPlatform("x86", "Windows NT"))).contains(WINDOWS_X86_ARCH);
     }
 
     @Test
     void should_resolve_architecture_id_when_os_is_windows_nt_and_jre_arch_is_x64() {
-        assertThat(usecase.execute(aPlatform("x64", "Windows NT"))).contains("win-x64");
+        assertThat(usecase.execute(aPlatform("x64", "Windows NT"))).contains(WINDOWS_X64_ARCH);
+    }
+
+    @Test
+    void should_resolve_architecture_id_when_os_is_windows_nt_and_jre_arch_is_arm64() {
+        assertThat(usecase.execute(aPlatform("aarch64", "Windows NT"))).contains(WINDOWS_ARM64_ARCH);
     }
 
     @Test
     void should_resolve_architecture_id_when_os_is_linux_and_jre_arch_is_amd64() {
-        assertThat(usecase.execute(aPlatform("amd64", "Linux"))).contains("linux-x64");
+        assertThat(usecase.execute(aPlatform("amd64", "Linux"))).contains(LINUX_X64_ARCH);
     }
 
     @Test
     void should_resolve_architecture_id_when_os_is_linux_and_jre_arch_is_aarch64() {
-        assertThat(usecase.execute(aPlatform("aarch64", "Linux"))).contains("linux-arm64");
+        assertThat(usecase.execute(aPlatform("aarch64", "Linux"))).contains(LINUX_ARM64_ARCH);
     }
 
     @Test
     void should_resolve_architecture_id_when_os_is_linux_and_jre_arch_is_armv() {
-        assertThat(usecase.execute(aPlatform("armv", "Linux"))).contains("linux-armv7l");
+        assertThat(usecase.execute(aPlatform("armv", "Linux"))).contains(LINUX_ARM32_ARCH);
     }
 
     @Test
     void should_resolve_architecture_id_when_os_is_mac_and_jre_arch_is_ppc() {
-        assertThat(usecase.execute(aPlatform("ppc", "Mac OS X"))).contains("darwin-x64");
+        assertThat(usecase.execute(aPlatform("ppc", "Mac OS X"))).contains(MACOS_PPC_X64_ARCH);
     }
 
     @Test
     void should_resolve_architecture_id_when_os_is_mac_and_jre_arch_is_arm64() {
-        assertThat(usecase.execute(aPlatform("aarch64", "Mac OS X"))).contains("darwin-arm64");
+        assertThat(usecase.execute(aPlatform("aarch64", "Mac OS X"))).contains(MACOS_ARM64_ARCH);
     }
 }

@@ -1,108 +1,111 @@
 <template>
-    <svg viewBox="0 0 640 440" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 720 460">
         <defs>
-            <g id="gradleTask">
-                <rect width="120" height="30" fill="chartreuse" stroke="black" rx="3" ry="3" />
+            <g id="gradleTaskContainer">
+                <rect width="100" height="30" fill="#00ff00" stroke="#000000" rx="3" ry="3" />
             </g>
-            <g id="frontendTask">
-                <rect width="120" height="30" fill="cyan" stroke="black" rx="3" ry="3" />
+            <g id="frontendCommonTaskContainer">
+                <rect width="100" height="30" fill="cyan" stroke="#000000" rx="3" ry="3" />
             </g>
-            <g id="frontendTaskType">
-                <rect width="100" height="30" fill="gainsboro" stroke="black" rx="3" ry="3" />
+            <g id="frontendInstantTaskContainer">
+                <rect width="100" height="30" fill="cyan" stroke="#000000" rx="3" ry="3" />
             </g>
-
-            <g id="cleanTask">
-                <use xlink:href="#gradleTask" />
-                <text x="60" y="16" dominant-baseline="middle" text-anchor="middle" font-size="0.6rem">clean</text>
-            </g>
-            <g id="checkTask">
-                <use xlink:href="#gradleTask" />
-                <text x="60" y="16" dominant-baseline="middle" text-anchor="middle" font-size="0.6rem">check</text>
-            </g>
-            <g id="assembleTask">
-                <use xlink:href="#gradleTask" />
-                <text x="60" y="16" dominant-baseline="middle" text-anchor="middle" font-size="0.6rem">assemble</text>
-            </g>
-            <g id="publishTask">
-                <use xlink:href="#gradleTask" />
-                <text x="60" y="16" dominant-baseline="middle" text-anchor="middle" font-size="0.6rem">publish</text>
-            </g>
-            <g id="installNodeTask">
-                <use xlink:href="#frontendTask" />
-                <text x="60" y="16" dominant-baseline="middle" text-anchor="middle" font-size="0.6rem">
-                    installNode
-                </text>
-            </g>
-            <g id="installCorepackTask">
-                <use xlink:href="#frontendTask" />
-                <text x="60" y="16" dominant-baseline="middle" text-anchor="middle" font-size="0.6rem">
-                    installCorepack
-                </text>
-            </g>
-            <g id="resolvePackageManagerTask">
-                <use xlink:href="#frontendTask" />
-                <text x="60" y="16" dominant-baseline="middle" text-anchor="middle" font-size="0.6rem">
-                    resolvePackageManager
-                </text>
-            </g>
-            <g id="installPackageManagerTask">
-                <use xlink:href="#frontendTask" />
-                <text x="60" y="16" dominant-baseline="middle" text-anchor="middle" font-size="0.6rem">
-                    installPackageManager
-                </text>
-            </g>
-            <g id="installFrontendTask">
-                <use xlink:href="#frontendTask" />
-                <text x="60" y="16" dominant-baseline="middle" text-anchor="middle" font-size="0.6rem">
-                    installFrontend
-                </text>
-            </g>
-            <g id="cleanFrontendTask">
-                <use xlink:href="#frontendTask" />
-                <text x="60" y="16" dominant-baseline="middle" text-anchor="middle" font-size="0.6rem">
-                    cleanFrontend
-                </text>
-            </g>
-            <g id="checkFrontendTask">
-                <use xlink:href="#frontendTask" />
-                <text x="60" y="16" dominant-baseline="middle" text-anchor="middle" font-size="0.6rem">
-                    checkFrontend
-                </text>
-            </g>
-            <g id="assembleFrontendTask">
-                <use xlink:href="#frontendTask" />
-                <text x="60" y="16" dominant-baseline="middle" text-anchor="middle" font-size="0.6rem">
-                    assembleFrontend
-                </text>
-            </g>
-            <g id="publishFrontendTask">
-                <use xlink:href="#frontendTask" />
-                <text x="60" y="16" dominant-baseline="middle" text-anchor="middle" font-size="0.6rem">
-                    publishFrontend
-                </text>
+            <g id="frontendTaskTypeContainer">
+                <rect width="100" height="30" fill="cyan" stroke="#000000" rx="3" ry="3" />
             </g>
 
-            <g id="RunNodeTaskType">
-                <use xlink:href="#frontendTaskType" />
-                <text x="50" y="16" dominant-baseline="middle" text-anchor="middle" font-size="0.6rem">RunNode</text>
+            <g id="cleanTaskShape">
+                <use xlink:href="#gradleTaskContainer" />
+                <text x="50" y="15" dominant-baseline="middle" text-anchor="middle" font-size="0.5rem">clean</text>
             </g>
-            <g id="RunCorepackTaskType">
-                <use xlink:href="#frontendTaskType" />
-                <text x="50" y="16" dominant-baseline="middle" text-anchor="middle" font-size="0.6rem">
-                    RunCorepack
-                </text>
+            <g id="checkTaskShape">
+                <use xlink:href="#gradleTaskContainer" />
+                <text x="50" y="15" dominant-baseline="middle" text-anchor="middle" font-size="0.5rem">check</text>
             </g>
-            <g id="RunNpmTaskType">
-                <use xlink:href="#frontendTaskType" />
-                <text x="50" y="16" dominant-baseline="middle" text-anchor="middle" font-size="0.6rem">RunNpm</text>
+            <g id="assembleTaskShape">
+                <use xlink:href="#gradleTaskContainer" />
+                <text x="50" y="15" dominant-baseline="middle" text-anchor="middle" font-size="0.5rem">assemble</text>
             </g>
-            <g id="RunPnpmTaskType">
-                <use xlink:href="#frontendTaskType" />
-                <text x="50" y="16" dominant-baseline="middle" text-anchor="middle" font-size="0.6rem">RunPnpm</text>
+            <g id="publishTaskShape">
+                <use xlink:href="#gradleTaskContainer" />
+                <text x="50" y="15" dominant-baseline="middle" text-anchor="middle" font-size="0.5rem">publish</text>
             </g>
-            <g id="RunYarnTaskType">
-                <use xlink:href="#frontendTaskType" />
-                <text x="50" y="16" dominant-baseline="middle" text-anchor="middle" font-size="0.6rem">RunYarn</text>
+            <g id="installNodeTaskShape">
+                <use xlink:href="#frontendCommonTaskContainer" />
+                <text x="50" y="15" dominant-baseline="middle" text-anchor="middle" font-size="0.5rem">installNode</text>
+            </g>
+            <g id="installCorepackTaskShape">
+                <use xlink:href="#frontendCommonTaskContainer" />
+                <text x="50" y="15" dominant-baseline="middle" text-anchor="middle" font-size="0.5rem">installCorepack</text>
+            </g>
+            <g id="resolvePackageManagerTaskShape">
+                <use xlink:href="#frontendCommonTaskContainer" />
+                <text x="50" y="15" dominant-baseline="middle" text-anchor="middle" font-size="0.5rem">resolvePackageManager</text>
+            </g>
+            <g id="installPackageManagerTaskShape">
+                <use xlink:href="#frontendCommonTaskContainer" />
+                <text x="50" y="15" dominant-baseline="middle" text-anchor="middle" font-size="0.5rem">installPackageManager</text>
+            </g>
+            <g id="installFrontendTaskShape">
+                <use xlink:href="#frontendCommonTaskContainer" />
+                <text x="50" y="15" dominant-baseline="middle" text-anchor="middle" font-size="0.5rem">installFrontend</text>
+            </g>
+            <g id="cleanFrontendTaskShape">
+                <use xlink:href="#frontendCommonTaskContainer" />
+                <text x="50" y="15" dominant-baseline="middle" text-anchor="middle" font-size="0.5rem">cleanFrontend</text>
+            </g>
+            <g id="checkFrontendTaskShape">
+                <use xlink:href="#frontendCommonTaskContainer" />
+                <text x="50" y="15" dominant-baseline="middle" text-anchor="middle" font-size="0.5rem">checkFrontend</text>
+            </g>
+            <g id="assembleFrontendTaskShape">
+                <use xlink:href="#frontendCommonTaskContainer" />
+                <text x="50" y="15" dominant-baseline="middle" text-anchor="middle" font-size="0.5rem">assembleFrontend</text>
+            </g>
+            <g id="publishFrontendTaskShape">
+                <use xlink:href="#frontendCommonTaskContainer" />
+                <text x="50" y="15" dominant-baseline="middle" text-anchor="middle" font-size="0.5rem">publishFrontend</text>
+            </g>
+            <g id="runNodeTaskShape">
+                <use xlink:href="#frontendInstantTaskContainer" />
+                <text x="50" y="15" dominant-baseline="middle" text-anchor="middle" font-size="0.5rem">runNode</text>
+            </g>
+            <g id="runCorepackTaskShape">
+                <use xlink:href="#frontendInstantTaskContainer" />
+                <text x="50" y="15" dominant-baseline="middle" text-anchor="middle" font-size="0.5rem">runCorepack</text>
+            </g>
+            <g id="runNpmTaskShape">
+                <use xlink:href="#frontendInstantTaskContainer" />
+                <text x="50" y="15" dominant-baseline="middle" text-anchor="middle" font-size="0.5rem">runNpm</text>
+            </g>
+            <g id="runPnpmTaskShape">
+                <use xlink:href="#frontendInstantTaskContainer" />
+                <text x="50" y="15" dominant-baseline="middle" text-anchor="middle" font-size="0.5rem">runPnpm</text>
+            </g>
+            <g id="runYarnTaskShape">
+                <use xlink:href="#frontendInstantTaskContainer" />
+                <text x="50" y="15" dominant-baseline="middle" text-anchor="middle" font-size="0.5rem">runYarn</text>
+            </g>
+
+            <g id="RunNodeTaskTypeShape">
+                <use xlink:href="#frontendTaskTypeContainer" />
+                <text x="50" y="15" dominant-baseline="middle" text-anchor="middle" font-size="0.5rem">RunNodeTaskType</text>
+            </g>
+            <g id="RunCorepackTaskTypeShape">
+                <use xlink:href="#frontendTaskTypeContainer" />
+                <text x="50" y="15" dominant-baseline="middle" text-anchor="middle" font-size="0.5rem">RunCorepackTaskType</text>
+            </g>
+            <g id="RunNpmTaskTypeShape">
+                <use xlink:href="#frontendTaskTypeContainer" />
+                <text x="50" y="15" dominant-baseline="middle" text-anchor="middle" font-size="0.5rem">RunNpmTaskType</text>
+            </g>
+            <g id="RunPnpmTaskTypeShape">
+                <use xlink:href="#frontendTaskTypeContainer" />
+                <text x="50" y="15" dominant-baseline="middle" text-anchor="middle" font-size="0.5rem">RunPnpmTaskType</text>
+            </g>
+            <g id="RunYarnTaskTypeShape">
+                <use xlink:href="#frontendTaskTypeContainer" />
+                <text x="50" y="15" dominant-baseline="middle" text-anchor="middle" font-size="0.5rem">RunYarnTaskType</text>
             </g>
 
             <marker
@@ -118,100 +121,127 @@
                 <path d="M 0 0 L 10 5 L 0 10 z" />
             </marker>
 
-            <g id="gradleBasePlugin">
-                <rect x="0" y="0" width="460" height="70" fill="none" stroke="grey" />
-                <text x="20" y="18" font-size="0.5rem" fill="grey">Gradle Base plugin</text>
-                <FgpGradleDocsLink path="/current/userguide/base_plugin.html#sec:base_tasks">
-                    <use x="20" y="30" xlink:href="#cleanTask" />
+            <g id="gradlePlugins">
+                <rect x="0" y="0" width="480" height="70" fill="none" stroke="grey" rx="10" />
+                <text x="10" y="18" dominant-baseline="middle" text-anchor="begin" font-size="0.5rem" fill="green" class="text-uppercase">Gradle Base plugin</text>
+                <FgpGradleDocsLink path="/current/userguide/base_plugin.html#sec:base_tasks" class="text-decoration-none">
+                    <use x="10" y="30" xlink:href="#cleanTaskShape" />
                 </FgpGradleDocsLink>
-                <FgpGradleDocsLink path="/current/userguide/base_plugin.html#sec:base_tasks">
-                    <use x="170" y="30" xlink:href="#checkTask" />
+                <FgpGradleDocsLink path="/current/userguide/base_plugin.html#sec:base_tasks" class="text-decoration-none">
+                    <use x="130" y="30" xlink:href="#checkTaskShape" />
                 </FgpGradleDocsLink>
-                <FgpGradleDocsLink path="/current/userguide/base_plugin.html#sec:base_tasks">
-                    <use x="320" y="30" xlink:href="#assembleTask" />
+                <FgpGradleDocsLink path="/current/userguide/base_plugin.html#sec:base_tasks" class="text-decoration-none">
+                    <use x="250" y="30" xlink:href="#assembleTaskShape" />
                 </FgpGradleDocsLink>
-            </g>
-
-            <g id="gradlePublishingPlugin">
-                <rect x="480" y="0" width="160" height="70" fill="none" stroke="grey" />
-                <text text-anchor="end" x="620" y="18" font-size="0.5rem" fill="grey">Gradle Publishing plugin</text>
-                <use x="500" y="30" xlink:href="#publishTask" />
+                <line x1="360" y1="0" x2="360" y2="70" stroke="gainsboro" stroke-dasharray="4 2" />
+                <text x="370" y="18" dominant-baseline="middle" text-anchor="begin" font-size="0.5rem" fill="green" class="text-uppercase">Gradle Publishing plugin</text>
+                <use x="370" y="30" xlink:href="#publishTaskShape" />
             </g>
 
             <g id="frontendGradlePlugin">
-                <rect x="0" y="80" width="640" height="360" fill="none" stroke="grey" />
-                <text text-anchor="end" x="620" y="238" font-size="0.5rem" fill="grey">Frontend Gradle plugin</text>
-                <FgpSiteLink :path="`${$config.public.paths.tasks}#cleanFrontend`">
-                    <use x="20" y="90" xlink:href="#cleanFrontendTask" />
+                <rect x="0" y="90" width="720" height="370" fill="none" stroke="grey" rx="10" />
+                <text x="10" y="235" dominant-baseline="middle" text-anchor="begin" font-size="0.5rem" fill="green" class="text-uppercase">Frontend Gradle plugin</text>
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#cleanFrontend`" class="text-decoration-none">
+                    <use x="10" y="100" xlink:href="#cleanFrontendTaskShape" />
                 </FgpSiteLink>
-                <FgpSiteLink :path="`${$config.public.paths.tasks}#checkFrontend`">
-                    <use x="170" y="90" xlink:href="#checkFrontendTask" />
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#checkFrontend`" class="text-decoration-none">
+                    <use x="130" y="100" xlink:href="#checkFrontendTaskShape" />
                 </FgpSiteLink>
-                <FgpSiteLink :path="`${$config.public.paths.tasks}#assembleFrontend`">
-                    <use x="320" y="90" xlink:href="#assembleFrontendTask" />
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#assembleFrontend`" class="text-decoration-none">
+                    <use x="250" y="100" xlink:href="#assembleFrontendTaskShape" />
                 </FgpSiteLink>
-                <FgpSiteLink :path="`${$config.public.paths.tasks}#publishFrontend`">
-                    <use x="500" y="90" xlink:href="#publishFrontendTask" />
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#publishFrontend`" class="text-decoration-none">
+                    <use x="370" y="100" xlink:href="#publishFrontendTaskShape" />
                 </FgpSiteLink>
-                <FgpSiteLink :path="`${$config.public.paths.tasks}#installFrontend`">
-                    <use x="170" y="150" xlink:href="#installFrontendTask" />
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#installFrontend`" class="text-decoration-none">
+                    <use x="130" y="180" xlink:href="#installFrontendTaskShape" />
                 </FgpSiteLink>
-                <FgpSiteLink :path="`${$config.public.paths.tasks}#installPackageManager`">
-                    <use x="170" y="210" xlink:href="#installPackageManagerTask" />
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#installPackageManager`" class="text-decoration-none">
+                    <use x="130" y="260" xlink:href="#installPackageManagerTaskShape" />
                 </FgpSiteLink>
-                <FgpSiteLink :path="`${$config.public.paths.tasks}#installCorepack`">
-                    <use x="20" y="270" xlink:href="#installCorepackTask" />
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#resolvePackageManager`" class="text-decoration-none">
+                    <use x="10" y="340" xlink:href="#resolvePackageManagerTaskShape" />
                 </FgpSiteLink>
-                <FgpSiteLink :path="`${$config.public.paths.tasks}#resolvePackageManager`">
-                    <use x="320" y="270" xlink:href="#resolvePackageManagerTask" />
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#installCorepack`" class="text-decoration-none">
+                    <use x="250" y="340" xlink:href="#installCorepackTaskShape" />
                 </FgpSiteLink>
-                <FgpSiteLink :path="`${$config.public.paths.tasks}#installNode`">
-                    <use x="170" y="330" xlink:href="#installNodeTask" />
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#installNode`" class="text-decoration-none">
+                    <use x="130" y="420" xlink:href="#installNodeTaskShape" />
                 </FgpSiteLink>
+                <text x="470" y="195" dominant-baseline="middle" text-anchor="end" font-size="0.5rem" fill="darkgrey">Lifecycle tasks</text>
 
-                <line x1="0" y1="370" x2="640" y2="370" stroke="gainsboro" stroke-dasharray="4 2" />
-                <text text-anchor="middle" x="320" y="388" font-size="0.5rem" fill="darkgrey">
-                    Additional task types
-                </text>
-                <FgpSiteLink :path="`${$config.public.paths.tasks}#RunNode`">
-                    <use x="10" y="400" xlink:href="#RunNodeTaskType" />
+                <line x1="480" y1="90" x2="480" y2="460" stroke="gainsboro" stroke-dasharray="4 2" />
+
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#runNpm`" class="text-decoration-none">
+                    <use x="490" y="220" xlink:href="#runNpmTaskShape" />
                 </FgpSiteLink>
-                <FgpSiteLink :path="`${$config.public.paths.tasks}#RunCorepack`">
-                    <use x="140" y="400" xlink:href="#RunCorepackTaskType" />
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#runPnpm`" class="text-decoration-none">
+                    <use x="490" y="260" xlink:href="#runPnpmTaskShape" />
                 </FgpSiteLink>
-                <FgpSiteLink :path="`${$config.public.paths.tasks}#RunNpm`">
-                    <use x="270" y="400" xlink:href="#RunNpmTaskType" />
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#runYarn`" class="text-decoration-none">
+                    <use x="490" y="300" xlink:href="#runYarnTaskShape" />
                 </FgpSiteLink>
-                <FgpSiteLink :path="`${$config.public.paths.tasks}#RunPnpm`">
-                    <use x="400" y="400" xlink:href="#RunPnpmTaskType" />
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#runCorepack`" class="text-decoration-none">
+                    <use x="490" y="340" xlink:href="#runCorepackTaskShape" />
                 </FgpSiteLink>
-                <FgpSiteLink :path="`${$config.public.paths.tasks}#RunYarn`">
-                    <use x="530" y="400" xlink:href="#RunYarnTaskType" />
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#runNode`" class="text-decoration-none">
+                    <use x="490" y="420" xlink:href="#runNodeTaskShape" />
                 </FgpSiteLink>
+                <text x="540" y="195" dominant-baseline="middle" text-anchor="middle" font-size="0.5rem" fill="darkgrey">Instant tasks</text>
+
+                <line x1="600" y1="90" x2="600" y2="460" stroke="gainsboro" stroke-dasharray="4 2" />
+
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#RunNpmTaskType`" class="text-decoration-none">
+                    <use x="610" y="220" xlink:href="#RunNpmTaskTypeShape" />
+                </FgpSiteLink>
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#RunPnpmTaskType`" class="text-decoration-none">
+                    <use x="610" y="260" xlink:href="#RunPnpmTaskTypeShape" />
+                </FgpSiteLink>
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#RunYarnTaskType`" class="text-decoration-none">
+                    <use x="610" y="300" xlink:href="#RunYarnTaskTypeShape" />
+                </FgpSiteLink>
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#RunCorepackTaskType`" class="text-decoration-none">
+                    <use x="610" y="340" xlink:href="#RunCorepackTaskTypeShape" />
+                </FgpSiteLink>
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#RunNodeTaskType`" class="text-decoration-none">
+                    <use x="610" y="420" xlink:href="#RunNodeTaskTypeShape" />
+                </FgpSiteLink>
+                <text x="660" y="195" dominant-baseline="middle" text-anchor="middle" font-size="0.5rem" fill="darkgrey">Task types</text>
             </g>
         </defs>
 
-        <use xlink:href="#gradleBasePlugin" />
-        <use xlink:href="#gradlePublishingPlugin" />
+        <use xlink:href="#gradlePlugins" />
         <use xlink:href="#frontendGradlePlugin" />
 
-        <line x1="80" y1="60" x2="80" y2="87" stroke="violet" marker-end="url(#arrow)" />
-        <line x1="230" y1="60" x2="230" y2="87" stroke="violet" marker-end="url(#arrow)" />
-        <line x1="380" y1="60" x2="380" y2="87" stroke="violet" marker-end="url(#arrow)" />
-        <line x1="560" y1="60" x2="560" y2="87" stroke="violet" marker-end="url(#arrow)" />
+        <line x1="60" y1="60" x2="60" y2="97" stroke="violet" marker-end="url(#arrow)" />
+        <line x1="180" y1="60" x2="180" y2="97" stroke="violet" marker-end="url(#arrow)" />
+        <line x1="300" y1="60" x2="300" y2="97" stroke="violet" marker-end="url(#arrow)" />
+        <line x1="420" y1="60" x2="420" y2="97" stroke="violet" marker-end="url(#arrow)" />
 
-        <line x1="500" y1="105" x2="443" y2="105" stroke="violet" marker-end="url(#arrow)" />
+        <line x1="370" y1="115" x2="353" y2="115" stroke="violet" marker-end="url(#arrow)" />
 
-        <path d="M 80 120 Q 80 133, 140 133 T 200 147" stroke="violet" fill="transparent" marker-end="url(#arrow)" />
-        <line x1="230" y1="120" x2="230" y2="147" stroke="violet" marker-end="url(#arrow)" />
-        <path d="M 380 120 Q 380 133, 320 133 T 260 147" stroke="violet" fill="transparent" marker-end="url(#arrow)" />
+        <path d="M 60 130 Q 60 153, 110 153 T 160 177" stroke="violet" fill="transparent" marker-end="url(#arrow)" />
+        <line x1="180" y1="130" x2="180" y2="177" stroke="violet" marker-end="url(#arrow)" />
+        <path d="M 300 130 Q 300 153, 250 153 T 200 177" stroke="violet" fill="transparent" marker-end="url(#arrow)" />
 
-        <line x1="230" y1="180" x2="230" y2="207" stroke="violet" marker-end="url(#arrow)" />
+        <line x1="180" y1="210" x2="180" y2="257" stroke="violet" marker-end="url(#arrow)" />
 
-        <path d="M 200 240 Q 200 253, 140 253 T 80 267" stroke="violet" fill="transparent" marker-end="url(#arrow)" />
-        <path d="M 260 240 Q 260 253, 320 253 T 380 267" stroke="violet" fill="transparent" marker-end="url(#arrow)" />
+        <path d="M 160 290 Q 160 313, 110 313 T 60 337" stroke="violet" fill="transparent" marker-end="url(#arrow)" />
+        <path d="M 200 290 Q 200 313, 250 313 T 300 337" stroke="violet" fill="transparent" marker-end="url(#arrow)" />
 
-        <path d="M 80 300 Q 80 313, 140 313 T 200 327" stroke="violet" fill="transparent" marker-end="url(#arrow)" />
-        <path d="M 380 300 Q 380 313, 320 313 T 260 327" stroke="violet" fill="transparent" marker-end="url(#arrow)" />
+        <path d="M 60 370 Q 60 393, 110 393 T 160 417" stroke="violet" fill="transparent" marker-end="url(#arrow)" />
+        <path d="M 300 370 Q 300 393, 250 393 T 200 417" stroke="violet" fill="transparent" marker-end="url(#arrow)" />
+
+        <path d="M 490 235 Q 362 235, 360 255 T 233 275" stroke="violet" fill="transparent" marker-end="url(#arrow)" />
+        <line x1="600" y1="90" x2="600" y2="460" stroke="gainsboro" stroke-dasharray="4 2" />
+        <line x1="610" y1="235" x2="590" y2="235" stroke="red" stroke-dasharray="1 1" />
+        <line x1="490" y1="275" x2="233" y2="275" stroke="violet" marker-end="url(#arrow)" />
+        <line x1="610" y1="275" x2="590" y2="275" stroke="red" stroke-dasharray="1 1" />
+        <path d="M 490 315 Q 362 315, 360 295 T 233 275" stroke="violet" fill="transparent" marker-end="url(#arrow)" />
+        <line x1="610" y1="315" x2="590" y2="315" stroke="red" stroke-dasharray="1 1" />
+        <line x1="490" y1="355" x2="353" y2="355" stroke="violet" marker-end="url(#arrow)" />
+        <line x1="610" y1="355" x2="590" y2="355" stroke="red" stroke-dasharray="1 1" />
+        <line x1="490" y1="435" x2="233" y2="435" stroke="violet" marker-end="url(#arrow)" />
+        <line x1="610" y1="435" x2="590" y2="435" stroke="red" stroke-dasharray="1 1" />
     </svg>
 </template>

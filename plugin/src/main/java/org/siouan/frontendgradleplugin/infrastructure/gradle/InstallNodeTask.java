@@ -2,7 +2,8 @@ package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import javax.inject.Inject;
 
 import org.gradle.api.DefaultTask;
@@ -425,7 +426,7 @@ public class InstallNodeTask extends DefaultTask {
      * @throws ResourceDownloadException If the distribution download failed.
      */
     @TaskAction
-    public void execute() throws BeanRegistryException, FrontendException, IOException {
+    public void execute() throws BeanRegistryException, FrontendException, IOException, URISyntaxException {
         final BeanRegistry beanRegistry = beanRegistryBuildService.get().getBeanRegistry();
         TaskLoggerInitializer.initAdapter(this, verboseModeEnabled.get(),
             beanRegistry.getBean(GradleLoggerAdapter.class), beanRegistry.getBean(GradleSettings.class));
@@ -456,7 +457,7 @@ public class InstallNodeTask extends DefaultTask {
                 .httpProxyHost(httpProxyHost.getOrNull())
                 .httpProxyPort(httpProxyPort.get())
                 .httpProxyCredentials(httpProxyCredentials)
-                .resourceUrl(new URL(nodeDistributionUrlRoot.get()))
+                .resourceUrl(URI.create(nodeDistributionUrlRoot.get()).toURL())
                 .systemHttpProxyHost(systemHttpProxyHost.getOrNull())
                 .systemHttpProxyPort(systemHttpProxyPort.get())
                 .systemHttpsProxyHost(systemHttpsProxyHost.getOrNull())

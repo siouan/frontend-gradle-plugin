@@ -13,6 +13,7 @@ import java.util.Base64;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.matching.MatchResult;
+import org.apache.hc.core5.http.HttpHeaders;
 
 /**
  * A HTTP server configurator.
@@ -52,7 +53,7 @@ public class ServerConfigurator {
                 mappingBuilder = get(urlPathMatching("^.*/node-v[^/]+$"));
                 withAuth(mappingBuilder);
                 server.stubFor(mappingBuilder.willReturn(
-                    aResponse().withBody(Files.readAllBytes(getResourcePath("node-v20.14.0.zip")))));
+                    aResponse().withBody(Files.readAllBytes(getResourcePath("node-v20.18.0.zip")))));
 
                 mappingBuilder = get(urlPathMatching("^.*/SHASUMS256.txt$"));
                 withAuth(mappingBuilder);
@@ -64,16 +65,22 @@ public class ServerConfigurator {
             mappingBuilder = get(urlPathMatching("^.*$"));
             if (username != null) {
                 // Add a condition if Basic authentication is required
-                mappingBuilder.withHeader("Proxy-Authorization", equalTo(buildBasicToken(username, password)));
+                mappingBuilder.withHeader(HttpHeaders.PROXY_AUTHORIZATION,
+                    equalTo(buildBasicToken(username, password)));
             }
-            server.stubFor(mappingBuilder.willReturn(aResponse().proxiedFrom(proxyTargetHost)));
+            server.stubFor(mappingBuilder.willReturn(aResponse().proxiedFrom(proxyTargetHost)
+                // https://datatracker.ietf.org/doc/html/rfc2817#section-3.1
+                // WireMock 3.9.1 does not support optional TLS upgrade issued by Apache HttpClient 5.4+ with headers
+                // "Upgrade" and "Connection" to secure communications, which lead to a 400 HTTP response. To prevent
+                // such errors, let's remove these request headers in the context of a JUnit test case.
+                .withRemoveRequestHeader(HttpHeaders.UPGRADE).withRemoveRequestHeader(HttpHeaders.CONNECTION)));
 
             if (username != null) {
                 // Simulate HTTP 407 responses when proxy authorization is missing or is incorrect.
                 mappingBuilder = get(urlPathMatching("^.*$"));
                 mappingBuilder.andMatching(request -> MatchResult.of(
-                    !request.containsHeader("Proxy-Authorization") || !request
-                        .getHeader("Proxy-Authorization")
+                    !request.containsHeader(HttpHeaders.PROXY_AUTHORIZATION) || !request
+                        .getHeader(HttpHeaders.PROXY_AUTHORIZATION)
                         .equals(buildBasicToken(username, password))));
                 server.stubFor(mappingBuilder.willReturn(aResponse().withStatus(407)));
             }

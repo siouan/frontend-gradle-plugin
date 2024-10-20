@@ -1,5 +1,5 @@
 import org.siouan.frontendgradleplugin.infrastructure.gradle.ResolvePackageManagerTask
-import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpm
+import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpmTaskType
 
 plugins {
     id("org.siouan.frontend-jdk17")
@@ -14,7 +14,7 @@ tasks.named<ResolvePackageManagerTask>("resolvePackageManager") {
     dependsOn(":node-subproject:installNode")
 }
 
-tasks.register<RunNpm>("npm6Version") {
+tasks.register<RunNpmTaskType>("npm6Version") {
     dependsOn("installPackageManager")
     script.set("--version")
 }
