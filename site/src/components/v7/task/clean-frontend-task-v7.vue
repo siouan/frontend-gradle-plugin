@@ -27,16 +27,16 @@
 const inputs = [
     {
         name: 'packageJsonDirectory',
-        type: 'F',
-        binding: 'P',
+        type: TaskPropertyType.FILE,
+        binding: TaskPropertyBinding.PROPERTY,
         property: 'packageJsonDirectory',
     },
     {
         name: 'nodeInstallDirectory',
-        type: 'F',
-        binding: 'P',
+        type: TaskPropertyType.FILE,
+        binding: TaskPropertyBinding.PROPERTY,
         property: 'nodeInstallDirectory',
     },
-    { name: 'script', type: 'S', binding: 'P', property: 'cleanScript' },
+    { name: 'script', type: TaskPropertyType.STRING, binding: TaskPropertyBinding.PROPERTY, property: 'cleanScript' },
 ];
 </script>

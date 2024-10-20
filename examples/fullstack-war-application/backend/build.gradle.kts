@@ -17,11 +17,11 @@ dependencies {
 
 tasks.register<Copy>("processFrontendResources") {
     // Directory containing the artifacts produced by the frontend project
-    val frontendProjectBuildDir = project(":frontend").buildDir
-    val frontendBuildDir = file("${frontendProjectBuildDir}/www")
+    val frontendProjectBuildDir = project(":frontend").layout.buildDirectory
+    val frontendBuildDir = frontendProjectBuildDir.dir("www")
     // Directory where the frontend artifacts must be copied to be packaged alltogether with the backend by the 'war'
     // plugin.
-    val frontendResourcesDir = file("${project.buildDir}/resources/main/public")
+    val frontendResourcesDir = project.layout.buildDirectory.dir("resources/main/public")
 
     group = "Frontend"
     description = "Process frontend resources"

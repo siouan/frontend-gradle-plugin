@@ -20,16 +20,16 @@
 const inputs = [
     {
         name: 'packageJsonDirectory',
-        type: 'F',
+        type: TaskPropertyType.FILE,
         binding: TaskPropertyBinding.PROPERTY,
         property: 'packageJsonDirectory',
     },
     {
         name: 'nodeInstallDirectory',
-        type: 'F',
+        type: TaskPropertyType.FILE,
         binding: TaskPropertyBinding.PROPERTY,
         property: 'nodeInstallDirectory',
     },
-    { name: 'args', type: 'S', binding: TaskPropertyBinding.USER, commandLineOptionSupported: true },
+    { name: 'args', type: TaskPropertyType.STRING, binding: TaskPropertyBinding.USER, commandLineOptionSupported: true },
 ];
 </script>
