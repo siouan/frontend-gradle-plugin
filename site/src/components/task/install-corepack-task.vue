@@ -65,7 +65,7 @@ const inputs = [{
 }];
 const outputs = [{
     name: 'corepackModuleDirectory',
-    type: TaskPropertyType.DIRECTORY',
+    type: TaskPropertyType.DIRECTORY,
     binding: TaskPropertyBinding.CUSTOM
 }];
 </script>
