@@ -92,6 +92,7 @@ With their feedback, plugin improvement is possible. Special thanks to:
 @[thebignet](https://github.com/thebignet)
 @[tngwoerleij](https://github.com/tngwoerleij),
 @[trohr](https://github.com/trohr),
+@[t-h-e](https://github.com/t-h-e),
 @[xehonk](https://github.com/xehonk)
 
 [contributing]: <CONTRIBUTING.md> (Contributing to this project)
