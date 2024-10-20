@@ -12,15 +12,15 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class GetExecutablePath {
 
-    private final ResolveCorepackExecutablePath getCorepackExecutablePath;
+    private final ResolveCorepackExecutablePath resolveCorepackExecutablePath;
 
-    private final ResolveNodeExecutablePath getNodeExecutablePath;
+    private final ResolveNodeExecutablePath resolveNodeExecutablePath;
 
-    private final ResolveNpmExecutablePath getNpmExecutablePath;
+    private final ResolveNpmExecutablePath resolveNpmExecutablePath;
 
-    private final ResolvePnpmExecutablePath getPnpmExecutablePath;
+    private final ResolvePnpmExecutablePath resolvePnpmExecutablePath;
 
-    private final ResolveYarnExecutablePath getYarnExecutablePath;
+    private final ResolveYarnExecutablePath resolveYarnExecutablePath;
 
     /**
      * Resolves the path of the executable.
@@ -38,15 +38,15 @@ public class GetExecutablePath {
         final ExecutableType executableType = command.getExecutableType();
         switch (executableType) {
         case COREPACK:
-            return getCorepackExecutablePath.execute(resolveExecutablePathCommand);
+            return resolveCorepackExecutablePath.execute(resolveExecutablePathCommand);
         case NODE:
-            return getNodeExecutablePath.execute(resolveExecutablePathCommand);
+            return resolveNodeExecutablePath.execute(resolveExecutablePathCommand);
         case NPM:
-            return getNpmExecutablePath.execute(resolveExecutablePathCommand);
+            return resolveNpmExecutablePath.execute(resolveExecutablePathCommand);
         case PNPM:
-            return getPnpmExecutablePath.execute(resolveExecutablePathCommand);
+            return resolvePnpmExecutablePath.execute(resolveExecutablePathCommand);
         case YARN:
-            return getYarnExecutablePath.execute(resolveExecutablePathCommand);
+            return resolveYarnExecutablePath.execute(resolveExecutablePathCommand);
         default:
             throw new IllegalArgumentException("Unsupported type of executable: " + executableType);
         }

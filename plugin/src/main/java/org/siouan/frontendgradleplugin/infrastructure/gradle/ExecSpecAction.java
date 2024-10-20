@@ -1,5 +1,7 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
+import static java.util.stream.Collectors.joining;
+
 import java.io.File;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -8,7 +10,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import lombok.Builder;
@@ -82,8 +83,7 @@ public class ExecSpecAction implements Action<ExecSpec> {
             additionalExecutablePaths.forEach(
                 additionalExecutablePath -> pathVariableBuilder.accept(additionalExecutablePath.toString()));
             basePathVariableValue.ifPresent(pathVariableBuilder);
-            execSpec.environment(PATH_VARIABLE_NAME,
-                pathVariableBuilder.build().collect(Collectors.joining(File.pathSeparator)));
+            execSpec.environment(PATH_VARIABLE_NAME, pathVariableBuilder.build().collect(joining(File.pathSeparator)));
         }
 
         afterConfiguredConsumer.accept(execSpec);

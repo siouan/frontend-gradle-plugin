@@ -48,9 +48,9 @@ public abstract class AbstractRunCommandTask extends DefaultTask {
     protected final Property<ExecutableType> executableType;
 
     /**
-     * The command to execute.
+     * Arguments to be appended to the executable name on the command line.
      */
-    protected final Property<String> script;
+    protected final Property<String> executableArgs;
 
     /**
      * Whether the task should produce log messages for the end-user.
@@ -86,7 +86,7 @@ public abstract class AbstractRunCommandTask extends DefaultTask {
         this.packageJsonDirectory = objectFactory.property(File.class);
         this.nodeInstallDirectory = objectFactory.property(File.class);
         this.executableType = objectFactory.property(ExecutableType.class);
-        this.script = objectFactory.property(String.class);
+        this.executableArgs = objectFactory.property(String.class);
         this.verboseModeEnabled = objectFactory.property(Boolean.class);
         this.systemJvmArch = objectFactory.property(String.class);
         this.systemOsName = objectFactory.property(String.class);
@@ -140,8 +140,8 @@ public abstract class AbstractRunCommandTask extends DefaultTask {
      * @throws NonRunnableTaskException When the task is not runnable.
      */
     protected void assertThatTaskIsRunnable() throws NonRunnableTaskException {
-        if (!script.isPresent()) {
-            throw new NonRunnableTaskException("Missing property 'script'.");
+        if (!executableArgs.isPresent()) {
+            throw new NonRunnableTaskException("No arguments provided");
         }
     }
 
@@ -170,7 +170,7 @@ public abstract class AbstractRunCommandTask extends DefaultTask {
                 .packageJsonDirectoryPath(packageJsonDirectory.map(File::toPath).get())
                 .executableType(executableType.get())
                 .nodeInstallDirectoryPath(nodeInstallDirectory.map(File::toPath).get())
-                .script(script.get())
+                .executableArgs(executableArgs.get())
                 .platform(platform)
                 .environmentVariables(environmentVariables.getOrElse(Map.of()))
                 .build());

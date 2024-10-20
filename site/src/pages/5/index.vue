@@ -7,6 +7,10 @@
                 src="https://img.shields.io/badge/Latest%20release-5.3.0-blue.svg"
                 alt="Latest release 5.3.0"
                 class="ml-1"
+            /> <FgpImageLink
+                href="https://github.com/siouan/frontend-gradle-plugin/stargazers"
+                src="https://img.shields.io/github/stars/siouan/frontend-gradle-plugin?style=badge&label=%E2%9C%AE&color=gold&cacheSeconds=86400"
+                alt="Stargazers"
             />
         </FgpMainTitle>
 
@@ -54,6 +58,9 @@
             <FgpNodejsLink />, <FgpNpmLink />, <FgpNpxLinkV6 />, <FgpYarnLink :version="1" />.
         </FgpFeatureCard>
 
+        <FgpSubTitle class="text-center">They use this plugin, thanks to these organizations!</FgpSubTitle>
+        <FgpReferenceOrganizations />
+
         <div class="card my-3">
             <div class="card-body">
                 <h5 class="card-title">Under the hood</h5>
@@ -79,7 +86,8 @@
 </template>
 
 <script setup lang="ts">
-const canonicalUrl = 'https://siouan.github.io/frontend-gradle-plugin/';
+const runtimeConfig = useRuntimeConfig();
+const canonicalUrl = `${runtimeConfig.public.canonicalBaseUrl}${runtimeConfig.public.paths.overview}`;
 const title = 'Gradle Node/NPM/Yarn plugin to build Javascript applications';
 const description =
     'Gradle plugin to build frontend applications with node/npm/yarn: distribution management, configurable tasks (build, test, publish), NPX support';

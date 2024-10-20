@@ -34,20 +34,7 @@ import org.siouan.frontendgradleplugin.infrastructure.bean.BeanInstanciationExce
 import org.siouan.frontendgradleplugin.infrastructure.bean.BeanRegistry;
 import org.siouan.frontendgradleplugin.infrastructure.bean.TooManyCandidateBeansException;
 import org.siouan.frontendgradleplugin.infrastructure.bean.ZeroOrMultiplePublicConstructorsException;
-import org.siouan.frontendgradleplugin.infrastructure.gradle.AssembleTask;
-import org.siouan.frontendgradleplugin.infrastructure.gradle.BeanRegistryBuildService;
-import org.siouan.frontendgradleplugin.infrastructure.gradle.CheckTask;
-import org.siouan.frontendgradleplugin.infrastructure.gradle.CleanTask;
-import org.siouan.frontendgradleplugin.infrastructure.gradle.FrontendExtension;
-import org.siouan.frontendgradleplugin.infrastructure.gradle.GradleLoggerAdapter;
-import org.siouan.frontendgradleplugin.infrastructure.gradle.GradleSettings;
-import org.siouan.frontendgradleplugin.infrastructure.gradle.InstallCorepackTask;
-import org.siouan.frontendgradleplugin.infrastructure.gradle.InstallFrontendTask;
-import org.siouan.frontendgradleplugin.infrastructure.gradle.InstallNodeTask;
-import org.siouan.frontendgradleplugin.infrastructure.gradle.InstallPackageManagerTask;
-import org.siouan.frontendgradleplugin.infrastructure.gradle.PublishTask;
-import org.siouan.frontendgradleplugin.infrastructure.gradle.ResolvePackageManagerTask;
-import org.siouan.frontendgradleplugin.infrastructure.gradle.SystemProviders;
+import org.siouan.frontendgradleplugin.infrastructure.gradle.*;
 import org.siouan.frontendgradleplugin.infrastructure.httpclient.HttpClientProviderImpl;
 import org.siouan.frontendgradleplugin.infrastructure.system.ChannelProviderImpl;
 import org.siouan.frontendgradleplugin.infrastructure.system.FileManagerImpl;
@@ -141,6 +128,11 @@ public class FrontendGradlePlugin implements Plugin<Project> {
 
     public static final int DEFAULT_RETRY_MAX_INTERVAL_MS = 30000;
 
+    /**
+     * Root name of the plugin extension.
+     */
+    private static final String EXTENSION_NAME = "frontend";
+
     public static final String GRADLE_ASSEMBLE_TASK_NAME = LifecycleBasePlugin.ASSEMBLE_TASK_NAME;
 
     public static final String GRADLE_CHECK_TASK_NAME = LifecycleBasePlugin.CHECK_TASK_NAME;
@@ -150,9 +142,21 @@ public class FrontendGradlePlugin implements Plugin<Project> {
     public static final String GRADLE_PUBLISH_TASK_NAME = PublishingPlugin.PUBLISH_LIFECYCLE_TASK_NAME;
 
     /**
+     * Name of the task that installs a specific version of Corepack.
+     *
+     * @since 8.1.0
+     */
+    public static final String INSTALL_COREPACK_TASK_NAME = "installCorepack";
+
+    /**
      * Name of the task that installs frontend dependencies.
      */
     public static final String INSTALL_FRONTEND_TASK_NAME = "installFrontend";
+
+    /**
+     * Name of the task that installs a Node distribution.
+     */
+    public static final String INSTALL_NODE_TASK_NAME = "installNode";
 
     /**
      * Name of the task that installs the relevant package manager.
@@ -163,18 +167,6 @@ public class FrontendGradlePlugin implements Plugin<Project> {
      * Name of the file containing Javascript project metadata.
      */
     public static final String PACKAGE_JSON_FILE_NAME = "package.json";
-
-    /**
-     * Name of the task that installs a specific version of Corepack.
-     *
-     * @since 8.1.0
-     */
-    public static final String INSTALL_COREPACK_TASK_NAME = "installCorepack";
-
-    /**
-     * Name of the task that installs a Node distribution.
-     */
-    public static final String INSTALL_NODE_TASK_NAME = "installNode";
 
     /**
      * Name of the file containing the name and version of the package manager resolved.
@@ -192,9 +184,29 @@ public class FrontendGradlePlugin implements Plugin<Project> {
     public static final String RESOLVE_PACKAGE_MANAGER_TASK_NAME = "resolvePackageManager";
 
     /**
-     * Root name of the plugin extension.
+     * Name of the task that runs the corepack executable.
      */
-    private static final String EXTENSION_NAME = "frontend";
+    public static final String RUN_COREPACK_TASK_NAME = "runCorepack";
+
+    /**
+     * Name of the task that runs the node executable.
+     */
+    public static final String RUN_NODE_TASK_NAME = "runNode";
+
+    /**
+     * Name of the task that runs the npm executable.
+     */
+    public static final String RUN_NPM_TASK_NAME = "runNpm";
+
+    /**
+     * Name of the task that runs the pnpm executable.
+     */
+    public static final String RUN_PNPM_TASK_NAME = "runPnpm";
+
+    /**
+     * Name of the task that runs the yarn executable.
+     */
+    public static final String RUN_YARN_TASK_NAME = "runYarn";
 
     /**
      * The Gradle group in which all this plugin's tasks will be categorized.
@@ -289,6 +301,21 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         taskContainer.register(INSTALL_PACKAGE_MANAGER_TASK_NAME, InstallPackageManagerTask.class,
             task -> configureInstallPackageManagerTask(task, taskContainer, beanRegistryBuildServiceProvider,
                 frontendExtension, systemProviders));
+        taskContainer.register(RUN_NODE_TASK_NAME, RunNodeTask.class,
+            task -> configureRunNodeTask(task, taskContainer, beanRegistryBuildServiceProvider, frontendExtension,
+                systemProviders));
+        taskContainer.register(RUN_COREPACK_TASK_NAME, RunCorepackTask.class,
+            task -> configureRunCorepackTask(task, taskContainer, beanRegistryBuildServiceProvider, frontendExtension,
+                systemProviders));
+        taskContainer.register(RUN_NPM_TASK_NAME, RunNpmTask.class,
+            task -> configureRunNpmTask(task, taskContainer, beanRegistryBuildServiceProvider, frontendExtension,
+                systemProviders));
+        taskContainer.register(RUN_PNPM_TASK_NAME, RunPnpmTask.class,
+            task -> configureRunPnpmTask(task, taskContainer, beanRegistryBuildServiceProvider, frontendExtension,
+                systemProviders));
+        taskContainer.register(RUN_YARN_TASK_NAME, RunYarnTask.class,
+            task -> configureRunYarnTask(task, taskContainer, beanRegistryBuildServiceProvider, frontendExtension,
+                systemProviders));
         taskContainer.register(INSTALL_FRONTEND_TASK_NAME, InstallFrontendTask.class,
             task -> configureInstallFrontendTask(task, taskContainer, beanRegistryBuildServiceProvider,
                 frontendExtension, systemProviders));
@@ -518,6 +545,86 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.setOnlyIf(t -> packageJsonFileExists(frontendExtension));
 
         configureDependency(taskContainer, task, INSTALL_COREPACK_TASK_NAME, InstallCorepackTask.class);
+    }
+
+    protected void configureRunNodeTask(final RunNodeTask task, final TaskContainer taskContainer,
+        final Provider<BeanRegistryBuildService> beanRegistryBuildServiceProvider,
+        final FrontendExtension frontendExtension, final SystemProviders systemProviders) {
+        task.setGroup(TASK_GROUP);
+        task.setDescription("Runs a command with node executable.");
+        task.getBeanRegistryBuildService().set(beanRegistryBuildServiceProvider);
+        task.usesService(beanRegistryBuildServiceProvider);
+
+        task.getPackageJsonDirectory().set(frontendExtension.getPackageJsonDirectory().getAsFile());
+        task.getNodeInstallDirectory().set(frontendExtension.getNodeInstallDirectory().getAsFile());
+        task.getVerboseModeEnabled().set(frontendExtension.getVerboseModeEnabled());
+        bindSystemArchPropertiesToTaskInputs(systemProviders, task.getSystemJvmArch(), task.getSystemOsName());
+
+        configureDependency(taskContainer, task, INSTALL_NODE_TASK_NAME, InstallNodeTask.class);
+    }
+
+    protected void configureRunCorepackTask(final RunCorepackTask task, final TaskContainer taskContainer,
+        final Provider<BeanRegistryBuildService> beanRegistryBuildServiceProvider,
+        final FrontendExtension frontendExtension, final SystemProviders systemProviders) {
+        task.setGroup(TASK_GROUP);
+        task.setDescription("Runs a command with corepack executable.");
+        task.getBeanRegistryBuildService().set(beanRegistryBuildServiceProvider);
+        task.usesService(beanRegistryBuildServiceProvider);
+
+        task.getPackageJsonDirectory().set(frontendExtension.getPackageJsonDirectory().getAsFile());
+        task.getNodeInstallDirectory().set(frontendExtension.getNodeInstallDirectory().getAsFile());
+        task.getVerboseModeEnabled().set(frontendExtension.getVerboseModeEnabled());
+        bindSystemArchPropertiesToTaskInputs(systemProviders, task.getSystemJvmArch(), task.getSystemOsName());
+
+        configureDependency(taskContainer, task, INSTALL_COREPACK_TASK_NAME, InstallCorepackTask.class);
+    }
+
+    protected void configureRunNpmTask(final RunNpmTask task, final TaskContainer taskContainer,
+        final Provider<BeanRegistryBuildService> beanRegistryBuildServiceProvider,
+        final FrontendExtension frontendExtension, final SystemProviders systemProviders) {
+        task.setGroup(TASK_GROUP);
+        task.setDescription("Runs a command with npm executable.");
+        task.getBeanRegistryBuildService().set(beanRegistryBuildServiceProvider);
+        task.usesService(beanRegistryBuildServiceProvider);
+
+        task.getPackageJsonDirectory().set(frontendExtension.getPackageJsonDirectory().getAsFile());
+        task.getNodeInstallDirectory().set(frontendExtension.getNodeInstallDirectory().getAsFile());
+        task.getVerboseModeEnabled().set(frontendExtension.getVerboseModeEnabled());
+        bindSystemArchPropertiesToTaskInputs(systemProviders, task.getSystemJvmArch(), task.getSystemOsName());
+
+        configureDependency(taskContainer, task, INSTALL_PACKAGE_MANAGER_TASK_NAME, InstallPackageManagerTask.class);
+    }
+
+    protected void configureRunPnpmTask(final RunPnpmTask task, final TaskContainer taskContainer,
+        final Provider<BeanRegistryBuildService> beanRegistryBuildServiceProvider,
+        final FrontendExtension frontendExtension, final SystemProviders systemProviders) {
+        task.setGroup(TASK_GROUP);
+        task.setDescription("Runs a command with pnpm executable.");
+        task.getBeanRegistryBuildService().set(beanRegistryBuildServiceProvider);
+        task.usesService(beanRegistryBuildServiceProvider);
+
+        task.getPackageJsonDirectory().set(frontendExtension.getPackageJsonDirectory().getAsFile());
+        task.getNodeInstallDirectory().set(frontendExtension.getNodeInstallDirectory().getAsFile());
+        task.getVerboseModeEnabled().set(frontendExtension.getVerboseModeEnabled());
+        bindSystemArchPropertiesToTaskInputs(systemProviders, task.getSystemJvmArch(), task.getSystemOsName());
+
+        configureDependency(taskContainer, task, INSTALL_PACKAGE_MANAGER_TASK_NAME, InstallPackageManagerTask.class);
+    }
+
+    protected void configureRunYarnTask(final RunYarnTask task, final TaskContainer taskContainer,
+        final Provider<BeanRegistryBuildService> beanRegistryBuildServiceProvider,
+        final FrontendExtension frontendExtension, final SystemProviders systemProviders) {
+        task.setGroup(TASK_GROUP);
+        task.setDescription("Runs a command with yarn executable.");
+        task.getBeanRegistryBuildService().set(beanRegistryBuildServiceProvider);
+        task.usesService(beanRegistryBuildServiceProvider);
+
+        task.getPackageJsonDirectory().set(frontendExtension.getPackageJsonDirectory().getAsFile());
+        task.getNodeInstallDirectory().set(frontendExtension.getNodeInstallDirectory().getAsFile());
+        task.getVerboseModeEnabled().set(frontendExtension.getVerboseModeEnabled());
+        bindSystemArchPropertiesToTaskInputs(systemProviders, task.getSystemJvmArch(), task.getSystemOsName());
+
+        configureDependency(taskContainer, task, INSTALL_PACKAGE_MANAGER_TASK_NAME, InstallPackageManagerTask.class);
     }
 
     /**

@@ -11,6 +11,8 @@ import static org.siouan.frontendgradleplugin.domain.PlatformFixture.LOCAL_PLATF
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 
@@ -126,7 +128,7 @@ class GetDistributionTest {
             .version(version)
             .downloadUrlRoot(distributionUrlRoot)
             .downloadUrlPathPattern(distributionUrlPathPattern)
-            .build())).thenReturn(new URL("https://domain.com/"));
+            .build())).thenReturn(URI.create("https://domain.com/").toURL());
         final GetDistributionCommand getDistributionCommand = new GetDistributionCommand(platform, version,
             distributionUrlRoot, distributionUrlPathPattern, CredentialsFixture.someCredentials(),
             ProxySettingsFixture.someProxySettings(), RetrySettingsFixture.someRetrySettings(), temporaryDirectoryPath);
@@ -148,7 +150,7 @@ class GetDistributionTest {
         final Credentials distributionServerCredentials = CredentialsFixture.someCredentials();
         final ProxySettings proxySettings = ProxySettingsFixture.someProxySettings();
         final RetrySettings retrySettings = RetrySettingsFixture.someRetrySettings();
-        final URL downloadUrl = new URL(distributionUrlRoot + distributionUrlPathPattern);
+        final URL downloadUrl = URI.create(distributionUrlRoot + distributionUrlPathPattern).toURL();
         when(resolveNodeDistributionUrl.execute(ResolveNodeDistributionUrlCommand
             .builder()
             .platform(platform)
@@ -182,7 +184,7 @@ class GetDistributionTest {
 
     @Test
     void should_fail_getting_distribution_when_distribution_is_invalid_after_download()
-        throws FrontendException, IOException {
+        throws FrontendException, IOException, URISyntaxException {
         final Platform platform = LOCAL_PLATFORM;
         final String version = VERSION;
         final String distributionUrlRoot = DISTRIBUTION_URL_ROOT;
@@ -190,7 +192,7 @@ class GetDistributionTest {
         final Credentials distributionServerCredentials = CredentialsFixture.someCredentials();
         final ProxySettings proxySettings = ProxySettingsFixture.someProxySettings();
         final RetrySettings retrySettings = RetrySettingsFixture.someRetrySettings();
-        final URL downloadUrl = new URL(distributionUrlRoot + distributionUrlPathPattern);
+        final URL downloadUrl = URI.create(distributionUrlRoot + distributionUrlPathPattern).toURL();
         when(resolveNodeDistributionUrl.execute(ResolveNodeDistributionUrlCommand
             .builder()
             .platform(platform)
@@ -232,7 +234,8 @@ class GetDistributionTest {
     }
 
     @Test
-    void should_get_valid_distribution_when_validator_is_available() throws FrontendException, IOException {
+    void should_get_valid_distribution_when_validator_is_available()
+        throws FrontendException, IOException, URISyntaxException {
         final Platform platform = LOCAL_PLATFORM;
         final String version = VERSION;
         final String distributionUrlRoot = DISTRIBUTION_URL_ROOT;
@@ -240,7 +243,7 @@ class GetDistributionTest {
         final Credentials distributionServerCredentials = CredentialsFixture.someCredentials();
         final ProxySettings proxySettings = ProxySettingsFixture.someProxySettings();
         final RetrySettings retrySettings = RetrySettingsFixture.someRetrySettings();
-        final URL downloadUrl = new URL(distributionUrlRoot + distributionUrlPathPattern);
+        final URL downloadUrl = URI.create(distributionUrlRoot + distributionUrlPathPattern).toURL();
         when(resolveNodeDistributionUrl.execute(ResolveNodeDistributionUrlCommand
             .builder()
             .platform(platform)

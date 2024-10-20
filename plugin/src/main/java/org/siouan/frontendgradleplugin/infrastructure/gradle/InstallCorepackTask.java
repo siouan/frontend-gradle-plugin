@@ -81,7 +81,7 @@ public class InstallCorepackTask extends AbstractRunCommandTask {
             scriptBuilder.append("@");
             scriptBuilder.append(version);
         }
-        this.script.set(scriptBuilder.toString());
+        this.executableArgs.set(scriptBuilder.toString());
         this.environmentVariables.put(COREPACK_ENABLE_STRICT_VARIABLE, "0");
 
         super.execute();

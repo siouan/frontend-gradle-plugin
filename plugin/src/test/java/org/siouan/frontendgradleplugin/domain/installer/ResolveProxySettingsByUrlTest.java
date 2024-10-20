@@ -8,6 +8,7 @@ import static org.siouan.frontendgradleplugin.domain.installer.ProxySettingsFixt
 
 import java.net.MalformedURLException;
 import java.net.Proxy;
+import java.net.URI;
 import java.net.URL;
 import java.util.Set;
 
@@ -50,7 +51,7 @@ class ResolveProxySettingsByUrlTest {
 
     @Test
     void should_fail_when_url_uses_unsupported_protocol() throws MalformedURLException {
-        final URL resourceUrl = new URL("ftp", HOST, PORT, "/");
+        final URL resourceUrl = URI.create("ftp://" + HOST + ':' + PORT + "/").toURL();
         final ResolveProxySettingsByUrlCommand command = ResolveProxySettingsByUrlCommand
             .builder()
             .httpProxyPort(80)
@@ -70,7 +71,7 @@ class ResolveProxySettingsByUrlTest {
                 .builder()
                 .httpProxyPort(80)
                 .httpsProxyPort(443)
-                .resourceUrl(new URL(FILE_RESOURCE_URL))
+                .resourceUrl(URI.create(FILE_RESOURCE_URL).toURL())
                 .build())
             .getProxyType()).isEqualTo(Proxy.Type.DIRECT);
 
@@ -80,7 +81,7 @@ class ResolveProxySettingsByUrlTest {
     @Test
     void should_return_direct_connection_when_url_uses_non_proxy_host() throws MalformedURLException {
         final Set<String> nonProxyHosts = Set.of(PLUGIN_PROXY_HOST);
-        final URL resourceUrl = new URL(HTTP_RESOURCE_URL);
+        final URL resourceUrl = URI.create(HTTP_RESOURCE_URL).toURL();
         when(isNonProxyHost.execute(IsNonProxyHostCommand
             .builder()
             .nonProxyHosts(nonProxyHosts)
@@ -103,7 +104,7 @@ class ResolveProxySettingsByUrlTest {
     @Test
     void should_return_http_proxy_settings_when_url_uses_non_secure_http_protocol() throws MalformedURLException {
         final Set<String> nonProxyHosts = Set.of();
-        final URL resourceUrl = new URL(HTTP_RESOURCE_URL);
+        final URL resourceUrl = URI.create(HTTP_RESOURCE_URL).toURL();
         when(isNonProxyHost.execute(IsNonProxyHostCommand
             .builder()
             .nonProxyHosts(nonProxyHosts)
@@ -141,7 +142,7 @@ class ResolveProxySettingsByUrlTest {
     @Test
     void should_return_https_proxy_settings_when_url_uses_secure_http_protocol() throws MalformedURLException {
         final Set<String> nonProxyHosts = Set.of();
-        final URL resourceUrl = new URL(HTTPS_RESOURCE_URL);
+        final URL resourceUrl = URI.create(HTTPS_RESOURCE_URL).toURL();
         when(isNonProxyHost.execute(IsNonProxyHostCommand
             .builder()
             .nonProxyHosts(nonProxyHosts)

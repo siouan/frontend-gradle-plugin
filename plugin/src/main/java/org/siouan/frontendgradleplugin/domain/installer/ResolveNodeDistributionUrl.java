@@ -1,6 +1,7 @@
 package org.siouan.frontendgradleplugin.domain.installer;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 
 import lombok.RequiredArgsConstructor;
@@ -63,6 +64,6 @@ public class ResolveNodeDistributionUrl {
         } else {
             pathPatternWithTypeResolved = pathPatternWithArchIdResolved;
         }
-        return new URL(resolveNodeDistributionUrlCommand.getDownloadUrlRoot() + pathPatternWithTypeResolved);
+        return URI.create(resolveNodeDistributionUrlCommand.getDownloadUrlRoot() + pathPatternWithTypeResolved).toURL();
     }
 }

@@ -9,7 +9,7 @@ import static org.siouan.frontendgradleplugin.test.PluginTaskOutcome.FAILED;
 import static org.siouan.frontendgradleplugin.test.PluginTaskOutcome.SKIPPED;
 import static org.siouan.frontendgradleplugin.test.PluginTaskOutcome.SUCCESS;
 import static org.siouan.frontendgradleplugin.test.PluginTaskOutcome.UP_TO_DATE;
-import static org.siouan.frontendgradleplugin.test.Resources.getResourceUrl;
+import static org.siouan.frontendgradleplugin.test.Resources.getResourcePath;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -59,7 +59,7 @@ class InstallNodeTaskFuncTest {
     @Test
     void should_fail_when_distribution_download_url_is_invalid() throws IOException {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("20.14.0")
+            .nodeVersion("20.18.0")
             .nodeDistributionUrlRoot("protocol://domain/unknown");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
@@ -71,8 +71,8 @@ class InstallNodeTaskFuncTest {
     @Test
     void should_succeed_first_time_and_be_up_to_date_next_time() throws IOException {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("20.14.0")
-            .nodeDistributionUrl(getResourceUrl("node-v20.14.0.zip"));
+            .nodeVersion("20.18.0")
+            .nodeDistributionUrl(getResourcePath("node-v20.18.0.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, INSTALL_NODE_TASK_NAME);

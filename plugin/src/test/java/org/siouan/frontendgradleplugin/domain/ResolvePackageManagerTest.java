@@ -64,12 +64,13 @@ class ResolvePackageManagerTest {
         final Path packageManagerSpecificationFilePath = Paths.get("name.txt");
         final Path packageManagerExecutablePathFilePath = Paths.get("executable-path.txt");
         final PackageManagerType packageManagerType = PackageManagerType.PNPM;
-        final String packageManagerVersion = "5.9.2";
+        final String packageManagerVersion = "9.12.0";
         when(parsePackageManagerFromPackageJsonFile.execute(packageJsonFilePath)).thenReturn(
             PackageManager.builder().type(packageManagerType).version(packageManagerVersion).build());
         final Path executablePath = Paths.get("executable");
-        when(fileManager.writeString(packageManagerSpecificationFilePath, "pnpm@5.9.2", StandardCharsets.UTF_8,
-            StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)).thenReturn(packageManagerSpecificationFilePath);
+        when(fileManager.writeString(packageManagerSpecificationFilePath, "pnpm@9.12.0", StandardCharsets.UTF_8,
+            StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)).thenReturn(
+            packageManagerSpecificationFilePath);
         when(getExecutablePath.execute(any(GetExecutablePathCommand.class))).thenReturn(executablePath);
         when(fileManager.writeString(packageManagerExecutablePathFilePath, executablePath.toString(),
             StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)).thenReturn(

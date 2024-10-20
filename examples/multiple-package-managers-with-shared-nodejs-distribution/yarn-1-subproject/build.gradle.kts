@@ -1,8 +1,8 @@
 import org.siouan.frontendgradleplugin.infrastructure.gradle.ResolvePackageManagerTask
-import org.siouan.frontendgradleplugin.infrastructure.gradle.RunYarn
+import org.siouan.frontendgradleplugin.infrastructure.gradle.RunYarnTaskType
 
 plugins {
-    id("org.siouan.frontend-jdk17")
+    id("org.siouan.frontend-jdk11")
 }
 
 frontend {
@@ -14,7 +14,7 @@ tasks.named<ResolvePackageManagerTask>("resolvePackageManager") {
     dependsOn(":node-subproject:installNode")
 }
 
-tasks.register<RunYarn>("yarn1Version") {
+tasks.register<RunYarnTaskType>("yarn1Version") {
     dependsOn("installPackageManager")
     script.set("--version")
 }

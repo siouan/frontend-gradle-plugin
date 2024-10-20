@@ -10,7 +10,6 @@ import static org.siouan.frontendgradleplugin.test.PluginTaskOutcome.SKIPPED;
 import static org.siouan.frontendgradleplugin.test.PluginTaskOutcome.SUCCESS;
 import static org.siouan.frontendgradleplugin.test.PluginTaskOutcome.UP_TO_DATE;
 import static org.siouan.frontendgradleplugin.test.Resources.getResourcePath;
-import static org.siouan.frontendgradleplugin.test.Resources.getResourceUrl;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -35,8 +34,8 @@ class InstallPackageManagerTaskFuncTest {
     @Test
     void should_skip_task_when_package_json_file_does_not_exist() throws IOException {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("20.14.0")
-            .nodeDistributionUrl(getResourceUrl("node-v20.14.0.zip"));
+            .nodeVersion("20.18.0")
+            .nodeDistributionUrl(getResourcePath("node-v20.18.0.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, INSTALL_PACKAGE_MANAGER_TASK_NAME);
@@ -62,8 +61,8 @@ class InstallPackageManagerTaskFuncTest {
     void should_install_package_managers() throws IOException {
         Files.copy(getResourcePath("package-npm.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("20.14.0")
-            .nodeDistributionUrl(getResourceUrl("node-v20.14.0.zip"));
+            .nodeVersion("20.18.0")
+            .nodeDistributionUrl(getResourcePath("node-v20.18.0.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult installNpmResult1 = runGradle(projectDirectoryPath, INSTALL_PACKAGE_MANAGER_TASK_NAME);

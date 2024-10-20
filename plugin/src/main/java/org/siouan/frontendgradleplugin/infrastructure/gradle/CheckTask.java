@@ -21,6 +21,6 @@ public class CheckTask extends AbstractRunCommandTask {
     @Input
     @Optional
     public Property<String> getCheckScript() {
-        return script;
+        return executableArgs;
     }
 }

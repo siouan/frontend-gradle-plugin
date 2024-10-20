@@ -44,6 +44,7 @@ class ZipEntryTest {
         assertThat(entry.getUnixMode()).isEqualTo(unixMode);
         assertThat(entry.isDirectory()).isEqualTo(directory);
         assertThat(entry.isSymbolicLink()).isEqualTo(symbolicLink);
+        assertThat(entry.isSymbolicLink()).isEqualTo(symbolicLink);
         assertThat(entry.isFile()).isEqualTo(regularFileExpected);
     }
 

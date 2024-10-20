@@ -7,8 +7,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.siouan.frontendgradleplugin.test.Resources.getResourcePath;
 import static org.siouan.frontendgradleplugin.domain.PlatformFixture.LOCAL_PLATFORM;
+import static org.siouan.frontendgradleplugin.test.Resources.getResourcePath;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,7 +56,12 @@ class TarArchiverTest {
             .targetDirectoryPath(targetDirectoryPath)
             .build();
 
-        assertThatThrownBy(() -> archiver.initializeContext(settings)).isInstanceOf(IOException.class);
+        assertThatThrownBy(() -> {
+            try (@SuppressWarnings("unused") final TarArchiverContext tarArchiverContext = archiver.initializeContext(
+                settings)) {
+                // Do nothing since context initialization is expected to fail.
+            }
+        }).isInstanceOf(IOException.class);
 
         verifyNoMoreInteractions(fileManager);
     }
@@ -74,9 +79,12 @@ class TarArchiverTest {
             .build();
         final IOException expectedException = new IOException();
 
-        assertThatThrownBy(
-            () -> new TarArchiverWithFailure(fileManager, expectedException).initializeContext(settings)).isEqualTo(
-            expectedException);
+        assertThatThrownBy(() -> {
+            try (@SuppressWarnings("unused") final TarArchiverContext tarArchiverContext = new TarArchiverWithFailure(
+                fileManager, expectedException).initializeContext(settings)) {
+                // Do nothing since context initialization is expected to fail.
+            }
+        }).isEqualTo(expectedException);
 
         verify(inputStream).close();
         verifyNoMoreInteractions(inputStream, fileManager);
