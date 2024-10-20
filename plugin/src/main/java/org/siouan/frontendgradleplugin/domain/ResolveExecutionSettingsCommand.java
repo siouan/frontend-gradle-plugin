@@ -42,10 +42,10 @@ public class ResolveExecutionSettingsCommand {
     private final Platform platform;
 
     /**
-     * Script.
+     * Arguments appended to the executable name on the command line.
      */
     @EqualsAndHashCode.Include
-    private final String script;
+    private final String executableArgs;
 
     /**
      * Additional environment variables to pass to the process.

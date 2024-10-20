@@ -47,21 +47,21 @@
                             <template #groovy>
                                 <pre><FgpCode>plugins {
     <FgpCodeComment>// For JDK 21+</FgpCodeComment>
-    id 'org.siouan.frontend-jdk21' version '8.1.0'
+    id 'org.siouan.frontend-jdk21' version '9.0.0'
     <FgpCodeComment>// For JDK 17+</FgpCodeComment>
-    id 'org.siouan.frontend-jdk17' version '8.1.0'
+    id 'org.siouan.frontend-jdk17' version '9.0.0'
     <FgpCodeComment>// For JDK 11+</FgpCodeComment>
-    id 'org.siouan.frontend-jdk11' version '8.1.0'
+    id 'org.siouan.frontend-jdk11' version '9.0.0'
 }</FgpCode></pre>
                             </template>
                             <template #kotlin>
                                 <pre><FgpCode>plugins {
     <FgpCodeComment>// For JDK 21+</FgpCodeComment>
-    id("org.siouan.frontend-jdk21") version "8.1.0"
+    id("org.siouan.frontend-jdk21") version "9.0.0"
     <FgpCodeComment>// For JDK 17+</FgpCodeComment>
-    id("org.siouan.frontend-jdk17") version "8.1.0"
+    id("org.siouan.frontend-jdk17") version "9.0.0"
     <FgpCodeComment>// For JDK 11+</FgpCodeComment>
-    id("org.siouan.frontend-jdk11") version "8.1.0"
+    id("org.siouan.frontend-jdk11") version "9.0.0"
 }</FgpCode></pre>
                             </template>
                         </FgpGradleScripts>
@@ -82,11 +82,11 @@
     }
     dependencies {
         <FgpCodeComment>// For JDK 21+</FgpCodeComment>
-        classpath 'org.siouan:frontend-gradle-plugin-jdk21:8.1.0'
+        classpath 'org.siouan:frontend-gradle-plugin-jdk21:9.0.0'
         <FgpCodeComment>// For JDK 17+</FgpCodeComment>
-        classpath 'org.siouan:frontend-gradle-plugin-jdk17:8.1.0'
+        classpath 'org.siouan:frontend-gradle-plugin-jdk17:9.0.0'
         <FgpCodeComment>// For JDK 11+</FgpCodeComment>
-        classpath 'org.siouan:frontend-gradle-plugin-jdk11:8.1.0'
+        classpath 'org.siouan:frontend-gradle-plugin-jdk11:9.0.0'
     }
 }
 
@@ -104,11 +104,11 @@ apply plugin: 'org.siouan.frontend-jdk11'</FgpCode></pre>
     }
     dependencies {
         <FgpCodeComment>// For JDK 21+</FgpCodeComment>
-        classpath("org.siouan:frontend-gradle-plugin-jdk21:8.1.0")
+        classpath("org.siouan:frontend-gradle-plugin-jdk21:9.0.0")
         <FgpCodeComment>// For JDK 17+</FgpCodeComment>
-        classpath("org.siouan:frontend-gradle-plugin-jdk17:8.1.0")
+        classpath("org.siouan:frontend-gradle-plugin-jdk17:9.0.0")
         <FgpCodeComment>// For JDK 11+</FgpCodeComment>
-        classpath("org.siouan:frontend-gradle-plugin-jdk11:8.1.0")
+        classpath("org.siouan:frontend-gradle-plugin-jdk11:9.0.0")
     }
 }
 
@@ -131,16 +131,34 @@ apply(plugin = "org.siouan.frontend-jdk11")</FgpCode></pre>
             <li>Add <FgpCode>.frontend-gradle-plugin/</FgpCode> directory to <FgpCode>.gitignore</FgpCode> file(s).</li>
             <li>
                 <FgpSiteLink :path="$config.public.paths.configuration">Configure</FgpSiteLink>
-                your project, optionally with the help of
+                the build, test (check), deploy (publish) phases in your project, with the help of the
+                <FgpSiteLink :path="`${$config.public.paths.tasks}#dependency-tree`"
+                >built-in tasks dependency tree</FgpSiteLink> and optionally
                 <FgpRepoLink path="/tree/main/examples">examples</FgpRepoLink> provided for typical use cases.
             </li>
             <li>Run <FgpCode>gradlew build</FgpCode>.</li>
-            <li>
-                If you need to run
-                <FgpCode>node</FgpCode
-                >/<FgpCode>corepack</FgpCode>/<FgpCode>npm</FgpCode>/<FgpCode>pnpm</FgpCode>/<FgpCode>yarn</FgpCode>
-                executables from a command line (e.g. to start a development server), take a look at the
-                <FgpSiteLink :path="$config.public.paths.faqs">FAQ</FgpSiteLink>.
+            <li>Additionally:
+                <ul>
+                <li>
+                    If you need to execute an instant command with a node-based executable (e.g. to install a
+                    dependency), invoke one of the following tasks on a Gradle command line:
+                    <FgpTaskLink name="runNode" />, <FgpTaskLink name="runCorepack" />, <FgpTaskLink name="runNpm" />,
+                    <FgpTaskLink name="runPnpm" />, <FgpTaskLink name="runYarn" />.
+                </li>
+                <li>
+                    If you need to define a reusable node-based command with eventual custom inputs, outputs,
+                    or environment, use one of the following task types: <FgpTaskLink name="RunNodeTaskType" />,
+                    <FgpTaskLink name="RunCorepackTaskType" />, <FgpTaskLink name="RunNpmTaskType" />,
+                    <FgpTaskLink name="RunPnpmTaskType" />, <FgpTaskLink name="RunYarnTaskType" />.
+                </li>
+                <li>
+                    If you need to run
+                    <FgpCode>node</FgpCode
+                    >/<FgpCode>corepack</FgpCode>/<FgpCode>npm</FgpCode>/<FgpCode>pnpm</FgpCode>/<FgpCode>yarn</FgpCode>
+                    executables from a command line (e.g. to start a development server), take a look at the
+                    <FgpSiteLink :path="$config.public.paths.faqs">FAQ</FgpSiteLink>.
+                </li>
+                </ul>
             </li>
         </ol>
     </section>

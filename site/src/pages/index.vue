@@ -3,14 +3,17 @@
         <FgpMainTitle class="text-center">
             Frontend Gradle plugin
             <FgpImageLink
-                href="https://github.com/siouan/frontend-gradle-plugin/releases/tag/v8.1.0"
-                src="https://img.shields.io/badge/Latest%20release-8.1.0-blue.svg"
-                alt="Latest release 8.1.0"
-                class="ml-1"
+                href="https://github.com/siouan/frontend-gradle-plugin/releases/tag/v9.0.0"
+                src="https://img.shields.io/badge/Latest%20release-9.0.0-blue.svg"
+                alt="Latest release 9.0.0"
+            /> <FgpImageLink
+                href="https://github.com/siouan/frontend-gradle-plugin/stargazers"
+                src="https://img.shields.io/github/stars/siouan/frontend-gradle-plugin?style=badge&label=%E2%9C%AE&color=gold&cacheSeconds=86400"
+                alt="Stargazers"
             />
         </FgpMainTitle>
 
-        <p class="fs-2 text-center">Build <FgpNodejsLink />-based applications with <FgpGradleLink /> and <FgpCorepackLink /></p>
+        <FgpSubTitle class="fs-2 text-center">Build <FgpNodejsLink />-based applications with <FgpGradleLink /> and <FgpCorepackLink /></FgpSubTitle>
 
         <p>
             This plugin allows to build a <FgpNodejsLink />-based application relying on a package manager supported by
@@ -60,9 +63,12 @@
             <FgpCode>gradlew build</FgpCode>.
         </FgpFeatureCard>
         <FgpFeatureCard title="Customization" icon-class="fa fa-code-branch text-warning">
-            For more complex use cases, the plugin provides types to create tasks and run custom commands with
+            For more complex use cases, the plugin provides types to register custom tasks and run commands with
             <FgpNodejsLink />, <FgpCorepackLink />, <FgpNpmLink />, <FgpPnpmLink />, <FgpYarnLink />.
         </FgpFeatureCard>
+
+        <FgpSubTitle class="text-center">They use this plugin, thanks to these organizations!</FgpSubTitle>
+        <FgpReferenceOrganizations />
 
         <div class="card my-3">
             <div class="card-body">

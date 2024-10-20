@@ -1,6 +1,6 @@
 {
   "private": true,
-  "packageManager": "yarn@3.6.1",
+  "packageManager": "yarn@4.5.0",
   "scripts": {
     "build": "echo Building frontend",
     "check": "echo Checking frontend && yarn run lint && yarn run test",

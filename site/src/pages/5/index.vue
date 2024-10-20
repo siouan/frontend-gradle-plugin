@@ -7,6 +7,10 @@
                 src="https://img.shields.io/badge/Latest%20release-5.3.0-blue.svg"
                 alt="Latest release 5.3.0"
                 class="ml-1"
+            /> <FgpImageLink
+                href="https://github.com/siouan/frontend-gradle-plugin/stargazers"
+                src="https://img.shields.io/github/stars/siouan/frontend-gradle-plugin?style=badge&label=%E2%9C%AE&color=gold&cacheSeconds=86400"
+                alt="Stargazers"
             />
         </FgpMainTitle>
 
@@ -53,6 +57,9 @@
             For more complex use cases, the plugin provides types to create tasks and run custom commands with
             <FgpNodejsLink />, <FgpNpmLink />, <FgpNpxLinkV6 />, <FgpYarnLink :version="1" />.
         </FgpFeatureCard>
+
+        <FgpSubTitle class="text-center">They use this plugin, thanks to these organizations!</FgpSubTitle>
+        <FgpReferenceOrganizations />
 
         <div class="card my-3">
             <div class="card-body">

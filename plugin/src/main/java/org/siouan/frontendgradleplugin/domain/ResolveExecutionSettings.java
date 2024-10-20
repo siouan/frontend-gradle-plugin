@@ -79,7 +79,7 @@ public class ResolveExecutionSettings {
             // The command that must be executed in the terminal must be a single argument on itself (like if it was
             // quoted).
             args.add(
-                escapeWhitespacesFromCommandLineToken(executablePath) + " " + command.getScript().trim());
+                escapeWhitespacesFromCommandLineToken(executablePath) + " " + command.getExecutableArgs().trim());
         } else {
             executable = UNIX_EXECUTABLE_PATH;
             args.add(UNIX_EXECUTABLE_AUTOEXIT_FLAG);
@@ -87,7 +87,7 @@ public class ResolveExecutionSettings {
                 escapeWhitespacesFromCommandLineToken(executablePath) + UNIX_SCRIPT_ARG_SEPARATOR_CHAR + String.join(
                     Character.toString(UNIX_SCRIPT_ARG_SEPARATOR_CHAR),
                     new StringSplitter(UNIX_SCRIPT_ARG_SEPARATOR_CHAR, UNIX_SCRIPT_ARG_ESCAPE_CHAR).execute(
-                        command.getScript().trim())));
+                        command.getExecutableArgs().trim())));
         }
 
         final Set<Path> executablePaths = new HashSet<>();

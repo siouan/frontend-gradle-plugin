@@ -113,7 +113,7 @@ The project relies on [GitHub Actions][github-actions] to integrate continuously
 repository. The configuration actually allows to build and test the plugin with Adoptium Temurin JDK 21 64 bits, on the
 environments below:
 
-- Linux Ubuntu 22.04.4
+- Linux Ubuntu 24.04
 - Mac OS 14.5
 - Windows Server 2022
 

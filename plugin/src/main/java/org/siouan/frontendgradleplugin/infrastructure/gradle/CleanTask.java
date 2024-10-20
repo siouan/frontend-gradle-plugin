@@ -21,6 +21,6 @@ public class CleanTask extends AbstractRunCommandTask {
     @Input
     @Optional
     public Property<String> getCleanScript() {
-        return script;
+        return executableArgs;
     }
 }

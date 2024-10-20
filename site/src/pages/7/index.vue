@@ -7,6 +7,10 @@
                 src="https://img.shields.io/badge/Latest%20release-7.0.0-blue.svg"
                 alt="Latest release 7.0.0"
                 class="ml-1"
+            /> <FgpImageLink
+                href="https://github.com/siouan/frontend-gradle-plugin/stargazers"
+                src="https://img.shields.io/github/stars/siouan/frontend-gradle-plugin?style=badge&label=%E2%9C%AE&color=gold&cacheSeconds=86400"
+                alt="Stargazers"
             />
         </FgpMainTitle>
 

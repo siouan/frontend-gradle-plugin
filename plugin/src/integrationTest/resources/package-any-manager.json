@@ -4,5 +4,5 @@
   "description": "Empty project to test package manager resolution",
   "private": true,
   "license": "UNLICENSED",
-  "packageManager": "npm@9.6.7"
+  "packageManager": "npm@10.9.0"
 }
