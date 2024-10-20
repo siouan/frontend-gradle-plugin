@@ -50,17 +50,17 @@
 <script setup lang="ts">
 const inputs = [{
     name: 'packageJsonFile',
-    type: 'RF',
-    binding: 'C',
+    type: TaskPropertyType.REGULAR_FILE,
+    binding: TaskPropertyBinding.CUSTOM,
     optionalHint: 'Whether this file exists or not changes the behavior of the task, see description hereafter.'
 }, {
     name: 'nodeInstallDirectory',
-    type: 'F',
-    binding: 'P',
+    type: TaskPropertyType.FILE,
+    binding: TaskPropertyBinding.PROPERTY,
     property: 'nodeInstallDirectory'
 }];
 const outputs = [
-    { name: 'packageManagerSpecificationFile', type: 'RF', binding: 'C' },
-    { name: 'packageManagerExecutablePathFile', type: 'RF', binding: 'C' }
+    { name: 'packageManagerSpecificationFile', type: TaskPropertyType.REGULAR_FILE, binding: TaskPropertyBinding.CUSTOM },
+    { name: 'packageManagerExecutablePathFile', type: TaskPropertyType.REGULAR_FILE, binding: TaskPropertyBinding.CUSTOM }
 ];
 </script>

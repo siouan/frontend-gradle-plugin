@@ -49,23 +49,23 @@
 <script setup lang="ts">
 const inputs = [{
     name: 'packageJsonDirectory',
-    type: 'F',
-    binding: 'P',
+    type: TaskPropertyType.FILE,
+    binding: TaskPropertyBinding.PROPERTY,
     property: 'packageJsonDirectory'
 }, {
     name: 'nodeInstallDirectory',
-    type: 'F',
-    binding: 'P',
+    type: TaskPropertyType.FILE,
+    binding: TaskPropertyBinding.PROPERTY,
     property: 'nodeInstallDirectory'
 }, {
     name: 'corepackVersion',
-    type: 'S',
-    binding: 'P',
+    type: TaskPropertyType.STRING,
+    binding: TaskPropertyBinding.PROPERTY,
     property: 'corepackVersion'
 }];
 const outputs = [{
     name: 'corepackModuleDirectory',
-    type: 'D',
-    binding: 'C'
+    type: TaskPropertyType.DIRECTORY,
+    binding: TaskPropertyBinding.CUSTOM
 }];
 </script>
