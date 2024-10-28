@@ -152,6 +152,7 @@ class DownloadResourceTest {
 
         verify(resourceInputChannel, times(2)).close();
         verify(httpResponse, times(2)).close();
+        verify(fileManager, times(2)).deleteIfExists(downloadResourceCommand.getTemporaryFilePath());
         verifyNoMoreInteractions(fileManager, channelProvider, httpClientProvider, httpClient);
     }
 
@@ -175,6 +176,7 @@ class DownloadResourceTest {
 
         verify(resourceInputChannel).close();
         verify(httpResponse).close();
+        verify(fileManager).deleteIfExists(downloadResourceCommand.getTemporaryFilePath());
         verifyNoMoreInteractions(fileManager, channelProvider, httpClientProvider, httpClient);
     }
 
@@ -265,7 +267,7 @@ class DownloadResourceTest {
 
         verify(resourceInputChannel, times(4)).close();
         verify(httpResponse, times(5)).close();
-        verify(fileManager, times(4)).deleteIfExists(downloadResourceCommand.getTemporaryFilePath());
+        verify(fileManager, times(5)).deleteIfExists(downloadResourceCommand.getTemporaryFilePath());
         verifyNoMoreInteractions(fileManager, channelProvider, httpClientProvider, httpClient);
     }
 

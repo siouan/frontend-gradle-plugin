@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.Proxy;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 
@@ -107,13 +108,11 @@ public class DownloadResource {
                     throw new ResourceDownloadException(errorMessage);
                 }
             }
+        } catch (final ResourceDownloadException e) {
+            deleteTemporaryFileOrWarn(command.getTemporaryFilePath());
+            throw e;
         } catch (final IOException e) {
-            try {
-                fileManager.deleteIfExists(command.getTemporaryFilePath());
-            } catch (IOException ex) {
-                // Ignore this second exception as it would hide the first exception.
-                logger.warn("Unexpected error while deleting file after error: {}", command.getTemporaryFilePath());
-            }
+            deleteTemporaryFileOrWarn(command.getTemporaryFilePath());
             throw new RetryableResourceDownloadException(e);
         }
     }
@@ -124,6 +123,15 @@ public class DownloadResource {
         if (maxDownloadAttempts > 1) {
             logger.info("Attempt {} of {}: {}", retryEvent.getNumberOfRetryAttempts(), maxDownloadAttempts,
                 retryEvent.getLastThrowable().getMessage());
+        }
+    }
+
+    public void deleteTemporaryFileOrWarn(final Path temporaryFilePath) {
+        try {
+            fileManager.deleteIfExists(temporaryFilePath);
+        } catch (IOException e) {
+            // Ignore this second exception as it would hide the first exception.
+            logger.warn("Unexpected error while deleting file after error: {}", temporaryFilePath);
         }
     }
 }
