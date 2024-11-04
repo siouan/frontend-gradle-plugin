@@ -2,9 +2,9 @@
 <a href="https://www.npmjs.com/" title="npm">npm</a>, <a href="https://pnpm.io/" title="pnpm">pnpm</a>,
 <a href="https://yarnpkg.com/" title="Yarn">Yarn</a> builds</h2> 
 <p align="center">
-    <a href="https://github.com/siouan/frontend-gradle-plugin/releases/tag/v9.0.1"><img src="https://img.shields.io/badge/Latest%20release-9.0.1-blue.svg" alt="Latest release 9.0.1"/></a>
+    <a href="https://github.com/siouan/frontend-gradle-plugin/releases/tag/v9.1.0"><img src="https://img.shields.io/badge/Latest%20release-9.1.0-blue.svg" alt="Latest release 9.1.0"/></a>
     <br/>
-    <a href="https://github.com/siouan/frontend-gradle-plugin/actions/workflows/build.yml"><img src="https://github.com/siouan/frontend-gradle-plugin/actions/workflows/build.yml/badge.svg?branch=9.0-jdk21" alt="Build status"/></a>
+    <a href="https://github.com/siouan/frontend-gradle-plugin/actions/workflows/build.yml"><img src="https://github.com/siouan/frontend-gradle-plugin/actions/workflows/build.yml/badge.svg?branch=9.1-jdk21" alt="Build status"/></a>
     <a href="https://sonarcloud.io/project/overview?id=siouan_frontend-gradle-plugin"><img src="https://sonarcloud.io/api/project_badges/measure?project=siouan_frontend-gradle-plugin&metric=alert_status" alt="Quality gate status"/></a>
     <a href="https://sonarcloud.io/summary/overall?id=siouan_frontend-gradle-plugin"><img src="https://sonarcloud.io/api/project_badges/measure?project=siouan_frontend-gradle-plugin&metric=coverage" alt="Code coverage"/></a>
     <a href="https://sonarcloud.io/summary/overall?id=siouan_frontend-gradle-plugin"><img src="https://sonarcloud.io/api/project_badges/measure?project=siouan_frontend-gradle-plugin&metric=reliability_rating" alt="Reliability"/></a>
