@@ -19,12 +19,14 @@ import lombok.ToString;
 @ToString(onlyExplicitlyIncluded = true)
 public class Platform {
 
+    private static final Set<String> SUPPORTED_AIX_OS_IDS = Set.of("aix");
+
     private static final Set<String> SUPPORTED_JVM_ARM_32_BITS_ARCH_IDS = Set.of("arm");
 
     private static final Set<String> SUPPORTED_JVM_ARM_64_BITS_ARCH_IDS = Set.of("aarch64");
 
     private static final Set<String> SUPPORTED_JVM_64_BITS_ARCH_IDS = Stream
-        .concat(Stream.of("x64", "x86_64", "amd64", "ppc", "sparc", "aarch64"),
+        .concat(Stream.of("x64", "x86_64", "amd64", "ppc64", "sparc"),
             SUPPORTED_JVM_ARM_64_BITS_ARCH_IDS.stream())
         .collect(toUnmodifiableSet());
 
@@ -73,6 +75,15 @@ public class Platform {
      */
     public boolean isArm32BitsArch() {
         return matchesAnyIdPart(jvmArch, SUPPORTED_JVM_ARM_32_BITS_ARCH_IDS);
+    }
+
+    /**
+     * Tells whether the platform O/S is a AIX O/S.
+     *
+     * @return {@code true} if the platform O/S is a AIX O/S.
+     */
+    public boolean isAixOs() {
+        return matchesAnyIdPart(osName, SUPPORTED_AIX_OS_IDS);
     }
 
     /**
