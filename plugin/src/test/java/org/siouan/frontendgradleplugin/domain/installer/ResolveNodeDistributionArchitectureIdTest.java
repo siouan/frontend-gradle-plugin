@@ -6,6 +6,7 @@ import static org.siouan.frontendgradleplugin.domain.installer.ResolveNodeDistri
 import static org.siouan.frontendgradleplugin.domain.installer.ResolveNodeDistributionArchitectureId.LINUX_ARM32_ARCH;
 import static org.siouan.frontendgradleplugin.domain.installer.ResolveNodeDistributionArchitectureId.LINUX_ARM64_ARCH;
 import static org.siouan.frontendgradleplugin.domain.installer.ResolveNodeDistributionArchitectureId.LINUX_PPC64LE_ARCH;
+import static org.siouan.frontendgradleplugin.domain.installer.ResolveNodeDistributionArchitectureId.LINUX_S390X_ARCH;
 import static org.siouan.frontendgradleplugin.domain.installer.ResolveNodeDistributionArchitectureId.LINUX_X64_ARCH;
 import static org.siouan.frontendgradleplugin.domain.installer.ResolveNodeDistributionArchitectureId.MACOS_ARM64_ARCH;
 import static org.siouan.frontendgradleplugin.domain.installer.ResolveNodeDistributionArchitectureId.MACOS_X64_ARCH;
@@ -77,6 +78,11 @@ class ResolveNodeDistributionArchitectureIdTest {
     @Test
     void should_resolve_architecture_id_when_os_is_linux_and_jvm_arch_is_ppc64le() {
         assertThat(usecase.execute(aPlatform("ppc64le", "Linux"))).contains(LINUX_PPC64LE_ARCH);
+    }
+
+    @Test
+    void should_resolve_architecture_id_when_os_is_linux_and_jvm_arch_is_s390x() {
+        assertThat(usecase.execute(aPlatform("s390x", "Linux"))).contains(LINUX_S390X_ARCH);
     }
 
     @Test

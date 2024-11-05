@@ -3,6 +3,7 @@ package org.siouan.frontendgradleplugin.domain;
 import static java.util.stream.Collectors.toUnmodifiableSet;
 
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import lombok.Builder;
@@ -25,11 +26,14 @@ public class Platform {
 
     private static final Set<String> SUPPORTED_JVM_ARM_64_BITS_ARCH_IDS = Set.of("aarch64");
 
-    private static final Set<String> SUPPORTED_JVM_PPC_LE_64_BITS_ARCH_IDS = Set.of("ppc64le");
+    private static final Set<String> SUPPORTED_JVM_PPC_64_BITS_LE_ARCH_IDS = Set.of("ppc64le");
+
+    private static final Set<String> SUPPORTED_JVM_S390X_64_BITS_ARCH_IDS = Set.of("s390x");
 
     private static final Set<String> SUPPORTED_JVM_64_BITS_ARCH_IDS = Stream
-        .concat(Stream.of("x64", "x86_64", "amd64", "ppc64", "sparc"),
-            SUPPORTED_JVM_ARM_64_BITS_ARCH_IDS.stream())
+        .of(Stream.of("x64", "x86_64", "amd64", "ppc64", "sparc"), SUPPORTED_JVM_ARM_64_BITS_ARCH_IDS.stream(),
+            SUPPORTED_JVM_PPC_64_BITS_LE_ARCH_IDS.stream(), SUPPORTED_JVM_S390X_64_BITS_ARCH_IDS.stream())
+        .flatMap(Function.identity())
         .collect(toUnmodifiableSet());
 
     private static final Set<String> SUPPORTED_LINUX_OS_IDS = Set.of("linux");
@@ -85,7 +89,16 @@ public class Platform {
      * @return {@code true} if the architecture is an ARM 64 bits architecture.
      */
     public boolean isPpc64BitsLeArch() {
-        return matchesAnyIdPart(jvmArch, SUPPORTED_JVM_PPC_LE_64_BITS_ARCH_IDS);
+        return matchesAnyIdPart(jvmArch, SUPPORTED_JVM_PPC_64_BITS_LE_ARCH_IDS);
+    }
+
+    /**
+     * Tells whether the JVM has a S390X 64 bits architecture.
+     *
+     * @return {@code true} if the architecture is a S390X 64 bits architecture.
+     */
+    public boolean isS390X64BitsArch() {
+        return matchesAnyIdPart(jvmArch, SUPPORTED_JVM_S390X_64_BITS_ARCH_IDS);
     }
 
     /**
