@@ -67,6 +67,11 @@ class PlatformTest {
     }
 
     @Test
+    void should_return_true_when_checking_if_jvm_arch_containing_s390x_is_a_s390x_64_bits_arch() {
+        assertThat(aPlatformWithJvmArch("_S390x_").isS390X64BitsArch()).isTrue();
+    }
+
+    @Test
     void should_return_false_when_checking_if_os_name_containing_ibm_is_an_aix_os() {
         assertThat(aPlatformWithOsName("_Unix_").isAixOs()).isFalse();
     }
