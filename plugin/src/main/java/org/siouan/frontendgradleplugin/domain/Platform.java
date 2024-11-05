@@ -25,6 +25,8 @@ public class Platform {
 
     private static final Set<String> SUPPORTED_JVM_ARM_64_BITS_ARCH_IDS = Set.of("aarch64");
 
+    private static final Set<String> SUPPORTED_JVM_PPC_LE_64_BITS_ARCH_IDS = Set.of("ppc64le");
+
     private static final Set<String> SUPPORTED_JVM_64_BITS_ARCH_IDS = Stream
         .concat(Stream.of("x64", "x86_64", "amd64", "ppc64", "sparc"),
             SUPPORTED_JVM_ARM_64_BITS_ARCH_IDS.stream())
@@ -75,6 +77,15 @@ public class Platform {
      */
     public boolean isArm32BitsArch() {
         return matchesAnyIdPart(jvmArch, SUPPORTED_JVM_ARM_32_BITS_ARCH_IDS);
+    }
+
+    /**
+     * Tells whether the JVM has an ARM 64 bits architecture.
+     *
+     * @return {@code true} if the architecture is an ARM 64 bits architecture.
+     */
+    public boolean isPpc64BitsLeArch() {
+        return matchesAnyIdPart(jvmArch, SUPPORTED_JVM_PPC_LE_64_BITS_ARCH_IDS);
     }
 
     /**
