@@ -11,14 +11,22 @@ public final class PlatformFixture {
 
     public static final Platform LOCAL_PLATFORM = aPlatform(getSystemJvmArch(), getSystemOsName());
 
-    public static final Platform ANY_WINDOWS_PLATFORM = aPlatform(getSystemJvmArch(), "Windows NT");
+    public static final Platform ANY_WINDOWS_PLATFORM = aPlatformWithOsName("Windows NT");
 
-    public static final Platform ANY_UNIX_PLATFORM = aPlatform(getSystemJvmArch(), "Linux");
+    public static final Platform ANY_UNIX_PLATFORM = aPlatformWithOsName("Linux");
 
     public static final Platform ANY_NON_WINDOWS_PLATFORM = ANY_UNIX_PLATFORM;
 
     public static Platform aPlatform() {
-        return aPlatform(getSystemJvmArch(), "Linux");
+        return aPlatformWithOsName("Linux");
+    }
+
+    public static Platform aPlatformWithOsName(final String osName) {
+        return aPlatform(getSystemJvmArch(), osName);
+    }
+
+    public static Platform aPlatformWithJvmArch(final String jvmArch) {
+        return aPlatform(jvmArch, getSystemOsName());
     }
 
     public static Platform aPlatform(final String jvmArch, final String osName) {
