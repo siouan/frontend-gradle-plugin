@@ -39,6 +39,9 @@ export default defineNuxtConfig({
     devtools: {
         enabled: true,
     },
+    i18n: {
+        vueI18n: '~/i18n/i18n.config.ts'
+    },
     modules: ['@nuxtjs/i18n', '@pinia/nuxt', '@nuxt/eslint'],
     runtimeConfig: {
         public: {
