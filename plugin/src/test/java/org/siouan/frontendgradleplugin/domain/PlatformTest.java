@@ -42,6 +42,11 @@ class PlatformTest {
     }
 
     @Test
+    void should_return_true_when_checking_if_jvm_arch_containing_ppc64le_is_a_64_bits_arch() {
+        assertThat(aPlatformWithJvmArch("_Ppc64Le_").is64BitsArch()).isTrue();
+    }
+
+    @Test
     void should_return_true_when_checking_if_jvm_arch_containing_sparc_is_a_64_bits_arch() {
         assertThat(aPlatformWithJvmArch("_Sparc_").is64BitsArch()).isTrue();
     }
@@ -54,6 +59,11 @@ class PlatformTest {
     @Test
     void should_return_true_when_checking_if_jvm_arch_containing_aarch64_is_an_arm_64_bits_arch() {
         assertThat(aPlatformWithJvmArch("_Aarch64_").isArm64BitsArch()).isTrue();
+    }
+
+    @Test
+    void should_return_true_when_checking_if_jvm_arch_containing_ppc64le_is_a_ppc_little_endian_64_bits_arch() {
+        assertThat(aPlatformWithJvmArch("_Ppc64Le_").isPpc64BitsLeArch()).isTrue();
     }
 
     @Test
