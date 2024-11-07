@@ -53,23 +53,23 @@ configurations["integrationTestRuntimeOnly"]
 dependencies {
     implementation(gradleApi())
     implementation("io.github.resilience4j:resilience4j-retry:2.2.0")
-    implementation("org.apache.httpcomponents.client5:httpclient5:5.4")
+    implementation("org.apache.httpcomponents.client5:httpclient5:5.4.1")
     implementation("org.apache.commons:commons-compress:1.27.1")
     implementation("org.json:json:20240303")
     compileOnly("org.projectlombok:lombok:1.18.34")
     annotationProcessor("org.projectlombok:lombok:1.18.34")
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.11.1")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.11.1")
-    testImplementation("org.mockito:mockito-core:5.14.1")
-    testImplementation("org.mockito:mockito-junit-jupiter:5.14.1")
-    testImplementation("org.junit-pioneer:junit-pioneer:2.2.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.11.3")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.11.3")
+    testImplementation("org.mockito:mockito-core:5.14.2")
+    testImplementation("org.mockito:mockito-junit-jupiter:5.14.2")
+    testImplementation("org.junit-pioneer:junit-pioneer:2.3.0")
     testImplementation("org.assertj:assertj-core:3.26.3")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.11.1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.11.3")
     testCompileOnly("org.projectlombok:lombok:1.18.34")
     testAnnotationProcessor("org.projectlombok:lombok:1.18.34")
 
-    integrationTestImplementation("org.wiremock:wiremock:3.9.1")
+    integrationTestImplementation("org.wiremock:wiremock:3.9.2")
 }
 
 idea {
