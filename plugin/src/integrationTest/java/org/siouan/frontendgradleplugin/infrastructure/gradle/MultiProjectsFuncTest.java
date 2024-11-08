@@ -84,8 +84,7 @@ class MultiProjectsFuncTest {
             .checkScript("run check")
             .publishScript("run publish");
         createBuildFile(npmSubProjectPath, npmSubProjectFrontendProperties.toMap(),
-            "tasks.named('installPackageManager').configure {" + "dependsOn project(':" + YARN_SUB_PROJECT_NAME
-                + "').installNode\n}");
+            "tasks.named('installPackageManager').configure { dependsOn(':" + YARN_SUB_PROJECT_NAME + ":installNode') }");
 
         // Sub-project 3
         final Path pnpmSubProjectPath = Files.createDirectory(projectDirectoryPath.resolve(PNPM_SUB_PROJECT_NAME));
@@ -99,8 +98,7 @@ class MultiProjectsFuncTest {
             .checkScript("run check")
             .publishScript("run publish");
         createBuildFile(pnpmSubProjectPath, pnpmSubProjectFrontendProperties.toMap(),
-            "tasks.named('installPackageManager').configure {" + "dependsOn project(':" + YARN_SUB_PROJECT_NAME
-                + "').installNode\n}");
+            "tasks.named('installPackageManager').configure { dependsOn(':" + YARN_SUB_PROJECT_NAME + ":installNode') }");
 
         final BuildResult result1 = runGradle(projectDirectoryPath, GRADLE_CLEAN_TASK_NAME,
             LifecycleBasePlugin.BUILD_TASK_NAME, GRADLE_PUBLISH_TASK_NAME);

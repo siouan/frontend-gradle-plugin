@@ -144,7 +144,7 @@ installFrontend {
 // Consequently, task 'otherTask' is also created and configured later. Let's also reinforce this behaviour
 // by using its provider to retrieve the task.</FgpCodeComment>
 tasks.named('installFrontend') {
-    dependsOn tasks.named('otherTask')
+    dependsOn 'otherTask'
     inputs.files('package.json', 'package-lock.json')
 }
 
@@ -158,7 +158,7 @@ task eagerTask {
 // Consequently, task 'installFrontend' is also created and configured later. Let's also reinforce this
 // behaviour by using its provider to retrieve the task.</FgpCodeComment>
 tasks.register('lazyTask') {
-    dependsOn tasks.named('installFrontend')
+    dependsOn 'installFrontend'
 }</FgpCode></pre>
                 </template>
                 <template #kotlin>
@@ -172,7 +172,7 @@ installFrontend {
 <FgpCodeComment>// MODERN SYNTAX: task 'installFrontend' is created and configured only when Gradle is about to execute it.
 // Consequently, task 'otherTask' is also created and configured later.</FgpCodeComment>
 tasks.named&lt;InstallFrontendTask&gt;("installFrontend") {
-    dependsOn(tasks.named("otherTask"))
+    dependsOn("otherTask")
     inputs.files("package.json", "package-lock.json")
 }
 
@@ -186,7 +186,7 @@ task eagerTask {
 // Consequently, task 'installFrontend' is also created and configured later. Let's also reinforce this
 // behaviour by using its provider to retrieve the task.</FgpCodeComment>
 tasks.register("lazyTask") {
-    dependsOn(tasks.named("installFrontend"))
+    dependsOn("installFrontend")
 }</FgpCode></pre>
                 </template>
             </FgpGradleScripts>
