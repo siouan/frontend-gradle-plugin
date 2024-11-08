@@ -9,13 +9,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.siouan.frontendgradleplugin.domain.PlatformFixture.LOCAL_PLATFORM;
+import static org.siouan.frontendgradleplugin.domain.PlatformFixture.aPlatformWithOsName;
 import static org.siouan.frontendgradleplugin.domain.installer.archiver.ArchiveEntryImpl.newDirectoryEntry;
 import static org.siouan.frontendgradleplugin.domain.installer.archiver.ArchiveEntryImpl.newFileEntry;
 import static org.siouan.frontendgradleplugin.domain.installer.archiver.ArchiveEntryImpl.newSymbolicLinkEntry;
 import static org.siouan.frontendgradleplugin.domain.installer.archiver.ArchiveEntryImpl.newUnknownEntry;
-import static org.siouan.frontendgradleplugin.domain.PlatformFixture.LOCAL_PLATFORM;
-import static org.siouan.frontendgradleplugin.domain.PlatformFixture.aPlatform;
-import static org.siouan.frontendgradleplugin.domain.SystemPropertiesFixture.getSystemJvmArch;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -87,8 +86,9 @@ class AbstractArchiverTest {
             .build();
         final ArchiverException expectedException = mock(ArchiverException.class);
 
-        assertThatThrownBy(() -> new ArchiverImpl(fileManager, context, entries, expectedException).explode(
-            explodeCommand)).isEqualTo(expectedException);
+        assertThatThrownBy(
+            () -> new ArchiverImpl(fileManager, context, entries, expectedException).explode(explodeCommand)).isEqualTo(
+            expectedException);
 
         verifyNoMoreInteractions(fileManager, context);
     }
@@ -126,8 +126,9 @@ class AbstractArchiverTest {
         entries.add(newFileEntry("unwritable-file", 511, null));
         final IOException expectedException = new IOException();
 
-        assertThatThrownBy(() -> new ArchiverImpl(fileManager, context, entries, expectedException).explode(
-            explodeCommand)).isEqualTo(expectedException);
+        assertThatThrownBy(
+            () -> new ArchiverImpl(fileManager, context, entries, expectedException).explode(explodeCommand)).isEqualTo(
+            expectedException);
 
         verify(context).close();
         verifyNoMoreInteractions(fileManager, context);
@@ -192,7 +193,7 @@ class AbstractArchiverTest {
         final Path rootFilePath = temporaryDirectoryPath.resolve("root-file");
         final ExplodeCommand explodeCommand = ExplodeCommand
             .builder()
-            .platform(aPlatform(getSystemJvmArch(), osName))
+            .platform(aPlatformWithOsName(osName))
             .archiveFilePath(archiveFilePath)
             .targetDirectoryPath(temporaryDirectoryPath)
             .build();
