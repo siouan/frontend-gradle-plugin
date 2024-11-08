@@ -14,7 +14,7 @@ import org.gradle.process.ExecOperations;
  * <pre>
  * import org.siouan.frontendgradleplugin.infrastructure.gradle.RunPnpmTaskType
  * tasks.register&lt;RunPnpmTaskType&gt;('mytask') {
- *     dependsOn(tasks.named('installPackageManager'))
+ *     dependsOn('installPackageManager')
  *     args.set('...')
  * }
  * </pre>

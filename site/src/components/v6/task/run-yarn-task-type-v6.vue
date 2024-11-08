@@ -16,16 +16,16 @@
                 <template #groovy>
                     <pre><FgpCode>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunYarn
 tasks.register('yarnVersion', RunYarn) {
-    <FgpCodeComment>// dependsOn tasks.named('installNode')
-    // dependsOn tasks.named('installFrontend')</FgpCodeComment>
+    <FgpCodeComment>// dependsOn 'installNode'
+    // dependsOn 'installFrontend'</FgpCodeComment>
     script = '--version'
 }</FgpCode></pre>
                 </template>
                 <template #kotlin>
                     <pre><FgpCode>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunYarn
 tasks.register&lt;RunYarn&gt;("yarnVersion") {
-    <FgpCodeComment>// dependsOn(tasks.named("installNode"))
-    // dependsOn(tasks.named("installFrontend"))</FgpCodeComment>
+    <FgpCodeComment>// dependsOn("installNode")
+    // dependsOn("installFrontend")</FgpCodeComment>
     script.set("--version")
 }</FgpCode></pre>
                 </template>

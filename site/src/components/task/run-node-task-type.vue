@@ -15,20 +15,20 @@
                 <template #groovy>
                     <pre><FgpCode>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNodeTaskType
 tasks.register('customNodeTask', RunNodeTaskType) {
-    dependsOn tasks.named('installNode')
+    dependsOn 'installNode'
     <FgpCodeComment>// If the command requires additional dependencies located in the 'package.json' file,
     // replace the previous task dependency with the one hereafter:
-    //dependsOn tasks.named('installFrontend')</FgpCodeComment>
+    //dependsOn 'installFrontend'</FgpCodeComment>
     args = '-v'
 }</FgpCode></pre>
                 </template>
                 <template #kotlin>
                     <pre><FgpCode>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNodeTaskType
 tasks.register&lt;RunNodeTaskType&gt;("customNodeTask") {
-    dependsOn(tasks.named("installNode")
+    dependsOn("installNode")
     <FgpCodeComment>// If the command requires additional dependencies located in the 'package.json' file,
     // replace the previous task dependency with the one hereafter:
-    //dependsOn(tasks.named("installFrontend")</FgpCodeComment>
+    //dependsOn("installFrontend")</FgpCodeComment>
     args.set("-v")
 }</FgpCode></pre>
                 </template>

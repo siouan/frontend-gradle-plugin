@@ -17,16 +17,16 @@
                 <template #groovy>
                     <pre><FgpCode>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpm
 tasks.register('npmVersion', RunNpm) {
-    <FgpCodeComment>// dependsOn tasks.named('installPackageManager')
-    // dependsOn tasks.named('installFrontend')</FgpCodeComment>
+    <FgpCodeComment>// dependsOn 'installPackageManager'
+    // dependsOn 'installFrontend'</FgpCodeComment>
     script = '-v'
 }</FgpCode></pre>
                 </template>
                 <template #kotlin>
                     <pre><FgpCode>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpm
 tasks.register&lt;RunNpm&gt;("npmVersion") {
-    <FgpCodeComment>// dependsOn(tasks.named("installPackageManager"))
-    // dependsOn(tasks.named("installFrontend"))</FgpCodeComment>
+    <FgpCodeComment>// dependsOn("installPackageManager")
+    // dependsOn("installFrontend")</FgpCodeComment>
     script.set("-v")
 }</FgpCode></pre>
                 </template>
