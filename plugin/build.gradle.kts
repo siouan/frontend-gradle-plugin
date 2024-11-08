@@ -50,6 +50,7 @@ configurations["integrationTestRuntimeOnly"]
     .extendsFrom(configurations.runtimeOnly.get())
     .extendsFrom(configurations.testRuntimeOnly.get())
 
+val mockitoAgent = configurations.create("mockitoAgent")
 dependencies {
     implementation(gradleApi())
     implementation("io.github.resilience4j:resilience4j-retry:2.2.0")
@@ -62,6 +63,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.11.3")
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.11.3")
     testImplementation("org.mockito:mockito-core:5.14.2")
+    mockitoAgent("org.mockito:mockito-core:5.14.2") { isTransitive = false }
     testImplementation("org.mockito:mockito-junit-jupiter:5.14.2")
     testImplementation("org.junit-pioneer:junit-pioneer:2.3.0")
     testImplementation("org.assertj:assertj-core:3.26.3")
@@ -141,7 +143,8 @@ tasks.withType<Test> {
 tasks.named<Test>("test") {
     jvmArgs(
         "--add-opens", "java.base/java.lang=ALL-UNNAMED",
-        "--add-opens", "java.base/java.util=ALL-UNNAMED"
+        "--add-opens", "java.base/java.util=ALL-UNNAMED",
+        "-javaagent:${mockitoAgent.asPath}"
     )
     outputs.upToDateWhen { false }
 }
