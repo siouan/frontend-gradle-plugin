@@ -2,11 +2,11 @@
   "name": "frontend-gradle-plugin-site",
   "description": "Frontend Gradle plugin's official site",
   "license": "Apache-2.0",
-  "version": "9.0.0",
+  "version": "9.1.0",
   "engines": {
     "node": "~20.18.0"
   },
-  "packageManager": "yarn@4.5.0",
+  "packageManager": "yarn@4.5.1",
   "type": "module",
   "scripts": {
     "build": "nuxt build",
@@ -22,24 +22,24 @@
     "typecheck": "nuxt typecheck"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^6.5.2",
-    "@pinia/nuxt": "^0.5.1",
+    "@fortawesome/fontawesome-free": "^6.6.0",
+    "@pinia/nuxt": "^0.7.0",
     "bootstrap": "^5.3.3",
-    "nuxt": "^3.11.2",
-    "vue": "^3.4.26",
-    "vue-router": "^4.3.2"
+    "nuxt": "^3.14.0",
+    "vue": "^3.5.12",
+    "vue-router": "^4.4.5"
   },
   "devDependencies": {
-    "@nuxt/eslint": "^0.3.10",
-    "@nuxtjs/i18n": "^8.3.1",
+    "@nuxt/eslint": "^0.6.1",
+    "@nuxtjs/i18n": "^9.0.0",
     "@types/eslint-config-prettier": "^6.11.3",
     "cpx": "^1.5.0",
-    "eslint": "^9.1.1",
+    "eslint": "^9.14.0",
     "eslint-config-prettier": "^9.1.0",
-    "prettier": "^3.2.5",
-    "rimraf": "^5.0.5",
-    "sass": "<=1.77.6",
-    "typescript": "^5.6.2",
-    "vue-tsc": "^2.1.6"
+    "prettier": "^3.3.3",
+    "rimraf": "^6.0.1",
+    "sass": "1.77.6",
+    "typescript": "^5.6.3",
+    "vue-tsc": "^2.1.10"
   }
 }

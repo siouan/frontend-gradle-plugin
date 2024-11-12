@@ -1,7 +1,7 @@
 import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNodeTaskType
 
 plugins {
-    id("org.siouan.frontend-jdk21")
+    alias(libs.plugins.frontend)
 }
 
 frontend {
@@ -11,7 +11,7 @@ frontend {
 
 tasks.register<RunNodeTaskType>("nodeVersion") {
     dependsOn("installNode")
-    script.set("--version")
+    args.set("--version")
 }
 
 tasks.named<Task>("build") {

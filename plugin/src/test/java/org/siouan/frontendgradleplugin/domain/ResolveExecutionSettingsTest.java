@@ -3,8 +3,8 @@ package org.siouan.frontendgradleplugin.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.siouan.frontendgradleplugin.domain.PlatformFixture.aPlatform;
-import static org.siouan.frontendgradleplugin.domain.SystemPropertiesFixture.getSystemJvmArch;
+import static org.siouan.frontendgradleplugin.domain.PlatformFixture.ANY_NON_WINDOWS_PLATFORM;
+import static org.siouan.frontendgradleplugin.domain.PlatformFixture.ANY_WINDOWS_PLATFORM;
 import static org.siouan.frontendgradleplugin.test.PathFixture.ANY_PATH;
 
 import java.nio.file.Path;
@@ -36,7 +36,7 @@ class ResolveExecutionSettingsTest {
 
     @Test
     void should_resolve_exec_settings_with_windows_cmd_when_executable_is_node_in_distribution_and_os_is_windows() {
-        final Platform platform = aPlatform(getSystemJvmArch(), "Windows NT");
+        final Platform platform = ANY_WINDOWS_PLATFORM;
         final Path nodeExecutablePath = NODE_INSTALL_DIRECTORY_PATH.resolve("node");
         when(getNodeExecutablePath.execute(ResolveExecutablePathCommand
             .builder()
@@ -72,7 +72,7 @@ class ResolveExecutionSettingsTest {
 
     @Test
     void should_resolve_exec_settings_with_windows_cmd_when_executable_is_not_node_in_distribution_and_os_is_windows() {
-        final Platform platform = aPlatform(getSystemJvmArch(), "Windows NT");
+        final Platform platform = ANY_WINDOWS_PLATFORM;
         final Path nodeExecutablePath = NODE_INSTALL_DIRECTORY_PATH.resolve("node");
         final Path npmExecutablePath = NODE_INSTALL_DIRECTORY_PATH.resolve("npm");
         when(getNodeExecutablePath.execute(ResolveExecutablePathCommand
@@ -109,7 +109,7 @@ class ResolveExecutionSettingsTest {
 
     @Test
     void should_resolve_exec_settings_with_unix_shell_when_executable_is_node_in_path_and_os_is_not_windows() {
-        final Platform platform = aPlatform(getSystemJvmArch(), "Linux");
+        final Platform platform = ANY_NON_WINDOWS_PLATFORM;
         final Path nodeExecutablePath = NODE_INSTALL_DIRECTORY_PATH.resolve("node");
         when(getNodeExecutablePath.execute(ResolveExecutablePathCommand
             .builder()
@@ -145,7 +145,7 @@ class ResolveExecutionSettingsTest {
 
     @Test
     void should_resolve_exec_settings_with_unix_shell_when_executable_is_npm_in_path_and_os_is_not_windows() {
-        final Platform platform = aPlatform(getSystemJvmArch(), "Linux");
+        final Platform platform = ANY_NON_WINDOWS_PLATFORM;
         final Path nodeExecutablePath = NODE_INSTALL_DIRECTORY_PATH.resolve("node");
         final Path npmExecutablePath = nodeExecutablePath.resolveSibling("npm");
         when(getNodeExecutablePath.execute(ResolveExecutablePathCommand

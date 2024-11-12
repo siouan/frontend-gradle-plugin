@@ -14,7 +14,7 @@ import org.gradle.process.ExecOperations;
  * <pre>
  * import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNodeTaskType
  * tasks.register&lt;RunNodeTaskType&gt;('mytask') {
- *     dependsOn(tasks.named('installNode'))
+ *     dependsOn('installNode')
  *     args.set('...')
  * }
  * </pre>
