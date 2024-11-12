@@ -14,7 +14,7 @@ import org.gradle.process.ExecOperations;
  * <pre>
  * import org.siouan.frontendgradleplugin.infrastructure.gradle.RunCorepackTaskType
  * tasks.register&lt;RunCorepackTaskType&gt;('mytask') {
- *     dependsOn(tasks.named('installCorepack'))
+ *     dependsOn('installCorepack')
  *     args.set('...')
  * }
  * </pre>

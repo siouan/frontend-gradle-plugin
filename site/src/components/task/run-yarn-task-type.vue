@@ -15,20 +15,20 @@
                 <template #groovy>
                     <pre><FgpCode>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunYarnTaskType
 tasks.register('customYarnTask', RunYarnTaskType) {
-    dependsOn tasks.named('installPackageManager')
+    dependsOn 'installPackageManager'
     <FgpCodeComment>// If the command requires additional dependencies located in the 'package.json' file,
     // replace the previous task dependency with the one hereafter:
-    //dependsOn tasks.named('installFrontend')</FgpCodeComment>
+    //dependsOn 'installFrontend'</FgpCodeComment>
     args = '-v'
 }</FgpCode></pre>
                 </template>
                 <template #kotlin>
                     <pre><FgpCode>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunYarnTaskType
 tasks.register&lt;RunYarnTaskType&gt;("customYarnTask") {
-    dependsOn(tasks.named("installPackageManager")
+    dependsOn("installPackageManager")
     <FgpCodeComment>// If the command requires additional dependencies located in the 'package.json' file,
     // replace the previous task dependency with the one hereafter:
-    //dependsOn(tasks.named("installFrontend")</FgpCodeComment>
+    //dependsOn("installFrontend")</FgpCodeComment>
     args.set("-v")
 }</FgpCode></pre>
                 </template>

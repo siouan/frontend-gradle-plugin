@@ -14,8 +14,8 @@ val fgpGradlePluginPortalTags: String by extra
 plugins {
     id("idea")
     id("jacoco")
-    id("com.gradle.plugin-publish")
-    id("org.sonarqube")
+    alias(libs.plugins.gradle.plugin.publish)
+    alias(libs.plugins.sonarqube)
 }
 
 repositories {
@@ -50,26 +50,28 @@ configurations["integrationTestRuntimeOnly"]
     .extendsFrom(configurations.runtimeOnly.get())
     .extendsFrom(configurations.testRuntimeOnly.get())
 
+val mockitoAgent = configurations.create("mockitoAgent")
 dependencies {
     implementation(gradleApi())
-    implementation("io.github.resilience4j:resilience4j-retry:2.2.0")
-    implementation("org.apache.httpcomponents.client5:httpclient5:5.4")
-    implementation("org.apache.commons:commons-compress:1.27.1")
-    implementation("org.json:json:20240303")
-    compileOnly("org.projectlombok:lombok:1.18.34")
-    annotationProcessor("org.projectlombok:lombok:1.18.34")
+    implementation(libs.resilience4j.retry)
+    implementation(libs.httpclient5)
+    implementation(libs.commons.compress)
+    implementation(libs.json)
+    compileOnly(libs.lombok)
+    annotationProcessor(libs.lombok)
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.11.1")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.11.1")
-    testImplementation("org.mockito:mockito-core:5.14.1")
-    testImplementation("org.mockito:mockito-junit-jupiter:5.14.1")
-    testImplementation("org.junit-pioneer:junit-pioneer:2.2.0")
-    testImplementation("org.assertj:assertj-core:3.26.3")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.11.1")
-    testCompileOnly("org.projectlombok:lombok:1.18.34")
-    testAnnotationProcessor("org.projectlombok:lombok:1.18.34")
+    testImplementation(libs.junit.jupiter.api)
+    testImplementation(libs.junit.jupiter.params)
+    testImplementation(libs.mockito.core)
+    mockitoAgent(libs.mockito.core) { isTransitive = false }
+    testImplementation(libs.mockito.junit.jupiter)
+    testImplementation(libs.junit.pioneer)
+    testImplementation(libs.assertj.core)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testCompileOnly(libs.lombok)
+    testAnnotationProcessor(libs.lombok)
 
-    integrationTestImplementation("org.wiremock:wiremock:3.9.1")
+    integrationTestImplementation(libs.wiremock)
 }
 
 idea {
@@ -83,7 +85,7 @@ idea {
 }
 
 jacoco {
-    toolVersion = "0.8.12"
+    toolVersion = libs.versions.jacoco.version.get()
 }
 
 gradlePlugin {
@@ -141,7 +143,8 @@ tasks.withType<Test> {
 tasks.named<Test>("test") {
     jvmArgs(
         "--add-opens", "java.base/java.lang=ALL-UNNAMED",
-        "--add-opens", "java.base/java.util=ALL-UNNAMED"
+        "--add-opens", "java.base/java.util=ALL-UNNAMED",
+        "-javaagent:${mockitoAgent.asPath}"
     )
     outputs.upToDateWhen { false }
 }
@@ -158,11 +161,11 @@ tasks.register<Test>("integrationTest") {
 }
 
 tasks.named<Task>("check") {
-    dependsOn(tasks.named("integrationTest"))
+    dependsOn("integrationTest")
 }
 
 tasks.named<JacocoReport>("jacocoTestReport") {
-    dependsOn(tasks.named("test"), tasks.named("integrationTest"))
+    dependsOn("test", "integrationTest")
     executionData.setFrom(
         project.layout.buildDirectory.files("jacoco/test.exec", "jacoco/integrationTest.exec"),
     )

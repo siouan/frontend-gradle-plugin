@@ -12,6 +12,11 @@ import org.siouan.frontendgradleplugin.domain.Platform;
 public class ResolveNodeDistributionArchitectureId {
 
     /**
+     * Architecture ID for a AIX O/S.
+     */
+    static final String AIX_PPC64_ARCH = "aix-ppc64";
+
+    /**
      * Architecture ID for a 64 bits Linux O/S.
      */
     static final String LINUX_X64_ARCH = "linux-x64";
@@ -27,9 +32,19 @@ public class ResolveNodeDistributionArchitectureId {
     static final String LINUX_ARM32_ARCH = "linux-armv7l";
 
     /**
-     * Architecture ID for a PPC 64 bits MacOS O/S.
+     * Architecture ID for a PPC 64 bits little endian Linux O/S.
      */
-    static final String MACOS_PPC_X64_ARCH = "darwin-x64";
+    static final String LINUX_PPC64LE_ARCH = "linux-ppc64le";
+
+    /**
+     * Architecture ID for a S390X 64 bits Linux O/S.
+     */
+    static final String LINUX_S390X_ARCH = "linux-s390x";
+
+    /**
+     * Architecture ID for a X64 bits MacOS O/S.
+     */
+    static final String MACOS_X64_ARCH = "darwin-x64";
 
     /**
      * Architecture ID for an ARM 64 bits MacOS O/S.
@@ -42,7 +57,7 @@ public class ResolveNodeDistributionArchitectureId {
     static final String WINDOWS_X86_ARCH = "win-x86";
 
     /**
-     * Architecture ID for a 64 bits Linux O/S.
+     * Architecture ID for a X64 bits Linux O/S.
      */
     static final String WINDOWS_X64_ARCH = "win-x64";
 
@@ -63,9 +78,19 @@ public class ResolveNodeDistributionArchitectureId {
             if (platform.isWindowsOs()) {
                 extension = platform.isArm64BitsArch() ? WINDOWS_ARM64_ARCH : WINDOWS_X64_ARCH;
             } else if (platform.isLinuxOs()) {
-                extension = platform.isArm64BitsArch() ? LINUX_ARM64_ARCH : LINUX_X64_ARCH;
+                if (platform.isArm64BitsArch()) {
+                    extension = LINUX_ARM64_ARCH;
+                } else if (platform.isPpc64BitsLeArch()) {
+                    extension = LINUX_PPC64LE_ARCH;
+                } else if (platform.isS390X64BitsArch()) {
+                    extension = LINUX_S390X_ARCH;
+                } else {
+                    extension = LINUX_X64_ARCH;
+                }
             } else if (platform.isMacOs()) {
-                extension = platform.isArm64BitsArch() ? MACOS_ARM64_ARCH : MACOS_PPC_X64_ARCH;
+                extension = platform.isArm64BitsArch() ? MACOS_ARM64_ARCH : MACOS_X64_ARCH;
+            } else if (platform.isAixOs()) {
+                extension = AIX_PPC64_ARCH;
             } else {
                 extension = null;
             }

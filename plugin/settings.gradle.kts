@@ -1,10 +1,16 @@
 val fgpArtifactId: String by extra
 
+dependencyResolutionManagement {
+    versionCatalogs {
+        create("libs") {
+            from(files("../gradle/libs.versions.toml"))
+        }
+    }
+}
+
 pluginManagement {
     plugins {
         id("com.gradle.develocity") version "3.18.1"
-        id("com.gradle.plugin-publish") version "1.3.0"
-        id("org.sonarqube") version "5.1.0.4882"
    }
 }
 
