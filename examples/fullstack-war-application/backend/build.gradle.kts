@@ -1,8 +1,8 @@
 plugins {
     id("java")
     id("war")
-    id("org.springframework.boot")
-    id("io.spring.dependency-management")
+    id("org.springframework.boot") version "3.3.5"
+    id("io.spring.dependency-management") version "1.1.6"
 }
 
 version = "1.0.0"

@@ -2,7 +2,7 @@ import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNodeTaskType
 import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpmTaskType
 
 plugins {
-    id("org.siouan.frontend-jdk11")
+    id("org.siouan.frontend-jdk11") version "9.1.0"
 }
 
 //val preinstalledNodeDistributionDirectory = file(<path-to-nodejs-install-directory>);
@@ -18,10 +18,10 @@ frontend {
 
 tasks.register<RunNodeTaskType>("nodeVersion") {
     dependsOn("installNode")
-    script.set("-v")
+    args.set("-v")
 }
 
 tasks.register<RunNpmTaskType>("npmVersion") {
     dependsOn("installPackageManager")
-    script.set("-v")
+    args.set("-v")
 }

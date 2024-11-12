@@ -17,16 +17,16 @@
                 <template #groovy>
                     <pre><FgpCode>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNode
 tasks.register('nodeVersion', RunNode) {
-    <FgpCodeComment>// dependsOn tasks.named('installNode')
-    // dependsOn tasks.named('installFrontend')</FgpCodeComment>
+    <FgpCodeComment>// dependsOn 'installNode'
+    // dependsOn 'installFrontend'</FgpCodeComment>
     script = '-v'
 }</FgpCode></pre>
                 </template>
                 <template #kotlin>
                     <pre><FgpCode>import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNode
 tasks.register&lt;RunNode&gt;("nodeVersion") {
-    <FgpCodeComment>// dependsOn(tasks.named("installNode"))
-    // dependsOn(tasks.named("installFrontend"))</FgpCodeComment>
+    <FgpCodeComment>// dependsOn("installNode")
+    // dependsOn("installFrontend")</FgpCodeComment>
     script.set("-v")
 }</FgpCode></pre>
                 </template>

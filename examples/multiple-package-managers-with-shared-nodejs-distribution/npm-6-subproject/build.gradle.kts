@@ -2,7 +2,7 @@ import org.siouan.frontendgradleplugin.infrastructure.gradle.ResolvePackageManag
 import org.siouan.frontendgradleplugin.infrastructure.gradle.RunNpmTaskType
 
 plugins {
-    id("org.siouan.frontend-jdk11")
+    alias(libs.plugins.frontend)
 }
 
 frontend {
@@ -16,7 +16,7 @@ tasks.named<ResolvePackageManagerTask>("resolvePackageManager") {
 
 tasks.register<RunNpmTaskType>("npm6Version") {
     dependsOn("installPackageManager")
-    script.set("--version")
+    args.set("--version")
 }
 
 tasks.named<Task>("build") {

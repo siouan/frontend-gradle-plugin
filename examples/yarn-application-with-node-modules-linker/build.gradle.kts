@@ -3,7 +3,7 @@ import kotlin.io.path.Path
 import org.siouan.frontendgradleplugin.infrastructure.gradle.InstallFrontendTask
 
 plugins {
-    id("org.siouan.frontend-jdk11")
+    id("org.siouan.frontend-jdk11") version "9.1.0"
 }
 
 frontend {

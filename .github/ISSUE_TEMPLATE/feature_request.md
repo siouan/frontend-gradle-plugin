@@ -22,9 +22,9 @@ Explain what you would like the plugin do: ...
 **Target environment**
 
 - OS: [e.g. Ubuntu 24.04, Windows 11 Pro, Mac OS X]
-- JDK: [e.g. Adoptium Temurin JDK 21 64 bits]
+- JDK: [e.g. Adoptium Temurin JDK 11 64 bits]
 - Gradle: [e.g. Gradle 8.10.2]
-- Frontend Gradle plugin: [e.g. 9.0.0 JDK 21]
+- Frontend Gradle plugin: [e.g. 9.1.0 JDK 11]
 
 Settings in `build.gradle[.kts]` file:
 ```groovy
