@@ -1,0 +1,1 @@
+import{b as n}from"./DZHecFjF.js";import{_ as e}from"./DlAUqK2U.js";import{o as _,e as r,w as a,d as c,t as p}from"./Bn0r76rF.js";const s={};function i(t,m){const o=n;return _(),r(o,{href:"https://pnpm.io/"},{default:a(()=>[c(p(t.$t("navigation.pnpm.label")),1)]),_:1})}const d=e(s,[["render",i]]);export{d as _};
