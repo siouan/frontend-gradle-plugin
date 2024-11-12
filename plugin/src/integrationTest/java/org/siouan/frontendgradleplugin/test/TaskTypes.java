@@ -103,9 +103,9 @@ public final class TaskTypes {
         definition.append(taskTypeClass.getName());
         definition.append(") {\n");
         dependsOnTaskNames.forEach(dependsOnTaskName -> {
-            definition.append("dependsOn tasks.named('");
+            definition.append("dependsOn '");
             definition.append(dependsOnTaskName);
-            definition.append("')\n");
+            definition.append("'\n");
         });
         if (executableArgs != null) {
             definition.append("args = '");

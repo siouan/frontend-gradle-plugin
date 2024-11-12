@@ -1,7 +1,6 @@
 package org.siouan.frontendgradleplugin.domain.installer;
 
 import java.io.IOException;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Path;
@@ -57,28 +56,12 @@ public class HashFile {
         try (final SeekableByteChannel inputChannel = channelProvider.getSeekableByteChannel(filePath)) {
             int numberOfBytesRead = inputChannel.read(buffer);
             while (numberOfBytesRead != -1) {
-                // Since JDK 9, ByteBuffer class overrides some methods and their return type in the Buffer class. To
-                // ensure compatibility with JDK 8, calling the 'flipBuffer' and 'clearBuffer' methods forces using the
-                // JDK 8 Buffer's methods signature, and avoids explicit casts.
-                flipBuffer(buffer);
+                buffer.flip();
                 messageDigest.update(buffer);
-                clearBuffer(buffer);
+                buffer.clear();
                 numberOfBytesRead = inputChannel.read(buffer);
             }
         }
         return convertToHexadecimalString.execute(messageDigest.digest());
-    }
-
-    ////////////////////
-    // The 2 methods below force the use of the flip method and clear method in the Buffer class instead of the
-    // ByteBuffer class. This is mandatory because the signature of each method is not the same in the ByteBuffer class
-    // vs. the Buffer class, and it leads to NoSuchMethodError exceptions from JDK 9+ (see issue #55).
-    ////////////////////
-    private void flipBuffer(final Buffer buffer) {
-        buffer.flip();
-    }
-
-    private void clearBuffer(final Buffer buffer) {
-        buffer.clear();
     }
 }

@@ -2,7 +2,7 @@ import org.siouan.frontendgradleplugin.infrastructure.gradle.ResolvePackageManag
 import org.siouan.frontendgradleplugin.infrastructure.gradle.RunYarnTaskType
 
 plugins {
-    id("org.siouan.frontend-jdk17")
+    alias(libs.plugins.frontend)
 }
 
 frontend {
@@ -16,7 +16,7 @@ tasks.named<ResolvePackageManagerTask>("resolvePackageManager") {
 
 tasks.register<RunYarnTaskType>("yarn1Version") {
     dependsOn("installPackageManager")
-    script.set("--version")
+    args.set("--version")
 }
 
 tasks.named<Task>("build") {

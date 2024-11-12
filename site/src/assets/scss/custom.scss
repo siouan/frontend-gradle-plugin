@@ -1,7 +1,7 @@
-@use 'variables';
-@use 'bootstrap/scss/bootstrap';
+@import 'variables';
+@import 'bootstrap/scss/bootstrap';
 
 @font-face {
     font-family: EtelkaTextPro;
-    src: url(variables.$etelkaTextProFontFile) format('opentype');
+    src: url($etelkaTextProFontFile) format('opentype');
 }

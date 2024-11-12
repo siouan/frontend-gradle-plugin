@@ -72,10 +72,10 @@ function hideMenu() {
 </script>
 
 <style scoped lang="scss">
-@use '@/assets/scss/variables';
+@import '@/assets/scss/variables';
 
 .nav-link {
-    font-family: variables.$headings-font-family;
+    font-family: $headings-font-family;
     color: var(--bs-tertiary-color);
 }
 
