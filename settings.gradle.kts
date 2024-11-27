@@ -1,2 +1,2 @@
-includeBuild("plugin")
+includeBuild("plugins")
 include("site")

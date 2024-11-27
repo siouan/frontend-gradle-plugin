@@ -10,18 +10,16 @@ After ensuring the problem was not reported already, any issue may be created us
 
 #### Long-term branches
 
-- Production branch: the `main` branch contains stable releases compiled with the most recent LTS JDK. The `HEAD`
-revision matches generally the latest stable release, though it may sometimes contain above the latest release some
-fixes unrelated to the packaged software (online documentation, CI workflows, etc.) It MUST receive commits only with
-pull requests merged from version branches. No short-term branch should be created from this branch for feature
-implementation or bug fixing.
-- Version branches: branches `<X>.<Y>[-jdk<Z>]` contain history of each version `X.Y`, eventually compiled with a
-certain version of the JDK.
+- Production branch: the `main` branch contains latest changes being implemented with the multiple JDK. It MUST receive
+commits only with pull requests merged from short-term branches, squashed.
+- Version branches: these are legacy branches `<X>.<Y>[-jdk<Z>]` containing history of each version `X.Y`, eventually
+compiled with a certain version of the JDK when the project was not configured with multiple Java toolchains yet.
 
 #### Short-term branches
 
-These branches are development branches. They are intended to reveive development of features, bug fixes, or updates of
-the build process or documentation. A development branch SHALL be named depending on its content:
+These branches are development branches, whose base is a commit from the `main` branch. They are intended to receive
+development of features, bug fixes, or updates of the build process or documentation. A development branch SHALL be
+named depending on its content:
 
 - Feature: `feature/<issue-number>-<description>`
 - Bug fix: `fix/<issue-number>-<description>`
@@ -35,9 +33,9 @@ together.
 #### Commit
 
 - Development branches MAY contain one or more commits to achieve the goal.
-- A pull request MUST be created to merge commits in a development branch into a version branch.
-- Linear history is expected in long-term branches: merge commits are forbidden.
-- A single commit by feature/fix/task is expected in long-term branches: commits in a development branch MUST be
+- A pull request MUST be created to merge commits from a development branch into the `main` branch.
+- Linear history is expected in the `main` branch: merge commits are forbidden.
+- A single commit by feature/fix/task is expected in the `main` branch: commits in a development branch MUST be
 squashed before being merged in a long-term branch. If not done by the developer, squashing is forced when the pull
 request is merged.
 - Commit messages MUST follow the [Conventional commits][conventional-commits] specification.
@@ -59,7 +57,7 @@ components in the infrastructure layer, a maximal code coverage is expected as f
 which cannot be done with unit tests due to the hard coupling with Gradle components 
 - Code conventions: natural language is a requirement during implementation. Authors privilege long understandable
 names for classes, parameters, variables, to short fuzzy ones.
-- Immutability: model classes are immutable to prevent side-effects.
+- Immutability: model classes are immutable to prevent side-effects, especially in case of multi-threading.
 
 #### Code layout
 
