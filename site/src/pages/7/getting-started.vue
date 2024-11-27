@@ -110,7 +110,8 @@ apply(plugin = "org.siouan.frontend-jdk11")</FgpCode></pre>
             <li>
                 Define the
                 <FgpCode><FgpNodejsLink path="/api/packages.html#packagemanager" label="packageManager" /></FgpCode>
-                property in the <FgpCode>package.json</FgpCode> file.
+                property in the <FgpCode>package.json</FgpCode> file: <FgpCode>(npm|pnpm|yarn)@x.y.z</FgpCode> (other
+                syntax defined by <FgpCorepackLink /> is not supported).
             </li>
             <li>Add <FgpCode>.frontend-gradle-plugin/</FgpCode> directory to <FgpCode>.gitignore</FgpCode> file(s).</li>
             <li>
