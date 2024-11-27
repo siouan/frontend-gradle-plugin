@@ -23,7 +23,7 @@ Explain what you would like the plugin do: ...
 
 - OS: [e.g. Ubuntu 24.04, Windows 11 Pro, Mac OS X]
 - JDK: [e.g. Adoptium Temurin JDK 21 64 bits]
-- Gradle: [e.g. Gradle 8.10.2]
+- Gradle: [e.g. Gradle 8.11.1]
 - Frontend Gradle plugin: [e.g. 10.0.0 JDK 21]
 
 Settings in `build.gradle[.kts]` file:

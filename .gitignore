@@ -1,5 +1,5 @@
-/plugin/buildSrc/out/
-/plugin/out/
+/frontend-jdk*/buildSrc/out/
+/frontend-jdk*/out/
 /site/.frontend-gradle-plugin
 /site/.nuxt/
 /site/.output/

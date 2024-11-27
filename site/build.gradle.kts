@@ -15,7 +15,9 @@ plugins {
 frontend {
     nodeVersion.set("22.11.0")
     assembleScript.set("run generate")
-    cleanScript.set("run clean")
-    publishScript.set("run deploy")
     verboseModeEnabled.set(true)
+}
+
+tasks.named<Delete>("clean") {
+    delete("${layout.projectDirectory}/.nuxt", "${layout.projectDirectory}/.output", "${layout.projectDirectory}/dist")
 }

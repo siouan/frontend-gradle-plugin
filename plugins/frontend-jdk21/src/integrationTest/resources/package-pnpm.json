@@ -1,0 +1,21 @@
+{
+  "name": "frontend-gradle-plugin-pnpm-tests",
+  "version": "1.0.0",
+  "description": "Empty project to test frontend scripts integration in a Gradle build with pnpm",
+  "private": true,
+  "license": "UNLICENSED",
+  "packageManager": "pnpm@9.12.3",
+  "cacheDirectories": [
+    "node_modules"
+  ],
+  "scripts": {
+    "another-script": "node -v && pnpm -v && echo 'Another frontend script executed' && pnpm run check",
+    "assemble": "echo 'Frontend assembled'",
+    "check": "pnpm run lint && pnpm run test",
+    "clean": "echo 'Frontend cleaned'",
+    "lint": "echo 'Frontend linted'",
+    "publish": "echo 'Frontend published'",
+    "start": "echo 'Frontend started and stopped'",
+    "test": "echo 'Frontend tested'"
+  }
+}

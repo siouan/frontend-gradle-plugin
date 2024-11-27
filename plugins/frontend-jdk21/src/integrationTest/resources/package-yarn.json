@@ -1,0 +1,21 @@
+{
+  "name": "frontend-gradle-plugin-npm-tests",
+  "version": "1.0.0",
+  "description": "Empty project to test frontend scripts integration in a Gradle build with npm",
+  "private": true,
+  "license": "UNLICENSED",
+  "packageManager": "yarn@4.5.1",
+  "cacheDirectories": [
+    "node_modules"
+  ],
+  "scripts": {
+    "another-script": "node -v && yarn -v && echo 'Another frontend script executed' && yarn run check",
+    "assemble": "echo 'Frontend assembled'",
+    "check": "yarn run lint && yarn run test",
+    "clean": "echo 'Frontend cleaned'",
+    "lint": "echo 'Frontend linted'",
+    "publish": "echo 'Frontend published'",
+    "start": "echo 'Frontend started and stopped'",
+    "test": "echo 'Frontend tested'"
+  }
+}
