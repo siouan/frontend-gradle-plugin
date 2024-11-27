@@ -21,17 +21,28 @@ class ParsePackageManagerSpecificationTest {
 
     @Test
     void should_fail_when_package_manager_is_unknown() {
-        assertThatThrownBy(() -> usecase.execute("name@version")).isInstanceOf(
-            UnsupportedPackageManagerException.class);
+        assertThatThrownBy(() -> usecase.execute("name@4.9.6")).isInstanceOf(UnsupportedPackageManagerException.class);
     }
 
     @Test
-    void should_return_package_manager_specification_with_no_other_specification_present()
+    void should_return_package_manager_specification_when_no_hash_is_present()
         throws MalformedPackageManagerSpecification, UnsupportedPackageManagerException {
 
         assertThat(usecase.execute("npm@10.9.0")).satisfies(packageManager -> {
             assertThat(packageManager.type()).isEqualTo(PackageManagerType.NPM);
             assertThat(packageManager.version()).isEqualTo("10.9.0");
         });
+    }
+
+    @Test
+    void should_return_package_manager_specification_when_hash_is_present()
+        throws MalformedPackageManagerSpecification, UnsupportedPackageManagerException {
+
+        assertThat(usecase.execute(
+            "npm@10.9.1+sha512.c89530d37c4baa38afd43e76a077a84b9aa63840b986426584fd5c5a54ab0a0b21bb1595c851042b733784b0b43706d36a494b4d8ae1a086a762cb8d3f95942a")).satisfies(
+            packageManager -> {
+                assertThat(packageManager.type()).isEqualTo(PackageManagerType.NPM);
+                assertThat(packageManager.version()).isEqualTo("10.9.1");
+            });
     }
 }
