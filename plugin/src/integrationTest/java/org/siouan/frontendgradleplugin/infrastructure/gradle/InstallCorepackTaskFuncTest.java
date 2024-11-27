@@ -34,8 +34,8 @@ class InstallCorepackTaskFuncTest {
     @Test
     void should_skip_task_when_corepack_version_property_is_null() throws IOException {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("20.18.0")
-            .nodeDistributionUrl(getResourcePath("node-v20.18.0.zip"));
+            .nodeVersion("22.11.0")
+            .nodeDistributionUrl(getResourcePath("node-v22.11.0.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result = runGradle(projectDirectoryPath, INSTALL_COREPACK_TASK_NAME);
@@ -58,9 +58,9 @@ class InstallCorepackTaskFuncTest {
     void should_install_corepack() throws IOException {
         Files.copy(getResourcePath("package-any-manager.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("20.18.0")
+            .nodeVersion("22.11.0")
             .corepackVersion(LATEST_VERSION_ARGUMENT)
-            .nodeDistributionUrl(getResourcePath("node-v20.18.0.zip"));
+            .nodeDistributionUrl(getResourcePath("node-v22.11.0.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, INSTALL_COREPACK_TASK_NAME);

@@ -7,10 +7,10 @@ jacoco-version = "0.8.12"
 json-version = "20240303"
 junit-jupiter-version = "5.11.3"
 junit-pioneer-version = "2.3.0"
-lombok-version = "1.18.34"
+lombok-version = "1.18.36"
 mockito-version = "5.14.2"
 resilience4j-retry-version = "2.2.0"
-sonarqube-version = "5.1.0.4882"
+sonarqube-version = "6.0.0.5145"
 wiremock-version = "3.9.2"
 
 [libraries]
