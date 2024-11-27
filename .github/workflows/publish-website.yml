@@ -1,11 +1,11 @@
-name: Build and publish website
+name: Publish website
 
 on:
   workflow_dispatch:
 
 jobs:
   build:
-    name: Build
+    name: Build website
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -19,6 +19,7 @@ jobs:
       - name: Git checkout
         uses: actions/checkout@v4
         with:
+          ref: main
           fetch-depth: 1
 
       - name: Set up JDK 21
@@ -43,7 +44,24 @@ jobs:
 
       - name: Build website
         run: |
-          ./gradlew :plugin:publishToMavenLocal :site:assembleFrontend --console=plain
+          ./gradlew :site:assembleFrontend --console=plain
+
+      - name: Upload static files as artifact
+        id: deployment
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site/dist
 
       - name: Stop Gradle before caching
         run: ./gradlew -stop
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
