@@ -42,8 +42,8 @@ class PublishFrontendTaskFuncTest {
     @Test
     void should_skip_plugin_task_when_package_json_file_does_not_exist() throws IOException {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("20.18.0")
-            .nodeDistributionUrl(getResourcePath("node-v20.18.0.zip"))
+            .nodeVersion("22.11.0")
+            .nodeDistributionUrl(getResourcePath("node-v22.11.0.zip"))
             .assembleScript("run assemble")
             .publishScript("run publish")
             .packageJsonDirectory(packageJsonDirectoryPath);
@@ -62,8 +62,8 @@ class PublishFrontendTaskFuncTest {
     void should_skip_plugin_task_when_script_is_not_defined() throws IOException {
         Files.copy(getResourcePath("package-any-manager.json"), packageJsonDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("20.18.0")
-            .nodeDistributionUrl(getResourcePath("node-v20.18.0.zip"))
+            .nodeVersion("22.11.0")
+            .nodeDistributionUrl(getResourcePath("node-v22.11.0.zip"))
             .packageJsonDirectory(packageJsonDirectoryPath);
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
@@ -80,8 +80,8 @@ class PublishFrontendTaskFuncTest {
     void should_skip_plugin_task_when_running_gradle_task_and_script_is_not_defined() throws IOException {
         Files.copy(getResourcePath("package-any-manager.json"), packageJsonDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("20.18.0")
-            .nodeDistributionUrl(getResourcePath("node-v20.18.0.zip"))
+            .nodeVersion("22.11.0")
+            .nodeDistributionUrl(getResourcePath("node-v22.11.0.zip"))
             .packageJsonDirectory(packageJsonDirectoryPath);
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
@@ -98,8 +98,8 @@ class PublishFrontendTaskFuncTest {
     void should_publish_frontend() throws IOException {
         Files.copy(getResourcePath("package-any-manager.json"), packageJsonDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("20.18.0")
-            .nodeDistributionUrl(getResourcePath("node-v20.18.0.zip"))
+            .nodeVersion("22.11.0")
+            .nodeDistributionUrl(getResourcePath("node-v22.11.0.zip"))
             .packageJsonDirectory(packageJsonDirectoryPath)
             .assembleScript("run assemble")
             .publishScript("run publish");

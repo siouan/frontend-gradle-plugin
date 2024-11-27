@@ -47,21 +47,21 @@
                             <template #groovy>
                                 <pre><FgpCode>plugins {
     <FgpCodeComment>// For JDK 21+</FgpCodeComment>
-    id 'org.siouan.frontend-jdk21' version '9.1.0'
+    id 'org.siouan.frontend-jdk21' version '10.0.0'
     <FgpCodeComment>// For JDK 17+</FgpCodeComment>
-    id 'org.siouan.frontend-jdk17' version '9.1.0'
+    id 'org.siouan.frontend-jdk17' version '10.0.0'
     <FgpCodeComment>// For JDK 11+</FgpCodeComment>
-    id 'org.siouan.frontend-jdk11' version '9.1.0'
+    id 'org.siouan.frontend-jdk11' version '10.0.0'
 }</FgpCode></pre>
                             </template>
                             <template #kotlin>
                                 <pre><FgpCode>plugins {
     <FgpCodeComment>// For JDK 21+</FgpCodeComment>
-    id("org.siouan.frontend-jdk21") version "9.1.0"
+    id("org.siouan.frontend-jdk21") version "10.0.0"
     <FgpCodeComment>// For JDK 17+</FgpCodeComment>
-    id("org.siouan.frontend-jdk17") version "9.1.0"
+    id("org.siouan.frontend-jdk17") version "10.0.0"
     <FgpCodeComment>// For JDK 11+</FgpCodeComment>
-    id("org.siouan.frontend-jdk11") version "9.1.0"
+    id("org.siouan.frontend-jdk11") version "10.0.0"
 }</FgpCode></pre>
                             </template>
                         </FgpGradleScripts>
@@ -82,11 +82,11 @@
     }
     dependencies {
         <FgpCodeComment>// For JDK 21+</FgpCodeComment>
-        classpath 'org.siouan:frontend-gradle-plugin-jdk21:9.1.0'
+        classpath 'org.siouan:frontend-gradle-plugin-jdk21:10.0.0'
         <FgpCodeComment>// For JDK 17+</FgpCodeComment>
-        classpath 'org.siouan:frontend-gradle-plugin-jdk17:9.1.0'
+        classpath 'org.siouan:frontend-gradle-plugin-jdk17:10.0.0'
         <FgpCodeComment>// For JDK 11+</FgpCodeComment>
-        classpath 'org.siouan:frontend-gradle-plugin-jdk11:9.1.0'
+        classpath 'org.siouan:frontend-gradle-plugin-jdk11:10.0.0'
     }
 }
 
@@ -104,11 +104,11 @@ apply plugin: 'org.siouan.frontend-jdk11'</FgpCode></pre>
     }
     dependencies {
         <FgpCodeComment>// For JDK 21+</FgpCodeComment>
-        classpath("org.siouan:frontend-gradle-plugin-jdk21:9.1.0")
+        classpath("org.siouan:frontend-gradle-plugin-jdk21:10.0.0")
         <FgpCodeComment>// For JDK 17+</FgpCodeComment>
-        classpath("org.siouan:frontend-gradle-plugin-jdk17:9.1.0")
+        classpath("org.siouan:frontend-gradle-plugin-jdk17:10.0.0")
         <FgpCodeComment>// For JDK 11+</FgpCodeComment>
-        classpath("org.siouan:frontend-gradle-plugin-jdk11:9.1.0")
+        classpath("org.siouan:frontend-gradle-plugin-jdk11:10.0.0")
     }
 }
 

@@ -2,9 +2,9 @@
   "name": "frontend-gradle-plugin-site",
   "description": "Frontend Gradle plugin's official site",
   "license": "Apache-2.0",
-  "version": "9.1.0",
+  "version": "10.0.0",
   "engines": {
-    "node": "~20.18.0"
+    "node": "~22.11.0"
   },
   "packageManager": "yarn@4.5.1",
   "type": "module",

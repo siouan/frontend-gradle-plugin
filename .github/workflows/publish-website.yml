@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    name: Build website
+    name: Build
     runs-on: ubuntu-24.04
 
     steps:
@@ -52,6 +52,7 @@ jobs:
           path: site/dist
 
   deploy:
+    name: Deploy
     permissions:
       pages: write
       id-token: write

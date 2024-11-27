@@ -31,8 +31,8 @@ class RunNodeTaskFuncTest {
     @Test
     void should_fail_task_when_args_is_not_defined() throws IOException {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("20.18.0")
-            .nodeDistributionUrl(getResourcePath("node-v20.18.0.zip"));
+            .nodeVersion("22.11.0")
+            .nodeDistributionUrl(getResourcePath("node-v22.11.0.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result = runGradleAndExpectFailure(projectDirectoryPath, RUN_NODE_TASK_NAME);
@@ -44,8 +44,8 @@ class RunNodeTaskFuncTest {
     void should_run_command() throws IOException {
         Files.copy(getResourcePath("package-any-manager.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("20.18.0")
-            .nodeDistributionUrl(getResourcePath("node-v20.18.0.zip"));
+            .nodeVersion("22.11.0")
+            .nodeDistributionUrl(getResourcePath("node-v22.11.0.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result = runGradle(projectDirectoryPath, RUN_NODE_TASK_NAME,

@@ -2,6 +2,7 @@
 /plugin/out/
 /site/.frontend-gradle-plugin
 /site/.nuxt/
+/site/.output/
 /site/.pnp.*
 /site/.yarn/
 !/site/.yarn/patches
