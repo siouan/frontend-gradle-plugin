@@ -58,8 +58,6 @@ jobs:
       JDK_11_BUILD_REQUIRED: (inputs.pluginJavaVersion == '11') || (inputs.pluginJavaVersion == 'All')
       JDK_17_BUILD_REQUIRED: (inputs.pluginJavaVersion == '17') || (inputs.pluginJavaVersion == 'All')
       JDK_21_BUILD_REQUIRED: (inputs.pluginJavaVersion == '21') || (inputs.pluginJavaVersion == 'All')
-      JDK_21_BUILD_TASK_NAME: ${{ ! env.FGP_CODE_SCAN_ENABLED }} && 'build' || 'jacocoTestReport'
-      GIT_FETCH_DEPTH: ${{ ! env.FGP_CODE_SCAN_ENABLED }} && 1 || 0
 
     steps:
       - name: Init Ubuntu environment
@@ -79,6 +77,8 @@ jobs:
 
       - name: Git checkout
         uses: actions/checkout@v4
+        env:
+          GIT_FETCH_DEPTH: ${{ ! env.FGP_CODE_SCAN_ENABLED }} && 1 || 0
         with:
           fetch-depth: env.GIT_FETCH_DEPTH
 
@@ -136,6 +136,8 @@ jobs:
 
       - name: Build plugin for JDK 21+
         if: env.JDK_21_BUILD_REQUIRED
+        env:
+          JDK_21_BUILD_TASK_NAME: env.FGP_CODE_SCAN_ENABLED && 'jacocoTestReport' || 'build'
         run: ./gradlew :plugins:frontend-jdk21:${{ env.JDK_21_BUILD_TASK_NAME }} --console=plain
 
       - name: Scan source code and test results
