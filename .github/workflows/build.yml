@@ -47,8 +47,10 @@ jobs:
           fi
           if [[ ("${{ github.event_name }}" == "push") || "${{ inputs.pluginJavaVersion }}" == "All" ]]; then
             echo 'pluginJavaVersion=["21", "17", "11"]' >> "$GITHUB_OUTPUT"
-          else
+          elif [[ -n "${{ inputs.pluginJavaVersion }}" ]]; then
             echo 'pluginJavaVersion=["${{ inputs.pluginJavaVersion }}"]' >> "$GITHUB_OUTPUT"
+          else
+            echo 'pluginJavaVersion=["21"]' >> "$GITHUB_OUTPUT"
           fi
 
   build:
@@ -133,7 +135,7 @@ jobs:
       - name: Build plugin on Windows
         if: runner.os == 'Windows'
         run: |
-          gradlew :plugins:frontend-jdk${{ matrix.pluginJavaVersion }}:build --console=plain
+          ./gradlew :plugins:frontend-jdk${{ matrix.pluginJavaVersion }}:build --console=plain
 
       - name: Scan source code and test results
         if: env.FGP_CODE_SCAN_ENABLED
