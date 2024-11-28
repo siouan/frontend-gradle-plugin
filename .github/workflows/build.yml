@@ -2,20 +2,69 @@ name: Build
 
 on:
   push:
-    branches: [ 'main', '*.*-jdk*' ]
+    branches: [ 'main' ]
   pull_request:
-    branches: [ 'main', '*.*-jdk*' ]
+    branches: [ 'main' ]
   workflow_dispatch:
+    inputs:
+      pluginJavaVersion:
+        description: 'JDK compatibility version of the plugin'
+        required: true
+        default: '21'
+        type: choice
+        options:
+          - '21'
+          - '17'
+          - '11'
+          - 'All'
+      os:
+        description: 'O/S'
+        required: true
+        default: 'ubuntu-24.04'
+        type: choice
+        options:
+          - 'ubuntu-24.04'
+          - 'macos-14'
+          - 'windows-2022'
+          - 'All'
 
 jobs:
+  define-matrix:
+    name: Define matrix
+    runs-on: ubuntu-24.04
+    outputs:
+      os: ${{ steps.set-matrix-variables.outputs.os }}
+      pluginJavaVersion: ${{ steps.set-matrix-variables.outputs.pluginJavaVersion }}
+
+    steps:
+      - name: Set matrix variables
+        id: set-matrix-variables
+        run: |
+          if [[ (-z "${{ inputs.os }}") || ("${{ inputs.os }}" == "All") ]]; then
+            echo 'os=["ubuntu-24.04", "macos-14", "windows-2022"]' >> "$GITHUB_OUTPUT"
+          else
+            echo 'os=["${{ inputs.os }}"]' >> "$GITHUB_OUTPUT"
+          fi
+          if [[ ("${{ github.event_name }}" == "push") || "${{ inputs.pluginJavaVersion }}" == "All" ]]; then
+            echo 'pluginJavaVersion=["21", "17", "11"]' >> "$GITHUB_OUTPUT"
+          else
+            echo 'pluginJavaVersion=["${{ inputs.pluginJavaVersion }}"]' >> "$GITHUB_OUTPUT"
+          fi
+
   build:
     name: Build
+    needs: define-matrix
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-24.04, macos-14, windows-2022]
+        os: ${{ fromJSON(needs.define-matrix.outputs.os) }}
+        pluginJavaVersion: ${{ fromJSON(needs.define-matrix.outputs.pluginJavaVersion) }}
 
     steps:
+      - name: Init environment
+        if: (matrix.os == 'ubuntu-24.04') && (matrix.pluginJavaVersion == '21')
+        run: echo "FGP_CODE_SCAN_ENABLED=1" >> $GITHUB_ENV
+
       - name: Init Ubuntu environment
         if: matrix.os == 'ubuntu-24.04'
         run: sudo rm -f /usr/local/bin/node /usr/local/bin/npm /usr/local/bin/pnpm /usr/local/bin/yarn
@@ -29,24 +78,25 @@ jobs:
         run: |
           Rename-Item "C:\Program Files\nodejs" "nodejs.old" -Force
           Rename-Item "C:\npm" "npm.old" -Force
+          Remove-Item Env:npm_config_prefix
 
       - name: Git checkout for source code analysis
         uses: actions/checkout@v4
-        if: matrix.os == 'ubuntu-24.04'
+        if: env.FGP_CODE_SCAN_ENABLED
         with:
           fetch-depth: 0
 
       - name: Git checkout
         uses: actions/checkout@v4
-        if: matrix.os != 'ubuntu-24.04'
+        if: ${{ ! env.FGP_CODE_SCAN_ENABLED }}
         with:
           fetch-depth: 1
 
-      - name: Set up JDK 21
+      - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '21'
+          java-version: ${{ matrix.pluginJavaVersion }}
           architecture: x64
 
       - name: Cache Gradle's cache and wrapper
@@ -61,7 +111,7 @@ jobs:
 
       - name: Cache Sonar's cache
         uses: actions/cache@v4
-        if: matrix.os == 'ubuntu-24.04'
+        if: env.FGP_CODE_SCAN_ENABLED
         with:
           path: |
             ~/.sonar/cache/
@@ -70,26 +120,27 @@ jobs:
       - name: Grant executable permission
         run: chmod +x gradlew plugins/frontend-jdk*/src/integrationTest/resources/*/bin/*
 
-      - name: Build plugin on Linux (with test coverage)
-        if: matrix.os == 'ubuntu-24.04'
-        run: ./gradlew :plugins:frontend-jdk21:jacocoTestReport --console=plain
-
-      - name: Build plugin on MacOS
-        if: matrix.os == 'macos-14'
-        run: ./gradlew :plugins:frontend-jdk21:build --console=plain
+      - name: Build plugin on Linux/Mac OS
+        if: runner.os != 'Windows'
+        run: |
+          if [[ "${{ env.FGP_CODE_SCAN_ENABLED }}" ]]; then
+            gradleTaskName=:plugins:frontend-jdk${{ matrix.pluginJavaVersion }}:jacocoTestReport
+          else
+            gradleTaskName=:plugins:frontend-jdk${{ matrix.pluginJavaVersion }}:build
+          fi
+          ./gradlew $gradleTaskName --console=plain
 
       - name: Build plugin on Windows
-        if: matrix.os == 'windows-2022'
+        if: runner.os == 'Windows'
         run: |
-          Remove-Item Env:npm_config_prefix
-          ./gradlew :plugins:frontend-jdk21:build --console=plain
+          gradlew :plugins:frontend-jdk${{ matrix.pluginJavaVersion }}:build --console=plain
 
       - name: Scan source code and test results
-        if: matrix.os == 'ubuntu-24.04'
+        if: env.FGP_CODE_SCAN_ENABLED
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew :plugins:frontend-jdk21:sonar --console=plain -Dorg.gradle.jvmargs=-Xmx512m -i
+        run: ./gradlew :plugins:frontend-jdk${{ matrix.pluginJavaVersion }}:sonar --console=plain -Dorg.gradle.jvmargs=-Xmx512m -i
 
       - name: Stop Gradle before caching
         run: ./gradlew -stop
