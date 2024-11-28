@@ -74,8 +74,8 @@ public final class GradleHelper {
     private static GradleRunner createGradleRunner(final Path projectDirectory, final LogLevel loggingLevel,
         final String... additionalArguments) {
         final List<String> arguments = new ArrayList<>();
-        arguments.add("-s");
-        arguments.add("--warning-mode=all");
+        //arguments.add("-s");
+        //arguments.add("--warning-mode=all");
         toLoggingLevelProperty(loggingLevel).ifPresent(arguments::add);
         arguments.addAll(asList(additionalArguments));
         return GradleRunner
