@@ -63,11 +63,6 @@ public class FrontendExtension {
     private final Property<String> installScript;
 
     /**
-     * Script provided as argument of the package manager executable to clean frontend artifacts.
-     */
-    private final Property<String> cleanScript;
-
-    /**
      * Script provided as argument of the package manager executable to assemble frontend artifacts.
      */
     private final Property<String> assembleScript;
@@ -208,7 +203,6 @@ public class FrontendExtension {
         nodeDistributionServerUsername = objectFactory.property(String.class);
         nodeDistributionServerPassword = objectFactory.property(String.class);
         installScript = objectFactory.property(String.class);
-        cleanScript = objectFactory.property(String.class);
         assembleScript = objectFactory.property(String.class);
         checkScript = objectFactory.property(String.class);
         publishScript = objectFactory.property(String.class);

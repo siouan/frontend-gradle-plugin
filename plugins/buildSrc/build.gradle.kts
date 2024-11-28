@@ -5,9 +5,3 @@ plugins {
 dependencies {
     implementation(gradleApi())
 }
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(11)
-    }
-}

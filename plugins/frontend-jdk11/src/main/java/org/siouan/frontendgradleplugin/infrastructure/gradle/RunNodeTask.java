@@ -18,7 +18,7 @@ import org.siouan.frontendgradleplugin.domain.ExecutableType;
  * /project&gt; gradle runNode "--args=-v"
  *
  * &gt; Task :runNode
- * 20.18.0
+ * 22.11.0
  * </pre>
  * <p>
  * This task should not be extended or used to register another task.

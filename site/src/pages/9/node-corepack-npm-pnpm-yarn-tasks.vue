@@ -18,7 +18,7 @@
         <FgpSubTitle id="dependency-tree">Dependency tree</FgpSubTitle>
 
         <section>
-            <FgpDependencyTree class="mx-5 mb-3" />
+            <FgpDependencyTreeV9 class="mx-5 mb-3" />
         </section>
 
         <FgpSubTitle>Reference</FgpSubTitle>
@@ -31,7 +31,7 @@
             <FgpResolvePackageManagerTask />
             <FgpInstallPackageManagerTask />
             <FgpInstallFrontendTask />
-            <FgpCleanFrontendTask />
+            <FgpCleanFrontendTaskV9 />
             <FgpAssembleFrontendTask />
             <FgpCheckFrontendTask />
             <FgpPublishFrontendTask />

@@ -39,7 +39,7 @@
         <FgpNodeCorepackNpmPnpmYarnDirectUseFaq id="node-corepack-npm-pnpm-yarn-direct-use" />
         <FgpUnsupportedPlatformExceptionFaq id="unsupported-platform-exception" />
         <FgpCustomNodejsDistributionServerFaq id="custom-nodejs-distribution-server" />
-        <FgpCacheDirectoryFaq id="cache-directory" />
+        <FgpCacheDirectoryFaqV9 id="cache-directory" />
     </section>
 </template>
 

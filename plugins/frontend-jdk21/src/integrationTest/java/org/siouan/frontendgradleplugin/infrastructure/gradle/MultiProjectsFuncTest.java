@@ -1,6 +1,5 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
-import static org.siouan.frontendgradleplugin.FrontendGradlePlugin.GRADLE_CLEAN_TASK_NAME;
 import static org.siouan.frontendgradleplugin.FrontendGradlePlugin.GRADLE_PUBLISH_TASK_NAME;
 import static org.siouan.frontendgradleplugin.test.GradleBuildAssertions.assertTaskOutcomes;
 import static org.siouan.frontendgradleplugin.test.GradleBuildFiles.createBuildFile;
@@ -66,7 +65,6 @@ class MultiProjectsFuncTest {
             .nodeInstallDirectory(nodeInstallDirectory)
             .nodeDistributionUrl(getResourcePath("node-v22.11.0.zip"))
             .installScript("run install")
-            .cleanScript("run clean")
             .assembleScript("run assemble")
             .checkScript("run check")
             .publishScript("run publish");
@@ -79,12 +77,12 @@ class MultiProjectsFuncTest {
             .nodeDistributionProvided(true)
             .nodeInstallDirectory(nodeInstallDirectory)
             .installScript("run install")
-            .cleanScript("run clean")
             .assembleScript("run assemble")
             .checkScript("run check")
             .publishScript("run publish");
         createBuildFile(npmSubProjectPath, npmSubProjectFrontendProperties.toMap(),
-            "tasks.named('installPackageManager').configure { dependsOn(':" + YARN_SUB_PROJECT_NAME + ":installNode') }");
+            "tasks.named('installPackageManager').configure { dependsOn(':" + YARN_SUB_PROJECT_NAME
+                + ":installNode') }");
 
         // Sub-project 3
         final Path pnpmSubProjectPath = Files.createDirectory(projectDirectoryPath.resolve(PNPM_SUB_PROJECT_NAME));
@@ -93,56 +91,41 @@ class MultiProjectsFuncTest {
             .nodeDistributionProvided(true)
             .nodeInstallDirectory(nodeInstallDirectory)
             .installScript("run install")
-            .cleanScript("run clean")
             .assembleScript("run assemble")
             .checkScript("run check")
             .publishScript("run publish");
         createBuildFile(pnpmSubProjectPath, pnpmSubProjectFrontendProperties.toMap(),
-            "tasks.named('installPackageManager').configure { dependsOn(':" + YARN_SUB_PROJECT_NAME + ":installNode') }");
+            "tasks.named('installPackageManager').configure { dependsOn(':" + YARN_SUB_PROJECT_NAME
+                + ":installNode') }");
 
-        final BuildResult result1 = runGradle(projectDirectoryPath, GRADLE_CLEAN_TASK_NAME,
-            LifecycleBasePlugin.BUILD_TASK_NAME, GRADLE_PUBLISH_TASK_NAME);
+        final BuildResult result1 = runGradle(projectDirectoryPath, LifecycleBasePlugin.BUILD_TASK_NAME,
+            GRADLE_PUBLISH_TASK_NAME);
 
         assertTaskOutcomes(result1, YARN_SUB_PROJECT_NAME, SUCCESS, SKIPPED, SUCCESS, SUCCESS, SUCCESS, SUCCESS,
-            SUCCESS, SUCCESS, SUCCESS, SUCCESS, SUCCESS, SUCCESS, SUCCESS);
+            SUCCESS, SUCCESS, SUCCESS, SUCCESS, SUCCESS);
 
         assertTaskOutcomes(result1, NPM_SUB_PROJECT_NAME, SKIPPED, SKIPPED, SUCCESS, SUCCESS, SUCCESS, SUCCESS, SUCCESS,
-            SUCCESS, SUCCESS, UP_TO_DATE, SUCCESS, SUCCESS, SUCCESS);
+            SUCCESS, SUCCESS, SUCCESS, SUCCESS);
 
         assertTaskOutcomes(result1, PNPM_SUB_PROJECT_NAME, SKIPPED, SKIPPED, SUCCESS, SUCCESS, SUCCESS, SUCCESS,
-            SUCCESS, SUCCESS, SUCCESS, UP_TO_DATE, SUCCESS, SUCCESS, SUCCESS);
+            SUCCESS, SUCCESS, SUCCESS, SUCCESS, SUCCESS);
 
         assertTaskOutcomes(result1, IGNORED, IGNORED, IGNORED, IGNORED, IGNORED, IGNORED, IGNORED, IGNORED, IGNORED,
-            IGNORED, IGNORED, IGNORED, IGNORED);
+            IGNORED, IGNORED);
 
         final BuildResult result2 = runGradle(projectDirectoryPath, LifecycleBasePlugin.BUILD_TASK_NAME,
             GRADLE_PUBLISH_TASK_NAME);
 
         assertTaskOutcomes(result2, YARN_SUB_PROJECT_NAME, UP_TO_DATE, SKIPPED, UP_TO_DATE, UP_TO_DATE, SUCCESS,
-            IGNORED, SUCCESS, SUCCESS, SUCCESS, IGNORED, SUCCESS, SUCCESS, SUCCESS);
+            SUCCESS, SUCCESS, SUCCESS, SUCCESS, SUCCESS, SUCCESS);
 
-        assertTaskOutcomes(result2, NPM_SUB_PROJECT_NAME, SKIPPED, SKIPPED, UP_TO_DATE, UP_TO_DATE, SUCCESS, IGNORED,
-            SUCCESS, SUCCESS, SUCCESS, IGNORED, SUCCESS, SUCCESS, SUCCESS);
+        assertTaskOutcomes(result2, NPM_SUB_PROJECT_NAME, SKIPPED, SKIPPED, UP_TO_DATE, UP_TO_DATE, SUCCESS, SUCCESS,
+            SUCCESS, SUCCESS, SUCCESS, SUCCESS, SUCCESS);
 
-        assertTaskOutcomes(result2, PNPM_SUB_PROJECT_NAME, SKIPPED, SKIPPED, UP_TO_DATE, UP_TO_DATE, SUCCESS, IGNORED,
-            SUCCESS, SUCCESS, SUCCESS, IGNORED, SUCCESS, SUCCESS, SUCCESS);
+        assertTaskOutcomes(result2, PNPM_SUB_PROJECT_NAME, SKIPPED, SKIPPED, UP_TO_DATE, UP_TO_DATE, SUCCESS, SUCCESS,
+            SUCCESS, SUCCESS, SUCCESS, SUCCESS, SUCCESS);
 
         assertTaskOutcomes(result2, IGNORED, IGNORED, IGNORED, IGNORED, IGNORED, IGNORED, IGNORED, IGNORED, IGNORED,
-            IGNORED, IGNORED, IGNORED, IGNORED);
-
-        final BuildResult result3 = runGradle(projectDirectoryPath, LifecycleBasePlugin.BUILD_TASK_NAME,
-            GRADLE_PUBLISH_TASK_NAME);
-
-        assertTaskOutcomes(result3, YARN_SUB_PROJECT_NAME, UP_TO_DATE, SKIPPED, UP_TO_DATE, UP_TO_DATE, SUCCESS,
-            IGNORED, SUCCESS, SUCCESS, SUCCESS, IGNORED, SUCCESS, SUCCESS, SUCCESS);
-
-        assertTaskOutcomes(result3, NPM_SUB_PROJECT_NAME, SKIPPED, SKIPPED, UP_TO_DATE, UP_TO_DATE, SUCCESS, IGNORED,
-            SUCCESS, SUCCESS, SUCCESS, IGNORED, SUCCESS, SUCCESS, SUCCESS);
-
-        assertTaskOutcomes(result3, PNPM_SUB_PROJECT_NAME, SKIPPED, SKIPPED, UP_TO_DATE, UP_TO_DATE, SUCCESS, IGNORED,
-            SUCCESS, SUCCESS, SUCCESS, IGNORED, SUCCESS, SUCCESS, SUCCESS);
-
-        assertTaskOutcomes(result3, IGNORED, IGNORED, IGNORED, IGNORED, IGNORED, IGNORED, IGNORED, IGNORED, IGNORED,
-            IGNORED, IGNORED, IGNORED, IGNORED);
+            IGNORED, IGNORED);
     }
 }

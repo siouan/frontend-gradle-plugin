@@ -68,11 +68,6 @@ public class FrontendGradlePlugin implements Plugin<Project> {
     public static final String CHECK_TASK_NAME = "checkFrontend";
 
     /**
-     * Name of the task that cleans the frontend.
-     */
-    public static final String CLEAN_TASK_NAME = "cleanFrontend";
-
-    /**
      * Name of the task that publishes the frontend.
      */
     public static final String PUBLISH_TASK_NAME = "publishFrontend";
@@ -136,8 +131,6 @@ public class FrontendGradlePlugin implements Plugin<Project> {
     public static final String GRADLE_ASSEMBLE_TASK_NAME = LifecycleBasePlugin.ASSEMBLE_TASK_NAME;
 
     public static final String GRADLE_CHECK_TASK_NAME = LifecycleBasePlugin.CHECK_TASK_NAME;
-
-    public static final String GRADLE_CLEAN_TASK_NAME = LifecycleBasePlugin.CLEAN_TASK_NAME;
 
     public static final String GRADLE_PUBLISH_TASK_NAME = PublishingPlugin.PUBLISH_LIFECYCLE_TASK_NAME;
 
@@ -319,9 +312,6 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         taskContainer.register(INSTALL_FRONTEND_TASK_NAME, InstallFrontendTask.class,
             task -> configureInstallFrontendTask(task, taskContainer, beanRegistryBuildServiceProvider,
                 frontendExtension, systemProviders));
-        taskContainer.register(CLEAN_TASK_NAME, CleanTask.class,
-            task -> configureCleanFrontendTask(task, taskContainer, beanRegistryBuildServiceProvider, frontendExtension,
-                systemProviders));
         taskContainer.register(CHECK_TASK_NAME, CheckTask.class,
             task -> configureCheckFrontendTask(task, taskContainer, beanRegistryBuildServiceProvider, frontendExtension,
                 systemProviders));
@@ -333,7 +323,6 @@ public class FrontendGradlePlugin implements Plugin<Project> {
                 frontendExtension, systemProviders));
 
         // Configure dependencies with Gradle built-in tasks.
-        configureDependency(taskContainer, GRADLE_CLEAN_TASK_NAME, CLEAN_TASK_NAME, CleanTask.class);
         configureDependency(taskContainer, GRADLE_ASSEMBLE_TASK_NAME, ASSEMBLE_TASK_NAME, AssembleTask.class);
         configureDependency(taskContainer, GRADLE_CHECK_TASK_NAME, CHECK_TASK_NAME, CheckTask.class);
         configureDependency(taskContainer, GRADLE_PUBLISH_TASK_NAME, PUBLISH_TASK_NAME, PublishTask.class);
@@ -653,34 +642,6 @@ public class FrontendGradlePlugin implements Plugin<Project> {
         task.setOnlyIf(t -> packageJsonFileExists(frontendExtension));
 
         configureDependency(taskContainer, task, INSTALL_PACKAGE_MANAGER_TASK_NAME, InstallPackageManagerTask.class);
-    }
-
-    /**
-     * Configures the given task with the plugin extension.
-     *
-     * @param task Task.
-     * @param taskContainer Task container.
-     * @param beanRegistryBuildServiceProvider Bean registry build service provider.
-     * @param frontendExtension Plugin extension.
-     */
-    protected void configureCleanFrontendTask(final CleanTask task, final TaskContainer taskContainer,
-        final Provider<BeanRegistryBuildService> beanRegistryBuildServiceProvider,
-        final FrontendExtension frontendExtension, final SystemProviders systemProviders) {
-        task.setGroup(TASK_GROUP);
-        task.setDescription("Cleans frontend resources outside the build directory by running a specific script.");
-        task.getBeanRegistryBuildService().set(beanRegistryBuildServiceProvider);
-        task.usesService(beanRegistryBuildServiceProvider);
-
-        final BeanRegistry beanRegistry = beanRegistryBuildServiceProvider.get().getBeanRegistry();
-        task.getPackageJsonDirectory().set(frontendExtension.getPackageJsonDirectory().getAsFile());
-        task.getNodeInstallDirectory().set(frontendExtension.getNodeInstallDirectory().getAsFile());
-        task.getExecutableType().set(getExecutableType(taskContainer, beanRegistry));
-        task.getCleanScript().set(frontendExtension.getCleanScript());
-        task.getVerboseModeEnabled().set(frontendExtension.getVerboseModeEnabled());
-        bindSystemArchPropertiesToTaskInputs(systemProviders, task.getSystemJvmArch(), task.getSystemOsName());
-        task.setOnlyIf(t -> packageJsonFileExists(frontendExtension) && frontendExtension.getCleanScript().isPresent());
-
-        configureDependency(taskContainer, task, INSTALL_FRONTEND_TASK_NAME, InstallFrontendTask.class);
     }
 
     /**

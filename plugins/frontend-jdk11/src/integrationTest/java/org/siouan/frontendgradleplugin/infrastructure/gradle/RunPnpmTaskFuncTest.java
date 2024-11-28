@@ -33,8 +33,8 @@ class RunPnpmTaskFuncTest {
     void should_fail_task_when_args_is_not_defined() throws IOException {
         Files.copy(getResourcePath("package-pnpm.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("20.18.0")
-            .nodeDistributionUrl(getResourcePath("node-v20.18.0.zip"));
+            .nodeVersion("22.11.0")
+            .nodeDistributionUrl(getResourcePath("node-v22.11.0.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result = runGradleAndExpectFailure(projectDirectoryPath, RUN_PNPM_TASK_NAME);
@@ -46,8 +46,8 @@ class RunPnpmTaskFuncTest {
     void should_run_command() throws IOException {
         Files.copy(getResourcePath("package-pnpm.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("20.18.0")
-            .nodeDistributionUrl(getResourcePath("node-v20.18.0.zip"));
+            .nodeVersion("22.11.0")
+            .nodeDistributionUrl(getResourcePath("node-v22.11.0.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result = runGradle(projectDirectoryPath, RUN_PNPM_TASK_NAME, "--args=add jest -D");

@@ -8,6 +8,7 @@
             'resolvePackageManager',
             'installPackageManager',
             'installFrontend',
+            'cleanFrontend',
             'assembleFrontend',
             'checkFrontend',
             'publishFrontend',

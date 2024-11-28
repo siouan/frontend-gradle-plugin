@@ -21,7 +21,6 @@
     <FgpPropertyLink name="corepackVersion" /> = 'latest'
 
     <FgpPropertyLink name="installScript" /> = 'install'
-    <FgpPropertyLink name="cleanScript" /> = 'run clean'
     <FgpPropertyLink name="assembleScript" /> = 'run assemble'
     <FgpPropertyLink name="checkScript" /> = 'run check'
     <FgpPropertyLink name="publishScript" /> = 'run publish'
@@ -56,7 +55,6 @@
     <FgpPropertyLink name="corepackVersion" />.set("latest")
 
     <FgpPropertyLink name="installScript" />.set("install")
-    <FgpPropertyLink name="cleanScript" />.set("run clean")
     <FgpPropertyLink name="assembleScript" />.set("run assemble")
     <FgpPropertyLink name="checkScript" />.set("run check")
     <FgpPropertyLink name="publishScript" />.set("run publish")
@@ -154,7 +152,6 @@ assembleScript.set("run build")
             </FgpGradleScripts>
 
             <FgpInstallScriptProperty />
-            <FgpCleanScriptProperty />
             <FgpAssembleScriptProperty />
             <FgpCheckScriptProperty />
             <FgpPublishScriptProperty />

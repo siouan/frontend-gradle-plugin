@@ -141,7 +141,7 @@ assembleScript.set("run build")
             </FgpGradleScripts>
 
             <FgpInstallScriptProperty />
-            <FgpCleanScriptProperty />
+            <FgpCleanScriptPropertyV9 />
             <FgpAssembleScriptProperty />
             <FgpCheckScriptProperty />
             <FgpPublishScriptProperty />
@@ -150,7 +150,7 @@ assembleScript.set("run build")
         <section>
             <FgpSubSubTitle>Other settings</FgpSubSubTitle>
 
-            <FgpPackageJsonDirectoryProperty />
+            <FgpPackageJsonDirectoryPropertyV9 />
             <FgpHttpsProxyHostProperty />
             <FgpHttpsProxyPortProperty />
             <FgpHttpsProxyUsernameProperty />

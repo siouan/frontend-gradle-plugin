@@ -32,7 +32,6 @@ import org.junitpioneer.jupiter.SetSystemProperty;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.AssembleTask;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.CheckTask;
-import org.siouan.frontendgradleplugin.infrastructure.gradle.CleanTask;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.FrontendExtension;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.InstallCorepackTask;
 import org.siouan.frontendgradleplugin.infrastructure.gradle.InstallFrontendTask;
@@ -76,7 +75,6 @@ class FrontendGradlePluginTest {
         assertThat(extension.getNodeDistributionServerPassword().isPresent()).isFalse();
         assertThat(extension.getCorepackVersion().isPresent()).isFalse();
         assertThat(extension.getInstallScript().get()).isEqualTo(DEFAULT_INSTALL_SCRIPT);
-        assertThat(extension.getCleanScript().isPresent()).isFalse();
         assertThat(extension.getAssembleScript().isPresent()).isFalse();
         assertThat(extension.getCheckScript().isPresent()).isFalse();
         assertThat(extension.getPublishScript().isPresent()).isFalse();
@@ -134,7 +132,6 @@ class FrontendGradlePluginTest {
         extension.getNodeInstallDirectory().set(project.file(nodeInstallDirectoryName));
         extension.getCorepackVersion().set("latest");
         extension.getInstallScript().set("run ci");
-        extension.getCleanScript().set("run clean");
         extension.getAssembleScript().set("run build");
         extension.getCheckScript().set("run test");
         extension.getPublishScript().set("run publish");
@@ -282,7 +279,6 @@ class FrontendGradlePluginTest {
             extension.getNodeInstallDirectory().getAsFile().get());
         assertThat(installPackageManagerTask.getPackageManagerSpecificationFile().getAsFile().get()).isEqualTo(
             resolvePackageManagerTask.getPackageManagerSpecificationFile().getAsFile().get());
-        //installPackageManagerTask.getPackageManagerExecutableFile()
         assertThat(installPackageManagerTask.getVerboseModeEnabled().get()).isEqualTo(
             extension.getVerboseModeEnabled().get());
         assertThat(installPackageManagerTask.getSystemJvmArch().get()).isEqualTo(
@@ -299,31 +295,12 @@ class FrontendGradlePluginTest {
             extension.getPackageJsonDirectory().getAsFile().get());
         assertThat(installFrontendTask.getNodeInstallDirectory().get()).isEqualTo(
             extension.getNodeInstallDirectory().getAsFile().get());
-        //installFrontendTask.getPackageManagerExecutableFile()
         assertThat(installFrontendTask.getInstallScript().get()).isEqualTo(extension.getInstallScript().get());
         assertThat(installFrontendTask.getVerboseModeEnabled().get()).isEqualTo(
             extension.getVerboseModeEnabled().get());
         assertThat(installFrontendTask.getSystemJvmArch().get()).isEqualTo(expectedSystemProperties.get(JVM_ARCH));
         assertThat(installFrontendTask.getSystemOsName().get()).isEqualTo(expectedSystemProperties.get(OS_NAME));
         assertThat(installFrontendTask.getDependsOn()).containsExactlyInAnyOrder(installPackageManagerTask.getName());
-
-        final CleanTask cleanFrontendTask = project
-            .getTasks()
-            .named(CLEAN_TASK_NAME, CleanTask.class)
-            .get();
-        assertThat(cleanFrontendTask.getBeanRegistryBuildService().get().getBeanRegistry()).isNotNull();
-        assertThat(cleanFrontendTask.getPackageJsonDirectory().get()).isEqualTo(
-            extension.getPackageJsonDirectory().getAsFile().get());
-        assertThat(cleanFrontendTask.getNodeInstallDirectory().get()).isEqualTo(
-            extension.getNodeInstallDirectory().getAsFile().get());
-        //frontendCleanTask.getPackageManagerExecutableFile()
-        assertThat(cleanFrontendTask.getCleanScript().getOrNull()).isEqualTo(extension.getCleanScript().getOrNull());
-        assertThat(cleanFrontendTask.getVerboseModeEnabled().get()).isEqualTo(extension.getVerboseModeEnabled().get());
-        assertThat(cleanFrontendTask.getSystemJvmArch().get()).isEqualTo(expectedSystemProperties.get(JVM_ARCH));
-        assertThat(cleanFrontendTask.getSystemOsName().get()).isEqualTo(expectedSystemProperties.get(OS_NAME));
-        assertThat(cleanFrontendTask.getDependsOn()).containsExactlyInAnyOrder(installFrontendTask.getName());
-        assertThat(project.getTasks().named(BasePlugin.CLEAN_TASK_NAME).get().getDependsOn()).contains(
-            cleanFrontendTask.getName());
 
         final AssembleTask assembleFrontendTask = project
             .getTasks()
@@ -332,7 +309,6 @@ class FrontendGradlePluginTest {
         assertThat(assembleFrontendTask.getBeanRegistryBuildService().get().getBeanRegistry()).isNotNull();
         assertThat(assembleFrontendTask.getPackageJsonDirectory().get()).isEqualTo(
             extension.getPackageJsonDirectory().getAsFile().get());
-        //frontendAssembleTask.getPackageManagerExecutableFile()
         assertThat(assembleFrontendTask.getAssembleScript().getOrNull()).isEqualTo(
             extension.getAssembleScript().getOrNull());
         assertThat(assembleFrontendTask.getVerboseModeEnabled().get()).isEqualTo(
@@ -343,16 +319,12 @@ class FrontendGradlePluginTest {
         assertThat(project.getTasks().named(BasePlugin.ASSEMBLE_TASK_NAME).get().getDependsOn()).contains(
             assembleFrontendTask.getName());
 
-        final CheckTask checkFrontendTask = project
-            .getTasks()
-            .named(CHECK_TASK_NAME, CheckTask.class)
-            .get();
+        final CheckTask checkFrontendTask = project.getTasks().named(CHECK_TASK_NAME, CheckTask.class).get();
         assertThat(checkFrontendTask.getBeanRegistryBuildService().get().getBeanRegistry()).isNotNull();
         assertThat(checkFrontendTask.getPackageJsonDirectory().get()).isEqualTo(
             extension.getPackageJsonDirectory().getAsFile().get());
         assertThat(checkFrontendTask.getNodeInstallDirectory().get()).isEqualTo(
             extension.getNodeInstallDirectory().getAsFile().get());
-        //frontendCheckTask.getPackageManagerExecutableFile()
         assertThat(checkFrontendTask.getCheckScript().getOrNull()).isEqualTo(extension.getCheckScript().getOrNull());
         assertThat(checkFrontendTask.getVerboseModeEnabled().get()).isEqualTo(extension.getVerboseModeEnabled().get());
         assertThat(checkFrontendTask.getSystemJvmArch().get()).isEqualTo(expectedSystemProperties.get(JVM_ARCH));
@@ -361,16 +333,12 @@ class FrontendGradlePluginTest {
         assertThat(project.getTasks().named(LifecycleBasePlugin.CHECK_TASK_NAME).get().getDependsOn()).contains(
             checkFrontendTask.getName());
 
-        final PublishTask publishFrontendTask = project
-            .getTasks()
-            .named(PUBLISH_TASK_NAME, PublishTask.class)
-            .get();
+        final PublishTask publishFrontendTask = project.getTasks().named(PUBLISH_TASK_NAME, PublishTask.class).get();
         assertThat(publishFrontendTask.getBeanRegistryBuildService().get().getBeanRegistry()).isNotNull();
         assertThat(publishFrontendTask.getPackageJsonDirectory().get()).isEqualTo(
             extension.getPackageJsonDirectory().getAsFile().get());
         assertThat(publishFrontendTask.getNodeInstallDirectory().get()).isEqualTo(
             extension.getNodeInstallDirectory().getAsFile().get());
-        //frontendPublishTask.getPackageManagerExecutableFile()
         assertThat(publishFrontendTask.getPublishScript().getOrNull()).isEqualTo(
             extension.getPublishScript().getOrNull());
         assertThat(publishFrontendTask.getVerboseModeEnabled().get()).isEqualTo(

@@ -59,7 +59,7 @@ class InstallNodeTaskFuncTest {
     @Test
     void should_fail_when_distribution_download_url_is_invalid() throws IOException {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("20.18.0")
+            .nodeVersion("22.11.0")
             .nodeDistributionUrlRoot("protocol://domain/unknown");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
@@ -71,8 +71,8 @@ class InstallNodeTaskFuncTest {
     @Test
     void should_succeed_first_time_and_be_up_to_date_next_time() throws IOException {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("20.18.0")
-            .nodeDistributionUrl(getResourcePath("node-v20.18.0.zip"));
+            .nodeVersion("22.11.0")
+            .nodeDistributionUrl(getResourcePath("node-v22.11.0.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, INSTALL_NODE_TASK_NAME);

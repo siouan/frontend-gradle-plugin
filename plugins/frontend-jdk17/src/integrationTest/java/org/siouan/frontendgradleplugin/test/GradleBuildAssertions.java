@@ -22,9 +22,9 @@ public final class GradleBuildAssertions {
 
     private static final List<String> TASK_NAMES = List.of(INSTALL_NODE_TASK_NAME, INSTALL_COREPACK_TASK_NAME,
         RESOLVE_PACKAGE_MANAGER_TASK_NAME, INSTALL_PACKAGE_MANAGER_TASK_NAME, INSTALL_FRONTEND_TASK_NAME,
-        CLEAN_TASK_NAME, ASSEMBLE_TASK_NAME, CHECK_TASK_NAME, PUBLISH_TASK_NAME, GRADLE_CLEAN_TASK_NAME,
-        GRADLE_ASSEMBLE_TASK_NAME, GRADLE_CHECK_TASK_NAME, GRADLE_PUBLISH_TASK_NAME, RUN_NODE_TASK_NAME,
-        RUN_COREPACK_TASK_NAME, RUN_NPM_TASK_NAME, RUN_PNPM_TASK_NAME, RUN_YARN_TASK_NAME);
+        ASSEMBLE_TASK_NAME, CHECK_TASK_NAME, PUBLISH_TASK_NAME, GRADLE_ASSEMBLE_TASK_NAME, GRADLE_CHECK_TASK_NAME,
+        GRADLE_PUBLISH_TASK_NAME, RUN_NODE_TASK_NAME, RUN_COREPACK_TASK_NAME, RUN_NPM_TASK_NAME, RUN_PNPM_TASK_NAME,
+        RUN_YARN_TASK_NAME);
 
     private GradleBuildAssertions() {
     }
@@ -35,8 +35,8 @@ public final class GradleBuildAssertions {
         final PluginTaskOutcome installPackageManagerTaskOutcome, final PluginTaskOutcome installFrontendTaskOutcome,
         final PluginTaskOutcome assembleTaskOutcome, final PluginTaskOutcome gradleAssembleTaskOutcome) {
         assertTaskOutcomes(result, null, installNodeTaskOutcome, installCorepackTaskOutcome,
-            resolvePackageManagerTaskOutcome, installPackageManagerTaskOutcome, installFrontendTaskOutcome, null,
-            assembleTaskOutcome, null, null, null, gradleAssembleTaskOutcome, null, null, null, null);
+            resolvePackageManagerTaskOutcome, installPackageManagerTaskOutcome, installFrontendTaskOutcome,
+            assembleTaskOutcome, null, null, gradleAssembleTaskOutcome, null, null, null, null);
     }
 
     public static void assertCheckTaskOutcomes(final BuildResult result, final PluginTaskOutcome installNodeTaskOutcome,
@@ -44,17 +44,8 @@ public final class GradleBuildAssertions {
         final PluginTaskOutcome installPackageManagerTaskOutcome, final PluginTaskOutcome installFrontendTaskOutcome,
         final PluginTaskOutcome checkTaskOutcome, final PluginTaskOutcome gradleCheckTaskOutcome) {
         assertTaskOutcomes(result, null, installNodeTaskOutcome, installCorepackTaskOutcome,
-            resolvePackageManagerTaskOutcome, installPackageManagerTaskOutcome, installFrontendTaskOutcome, null, null,
-            checkTaskOutcome, null, null, null, gradleCheckTaskOutcome, null, null, null);
-    }
-
-    public static void assertCleanTaskOutcomes(final BuildResult result, final PluginTaskOutcome installNodeTaskOutcome,
-        final PluginTaskOutcome installCorepackTaskOutcome, final PluginTaskOutcome resolvePackageManagerTaskOutcome,
-        final PluginTaskOutcome installPackageManagerTaskOutcome, final PluginTaskOutcome installFrontendTaskOutcome,
-        final PluginTaskOutcome cleanTaskOutcome, final PluginTaskOutcome gradleCleanTaskOutcome) {
-        assertTaskOutcomes(result, null, installNodeTaskOutcome, installCorepackTaskOutcome,
-            resolvePackageManagerTaskOutcome, installPackageManagerTaskOutcome, installFrontendTaskOutcome,
-            cleanTaskOutcome, null, null, null, gradleCleanTaskOutcome, null, null, null, null, null);
+            resolvePackageManagerTaskOutcome, installPackageManagerTaskOutcome, installFrontendTaskOutcome, null,
+            checkTaskOutcome, null, null, gradleCheckTaskOutcome, null, null, null);
     }
 
     public static void assertPublishTaskOutcomes(final BuildResult result,
@@ -64,7 +55,7 @@ public final class GradleBuildAssertions {
         final PluginTaskOutcome publishTaskOutcome, final PluginTaskOutcome gradlePublishTaskOutcome) {
         assertTaskOutcomes(result, null, installNodeTaskOutcome, installCorepackTaskOutcome,
             resolvePackageManagerTaskOutcome, installPackageManagerTaskOutcome, installFrontendTaskOutcome, null, null,
-            null, publishTaskOutcome, null, null, null, gradlePublishTaskOutcome, null, null);
+            publishTaskOutcome, null, null, gradlePublishTaskOutcome, null, null);
     }
 
     public static void assertRunNodeTaskOutcome(final BuildResult result,
@@ -80,39 +71,39 @@ public final class GradleBuildAssertions {
     }
 
     public static void assertTaskFailed(final BuildResult result, final String taskName) {
-        assertTaskOutcomes(result, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            taskName, FAILED);
+        assertTaskOutcomes(result, null, null, null, null, null, null, null, null, null, null, null, null, taskName,
+            FAILED);
     }
 
     public static void assertTaskOutcome(final BuildResult result, final String taskName,
         final PluginTaskOutcome taskOutcome) {
-        assertTaskOutcomes(result, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            taskName, taskOutcome);
+        assertTaskOutcomes(result, null, null, null, null, null, null, null, null, null, null, null, null, taskName,
+            taskOutcome);
     }
 
     public static void assertTaskOutcomes(final BuildResult result, final PluginTaskOutcome installNodeTaskOutcome,
         final String taskName, final PluginTaskOutcome taskOutcome) {
         assertTaskOutcomes(result, null, installNodeTaskOutcome, null, null, null, null, null, null, null, null, null,
-            null, null, null, taskName, taskOutcome);
+            null, taskName, taskOutcome);
     }
 
     public static void assertTaskOutcomes(final BuildResult result, final PluginTaskOutcome installNodeTaskOutcome,
         final PluginTaskOutcome installCorepackTaskOutcome, final String taskName,
         final PluginTaskOutcome taskOutcome) {
         assertTaskOutcomes(result, null, installNodeTaskOutcome, installCorepackTaskOutcome, null, null, null, null,
-            null, null, null, null, null, null, null, taskName, taskOutcome);
+            null, null, null, null, null, taskName, taskOutcome);
     }
 
     public static void assertTaskOutcomes(final BuildResult result, final PluginTaskOutcome installNodeTaskOutcome,
         final PluginTaskOutcome installCorepackTaskOutcome) {
         assertTaskOutcomes(result, null, installNodeTaskOutcome, installCorepackTaskOutcome, null, null, null, null,
-            null, null, null, null, null, null, null, null, null);
+            null, null, null, null, null, null, null);
     }
 
     public static void assertTaskOutcomes(final BuildResult result, final PluginTaskOutcome installNodeTaskOutcome,
         final PluginTaskOutcome installCorepackTaskOutcome, final PluginTaskOutcome resolvePackageManagerTaskOutcome) {
         assertTaskOutcomes(result, null, installNodeTaskOutcome, installCorepackTaskOutcome,
-            resolvePackageManagerTaskOutcome, null, null, null, null, null, null, null, null, null, null, null, null);
+            resolvePackageManagerTaskOutcome, null, null, null, null, null, null, null, null, null, null);
     }
 
     public static void assertTaskOutcomes(final BuildResult result, final PluginTaskOutcome installNodeTaskOutcome,
@@ -120,7 +111,7 @@ public final class GradleBuildAssertions {
         final PluginTaskOutcome installPackageManagerTaskOutcome) {
         assertTaskOutcomes(result, null, installNodeTaskOutcome, installCorepackTaskOutcome,
             resolvePackageManagerTaskOutcome, installPackageManagerTaskOutcome, null, null, null, null, null, null,
-            null, null, null, null, null);
+            null, null, null);
     }
 
     public static void assertTaskOutcomes(final BuildResult result, final PluginTaskOutcome installNodeTaskOutcome,
@@ -129,7 +120,7 @@ public final class GradleBuildAssertions {
         final PluginTaskOutcome taskOutcome) {
         assertTaskOutcomes(result, null, installNodeTaskOutcome, installCorepackTaskOutcome,
             resolvePackageManagerTaskOutcome, installPackageManagerTaskOutcome, null, null, null, null, null, null,
-            null, null, null, taskName, taskOutcome);
+            null, taskName, taskOutcome);
     }
 
     public static void assertTaskOutcomes(final BuildResult result, final PluginTaskOutcome installNodeTaskOutcome,
@@ -137,7 +128,7 @@ public final class GradleBuildAssertions {
         final PluginTaskOutcome installPackageManagerTaskOutcome, final PluginTaskOutcome installFrontendTaskOutcome) {
         assertTaskOutcomes(result, null, installNodeTaskOutcome, installCorepackTaskOutcome,
             resolvePackageManagerTaskOutcome, installPackageManagerTaskOutcome, installFrontendTaskOutcome, null, null,
-            null, null, null, null, null, null, null, null);
+            null, null, null, null, null, null);
     }
 
     public static void assertTaskOutcomes(final BuildResult result, final PluginTaskOutcome installNodeTaskOutcome,
@@ -146,43 +137,40 @@ public final class GradleBuildAssertions {
         final String taskName, final PluginTaskOutcome taskOutcome) {
         assertTaskOutcomes(result, null, installNodeTaskOutcome, installCorepackTaskOutcome,
             resolvePackageManagerTaskOutcome, installPackageManagerTaskOutcome, installFrontendTaskOutcome, null, null,
-            null, null, null, null, null, null, taskName, taskOutcome);
+            null, null, null, null, taskName, taskOutcome);
     }
 
     public static void assertTaskOutcomes(final BuildResult result, final PluginTaskOutcome installNodeTaskOutcome,
         final PluginTaskOutcome installCorepackTaskOutcome, final PluginTaskOutcome resolvePackageManagerTaskOutcome,
         final PluginTaskOutcome installPackageManagerTaskOutcome, final PluginTaskOutcome installFrontendTaskOutcome,
-        final PluginTaskOutcome cleanTaskOutcome, final PluginTaskOutcome assembleTaskOutcome,
-        final PluginTaskOutcome checkTaskOutcome, final PluginTaskOutcome publishTaskOutcome,
-        final PluginTaskOutcome gradleCleanTaskOutcome, final PluginTaskOutcome gradleAssembleTaskOutcome,
+        final PluginTaskOutcome assembleTaskOutcome, final PluginTaskOutcome checkTaskOutcome,
+        final PluginTaskOutcome publishTaskOutcome, final PluginTaskOutcome gradleAssembleTaskOutcome,
         final PluginTaskOutcome gradleCheckTaskOutcome, final PluginTaskOutcome gradlePublishTaskOutcome) {
         assertTaskOutcomes(result, null, installNodeTaskOutcome, installCorepackTaskOutcome,
             resolvePackageManagerTaskOutcome, installPackageManagerTaskOutcome, installFrontendTaskOutcome,
-            cleanTaskOutcome, assembleTaskOutcome, checkTaskOutcome, publishTaskOutcome, gradleCleanTaskOutcome,
-            gradleAssembleTaskOutcome, gradleCheckTaskOutcome, gradlePublishTaskOutcome, null, null);
+            assembleTaskOutcome, checkTaskOutcome, publishTaskOutcome, gradleAssembleTaskOutcome,
+            gradleCheckTaskOutcome, gradlePublishTaskOutcome, null, null);
     }
 
     public static void assertTaskOutcomes(final BuildResult result, final String projectName,
         final PluginTaskOutcome installNodeTaskOutcome, final PluginTaskOutcome installCorepackTaskOutcome,
         final PluginTaskOutcome resolvePackageManagerTaskOutcome,
         final PluginTaskOutcome installPackageManagerTaskOutcome, final PluginTaskOutcome installFrontendTaskOutcome,
-        final PluginTaskOutcome cleanTaskOutcome, final PluginTaskOutcome assembleTaskOutcome,
-        final PluginTaskOutcome checkTaskOutcome, final PluginTaskOutcome publishTaskOutcome,
-        final PluginTaskOutcome gradleCleanTaskOutcome, final PluginTaskOutcome gradleAssembleTaskOutcome,
+        final PluginTaskOutcome assembleTaskOutcome, final PluginTaskOutcome checkTaskOutcome,
+        final PluginTaskOutcome publishTaskOutcome, final PluginTaskOutcome gradleAssembleTaskOutcome,
         final PluginTaskOutcome gradleCheckTaskOutcome, final PluginTaskOutcome gradlePublishTaskOutcome) {
         assertTaskOutcomes(result, projectName, installNodeTaskOutcome, installCorepackTaskOutcome,
             resolvePackageManagerTaskOutcome, installPackageManagerTaskOutcome, installFrontendTaskOutcome,
-            cleanTaskOutcome, assembleTaskOutcome, checkTaskOutcome, publishTaskOutcome, gradleCleanTaskOutcome,
-            gradleAssembleTaskOutcome, gradleCheckTaskOutcome, gradlePublishTaskOutcome, null, null);
+            assembleTaskOutcome, checkTaskOutcome, publishTaskOutcome, gradleAssembleTaskOutcome,
+            gradleCheckTaskOutcome, gradlePublishTaskOutcome, null, null);
     }
 
     public static void assertTaskOutcomes(final BuildResult result, final String projectName,
         final PluginTaskOutcome installNodeTaskOutcome, final PluginTaskOutcome installCorepackTaskOutcome,
         final PluginTaskOutcome resolvePackageManagerTaskOutcome,
         final PluginTaskOutcome installPackageManagerTaskOutcome, final PluginTaskOutcome installFrontendTaskOutcome,
-        final PluginTaskOutcome cleanTaskOutcome, final PluginTaskOutcome assembleTaskOutcome,
-        final PluginTaskOutcome checkTaskOutcome, final PluginTaskOutcome publishTaskOutcome,
-        final PluginTaskOutcome gradleCleanTaskOutcome, final PluginTaskOutcome gradleAssembleTaskOutcome,
+        final PluginTaskOutcome assembleTaskOutcome, final PluginTaskOutcome checkTaskOutcome,
+        final PluginTaskOutcome publishTaskOutcome, final PluginTaskOutcome gradleAssembleTaskOutcome,
         final PluginTaskOutcome gradleCheckTaskOutcome, final PluginTaskOutcome gradlePublishTaskOutcome,
         final String taskName, final PluginTaskOutcome taskOutcome) {
         final Map<String, PluginTaskOutcome> outcomeByTaskNames = new HashMap<>();
@@ -191,11 +179,9 @@ public final class GradleBuildAssertions {
         outcomeByTaskNames.put(RESOLVE_PACKAGE_MANAGER_TASK_NAME, resolvePackageManagerTaskOutcome);
         outcomeByTaskNames.put(INSTALL_PACKAGE_MANAGER_TASK_NAME, installPackageManagerTaskOutcome);
         outcomeByTaskNames.put(INSTALL_FRONTEND_TASK_NAME, installFrontendTaskOutcome);
-        outcomeByTaskNames.put(CLEAN_TASK_NAME, cleanTaskOutcome);
         outcomeByTaskNames.put(ASSEMBLE_TASK_NAME, assembleTaskOutcome);
         outcomeByTaskNames.put(CHECK_TASK_NAME, checkTaskOutcome);
         outcomeByTaskNames.put(PUBLISH_TASK_NAME, publishTaskOutcome);
-        outcomeByTaskNames.put(GRADLE_CLEAN_TASK_NAME, gradleCleanTaskOutcome);
         outcomeByTaskNames.put(GRADLE_ASSEMBLE_TASK_NAME, gradleAssembleTaskOutcome);
         outcomeByTaskNames.put(GRADLE_CHECK_TASK_NAME, gradleCheckTaskOutcome);
         outcomeByTaskNames.put(GRADLE_PUBLISH_TASK_NAME, gradlePublishTaskOutcome);

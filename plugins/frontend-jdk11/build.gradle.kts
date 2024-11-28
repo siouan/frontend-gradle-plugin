@@ -1,5 +1,3 @@
-import org.siouan.frontendgradleplugin.GradleTestListener
-
 val fgpJdkVersion: String by extra
 val fgpGroup: String by extra
 val fgpVersion: String by extra
