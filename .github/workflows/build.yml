@@ -45,13 +45,6 @@ jobs:
           else
             echo 'os=["${{ inputs.os }}"]' >> "$GITHUB_OUTPUT"
           fi
-          if [[ "${{ inputs.pluginJavaVersion }}" == "All" ]]; then
-            echo 'pluginJavaVersion=["21", "17", "11"]' >> "$GITHUB_OUTPUT"
-          elif [[ -n "${{ inputs.pluginJavaVersion }}" ]]; then
-            echo 'pluginJavaVersion=["${{ inputs.pluginJavaVersion }}"]' >> "$GITHUB_OUTPUT"
-          else
-            echo 'pluginJavaVersion=["21"]' >> "$GITHUB_OUTPUT"
-          fi
 
   build:
     name: Build
@@ -60,13 +53,15 @@ jobs:
     strategy:
       matrix:
         os: ${{ fromJSON(needs.define-matrix.outputs.os) }}
-        pluginJavaVersion: ${{ fromJSON(needs.define-matrix.outputs.pluginJavaVersion) }}
+    env:
+      SONAR_CODE_SCAN_ENABLED: (matrix.os == 'ubuntu-24.04') && (inputs.pluginJavaVersion == '21')
+      JDK_11_BUILD_REQUIRED: (inputs.pluginJavaVersion == '11') || (inputs.pluginJavaVersion == 'All')
+      JDK_17_BUILD_REQUIRED: (inputs.pluginJavaVersion == '17') || (inputs.pluginJavaVersion == 'All')
+      JDK_21_BUILD_REQUIRED: (inputs.pluginJavaVersion == '21') || (inputs.pluginJavaVersion == 'All')
+      JDK_21_BUILD_TASK_NAME: ${{ ! env.FGP_CODE_SCAN_ENABLED }} && 'build' || 'jacocoTestReport'
+      GIT_FETCH_DEPTH: ${{ ! env.FGP_CODE_SCAN_ENABLED }} && 1 || 0
 
     steps:
-      - name: Init environment
-        if: (matrix.os == 'ubuntu-24.04') && (matrix.pluginJavaVersion == '21')
-        run: echo "FGP_CODE_SCAN_ENABLED=1" >> $GITHUB_ENV
-
       - name: Init Ubuntu environment
         if: matrix.os == 'ubuntu-24.04'
         run: sudo rm -f /usr/local/bin/node /usr/local/bin/npm /usr/local/bin/pnpm /usr/local/bin/yarn
@@ -82,24 +77,25 @@ jobs:
           Rename-Item "C:\npm" "npm.old" -Force
           Remove-Item Env:npm_config_prefix
 
-      - name: Git checkout for source code analysis
-        uses: actions/checkout@v4
-        if: env.FGP_CODE_SCAN_ENABLED
-        with:
-          fetch-depth: 0
-
       - name: Git checkout
         uses: actions/checkout@v4
-        if: ${{ ! env.FGP_CODE_SCAN_ENABLED }}
         with:
-          fetch-depth: 1
+          fetch-depth: env.GIT_FETCH_DEPTH
 
-      - name: Set up additional JDK
+      - name: Set up JDK 11
         uses: actions/setup-java@v4
-        if: matrix.pluginJavaVersion != '21'
+        if: env.JDK_11_BUILD_REQUIRED
         with:
           distribution: temurin
-          java-version: ${{ matrix.pluginJavaVersion }}
+          java-version: '11'
+          architecture: x64
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        if: env.JDK_17_BUILD_REQUIRED
+        with:
+          distribution: temurin
+          java-version: '17'
           architecture: x64
 
       - name: Set up JDK 21
@@ -121,7 +117,7 @@ jobs:
 
       - name: Cache Sonar's cache
         uses: actions/cache@v4
-        if: env.FGP_CODE_SCAN_ENABLED
+        if: env.SONAR_CODE_SCAN_ENABLED
         with:
           path: |
             ~/.sonar/cache/
@@ -130,27 +126,24 @@ jobs:
       - name: Grant executable permission
         run: chmod +x gradlew plugins/frontend-jdk*/src/integrationTest/resources/*/bin/*
 
-      - name: Build plugin on Linux/Mac OS
-        if: runner.os != 'Windows'
-        run: |
-          if [[ "${{ env.FGP_CODE_SCAN_ENABLED }}" ]]; then
-            gradleTaskName=:plugins:frontend-jdk${{ matrix.pluginJavaVersion }}:jacocoTestReport
-          else
-            gradleTaskName=:plugins:frontend-jdk${{ matrix.pluginJavaVersion }}:build
-          fi
-          ./gradlew $gradleTaskName --console=plain
+      - name: Build plugin for JDK 11+
+        if: env.JDK_11_BUILD_REQUIRED
+        run: ./gradlew :plugins:frontend-jdk11:build --console=plain
 
-      - name: Build plugin on Windows
-        if: runner.os == 'Windows'
-        run: |
-          ./gradlew :plugins:frontend-jdk${{ matrix.pluginJavaVersion }}:build --console=plain
+      - name: Build plugin for JDK 17+
+        if: env.JDK_17_BUILD_REQUIRED
+        run: ./gradlew :plugins:frontend-jdk17:build --console=plain
+
+      - name: Build plugin for JDK 21+
+        if: env.JDK_21_BUILD_REQUIRED
+        run: ./gradlew :plugins:frontend-jdk21:${{ env.JDK_21_BUILD_TASK_NAME }} --console=plain
 
       - name: Scan source code and test results
-        if: env.FGP_CODE_SCAN_ENABLED
+        if: env.SONAR_CODE_SCAN_ENABLED
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew :plugins:frontend-jdk${{ matrix.pluginJavaVersion }}:sonar --console=plain -Dorg.gradle.jvmargs=-Xmx512m -i
+        run: ./gradlew :plugins:frontend-jdk21:sonar --console=plain -Dorg.gradle.jvmargs=-Xmx512m -i
 
       - name: Stop Gradle before caching
         run: ./gradlew -stop
