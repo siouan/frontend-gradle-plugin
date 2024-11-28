@@ -34,8 +34,8 @@ class InstallPackageManagerTaskFuncTest {
     @Test
     void should_skip_task_when_package_json_file_does_not_exist() throws IOException {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("20.18.0")
-            .nodeDistributionUrl(getResourcePath("node-v20.18.0.zip"));
+            .nodeVersion("22.11.0")
+            .nodeDistributionUrl(getResourcePath("node-v22.11.0.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, INSTALL_PACKAGE_MANAGER_TASK_NAME);
@@ -61,8 +61,8 @@ class InstallPackageManagerTaskFuncTest {
     void should_install_package_managers() throws IOException {
         Files.copy(getResourcePath("package-npm.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("20.18.0")
-            .nodeDistributionUrl(getResourcePath("node-v20.18.0.zip"));
+            .nodeVersion("22.11.0")
+            .nodeDistributionUrl(getResourcePath("node-v22.11.0.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult installNpmResult1 = runGradle(projectDirectoryPath, INSTALL_PACKAGE_MANAGER_TASK_NAME);

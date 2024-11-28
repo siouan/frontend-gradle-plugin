@@ -32,8 +32,8 @@ class CheckFrontendTaskFuncTest {
     @Test
     void should_skip_task_when_package_json_file_does_not_exist() throws IOException {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("20.18.0")
-            .nodeDistributionUrl(getResourcePath("node-v20.18.0.zip"))
+            .nodeVersion("22.11.0")
+            .nodeDistributionUrl(getResourcePath("node-v22.11.0.zip"))
             .checkScript("run check");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
@@ -50,8 +50,8 @@ class CheckFrontendTaskFuncTest {
     void should_skip_task_when_script_is_not_defined() throws IOException {
         Files.copy(getResourcePath("package-any-manager.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("20.18.0")
-            .nodeDistributionUrl(getResourcePath("node-v20.18.0.zip"));
+            .nodeVersion("22.11.0")
+            .nodeDistributionUrl(getResourcePath("node-v22.11.0.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, CHECK_TASK_NAME);
@@ -67,8 +67,8 @@ class CheckFrontendTaskFuncTest {
     void should_skip_task_when_running_gradle_task_and_script_is_not_defined() throws IOException {
         Files.copy(getResourcePath("package-any-manager.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("20.18.0")
-            .nodeDistributionUrl(getResourcePath("node-v20.18.0.zip"));
+            .nodeVersion("22.11.0")
+            .nodeDistributionUrl(getResourcePath("node-v22.11.0.zip"));
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 
         final BuildResult result1 = runGradle(projectDirectoryPath, GRADLE_CHECK_TASK_NAME);
@@ -84,8 +84,8 @@ class CheckFrontendTaskFuncTest {
     void should_check_frontend() throws IOException {
         Files.copy(getResourcePath("package-any-manager.json"), projectDirectoryPath.resolve("package.json"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("20.18.0")
-            .nodeDistributionUrl(getResourcePath("node-v20.18.0.zip"))
+            .nodeVersion("22.11.0")
+            .nodeDistributionUrl(getResourcePath("node-v22.11.0.zip"))
             .checkScript("run check");
         createBuildFile(projectDirectoryPath, frontendMapBuilder.toMap());
 

@@ -172,7 +172,7 @@ assembleScript.set("run build")
             </FgpGradleScripts>
 
             <FgpInstallScriptProperty />
-            <FgpCleanScriptProperty />
+            <FgpCleanScriptPropertyV9 />
             <FgpAssembleScriptProperty />
             <FgpCheckScriptProperty />
             <FgpPublishScriptProperty />

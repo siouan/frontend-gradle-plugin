@@ -197,7 +197,7 @@ class AuthenticationAndProxyFuncTest {
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder().verboseModeEnabled(false);
         if (nodeDistributionUrlRoot != null) {
             frontendMapBuilder
-                .nodeVersion("20.18.0")
+                .nodeVersion("22.11.0")
                 .nodeDistributionUrlRoot(nodeDistributionUrlRoot)
                 .nodeDistributionUrlPathPattern(NODE_DISTRIBUTION_URL_PATH_PATTERN);
             distributionServerConfigurator.withNodeDistribution();

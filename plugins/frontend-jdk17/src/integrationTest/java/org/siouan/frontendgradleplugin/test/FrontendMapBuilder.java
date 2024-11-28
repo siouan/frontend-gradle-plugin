@@ -27,8 +27,6 @@ public final class FrontendMapBuilder {
 
     private String installScript;
 
-    private String cleanScript;
-
     private String assembleScript;
 
     private String checkScript;
@@ -95,11 +93,6 @@ public final class FrontendMapBuilder {
 
     public FrontendMapBuilder installScript(final String installScript) {
         this.installScript = installScript;
-        return this;
-    }
-
-    public FrontendMapBuilder cleanScript(final String cleanScript) {
-        this.cleanScript = cleanScript;
         return this;
     }
 
@@ -176,9 +169,6 @@ public final class FrontendMapBuilder {
         }
         if (installScript != null) {
             properties.put("installScript", installScript);
-        }
-        if (cleanScript != null) {
-            properties.put("cleanScript", cleanScript);
         }
         if (assembleScript != null) {
             properties.put("assembleScript", assembleScript);

@@ -1,5 +1,5 @@
 <template>
-    <article class="mb-3 border-bottom">
+    <article class="mb-3 py-4 border-bottom">
         <header>
             <h4>
                 <FgpPropertyLinkAnchor :name="name" />

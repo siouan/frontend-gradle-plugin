@@ -31,7 +31,7 @@
             <FgpResolvePackageManagerTask />
             <FgpInstallPackageManagerTask />
             <FgpInstallFrontendTask />
-            <FgpCleanFrontendTask />
+            <FgpCleanFrontendTaskV9 />
             <FgpAssembleFrontendTask />
             <FgpCheckFrontendTask />
             <FgpPublishFrontendTask />
