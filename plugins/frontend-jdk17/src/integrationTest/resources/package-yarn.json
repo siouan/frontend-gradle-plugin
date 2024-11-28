@@ -12,7 +12,6 @@
     "another-script": "node -v && yarn -v && echo 'Another frontend script executed' && yarn run check",
     "assemble": "echo 'Frontend assembled'",
     "check": "yarn run lint && yarn run test",
-    "clean": "echo 'Frontend cleaned'",
     "lint": "echo 'Frontend linted'",
     "publish": "echo 'Frontend published'",
     "start": "echo 'Frontend started and stopped'",

@@ -4,7 +4,6 @@
   "scripts": {
     "build": "echo Building frontend",
     "check": "echo Checking frontend && yarn run lint && yarn run test",
-    "clean": "echo Cleaning frontend",
     "lint": "echo Linting frontend",
     "test": "echo Testing frontend"
   },

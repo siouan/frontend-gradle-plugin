@@ -12,7 +12,6 @@ frontend {
     nodeDistributionProvided.set(true)
     nodeInstallDirectory.set(preinstalledNodeDistributionDirectory)
     assembleScript.set("run build")
-    cleanScript.set("run clean")
     checkScript.set("run check")
 }
 

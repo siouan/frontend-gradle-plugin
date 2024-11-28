@@ -5,6 +5,5 @@ plugins {
 frontend {
     nodeVersion.set("22.11.0")
     assembleScript.set("run build")
-    cleanScript.set("run clean")
     checkScript.set("run check")
 }

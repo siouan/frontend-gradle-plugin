@@ -94,6 +94,7 @@ With their feedback, plugin improvement is possible. Special thanks to:
 @[davidkron](https://github.com/davidkron),
 @[fdw](https://github.com/fdw),
 @[Griefed](https://github.com/Griefed),
+@[JonasMorrissey](https://github.com/JonasMorrissey),
 @[joschi](https://github.com/joschi),
 @[jorgheymans](https://github.com/jorgheymans),
 @[ludik0](https://github.com/ludik0),
