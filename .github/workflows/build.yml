@@ -94,11 +94,19 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Set up JDK
+      - name: Set up additional JDK
         uses: actions/setup-java@v4
+        if: matrix.pluginJavaVersion != '21'
         with:
           distribution: temurin
           java-version: ${{ matrix.pluginJavaVersion }}
+          architecture: x64
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
           architecture: x64
 
       - name: Cache Gradle's cache and wrapper
