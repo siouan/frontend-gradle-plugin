@@ -45,7 +45,7 @@ jobs:
           else
             echo 'os=["${{ inputs.os }}"]' >> "$GITHUB_OUTPUT"
           fi
-          if [[ ("${{ github.event_name }}" == "push") || "${{ inputs.pluginJavaVersion }}" == "All" ]]; then
+          if [[ "${{ inputs.pluginJavaVersion }}" == "All" ]]; then
             echo 'pluginJavaVersion=["21", "17", "11"]' >> "$GITHUB_OUTPUT"
           elif [[ -n "${{ inputs.pluginJavaVersion }}" ]]; then
             echo 'pluginJavaVersion=["${{ inputs.pluginJavaVersion }}"]' >> "$GITHUB_OUTPUT"
