@@ -38,21 +38,21 @@ jobs:
         run: |
           requestedJavaVersions=${{ inputs.javaVersion }}
           if [[ "$requestedJavaVersions" == "All" ]]; then
-              jdk21BuildRequested=1
-              jdk17BuildRequested=1
-              jdk11BuildRequested=1
+              jdk21BuildRequested=true
+              jdk17BuildRequested=true
+              jdk11BuildRequested=true
           elif [[ (-z "$requestedJavaVersions") || ("$requestedJavaVersions" == "21") ]]; then
-              jdk21BuildRequested=1
-              jdk17BuildRequested=0
-              jdk11BuildRequested=0
+              jdk21BuildRequested=true
+              jdk17BuildRequested=false
+              jdk11BuildRequested=false
           elif [[ "$requestedJavaVersions" == "17" ]]; then
-              jdk21BuildRequested=0
-              jdk17BuildRequested=1
-              jdk11BuildRequested=0
+              jdk21BuildRequested=false
+              jdk17BuildRequested=true
+              jdk11BuildRequested=false
           elif [[ "$requestedJavaVersions" == "11" ]]; then
-              jdk21BuildRequested=0
-              jdk17BuildRequested=0
-              jdk11BuildRequested=1
+              jdk21BuildRequested=false
+              jdk17BuildRequested=false
+              jdk11BuildRequested=true
           fi
 
           requestedOs=${{ inputs.os }}
@@ -99,9 +99,9 @@ jobs:
               jsonProperties+="\"codeScanEnabled\": $codeScanEnabled, "
               jsonProperties+="\"gitFetchDepth\": $gitFetchDepth, "
               jsonProperties+="\"pluginTaskNameJdk21\": \"$pluginTaskNameJdk21\", "
-              jsonProperties+="\"jdk11BuildRequested\": \"$jdk11BuildRequested\", "
-              jsonProperties+="\"jdk17BuildRequested\": \"$jdk17BuildRequested\", "
-              jsonProperties+="\"jdk21BuildRequested\": \"$jdk21BuildRequested\" }"
+              jsonProperties+="\"jdk11BuildRequested\": $jdk11BuildRequested, "
+              jsonProperties+="\"jdk17BuildRequested\": $jdk17BuildRequested, "
+              jsonProperties+="\"jdk21BuildRequested\": $jdk21BuildRequested }"
               echo "OS: $jsonProperties"
               matrix+=$jsonProperties
               if [[ $i < $selectedOsMaxIndex ]]; then
