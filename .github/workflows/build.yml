@@ -2,12 +2,20 @@ name: Build
 
 on:
   push:
-    branches: [ 'main' ]
-  pull_request:
-    branches: [ 'main' ]
+    branches: ['main']
   workflow_dispatch:
     inputs:
-      pluginJavaVersion:
+      os:
+        description: 'O/S'
+        required: true
+        default: 'Ubuntu'
+        type: choice
+        options:
+          - 'Linux'
+          - 'Mac'
+          - 'Windows'
+          - 'All'
+      javaVersion:
         description: 'JDK compatibility'
         required: true
         default: '21'
@@ -17,59 +25,120 @@ on:
           - '17'
           - '11'
           - 'All'
-      os:
-        description: 'O/S'
-        required: true
-        default: 'ubuntu-24.04'
-        type: choice
-        options:
-          - 'ubuntu-24.04'
-          - 'macos-14'
-          - 'windows-2022'
-          - 'All'
 
 jobs:
   define-matrix:
     name: Define matrix
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     outputs:
-      os: ${{ steps.set-matrix-variables.outputs.os }}
-      pluginJavaVersion: ${{ steps.set-matrix-variables.outputs.pluginJavaVersion }}
-
+      matrix: ${{ steps.set-environment-variables.outputs.matrix }}
     steps:
-      - name: Set matrix variables
-        id: set-matrix-variables
+      - name: Set environment variables
+        id: set-environment-variables
         run: |
-          if [[ (-z "${{ inputs.os }}") || ("${{ inputs.os }}" == "All") ]]; then
-            echo 'os=["ubuntu-24.04", "macos-14", "windows-2022"]' >> "$GITHUB_OUTPUT"
-          else
-            echo 'os=["${{ inputs.os }}"]' >> "$GITHUB_OUTPUT"
+          requestedJavaVersions=${{ inputs.javaVersion }}
+          if [[ "$requestedJavaVersions" == "All" ]]; then
+              jdk21BuildRequested=1
+              jdk17BuildRequested=1
+              jdk11BuildRequested=1
+          elif [[ (-z "$requestedJavaVersions") || ("$requestedJavaVersions" == "21") ]]; then
+              jdk21BuildRequested=1
+              jdk17BuildRequested=0
+              jdk11BuildRequested=0
+          elif [[ "$requestedJavaVersions" == "17" ]]; then
+              jdk21BuildRequested=0
+              jdk17BuildRequested=1
+              jdk11BuildRequested=0
+          elif [[ "$requestedJavaVersions" == "11" ]]; then
+              jdk21BuildRequested=0
+              jdk17BuildRequested=0
+              jdk11BuildRequested=1
           fi
 
-  build:
-    name: Build
+          requestedOs=${{ inputs.os }}
+          selectedOs=()
+          if [[ (-z "$requestedOs") || ("$requestedOs" == "All") || ("$requestedOs" == "Linux") ]]; then
+              selectedOs+=(Linux)
+          fi
+          if [[ (-z "$requestedOs") || ("$requestedOs" == "All") || ("$requestedOs" == "Mac") ]]; then
+              selectedOs+=(Mac)
+          fi
+          if [[ (-z "$requestedOs") || ("$requestedOs" == "All") || ("$requestedOs" == "Windows") ]]; then
+              selectedOs+=(Windows)
+          fi
+          echo "Selected OS: ${selectedOs[*]}"
+
+          matrix="{\"include\": ["
+          selectedOsMaxIndex=$((${#selectedOs[@]} - 1))
+          for (( i=0; i<${#selectedOs[@]}; i++ )); do
+              case "${selectedOs[$i]}" in
+              Linux)
+                  os=ubuntu-24.04
+                  name=Ubuntu
+                  codeScanEnabled=$(if [[ "$jdk21BuildRequested" -eq 1 ]]; then echo true; else echo false; fi)
+                  gitFetchDepth=$(if [[ "$codeScanEnabled" == true ]]; then echo 0; else echo 1; fi)
+                  pluginTaskNameJdk21=$(if [[ "$codeScanEnabled" == true ]]; then echo jacocoTestReport; else echo build; fi)
+                  ;;
+              Mac)
+                  os=macos-14
+                  name=Mac
+                  codeScanEnabled=false
+                  gitFetchDepth=1
+                  pluginTaskNameJdk21=build
+                  ;;
+              Windows)
+                  os=windows-2022
+                  name=Windows
+                  codeScanEnabled=false
+                  gitFetchDepth=1
+                  pluginTaskNameJdk21=build
+                  ;;
+              esac
+              jsonProperties="{ \"os\": \"$os\", "
+              jsonProperties+="\"name\": \"$name\", "
+              jsonProperties+="\"codeScanEnabled\": $codeScanEnabled, "
+              jsonProperties+="\"gitFetchDepth\": $gitFetchDepth, "
+              jsonProperties+="\"pluginTaskNameJdk21\": \"$pluginTaskNameJdk21\", "
+              jsonProperties+="\"jdk11BuildRequested\": \"$jdk11BuildRequested\", "
+              jsonProperties+="\"jdk17BuildRequested\": \"$jdk17BuildRequested\", "
+              jsonProperties+="\"jdk21BuildRequested\": \"$jdk21BuildRequested\" }"
+              echo "OS: $jsonProperties"
+              matrix+=$jsonProperties
+              if [[ $i < $selectedOsMaxIndex ]]; then
+                  matrix+=", "
+              fi
+          done
+          matrix+="]}"
+          echo "Matrix: $matrix"
+          echo "JDK build requests: 11=$jdk11BuildRequested" 17=$jdk17BuildRequested 21=$jdk21BuildRequested
+          echo "matrix=$matrix" >> $GITHUB_OUTPUT
+
+  run-matrix:
     needs: define-matrix
-    runs-on: ${{ matrix.os }}
     strategy:
-      matrix:
-        os: ${{ fromJSON(needs.define-matrix.outputs.os) }}
-    env:
-      SONAR_CODE_SCAN_ENABLED: ${{ (matrix.os == 'ubuntu-24.04') && (inputs.pluginJavaVersion == '21') }}
-      JDK_11_BUILD_REQUIRED: ${{ (inputs.pluginJavaVersion == '11') || (inputs.pluginJavaVersion == 'All') }}
-      JDK_17_BUILD_REQUIRED: ${{ (inputs.pluginJavaVersion == '17') || (inputs.pluginJavaVersion == 'All') }}
-      JDK_21_BUILD_REQUIRED: ${{ (inputs.pluginJavaVersion == '21') || (inputs.pluginJavaVersion == 'All') }}
+      matrix: ${{ fromJSON(needs.define-matrix.outputs.matrix) }}
+    name: Building on ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
 
     steps:
+      - name: Building parameters
+        run: |
+          echo "OS: ${{ matrix.os }}"
+          echo "Target JDKS: 11=${{ matrix.jdk11BuildRequested }}, 17=${{ matrix.jdk17BuildRequested }}, 21=${{ matrix.jdk21BuildRequested }}"
+          echo "Git fetch depth: ${{ matrix.gitFetchDepth }}"
+          echo "[JDK 21] Code scan enabled: ${{ matrix.codeScanEnabled }}"
+          echo "[JDK 21] Task name: ${{ matrix.pluginTaskNameJdk21 }}"
+
       - name: Init Ubuntu environment
-        if: matrix.os == 'ubuntu-24.04'
+        if: matrix.name == 'Ubuntu'
         run: sudo rm -f /usr/local/bin/node /usr/local/bin/npm /usr/local/bin/pnpm /usr/local/bin/yarn
 
       - name: Init MacOS environment
-        if: matrix.os == 'macos-14'
+        if: matrix.name == 'Mac'
         run: sudo rm -f /opt/homebrew/bin/node /usr/local/bin/npm /usr/local/bin/pnpm /usr/bin/yarn /Users/runner/.yarn/bin/yarn
 
       - name: Init Windows environment
-        if: matrix.os == 'windows-2022'
+        if: matrix.name == 'Windows'
         run: |
           Rename-Item "C:\Program Files\nodejs" "nodejs.old" -Force
           Rename-Item "C:\npm" "npm.old" -Force
@@ -77,14 +146,12 @@ jobs:
 
       - name: Git checkout
         uses: actions/checkout@v4
-        env:
-          GIT_FETCH_DEPTH: ${{ ! env.FGP_CODE_SCAN_ENABLED && 1 || 0 }}
         with:
-          fetch-depth: env.GIT_FETCH_DEPTH
+          fetch-depth: matrix.gitFetchDepth
 
       - name: Set up JDK 11
         uses: actions/setup-java@v4
-        if: env.JDK_11_BUILD_REQUIRED
+        if: matrix.jdk11BuildRequested
         with:
           distribution: temurin
           java-version: '11'
@@ -92,7 +159,7 @@ jobs:
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
-        if: env.JDK_17_BUILD_REQUIRED
+        if: matrix.jdk17BuildRequested
         with:
           distribution: temurin
           java-version: '17'
@@ -117,7 +184,7 @@ jobs:
 
       - name: Cache Sonar's cache
         uses: actions/cache@v4
-        if: env.SONAR_CODE_SCAN_ENABLED
+        if: matrix.codeScanEnabled
         with:
           path: |
             ~/.sonar/cache/
@@ -127,21 +194,19 @@ jobs:
         run: chmod +x gradlew plugins/frontend-jdk*/src/integrationTest/resources/*/bin/*
 
       - name: Build plugin for JDK 11+
-        if: env.JDK_11_BUILD_REQUIRED
+        if: matrix.jdk11BuildRequested
         run: ./gradlew :plugins:frontend-jdk11:build --console=plain
 
       - name: Build plugin for JDK 17+
-        if: env.JDK_17_BUILD_REQUIRED
+        if: matrix.jdk17BuildRequested
         run: ./gradlew :plugins:frontend-jdk17:build --console=plain
 
       - name: Build plugin for JDK 21+
-        if: env.JDK_21_BUILD_REQUIRED
-        env:
-          JDK_21_BUILD_TASK_NAME: ${{ env.FGP_CODE_SCAN_ENABLED && 'jacocoTestReport' || 'build' }}
-        run: ./gradlew :plugins:frontend-jdk21:${{ env.JDK_21_BUILD_TASK_NAME }} --console=plain
+        if: matrix.jdk21BuildRequested
+        run: ./gradlew :plugins:frontend-jdk21:${{ matrix.pluginTaskNameJdk21 }} --console=plain
 
       - name: Scan source code and test results
-        if: env.SONAR_CODE_SCAN_ENABLED
+        if: matrix.codeScanEnabled
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
