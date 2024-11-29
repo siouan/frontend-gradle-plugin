@@ -75,9 +75,9 @@ jobs:
               Linux)
                   os=ubuntu-24.04
                   name=Ubuntu
-                  codeScanEnabled=$(if [[ "$jdk21BuildRequested" -eq 1 ]]; then echo true; else echo false; fi)
-                  gitFetchDepth=$(if [[ "$codeScanEnabled" == true ]]; then echo 0; else echo 1; fi)
-                  pluginTaskNameJdk21=$(if [[ "$codeScanEnabled" == true ]]; then echo jacocoTestReport; else echo build; fi)
+                  codeScanEnabled=$(if [[ "$jdk21BuildRequested" == "true" ]]; then echo true; else echo false; fi)
+                  gitFetchDepth=$(if [[ "$codeScanEnabled" == "true" ]]; then echo 0; else echo 1; fi)
+                  pluginTaskNameJdk21=$(if [[ "$codeScanEnabled" == "true" ]]; then echo jacocoTestReport; else echo build; fi)
                   ;;
               Mac)
                   os=macos-14
