@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import static org.siouan.frontendgradleplugin.domain.PlatformFixture.LOCAL_PLATFORM;
 import static org.siouan.frontendgradleplugin.test.PathFixture.ANY_PATH;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
@@ -49,11 +50,11 @@ class GradleScriptRunnerAdapterTest {
     }
 
     @Test
-    void should_run_script_when_settings_are_resolved() {
+    void should_run_script_when_settings_are_resolved() throws IOException {
         final Path nodeInstallationDirectory = ANY_PATH.resolve("node");
         final Map<String, String> environmentVariables = Map.of("VARIABLE", "value");
         final ScriptProperties scriptProperties = new ScriptProperties(execOperations, ANY_PATH.resolve("frontend"),
-            ExecutableType.NPM, nodeInstallationDirectory, SCRIPT, LOCAL_PLATFORM, environmentVariables);
+            ExecutableType.NPM, nodeInstallationDirectory, null, SCRIPT, LOCAL_PLATFORM, environmentVariables);
         final Set<Path> executablePaths = Set.of();
         final List<String> arguments = List.of();
         final ExecutionSettings executionSettings = ExecutionSettings

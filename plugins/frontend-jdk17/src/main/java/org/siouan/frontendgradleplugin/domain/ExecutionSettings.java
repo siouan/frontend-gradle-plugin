@@ -1,11 +1,13 @@
 package org.siouan.frontendgradleplugin.domain;
 
+import java.io.OutputStream;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -52,19 +54,29 @@ public class ExecutionSettings {
     private final Map<String, String> environmentVariables;
 
     /**
+     * Optional output stream to redirect the process output.
+     *
+     * @since 10.1.0
+     */
+    @EqualsAndHashCode.Exclude
+    private final OutputStream outputStream;
+
+    /**
      * Builds execution settings.
      *
      * @param workingDirectoryPath Path to the current working directory used at execution.
      * @param additionalExecutablePaths Set of paths of directories to find additional programs required at execution.
      * @param executablePath Path to the program to execute.
      * @param arguments List of arguments.
+     * @param outputStream Optional output stream to redirect the process output.
      */
     public ExecutionSettings(final Path workingDirectoryPath, final Set<Path> additionalExecutablePaths,
-        final Path executablePath, final List<String> arguments, final Map<String, String> environmentVariables) {
+        final Path executablePath, final List<String> arguments, final Map<String, String> environmentVariables, OutputStream outputStream) {
         this.workingDirectoryPath = workingDirectoryPath;
         this.additionalExecutablePaths = Set.copyOf(additionalExecutablePaths);
         this.executablePath = executablePath;
         this.arguments = List.copyOf(arguments);
         this.environmentVariables = Map.copyOf(environmentVariables);
+        this.outputStream = outputStream;
     }
 }

@@ -48,6 +48,9 @@ public class ExecSpecAction implements Action<ExecSpec> {
         execSpec.setExecutable(executionSettings.getExecutablePath().toString());
         execSpec.setArgs(executionSettings.getArguments());
 
+        Optional.ofNullable(executionSettings.getOutputStream())
+                .ifPresent(execSpec::setStandardOutput);
+
         final Map<String, String> userEnvironmentVariables = new HashMap<>(executionSettings.getEnvironmentVariables());
         final Map<String, Object> currentEnvironmentVariables = execSpec.getEnvironment();
 

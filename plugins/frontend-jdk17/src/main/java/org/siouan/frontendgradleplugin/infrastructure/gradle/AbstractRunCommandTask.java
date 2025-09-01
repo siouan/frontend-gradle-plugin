@@ -1,6 +1,7 @@
 package org.siouan.frontendgradleplugin.infrastructure.gradle;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 
 import org.gradle.api.DefaultTask;
@@ -9,6 +10,8 @@ import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Internal;
+import org.gradle.api.tasks.Optional;
+import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.process.ExecOperations;
 import org.siouan.frontendgradleplugin.domain.ExecutableType;
@@ -41,6 +44,11 @@ public abstract class AbstractRunCommandTask extends DefaultTask {
      * Directory where the Node.js distribution is installed, and used to find the executables.
      */
     protected final Property<File> nodeInstallDirectory;
+
+    /**
+     * Optional output file, for the task output.
+     */
+    protected final Property<File> outputFile;
 
     /**
      * Type of executable to run.
@@ -85,6 +93,7 @@ public abstract class AbstractRunCommandTask extends DefaultTask {
         this.beanRegistryBuildService = objectFactory.property(BeanRegistryBuildService.class);
         this.packageJsonDirectory = objectFactory.property(File.class);
         this.nodeInstallDirectory = objectFactory.property(File.class);
+        this.outputFile = objectFactory.property(File.class);
         this.executableType = objectFactory.property(ExecutableType.class);
         this.executableArgs = objectFactory.property(String.class);
         this.verboseModeEnabled = objectFactory.property(Boolean.class);
@@ -134,6 +143,12 @@ public abstract class AbstractRunCommandTask extends DefaultTask {
         return nodeInstallDirectory;
     }
 
+    @OutputFile
+    @Optional
+    public Property<File> getOutputFile() {
+        return outputFile;
+    }
+
     /**
      * Asserts this task is runnable.
      *
@@ -153,7 +168,7 @@ public abstract class AbstractRunCommandTask extends DefaultTask {
      * @throws BeanRegistryException If a component cannot be instanciated.
      */
     @TaskAction
-    public void execute() throws NonRunnableTaskException, BeanRegistryException {
+    public void execute() throws NonRunnableTaskException, BeanRegistryException, IOException {
         assertThatTaskIsRunnable();
 
         final BeanRegistry beanRegistry = beanRegistryBuildService.get().getBeanRegistry();
@@ -170,6 +185,7 @@ public abstract class AbstractRunCommandTask extends DefaultTask {
                 .packageJsonDirectoryPath(packageJsonDirectory.map(File::toPath).get())
                 .executableType(executableType.get())
                 .nodeInstallDirectoryPath(nodeInstallDirectory.map(File::toPath).get())
+                .outputFile(outputFile.isPresent() ? outputFile.get().toPath() : null)
                 .executableArgs(executableArgs.get())
                 .platform(platform)
                 .environmentVariables(environmentVariables.getOrElse(Map.of()))

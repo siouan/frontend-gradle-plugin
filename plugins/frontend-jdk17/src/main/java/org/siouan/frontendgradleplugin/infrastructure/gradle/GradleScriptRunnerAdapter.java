@@ -7,6 +7,10 @@ import org.siouan.frontendgradleplugin.domain.Logger;
 import org.siouan.frontendgradleplugin.domain.ResolveExecutionSettings;
 import org.siouan.frontendgradleplugin.domain.ResolveExecutionSettingsCommand;
 
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+
 /**
  * An adapter that delegates running a script to the executor available in a Gradle project.
  *
@@ -25,27 +29,35 @@ public class GradleScriptRunnerAdapter {
      *
      * @param scriptProperties Script properties.
      */
-    public void execute(final ScriptProperties scriptProperties) {
-        final ExecutionSettings executionSettings = resolveExecutionSettings.execute(ResolveExecutionSettingsCommand
-            .builder()
-            .packageJsonDirectoryPath(scriptProperties.getPackageJsonDirectoryPath())
-            .executableType(scriptProperties.getExecutableType())
-            .nodeInstallDirectoryPath(scriptProperties.getNodeInstallDirectoryPath())
-            .platform(scriptProperties.getPlatform())
-            .executableArgs(scriptProperties.getExecutableArgs())
-            .environmentVariables(scriptProperties.getEnvironmentVariables())
-            .build());
-        logger.debug("Execution settings: {}", executionSettings);
+    public void execute(final ScriptProperties scriptProperties) throws IOException {
+        final var outputFile = scriptProperties.getOutputFile();
+        try (
+            final var outputStream = null == outputFile
+                ? null
+                : new BufferedOutputStream(Files.newOutputStream(outputFile))
+        ) {
+            final ExecutionSettings executionSettings = resolveExecutionSettings.execute(ResolveExecutionSettingsCommand
+                    .builder()
+                    .packageJsonDirectoryPath(scriptProperties.getPackageJsonDirectoryPath())
+                    .executableType(scriptProperties.getExecutableType())
+                    .nodeInstallDirectoryPath(scriptProperties.getNodeInstallDirectoryPath())
+                    .platform(scriptProperties.getPlatform())
+                    .executableArgs(scriptProperties.getExecutableArgs())
+                    .environmentVariables(scriptProperties.getEnvironmentVariables())
+                    .outputStream(outputStream)
+                    .build());
+            logger.debug("Execution settings: {}", executionSettings);
 
-        scriptProperties
-            .getExecOperations()
-            .exec(ExecSpecAction
-                .builder()
-                .executionSettings(executionSettings)
-                .afterConfiguredConsumer(this::logExecSpecBeforeExecution)
-                .build())
-            .rethrowFailure()
-            .assertNormalExitValue();
+            scriptProperties
+                    .getExecOperations()
+                    .exec(ExecSpecAction
+                            .builder()
+                            .executionSettings(executionSettings)
+                            .afterConfiguredConsumer(this::logExecSpecBeforeExecution)
+                            .build())
+                    .rethrowFailure()
+                    .assertNormalExitValue();
+        }
     }
 
     private void logExecSpecBeforeExecution(final ExecSpec execSpec) {
