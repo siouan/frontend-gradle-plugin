@@ -55,7 +55,7 @@ public class InstallPackageManagerTask extends AbstractRunCommandTask {
     }
 
     @Override
-    public void execute() throws NonRunnableTaskException, BeanRegistryException {
+    public void execute() throws NonRunnableTaskException, BeanRegistryException, IOException {
         final BeanRegistry beanRegistry = beanRegistryBuildService.get().getBeanRegistry();
 
         this.executableArgs.set(packageManagerSpecificationFile.getAsFile().map(f -> {

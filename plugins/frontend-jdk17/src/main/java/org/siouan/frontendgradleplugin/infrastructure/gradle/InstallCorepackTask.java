@@ -11,6 +11,8 @@ import org.gradle.process.ExecOperations;
 import org.siouan.frontendgradleplugin.domain.ExecutableType;
 import org.siouan.frontendgradleplugin.infrastructure.bean.BeanRegistryException;
 
+import java.io.IOException;
+
 /**
  * This task installs a specific version of Corepack, which will override the default version embedded in the Node.js
  * distribution (by executing command {@code node -g install corepack[@<corepackVersion>]}).
@@ -74,7 +76,7 @@ public class InstallCorepackTask extends AbstractRunCommandTask {
     }
 
     @Override
-    public void execute() throws NonRunnableTaskException, BeanRegistryException {
+    public void execute() throws NonRunnableTaskException, BeanRegistryException, IOException {
         final StringBuilder scriptBuilder = new StringBuilder(INSTALL_COREPACK_COMMAND);
         final String version = corepackVersion.get();
         if (!version.equals(LATEST_VERSION_ARGUMENT)) {

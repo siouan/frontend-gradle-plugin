@@ -99,7 +99,7 @@ public class ResolveExecutionSettings {
         }
 
         return new ExecutionSettings(command.getPackageJsonDirectoryPath(), executablePaths, executable, args,
-            command.getEnvironmentVariables());
+            command.getEnvironmentVariables(), command.getOutputStream());
     }
 
     private String escapeWhitespacesFromCommandLineToken(Path path) {

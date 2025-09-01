@@ -1,5 +1,6 @@
 package org.siouan.frontendgradleplugin.domain;
 
+import java.io.OutputStream;
 import java.nio.file.Path;
 import java.util.Map;
 
@@ -54,4 +55,11 @@ public class ResolveExecutionSettingsCommand {
      */
     @EqualsAndHashCode.Include
     private final Map<String, String> environmentVariables;
+
+    /**
+     * Optional output stream to redirect the process output.
+     *
+     * @since 10.1.0
+     */
+    private final OutputStream outputStream;
 }
