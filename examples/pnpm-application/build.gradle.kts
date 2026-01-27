@@ -7,7 +7,7 @@ plugins {
 }
 
 frontend {
-    nodeVersion.set("22.11.0")
+    nodeVersion.set("24.13.0")
     assembleScript.set("run build")
     checkScript.set("run check")
     verboseModeEnabled.set(true)
