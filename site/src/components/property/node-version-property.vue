@@ -4,7 +4,7 @@
         type="java.lang.String"
         :required="false"
         :default-value="null"
-        example="22.11.0"
+        example="24.13.0"
         :task-names="['installNode']"
     >
         <p>

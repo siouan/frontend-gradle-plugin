@@ -4,7 +4,7 @@
   "license": "Apache-2.0",
   "version": "10.0.0",
   "engines": {
-    "node": "~22.11.0"
+    "node": "~24.13.0"
   },
   "packageManager": "yarn@4.5.1",
   "type": "module",

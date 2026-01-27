@@ -63,7 +63,7 @@ class TaskTypesWithDownloadedDistributionsFuncTest {
         final Path temporaryScriptPath = createJavascriptFileLoggingProcessTitle(
             temporaryDirectoryPath.resolve("script.js"));
         final FrontendMapBuilder frontendMapBuilder = new FrontendMapBuilder()
-            .nodeVersion("22.11.0")
+            .nodeVersion("24.13.0")
             .nodeInstallDirectory(projectDirectoryPath.resolve("node-dist"))
             .corepackVersion(LATEST_VERSION_ARGUMENT)
             .packageJsonDirectory(packageJsonDirectoryPath);

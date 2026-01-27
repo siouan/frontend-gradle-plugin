@@ -61,9 +61,9 @@ class MultiProjectsFuncTest {
         final Path yarnSubProjectPath = Files.createDirectory(projectDirectoryPath.resolve(YARN_SUB_PROJECT_NAME));
         Files.copy(getResourcePath("package-yarn.json"), yarnSubProjectPath.resolve("package.json"));
         final FrontendMapBuilder yarnSubProjectFrontendProperties = new FrontendMapBuilder()
-            .nodeVersion("22.11.0")
+            .nodeVersion("24.13.0")
             .nodeInstallDirectory(nodeInstallDirectory)
-            .nodeDistributionUrl(getResourcePath("node-v22.11.0.zip"))
+            .nodeDistributionUrl(getResourcePath("node-v24.13.0.zip"))
             .installScript("run install")
             .assembleScript("run assemble")
             .checkScript("run check")

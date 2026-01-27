@@ -13,7 +13,7 @@ plugins {
 }
 
 frontend {
-    nodeVersion.set("22.11.0")
+    nodeVersion.set("24.13.0")
     assembleScript.set("run generate")
     verboseModeEnabled.set(true)
 }
