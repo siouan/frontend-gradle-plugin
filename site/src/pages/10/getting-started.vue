@@ -13,6 +13,10 @@
                 <FgpGradlePluginsLink path="/plugin/org.siouan.frontend-jdk17">JDK 17 build</FgpGradlePluginsLink>:
                 <FgpGradleLink /> 8.5+
             </li>
+            <li>
+                <FgpGradlePluginsLink path="/plugin/org.siouan.frontend-jdk11">JDK 11 build</FgpGradlePluginsLink>:
+                <FgpGradleLink /> 8.5+
+            </li>
         </ul>
         <p>
             The plugin is built and tested on Linux, Mac OS, Windows (see the list of build environments used in the
@@ -46,6 +50,8 @@
     id 'org.siouan.frontend-jdk21' version '11.0.0'
     <FgpCodeComment>// For JDK 17+</FgpCodeComment>
     id 'org.siouan.frontend-jdk17' version '11.0.0'
+    <FgpCodeComment>// For JDK 11+</FgpCodeComment>
+    id 'org.siouan.frontend-jdk11' version '11.0.0'
 }</FgpCode></pre>
                             </template>
                             <template #kotlin>
@@ -54,6 +60,8 @@
     id("org.siouan.frontend-jdk21") version "11.0.0"
     <FgpCodeComment>// For JDK 17+</FgpCodeComment>
     id("org.siouan.frontend-jdk17") version "11.0.0"
+    <FgpCodeComment>// For JDK 11+</FgpCodeComment>
+    id("org.siouan.frontend-jdk11") version "11.0.0"
 }</FgpCode></pre>
                             </template>
                         </FgpGradleScripts>
@@ -77,13 +85,17 @@
         classpath 'org.siouan:frontend-gradle-plugin-jdk21:11.0.0'
         <FgpCodeComment>// For JDK 17+</FgpCodeComment>
         classpath 'org.siouan:frontend-gradle-plugin-jdk17:11.0.0'
+        <FgpCodeComment>// For JDK 11+</FgpCodeComment>
+        classpath 'org.siouan:frontend-gradle-plugin-jdk11:11.0.0'
     }
 }
 
 <FgpCodeComment>// For JDK 21+</FgpCodeComment>
 apply plugin: 'org.siouan.frontend-jdk21'
 <FgpCodeComment>// For JDK 17+</FgpCodeComment>
-apply plugin: 'org.siouan.frontend-jdk17'</FgpCode></pre>
+apply plugin: 'org.siouan.frontend-jdk17'
+<FgpCodeComment>// For JDK 11+</FgpCodeComment>
+apply plugin: 'org.siouan.frontend-jdk11'</FgpCode></pre>
                             </template>
                             <template #kotlin>
                                 <pre><FgpCode>buildscript {
@@ -95,13 +107,17 @@ apply plugin: 'org.siouan.frontend-jdk17'</FgpCode></pre>
         classpath("org.siouan:frontend-gradle-plugin-jdk21:11.0.0")
         <FgpCodeComment>// For JDK 17+</FgpCodeComment>
         classpath("org.siouan:frontend-gradle-plugin-jdk17:11.0.0")
+        <FgpCodeComment>// For JDK 11+</FgpCodeComment>
+        classpath("org.siouan:frontend-gradle-plugin-jdk11:11.0.0")
     }
 }
 
 <FgpCodeComment>// For JDK 21+</FgpCodeComment>
 apply(plugin = "org.siouan.frontend-jdk21")
 <FgpCodeComment>// For JDK 17+</FgpCodeComment>
-apply(plugin = "org.siouan.frontend-jdk17")</FgpCode></pre>
+apply(plugin = "org.siouan.frontend-jdk17")
+<FgpCodeComment>// For JDK 11+</FgpCodeComment>
+apply(plugin = "org.siouan.frontend-jdk11")</FgpCode></pre>
                             </template>
                         </FgpGradleScripts>
                     </li>

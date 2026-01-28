@@ -13,6 +13,9 @@ const runtimeConfig = useRuntimeConfig();
 const mainStore = useMainStore();
 
 const options = [{
+    label: '11.x',
+    value: 11
+}, {
     label: '10.x',
     value: 10
 }, {
@@ -34,7 +37,7 @@ const options = [{
 
 function navigateToRelease(event: Event): void {
     const selectedRelease = Number((<HTMLSelectElement>event.target)?.value);
-    const [previousSelectedRelease, canonicalPath] = parseReleaseAndCanonicalPath(router.currentRoute.value.path, runtimeConfig.public.latestMajorRelease);
+    const [, canonicalPath] = parseReleaseAndCanonicalPath(router.currentRoute.value.path, runtimeConfig.public.latestMajorRelease);
     mainStore.setSelectedRelease(selectedRelease);
     router.push(`${mainStore.selectedReleasePath}${canonicalPath}`);
 }

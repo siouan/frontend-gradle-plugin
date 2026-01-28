@@ -51,7 +51,7 @@ configurations["integrationTestRuntimeOnly"]
 val mockitoAgent = configurations.create("mockitoAgent")
 dependencies {
     implementation(gradleApi())
-    implementation(libs.resilience4j.retry.jdk17)
+    implementation(libs.resilience4j.retry)
     implementation(libs.httpclient5)
     implementation(libs.commons.compress)
     implementation(libs.json)
