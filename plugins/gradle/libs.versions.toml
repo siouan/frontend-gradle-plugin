@@ -9,8 +9,7 @@ junit-jupiter-version = "5.14.2"
 junit-pioneer-version = "2.3.0"
 lombok-version = "1.18.42"
 mockito-version = "5.21.0"
-resilience4j-retry-version-jdk11 = "1.7.1"
-resilience4j-retry-version-jdk17 = "2.3.0"
+resilience4j-retry-version = "2.3.0"
 sonarqube-version = "7.2.2.6593"
 wiremock-version = "3.13.2"
 
@@ -26,8 +25,7 @@ junit-pioneer = { group = "org.junit-pioneer", name = "junit-pioneer", version.r
 lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok-version" }
 mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockito-version" }
 mockito-junit-jupiter = { group = "org.mockito", name = "mockito-junit-jupiter", version.ref = "mockito-version" }
-resilience4j-retry-jdk11 = { group = "io.github.resilience4j", name = "resilience4j-retry", version.ref = "resilience4j-retry-version-jdk11" }
-resilience4j-retry-jdk17 = { group = "io.github.resilience4j", name = "resilience4j-retry", version.ref = "resilience4j-retry-version-jdk17" }
+resilience4j-retry = { group = "io.github.resilience4j", name = "resilience4j-retry", version.ref = "resilience4j-retry-version" }
 wiremock = { group = "org.wiremock", name = "wiremock", version.ref = "wiremock-version" }
 
 [plugins]

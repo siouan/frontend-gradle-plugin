@@ -23,7 +23,6 @@ on:
         options:
           - '21'
           - '17'
-          - '11'
           - 'All'
 
 jobs:
@@ -40,19 +39,12 @@ jobs:
           if [[ "$requestedJavaVersions" == "All" ]]; then
               jdk21BuildRequested=true
               jdk17BuildRequested=true
-              jdk11BuildRequested=true
           elif [[ (-z "$requestedJavaVersions") || ("$requestedJavaVersions" == "21") ]]; then
               jdk21BuildRequested=true
               jdk17BuildRequested=false
-              jdk11BuildRequested=false
           elif [[ "$requestedJavaVersions" == "17" ]]; then
               jdk21BuildRequested=false
               jdk17BuildRequested=true
-              jdk11BuildRequested=false
-          elif [[ "$requestedJavaVersions" == "11" ]]; then
-              jdk21BuildRequested=false
-              jdk17BuildRequested=false
-              jdk11BuildRequested=true
           fi
 
           requestedOs=${{ inputs.os }}
@@ -99,7 +91,6 @@ jobs:
               jsonProperties+="\"codeScanEnabled\": $codeScanEnabled, "
               jsonProperties+="\"gitFetchDepth\": $gitFetchDepth, "
               jsonProperties+="\"pluginTaskNameJdk21\": \"$pluginTaskNameJdk21\", "
-              jsonProperties+="\"jdk11BuildRequested\": $jdk11BuildRequested, "
               jsonProperties+="\"jdk17BuildRequested\": $jdk17BuildRequested, "
               jsonProperties+="\"jdk21BuildRequested\": $jdk21BuildRequested }"
               echo "OS: $jsonProperties"
@@ -110,7 +101,7 @@ jobs:
           done
           matrix+="]}"
           echo "Matrix: $matrix"
-          echo "JDK build requests: 11=$jdk11BuildRequested" 17=$jdk17BuildRequested 21=$jdk21BuildRequested
+          echo "JDK build requests: 17=$jdk17BuildRequested 21=$jdk21BuildRequested"
           echo "matrix=$matrix" >> $GITHUB_OUTPUT
 
   run-matrix:
@@ -124,7 +115,7 @@ jobs:
       - name: Building parameters
         run: |
           echo "OS: ${{ matrix.os }}"
-          echo "Target JDKS: 11=${{ matrix.jdk11BuildRequested }}, 17=${{ matrix.jdk17BuildRequested }}, 21=${{ matrix.jdk21BuildRequested }}"
+          echo "Target JDKS: 17=${{ matrix.jdk17BuildRequested }}, 21=${{ matrix.jdk21BuildRequested }}"
           echo "Git fetch depth: ${{ matrix.gitFetchDepth }}"
           echo "[JDK 21] Code scan enabled: ${{ matrix.codeScanEnabled }}"
           echo "[JDK 21] Task name: ${{ matrix.pluginTaskNameJdk21 }}"
@@ -148,14 +139,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: matrix.gitFetchDepth
-
-      - name: Set up JDK 11
-        uses: actions/setup-java@v4
-        if: matrix.jdk11BuildRequested
-        with:
-          distribution: temurin
-          java-version: '11'
-          architecture: x64
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -192,10 +175,6 @@ jobs:
 
       - name: Grant executable permission
         run: chmod +x gradlew plugins/frontend-jdk*/src/integrationTest/resources/*/bin/*
-
-      - name: Build plugin for JDK 11+
-        if: matrix.jdk11BuildRequested
-        run: ./gradlew :plugins:frontend-jdk11:build --console=plain
 
       - name: Build plugin for JDK 17+
         if: matrix.jdk17BuildRequested
