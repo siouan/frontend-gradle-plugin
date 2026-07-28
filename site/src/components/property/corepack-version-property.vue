@@ -23,5 +23,9 @@
                 run.
             </li>
         </ul>
+        <FgpWarning>
+            Starting from Node.js 25+, <FgpCorepackLink /> is not embedded anymore in the <FgpNodejsLink /> distribution.
+            In this case, this property MUST be set to a non-<FgpCodenull</FgpCode> value.
+        </FgpWarning>
     </FgpProperty>
 </template>
