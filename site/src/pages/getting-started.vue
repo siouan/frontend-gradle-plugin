@@ -108,6 +108,10 @@ apply(plugin = "org.siouan.frontend-jdk17")</FgpCode></pre>
                 </ul>
             </li>
             <li>
+                Starting from <FgpNodejsLink /> 25+, <FgpCorepackLink /> is not bundled in the distribution anymore. Set
+                the <FgpPropertyLink name="corepackVersion" /> property with a non-<FgpCode>null</FgpCode> value.
+            </li>
+            <li>
                 Define the
                 <FgpCode><FgpNodejsLink path="/api/packages.html#packagemanager" label="packageManager" /></FgpCode>
                 property in the <FgpCode>package.json</FgpCode> file: <FgpCode>(npm|pnpm|yarn)@x.y.z(+hash)</FgpCode>
