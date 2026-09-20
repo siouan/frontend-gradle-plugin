@@ -1,13 +1,14 @@
-val fgpJdkVersion: String by extra
-val fgpGroup: String by extra
-val fgpVersion: String by extra
-val fgpDisplayName: String by extra
-val fgpDescription: String by extra
-val fgpPluginId: String by extra
-val fgpImplementationClass: String by extra
-val fgpWebsiteUrl: String by extra
-val fgpVcsUrl: String by extra
-val fgpGradlePluginPortalTags: String by extra
+import org.gradle.kotlin.dsl.extra
+
+val fgpJdkVersion = extra["fgpJdkVersion"] as String
+val fgpGroup = extra["fgpGroup"] as String
+val fgpVersion = extra["fgpVersion"] as String
+val fgpDisplayName = extra["fgpDisplayName"] as String
+val fgpDescription = extra["fgpDescription"] as String
+val fgpImplementationClass = extra["fgpImplementationClass"] as String
+val fgpWebsiteUrl = extra["fgpWebsiteUrl"] as String
+val fgpVcsUrl = extra["fgpVcsUrl"] as String
+val fgpGradlePluginPortalTags = extra["fgpGradlePluginPortalTags"] as String
 
 plugins {
     id("idea")
@@ -39,7 +40,7 @@ sourceSets {
     }
 }
 
-val integrationTestImplementation: Configuration by configurations.getting {
+val integrationTestImplementation = configurations.getByName("integrationTestImplementation") {
     extendsFrom(configurations.implementation.get())
     extendsFrom(configurations.testImplementation.get())
 }
