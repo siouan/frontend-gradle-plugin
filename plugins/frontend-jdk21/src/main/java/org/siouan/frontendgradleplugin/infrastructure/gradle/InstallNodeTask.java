@@ -15,6 +15,7 @@ import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.TaskAction;
+import org.gradle.work.DisableCachingByDefault;
 import org.siouan.frontendgradleplugin.domain.FrontendException;
 import org.siouan.frontendgradleplugin.domain.Platform;
 import org.siouan.frontendgradleplugin.domain.UnsupportedPlatformException;
@@ -35,6 +36,7 @@ import org.siouan.frontendgradleplugin.infrastructure.bean.BeanRegistryException
 /**
  * Task that downloads and installs a Node distribution.
  */
+@DisableCachingByDefault
 public class InstallNodeTask extends DefaultTask {
 
     /**

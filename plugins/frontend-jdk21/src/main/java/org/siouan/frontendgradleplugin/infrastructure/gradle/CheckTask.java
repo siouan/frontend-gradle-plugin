@@ -7,10 +7,12 @@ import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
 import org.gradle.process.ExecOperations;
+import org.gradle.work.DisableCachingByDefault;
 
 /**
  * This task checks the project.
  */
+@DisableCachingByDefault
 public class CheckTask extends AbstractRunCommandTask {
 
     @Inject

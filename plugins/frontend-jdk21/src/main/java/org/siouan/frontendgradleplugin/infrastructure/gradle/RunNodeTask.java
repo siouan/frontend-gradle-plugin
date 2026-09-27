@@ -7,6 +7,7 @@ import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.options.Option;
 import org.gradle.process.ExecOperations;
+import org.gradle.work.DisableCachingByDefault;
 import org.siouan.frontendgradleplugin.domain.ExecutableType;
 
 /**
@@ -25,6 +26,7 @@ import org.siouan.frontendgradleplugin.domain.ExecutableType;
  *
  * @since 9.0.0
  */
+@DisableCachingByDefault
 public class RunNodeTask extends AbstractRunCommandTask {
 
     @Inject

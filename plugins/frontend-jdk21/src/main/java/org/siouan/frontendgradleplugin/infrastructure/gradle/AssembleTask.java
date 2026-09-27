@@ -7,10 +7,12 @@ import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
 import org.gradle.process.ExecOperations;
+import org.gradle.work.DisableCachingByDefault;
 
 /**
  * This task assembles project artifacts.
  */
+@DisableCachingByDefault
 public class AssembleTask extends AbstractRunCommandTask {
 
     @Inject

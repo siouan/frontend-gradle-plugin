@@ -10,6 +10,7 @@ import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.tasks.InputFile;
 import org.gradle.api.tasks.OutputFile;
 import org.gradle.process.ExecOperations;
+import org.gradle.work.DisableCachingByDefault;
 import org.siouan.frontendgradleplugin.domain.ExecutableType;
 import org.siouan.frontendgradleplugin.domain.FileManager;
 import org.siouan.frontendgradleplugin.infrastructure.bean.BeanRegistry;
@@ -21,6 +22,7 @@ import org.siouan.frontendgradleplugin.infrastructure.bean.BeanRegistryException
  *
  * @since 7.0.0
  */
+@DisableCachingByDefault
 public class InstallPackageManagerTask extends AbstractRunCommandTask {
 
     private static final String COREPACK_ENABLE_COMMAND = "enable";

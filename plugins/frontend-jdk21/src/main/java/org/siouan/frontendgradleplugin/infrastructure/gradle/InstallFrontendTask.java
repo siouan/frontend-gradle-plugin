@@ -6,11 +6,13 @@ import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.process.ExecOperations;
+import org.gradle.work.DisableCachingByDefault;
 
 /**
  * This task installs frontend dependencies (by executing a {@code npm/pnpm/yarn} command). Optionally, the command may
  * be customized to pass other parameter (e.g. {@code npm ci} command).
  */
+@DisableCachingByDefault
 public class InstallFrontendTask extends AbstractRunCommandTask {
 
     @Inject

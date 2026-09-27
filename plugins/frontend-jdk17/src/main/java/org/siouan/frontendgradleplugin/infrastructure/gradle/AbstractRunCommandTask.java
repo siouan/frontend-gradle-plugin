@@ -11,6 +11,7 @@ import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.process.ExecOperations;
+import org.gradle.work.DisableCachingByDefault;
 import org.siouan.frontendgradleplugin.domain.ExecutableType;
 import org.siouan.frontendgradleplugin.domain.Platform;
 import org.siouan.frontendgradleplugin.infrastructure.bean.BeanRegistry;
@@ -20,6 +21,7 @@ import org.siouan.frontendgradleplugin.infrastructure.bean.BeanRegistryException
  * This abstract class provides the reusable logic to run a command with an executable. Sub-classes must expose inputs
  * and outputs.
  */
+@DisableCachingByDefault
 public abstract class AbstractRunCommandTask extends DefaultTask {
 
     protected final ExecOperations execOperations;

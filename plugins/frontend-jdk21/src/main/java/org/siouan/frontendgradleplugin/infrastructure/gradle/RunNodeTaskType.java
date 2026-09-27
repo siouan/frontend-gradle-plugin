@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.process.ExecOperations;
+import org.gradle.work.DisableCachingByDefault;
 
 /**
  * Task type allowing developers to implement custom task and run a {@code node} command. To do so, the {@code script}
@@ -21,6 +22,7 @@ import org.gradle.process.ExecOperations;
  *
  * @since 1.2.0
  */
+@DisableCachingByDefault
 public abstract class RunNodeTaskType extends RunNodeTask {
 
     @Inject
