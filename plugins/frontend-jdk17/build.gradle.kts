@@ -49,6 +49,10 @@ configurations["integrationTestRuntimeOnly"]
     .extendsFrom(configurations.runtimeOnly.get())
     .extendsFrom(configurations.testRuntimeOnly.get())
 
+dependencyLocking {
+    lockAllConfigurations()
+}
+
 val mockitoAgent = configurations.create("mockitoAgent")
 dependencies {
     implementation(gradleApi())

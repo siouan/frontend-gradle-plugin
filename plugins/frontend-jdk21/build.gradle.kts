@@ -49,6 +49,10 @@ configurations["integrationTestRuntimeOnly"]
     .extendsFrom(configurations.runtimeOnly.get())
     .extendsFrom(configurations.testRuntimeOnly.get())
 
+dependencyLocking {
+    lockAllConfigurations()
+}
+
 val mockitoAgent = configurations.create("mockitoAgent")
 dependencies {
     implementation(gradleApi())
@@ -162,6 +166,5 @@ tasks.named<JacocoReport>("jacocoTestReport") {
     )
     reports {
         xml.required.set(true)
-        xml.outputLocation.set(project.layout.buildDirectory.file("reports/jacoco/report.xml"))
     }
 }
