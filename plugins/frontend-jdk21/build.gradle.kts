@@ -114,14 +114,10 @@ sonarqube {
         property("sonar.links.scm", "https://github.com/siouan/frontend-gradle-plugin")
         property("sonar.links.issue", "https://github.com/siouan/frontend-gradle-plugin/issues")
 
-        property("sonar.sources", "src/main")
         property("sonar.tests", "src/test,src/integrationTest")
 
-        property("sonar.java.binaries", "build/classes/java/main")
         property("sonar.java.test.binaries", "build/classes/java/test,build/classes/java/integrationTest")
         property("sonar.junit.reportPaths", "build/test-results/test/,build/test-results/integrationTest/")
-        property("sonar.jacoco.xmlReportPaths", "build/reports/jacoco/report.xml")
-        property("sonar.verbose", true)
 
         // Irrelevant duplications detected on task inputs
         property(
